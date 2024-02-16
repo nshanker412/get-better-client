@@ -20,6 +20,8 @@
 			"@context/*": ["./src/context/*"],
 			"@assets/*": ["./assets/*"],
 			"@types/*": ["./src/types/*"],
+			"@components/*": ["./src/components/*"],
+			"@constants/*": ["./src/constants/*"],
 		},
 	},
 	"exclude": ["node_modules"],

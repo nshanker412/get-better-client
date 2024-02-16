@@ -1,6 +1,6 @@
+import { BLUR_HASH } from '@constants/constants';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { Link, useIsFocused } from '@react-navigation/native';
-import { BLUR_HASH } from '@types/constants';
 import axios from 'axios';
 import { Video } from 'expo-av';
 import * as FileSystem from 'expo-file-system';

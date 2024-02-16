@@ -12,6 +12,8 @@ module.exports = (api) => {
 						'@assets': './assets',
 						'@context': './src/context',
 						'@types': './src/types',
+						'@constants': './src/constants',
+
 					},
 				},
 				'react-native-reanimated/plugin',

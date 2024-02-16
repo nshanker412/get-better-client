@@ -7,8 +7,8 @@
 import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
+import { BLUR_HASH } from '@constants/constants';
 import { Link } from '@react-navigation/native';
-import { BLUR_HASH } from '@types/constants';
 import axios from 'axios';
 import { Video } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
