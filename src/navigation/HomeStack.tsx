@@ -5,9 +5,9 @@ import CreatePost from '../components/createPost/createPost';
 import { Home } from '../components/home/home';
 import Notifications from '../components/notifications/notifications';
 import { Profile } from '../components/profile/Profile';
+import ProfilePlan from '../components/profile/ProfilePlan';
+import ProfilePost from '../components/profile/ProfilePost';
 import ProfileEdit from '../components/profile/profileEdit';
-import ProfilePlan from '../components/profile/profilePlan';
-import ProfilePost from '../components/profile/profilePost';
 
 export const HomeStack: React.FC = ({ navigation }) => {
 	const HomeStackNav = createStackNavigator();
