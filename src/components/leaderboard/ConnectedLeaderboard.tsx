@@ -22,11 +22,9 @@ const LBPlaceholder = () => {
 			<ShimmerTile opacity={0.3} />
 			<ShimmerTile opacity={0.2} />
 			<ShimmerTile opacity={0.1} />
-			
 		</View>
 	);
 }
-
 
 
 export const ConnectedLeaderboard: React.FC = ({ navigation }) => {

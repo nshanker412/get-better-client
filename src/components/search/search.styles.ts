@@ -30,20 +30,7 @@ export const useSearchStyles = () => {
 			width: '90%',
 			borderRadius: 50,
 		},
-		// searchContainer: {
-		// 	flexDirection: 'row',
-		// 	alignItems: 'flex-end',
-		// 	backgroundColor: '#fff',
-		// 	opacity: 0.9,
-		// 	borderRadius: 25,
-		// 	margin: 10,
-		// 	paddingHorizontal: 15,
-		// 	elevation: 3, // Shadow for Android
-		// 	shadowColor: '#000', // Shadow for iOS
-		// 	shadowOffset: { width: 0, height: 2 },
-		// 	shadowOpacity: 0.1,
-		// 	shadowRadius: 3,
-		//   },
+
 		inputStyle: {
 			flex: 1,
 			color: '#000',
@@ -74,7 +61,7 @@ export const useSearchStyles = () => {
 			...theme.input,
 		},
 		defaultInputText: {
-			color: theme.defaultInputText,
+			color: theme.textColorPrimary,
 		},
 		searchIcon: {
 			paddingLeft: 6,
@@ -83,7 +70,6 @@ export const useSearchStyles = () => {
 		profilesContainer: {
 			display: 'flex',
 			flexDirection: 'column',
-			justifyContent: 'left',
 			width: '100%',
 			padding: 20,
 			// marginTop: 25,
@@ -96,7 +82,7 @@ export const useSearchStyles = () => {
 			display: 'flex',
 			flexDirection: 'row',
 			justifyContent: 'flex-start',
-			padding: 10,
+			padding: 15,
 			borderRadius: 16,
 			// borderTopColor: theme.borderColor,
 			// borderTopWidth: 1,
@@ -183,6 +169,12 @@ export const useSearchStyles = () => {
 			width: 75,
 			height: 75,
 		},
+		divider:
+		{
+			backgroundColor: theme.borderColor,
+			height: 1,
+			width: '100%',
+		}
 	});
 
 	return searchStyles;
