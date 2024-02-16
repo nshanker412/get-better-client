@@ -1,5 +1,5 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { TouchableHighlight } from 'react-native';
 import { ProfilePost } from '../../ProfilePost';
@@ -13,6 +13,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	fetchUserPosts,
 }) => {
 	const route = useRoute();
+	const navigation = useNavigation();
 
 	// if came from a link, find that post and open it, otherwise
 
@@ -56,12 +57,16 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	}, [route]);
 
 	const onClosePreviewPress = (wasPostDeleted: boolean) => {
+		console.log('onClosePreviewPress', wasPostDeleted);
+		navigation.setParams({ linkPostID: undefined })
 		if (wasPostDeleted) {
 			fetchUserPosts();
 		}
 		setPostPreview(undefined);
 		setPreviewModalVisible(false);
 		setIndex(undefined);
+
+
 	};
 
 	const onChangePost = (direction: 'prev' | 'next') => {
@@ -109,6 +114,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 							storePost={true}
 							pauseVideo={index !== currentScrollIndex}
 							setPreview={() => togglePreview(index)}
+							muted={true}
 							isMyProfile={isMyProfile}
 							fetchUserPosts={fetchUserPosts}
 						/>

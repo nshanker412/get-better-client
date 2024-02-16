@@ -136,6 +136,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 					pushSendResponse.data,
 				);
 			} catch (error) {
+				throw new Error('Failed to send notifications.'); // Throw an error for the user
 				console.error(
 					'Error during notification fetching/sending:',
 					error,
@@ -177,13 +178,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 			}
 		}, [currentComment, onAddComment]);
 
-		// useEffect(() => {
-		// 	if (comments) {
-		// 		comments.forEach((comment) => {
-		// 			fetchCommentProfileImage(comment.username);
-		// 		});
-		// 	}
-		// }, [comments]);
+
 
 		return (
 			<Modalize

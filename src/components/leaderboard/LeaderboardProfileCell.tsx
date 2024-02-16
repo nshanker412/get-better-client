@@ -12,9 +12,7 @@ interface LeaderboardProfileCell {
 
 
 export const LeaderboardProfileCell: React.FC<LeaderboardProfileCell> = ({item, index}) => {
-
     const navigation = useNavigation();
-    
 
     const onPressProfile = () => {
         console.log('onPressProfile', item.username);

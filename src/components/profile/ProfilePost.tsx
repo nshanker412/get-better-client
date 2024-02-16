@@ -28,6 +28,7 @@ export const  ProfilePost: React.FC = (props) => {
 		storePost,
 		setPreview,
 		pauseVideo,
+		muted,
 	} = props;
 	
 	const [liked, setLiked] = useState(false);
@@ -489,7 +490,7 @@ export const  ProfilePost: React.FC = (props) => {
 										source={{ uri: media }}
 										rate={1.0}
 										volume={1.0}
-										isMuted={false}
+										isMuted={muted}
 										style={{
 											width: '100%',
 											height: '100%',
@@ -543,7 +544,6 @@ export const  ProfilePost: React.FC = (props) => {
 					}}>
 					<View style={styles.postHeader}>
 						<Link
-							underlayColor='transparent'
 							to={{
 								screen: 'profile',
 								params: { profileUsername: profileUsername },
@@ -559,7 +559,6 @@ export const  ProfilePost: React.FC = (props) => {
 						</Link>
 						<View style={styles.postHeaderInfoContainer}>
 							<Link
-								underlayColor='transparent'
 								to={{
 									screen: 'profile',
 									params: { profileUsername: postData.user },

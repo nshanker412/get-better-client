@@ -13,8 +13,6 @@ import { ProfilePosts } from './ProfilePosts';
 import { useProfilePostsStyles } from './ProfilePosts.styles';
 import { ConnectedProfilePostsProps } from './ProfilePosts.types';
 
-
-
 /**
  * Connected ProfilePosts Component
  * Details:
