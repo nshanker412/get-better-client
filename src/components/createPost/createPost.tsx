@@ -6,9 +6,10 @@ import axios from 'axios';
 import { Video } from 'expo-av';
 import { Camera } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
-import { Image } from 'expo-image';
+import { Image, ImageContentFit } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
+
 import React, { useEffect, useState } from 'react';
 import {
 	Dimensions,
@@ -51,7 +52,7 @@ export default function CreatePost() {
 	const [isFocused, setIsFocused] = useState(false);
 	const [isPhoto, setIsPhoto] = useState(true);
 	const [isRecording, setIsRecording] = useState(false);
-	const [video, setVideo] = useState(null);
+	const [vid, setVideo] = useState(null);
 	const [timer, setTimer] = useState(10); // Initial countdown time
 	const [timerId, setTimerId] = useState(null); // To store the timer ID
 
@@ -59,30 +60,9 @@ export default function CreatePost() {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
 	const createPostStyles = useCreatePostStyles();
 
-	const [picStyle, setPicStyle] = useState({
-		...createPostStyles.photoStyle,
-		width: '100%',
-		height: '100%',
-	});
+	const [photoContentFit, setPhotoContentFit] = useState<ImageContentFit>('contain');
 
-	const [photoContentFit, setPhotoContentFit] = useState('contain');
 	const toggleContentFit = () => {
-		// if(photoContentFit === 'cover' ){
-		// 	setPicStyle({
-		// 		...picStyle,
-		// 		width: '90%',
-		// 		height: '90%',
-
-		// 	}
-		// 	);
-		// } else {
-		// 	setPicStyle({
-		// 		...picStyle,
-		// 		width: '100%',
-		// 		height: '100%',
-		// 	}
-		// 	);
-		// }
 		setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
 	};
 
@@ -108,18 +88,22 @@ export default function CreatePost() {
 
 	// pick an image from camera roll
 	const pickImage = async () => {
-		console.log('pickImage');
-		if (isPhoto) {
-			let result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+
+			const result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.All,
 				allowsEditing: false,
 				quality: 1,
 				allowsMultipleSelection: false,
+				videoMaxDuration: 10,
 			});
+		
+		
+			if (result.assets[0].type === 'image') {
 
 			console.log('result', result.assets);
 
 			if (!result.canceled && result.assets && result.assets[0].uri) {
+				console.log("think its an image")
 				setVideo(null);
 				setPhoto(result.assets[0].uri);
 				return;
@@ -181,15 +165,19 @@ export default function CreatePost() {
 				// setPhoto(resizedImage.uri);
 			}
 		} else {
-			let result = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-				allowsEditing: true,
-				quality: 1,
-				videoMaxDuration: 10,
-			});
+			// let result = await ImagePicker.launchImageLibraryAsync({
+			// 	mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+			// 	allowsEditing: true,
+			// 	quality: 1,
+			// 	videoMaxDuration: 10,
+				// });
+				console.log("think its an image")
+
+				
+				console.log('result', result);
 
 			if (!result.canceled && result.assets && result.assets[0].uri) {
-				setVideo(result.uri);
+				setVideo(result.assets[0].uri);
 				setPhoto(null);
 			}
 		}
@@ -289,9 +277,9 @@ export default function CreatePost() {
 				type: 'image/jpeg', // Adjust based on your image format
 				name: `${Math.floor(Date.now() / 1000)}.jpeg`,
 			});
-		} else if (video) {
+		} else if (vid) {
 			formData.append('postMedia', {
-				uri: video,
+				uri: vid,
 				type: 'video/mp4', // Adjust based on your video format
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
@@ -310,6 +298,8 @@ export default function CreatePost() {
 			.then((response) => {
 				console.log('sendPost', response.data);
 				onSendSuccessToast();
+				setPhoto(null);
+				setVideo(null);
 				setLoading(false);
 				// fetch friends notifications
 				axios
@@ -376,11 +366,11 @@ export default function CreatePost() {
 						});
 				}
 			})
-			.then(refreshMyUserInfo())
 			.catch((error) => {
 				console.log('sendPostError', error);
 			})
 			.finally(() => {
+				refreshMyUserInfo()
 				navigate.goBack();
 			});
 	};
@@ -421,9 +411,9 @@ export default function CreatePost() {
 			style={{ flex: 1 }}
 			onPress={() => Keyboard.dismiss()}
 			accessible={false}>
-			{photo === null && video === null ? (
+			{photo === null && vid === null ? (
 				<>
-					<Header textColor='#ffffff' />
+					<Header />
 					<TouchableHighlight
 						style={createPostStyles.cameraRollContainer}
 						onPress={pickImage}>
@@ -601,7 +591,11 @@ export default function CreatePost() {
 									}}
 									accessible={false}>
 									<Image
-										style={picStyle}
+										style={[createPostStyles.photoStyle,{
+												width: '100%',
+												height: '100%',
+										
+										}]}
 										transition={300}
 										contentFit={photoContentFit}
 										contentPosition={'center'}
@@ -610,19 +604,19 @@ export default function CreatePost() {
 										source={{ uri: photo }}></Image>
 								</TouchableWithoutFeedback>
 							)}
-							{video && (
-								<View>
+							{vid && (
+								<View >
 									<Video
-										source={{ uri: video }}
+										source={{ uri: vid }}
 										style={{
 											width: Dimensions.get('window')
 												.width,
 											height: '100%',
-											resizeMode: 'cover',
+											// resizeMode: 'cover',
 										}}
 										shouldPlay
-										isLooping
-										resizeMode='cover'
+											isLooping
+											resizeMode='contain'
 									/>
 								</View>
 							)}

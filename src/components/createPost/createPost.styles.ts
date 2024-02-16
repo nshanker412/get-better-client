@@ -22,7 +22,7 @@ export const useCreatePostStyles = () => {
 		},
 		photoStyle: {
 			backgroundColor: theme.innerContainer.backgroundColor,
-			shadowColor: theme.shadowColor,
+			shadowColor: theme.grayShades.gray900,
 			shadowRadius: 10,
 			shadowOffset: {
 				width: 5,
