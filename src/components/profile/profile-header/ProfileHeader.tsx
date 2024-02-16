@@ -1,9 +1,9 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { CommonActions, Link, useNavigation } from '@react-navigation/native';
+import { Link, useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -31,31 +31,41 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
 	const { theme } = useThemeContext();
 
+	const [loadingMotivate, setLoadingMotivate] = useState(false);
+
+	const onMotivatePressCb = async () => {
+		setLoadingMotivate(true);
+		await onMotivatePress!();
+		setLoadingMotivate(false);
+	}
+
+
+
 	const onViewFollowersPress = () => {
 		console.log('Others Followers Pressed', username);
 		console.log('Others Followers Pressed');
 
-		navigation.dispatch(
-			CommonActions.navigate('followerFollowing', {
-				profileUsername: username,
-				following: following,
-				followers: followers,
-				initial: 'Followers',
-			}),
-		);
+		navigation.navigate('profileTab', { screen: 'followerFollowing', params:  {
+			profileUsername: username,
+			following: following,
+			followers: followers,
+			initial: 'Followers',
+		} });
+	
+
+
 	};
 
 	const onViewFollowingPress = () => {
 		console.log('Others Following Pressed');
 
-		navigation.dispatch(
-			CommonActions.navigate('followerFollowing', {
-				profileUsername: username,
-				following: following,
-				followers: followers,
-				initial: 'Following',
-			}),
-		);
+	
+		navigation.navigate('profileTab', { screen: 'followerFollowing', params:  {
+			profileUsername: username,
+			following: following,
+			followers: followers,
+			initial: 'Followers',
+		} });
 	};
 
 	if (isMyProfile) {
@@ -393,7 +403,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							},
 						]}>
 						<View style={{ flex: 1 }}>
-							<ActionButton
+								<ActionButton
 								defaultPressed={false}
 								isPrimary={false}
 								onPress={onOpenChallengeModal}
@@ -409,10 +419,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							</View>
 						</View>
 						<View style={{ flex: 1 }}>
-							<ActionButton
+								<ActionButton
+																		loading={loadingMotivate}
+
 								defaultPressed={amIFollowing}
 								isPrimary={true}
-								onPress={onMotivatePress}
+								onPress={onMotivatePressCb}
 								title={
 									!amIFollowing ? 'Motivate' : 'Motivating'
 								}

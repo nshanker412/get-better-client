@@ -144,6 +144,7 @@ export const Home: React.FC = () => {
 
 	// fetch public posts metadata (10 or all of them??)
 	function fetchPublicPosts() {
+		setPosts([]);
 		setLoadingPosts(true);
 		axios
 			.get(

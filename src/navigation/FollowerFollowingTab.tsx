@@ -16,7 +16,7 @@ export function FollowerFollowingTab() {
 	const followingCount = route?.params?.following;
 
 	useEffect(() => {
-		navigation.setOptions({ title: `@${uname}` });
+		navigation.setOptions({ title: `@${uname}`, headerShown: true, headerBackTitle: 'back'});
 	}, [uname]);
 
 	const initroute = route?.params?.initial;

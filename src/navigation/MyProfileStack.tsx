@@ -19,8 +19,12 @@ export const MyProfileStack = () => {
 				headerShown: false,
 				headerTintColor: 'white',
 				headerStyle: { backgroundColor: 'black' },
-				headerBackTitleVisible: false,
-				headerBackTitle: 'Back',
+				headerBackTitleStyle: {
+					color: theme.textColorPrimary,
+					fontFamily: theme.fontFamily,
+				},
+				headerBackTitleVisible: true,
+				headerBackTitle: 'back',
 				headerTitleStyle: {
 					color: theme.textColorPrimary,
 					fontFamily: theme.fontFamily,
@@ -49,7 +53,9 @@ export const MyProfileStack = () => {
 			/>
 			<HomeStackNav.Screen
 				name='followerFollowing'
-				options={{ headerShown: true, title: '' }}
+				options={{ headerShown: true, title: 'back', 
+				headerTintColor: 'white',
+				 }}
 				component={FollowerFollowingTab}
 			/>
 		</HomeStackNav.Navigator>

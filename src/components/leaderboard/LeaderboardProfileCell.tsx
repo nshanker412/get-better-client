@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from 'react';
-import { Pressable } from 'react-native';
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { LeaderboardItem } from './LeaderboardItem';
 import { LeaderboardProfile } from './models/LeaderboardProfile';
 
@@ -22,10 +22,10 @@ export const LeaderboardProfileCell: React.FC<LeaderboardProfileCell> = ({item, 
     }
 
     return (
-        <Pressable
+        <TouchableOpacity
             onPress={onPressProfile}
         >
             <LeaderboardItem  user={item} index={index}  />
-        </Pressable>
+        </TouchableOpacity>
       );
 }

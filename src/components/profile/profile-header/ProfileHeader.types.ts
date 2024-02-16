@@ -10,7 +10,7 @@ export interface ProfileHeaderProps {
 	username: string | null;
 	bio: string | null;
 	onOpenChallengeModal: () => void;
-	onMotivatePress: (() => void) | null;
+	onMotivatePress: (() => Promise<void>) | null;
 	followers: number | null;
 	following: number | null;
 	profileImage: string | null;

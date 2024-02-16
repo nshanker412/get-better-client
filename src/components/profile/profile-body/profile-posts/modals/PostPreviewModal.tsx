@@ -77,12 +77,12 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 	});
 
-	const flingClose = Gesture.Fling();
-	flingDown.direction(Directions.RIGHT | Directions.LEFT);
-	flingClose.onEnd(() => {
-		onClosePress(false);
-	});
-	const allFlings = Gesture.Exclusive(flingUp, flingDown, flingClose);
+	// const flingClose = Gesture.Fling();
+	// flingDown.direction(Directions.RIGHT | Directions.LEFT);
+	// flingClose.onEnd(() => {
+	// 	onClosePress(false);
+	// });
+	const allFlings = Gesture.Exclusive(flingUp, flingDown);
 
 	return (
 		<GestureHandlerRootView>

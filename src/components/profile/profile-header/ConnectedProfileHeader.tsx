@@ -49,8 +49,8 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 
 	const { username: myUsername } = useMyUserInfo();
 
-	const onMotivatePressCb = () => {
-		onMotivatePress(myUsername!);
+	const onMotivatePressCb = (): Promise<void>  => {
+		return	onMotivatePress(myUsername!);
 	};
 
 	return (
