@@ -49,6 +49,7 @@ export const Home: React.FC = () => {
 			// TODO: scrollViewRef.current.onRefresh();
 			// refresh page
 			console.log('refreshing');
+			
 		} else {
 			scrollViewRef.current?.scrollTo({ y: 0, animated: true });
 		}

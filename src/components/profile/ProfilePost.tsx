@@ -29,6 +29,7 @@ export const  ProfilePost: React.FC = (props) => {
 		setPreview,
 		pauseVideo,
 	} = props;
+	
 	const [liked, setLiked] = useState(false);
 	const [likes, setLikes] = useState(null);
 	const [commentsOpen, setCommentsOpen] = useState(false);

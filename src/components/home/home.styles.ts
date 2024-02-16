@@ -15,6 +15,7 @@ export const useHomeStyles = () => {
 			width: 200,
 			position: 'absolute',
 			display: 'flex',
+			
 			alignSelf: 'flex-start',
 			alignItems: 'flex-start',
 			flexDirection: 'row',
