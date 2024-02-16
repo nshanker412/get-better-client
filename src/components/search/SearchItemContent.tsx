@@ -13,7 +13,6 @@ export const SearchItemContent: React.FC<SearchItemCellProps> = ({ user}) => {
     return (
   
         <View style={searchStyles.profile}>
-            {/* <View style={{width: 50, height: 50 }} /> */}
             <ConnectedProfileAvatar
                 key={user.username}
                 username={user.username}

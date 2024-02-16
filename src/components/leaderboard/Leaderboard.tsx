@@ -7,12 +7,18 @@ import React, { useEffect, useState } from 'react';
 import { Image, RefreshControl, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import RNPickerSelect from 'react-native-picker-select';
-import Toast from 'react-native-toast-message';
 import { Header } from '../header/Header';
-import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useLeaderboardStyles } from './Leaderboard.styles';
+import { LeaderboardProfileCell } from './LeaderboardProfileCell';
+import {
+	LeaderboardChallengesApiModel, LeaderboardConsistencyApiModel, LeaderboardProfile, LeaderboardProfileChallenges, LeaderboardProfileConsistency
+} from './models/LeaderboardProfile';
+import {
+	LeaderboardProfileType
+} from './models/LeaderboardProfile.type';
 import { ShimmerTile } from './skeleton/ShimmerTile';
-
+import { mapChallengesApiResponse } from './utils/mapChallengesApiResponse';
+import { mapConsistencyApiResponse } from './utils/mapConsistencyApiResponse';
 
 const LBPlaceholder = () => {
 	return (
@@ -26,122 +32,105 @@ const LBPlaceholder = () => {
 	);
 }
 
-
-export const ConnectedLeaderboard: React.FC = ({ navigation }) => {
-	const [profiles, setProfiles] = useState([]);
+export const Leaderboard: React.FC = ({ navigation }) => {
+	const [profiles, setProfiles] = useState<LeaderboardProfile[]>([]);
 	const [isFriendsFeed, setIsFriendsFeed] = useState(true);
 	const [leaderboardMetric, setLeaderboardMetric] = useState('consistency');
+	const [leaderboardType, setLeaderboardType] = useState<LeaderboardProfileType>(LeaderboardProfileType.CONSISTENCY);
 	const [loading, setLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const limit = 100;
 	const { theme } = useThemeContext();
-
 	const leaderboardStyles = useLeaderboardStyles();
 	const { username: myUsername } = useMyUserInfo();
 
-	const onPressProfile = (username) => {
 
-		console.log('onPressProfile', username);
-		navigation.navigate('profile', { profileUsername: username });
-
-	}
-	  
-	const renderItem = ({ item, index }) => (
-		<TouchableOpacity
-			onPressIn={() => {
-				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-			}}
-			onPress={() => onPressProfile(item.username)}>
-			<View style={leaderboardStyles.profile}>
-				<View style={leaderboardStyles.rankContainer}>
-					<Text style={leaderboardStyles.rankText}>{index + 1}.</Text>
-				</View>
-				<View style={leaderboardStyles.profileContainer}>
-					<View style={{ flex: 1, alignItems: 'center' }}>
-						<ConnectedProfileAvatar username={item.username} size={50} />
+	const fetchLeaderboardConsistency = async (): Promise<LeaderboardProfileConsistency[]> => {
+		try {
+			const response = await axios.post<LeaderboardConsistencyApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/consistency`, {
+				username: myUsername,
+				feedType: isFriendsFeed ? 'friends' : 'public',
+				limit: limit,
+			});
 		
-					</View>
-					<View style={leaderboardStyles.profileInfoContainer}>
-						<Text style={leaderboardStyles.name}>{item.name}</Text>
-						<Text style={leaderboardStyles.username}>@{item.username}</Text>
-					</View>
-				</View>
-				<View style={leaderboardStyles.metricContainer}>
-					<Text style={leaderboardStyles.metricText}>
-						{item.consistency ? `${item.consistency}%` : item.challengesComplete}
-					</Text>
-				</View>
-			</View>
-		</TouchableOpacity>
-	);
-	  
+			// Use the updated mapApiResponse function to filter and map the response data
+			return mapConsistencyApiResponse(response.data?.leaderboard);
+		} catch (error) {
+			console.log('error', error);	
 
-	const onRefreshCallback = () => {
+			throw new Error('Failed to fetch leaderboard consistency');
+		} 
+	}
+
+	
+
+
+	const fetchLeaderboardChallenges =    async ():  Promise<LeaderboardProfileChallenges[]> =>  {
+
+		try {
+			const response = await axios.post<LeaderboardChallengesApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/challenges`, {
+				username: myUsername,
+				feedType: isFriendsFeed ? 'friends' : 'public',
+				limit: limit,
+			});
+		
+			return mapChallengesApiResponse(response.data.leaderboard);
+		} catch (error) {
+			console.log('error', error);	
+			setProfiles([]);
+
+			throw new Error('Failed to fetch leaderboard challenges');
+		} finally
+		{
+			setRefreshing(false);
+			setLoading(false);
+		}
+		
+	}
+
+
+	const onFetchLeaderboard = async () => {
+		if (refreshing) return;
+
+		setLoading(true);
+
+		try {
+			const data = leaderboardType === LeaderboardProfileType.CONSISTENCY ? await fetchLeaderboardConsistency() : await fetchLeaderboardChallenges();
+			setProfiles(data);
+		} catch (error) {
+			setProfiles([]);
+			throw new Error(`Failed to fetch leaderboard metric: ${leaderboardMetric}`);
+			
+		
+		} finally {
+			setLoading(false);
+			setRefreshing(false);
+		}
+	}
+
+
+
+	const onRefreshCallback = async () => {
+		if(loading) return;
 		setRefreshing(true);
-		setLoading(true);
-
-		if (myUsername) {
-			axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/${leaderboardMetric}`,
-					{
-						username: myUsername, // get this
-						feedType: isFriendsFeed ? 'friends' : 'public',
-						limit: limit,
-					},
-				)
-				.then((response) => {
-					console.log(
-						'fetchLeaderboardConsistency',
-						response.data.leaderboard.length,
-					);
-					setProfiles(response.data.leaderboard);
-					setLoading(false);
-					setRefreshing(false);
-				})
-				.catch((error) => {
-					console.log('fetchLeaderboardConsistencyError', error);
-					Toast.show({
-						type: 'error',
-						text1: 'Hmmm...',
-						text2: 'Something went wrong. Please try again.',
-						topOffset: 150,
-					
-					})
-				}).finally(() => {
-					setRefreshing(false);
-				})
-		}
+		await onFetchLeaderboard();
+		setRefreshing(false);
 	}
 
-	useEffect(() => {
+	const onChangeLeaderboardMetric = (value: string) => {
+		setLeaderboardMetric(value);
+		setLeaderboardType(value === 'consistency' ? LeaderboardProfileType.CONSISTENCY : LeaderboardProfileType.CHALLENGES);
+	}
+
+
+	useEffect(() => {	
+		if (refreshing) return;
 		setProfiles([]);
-		setLoading(true);
-		
-		if (myUsername) {
-			axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/${leaderboardMetric}`,
-					{
-						username: myUsername, // get this
-						feedType: isFriendsFeed ? 'friends' : 'public',
-						limit: limit,
-					},
-				)
-				.then((response) => {
-					console.log(
-						'fetchLeaderboardConsistency',
-						response.data.leaderboard.length,
-					);
-					setProfiles(response.data.leaderboard);
-					setLoading(false);
-				})
-				.catch((error) => {
-					console.log('fetchLeaderboardConsistencyError', error);
-				});
-		}
-	}, [myUsername, isFriendsFeed, leaderboardMetric]);
+		onFetchLeaderboard();
+	}, [leaderboardMetric, isFriendsFeed]);
+
+
+
 
 
 	return (
@@ -233,7 +222,7 @@ export const ConnectedLeaderboard: React.FC = ({ navigation }) => {
 					</View>
 					<View style={leaderboardStyles.metricHeaderContainer}>
 						<RNPickerSelect
-							onValueChange={(value) => setLeaderboardMetric(value)}
+							onValueChange={onChangeLeaderboardMetric}
 							items={[
 								{ label: 'Consistency', value: 'consistency' },
 								{ label: 'Challenges Complete', value: 'challenges' },
@@ -259,7 +248,11 @@ export const ConnectedLeaderboard: React.FC = ({ navigation }) => {
 						ListEmptyComponent={
 								<LBPlaceholder/>
 						}
-						renderItem={renderItem}
+
+						renderItem={({ item, index }) => (
+					
+							<LeaderboardProfileCell   item={item} index={index} />
+						)}
 						estimatedItemSize={100}
 						keyExtractor={(item) => item.username}
 						refreshing={refreshing}
