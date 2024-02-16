@@ -2,7 +2,7 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { TouchableHighlight } from 'react-native';
-import ProfilePost from '../../profilePost2';
+import ProfilePost from '../../profilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PostPreviewModal } from './modals/PostPreviewModal';
 

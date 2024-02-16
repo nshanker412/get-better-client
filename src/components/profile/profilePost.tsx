@@ -18,7 +18,7 @@ import {
 import { sanitize } from '../../utils/sanitize';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 
-export default function ProfilePost(props) {
+export const  ProfilePost: React.FC = (props) => {
 	const {
 		index,
 		loadMedia,
