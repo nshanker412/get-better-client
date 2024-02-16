@@ -2,12 +2,12 @@ import { BottomTabEventProvider } from '@context/bottom-tab-nav/BottomTabEventPr
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import CreatePost from '../components/createPost/createPost';
-import { Home } from '../components/home/home';
-import Notifications from '../components/notifications/notifications';
+import { Home } from '../components/home/Home';
+import { Notifications } from '../components/notifications/Notifications';
 import { Profile } from '../components/profile/Profile';
-import ProfilePlan from '../components/profile/ProfilePlan';
-import ProfilePost from '../components/profile/ProfilePost';
-import ProfileEdit from '../components/profile/profileEdit';
+import { ProfileEdit } from '../components/profile/ProfileEdit';
+import { ProfilePlan } from '../components/profile/ProfilePlan';
+import { ProfilePost } from '../components/profile/ProfilePost';
 
 export const HomeStack: React.FC = ({ navigation }) => {
 	const HomeStackNav = createStackNavigator();

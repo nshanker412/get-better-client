@@ -11,7 +11,7 @@ import Toast from 'react-native-toast-message';
 import { timeAgo } from '../../utils/timeAgo';
 import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
-import { useNotificationsStyles } from './notifications.styles';
+import { useNotificationsStyles } from './Notifications.styles';
 
 // const updateReadTimeToNow = async () => {
 // 	const now = new Date();
@@ -28,7 +28,7 @@ import { useNotificationsStyles } from './notifications.styles';
  *
  * Convert to Notification Tiles and use Flatlist or Flashlist
  */
-export default function Notifications() {
+export const Notifications = () =>  {
 	const profileUsername = useRoute()?.params?.profileUsername;
 	// const navigate = useNavigation();
 	const [notifications, setNotifications] = useState([]);
@@ -307,7 +307,6 @@ export default function Notifications() {
 															</Text>
 														</View>
 														<Link
-															underlayColor='transparent'
 															to={{
 																screen: 'post',
 																params: {

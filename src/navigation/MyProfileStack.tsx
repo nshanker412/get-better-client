@@ -4,7 +4,7 @@ import React from 'react';
 import CreatePlan from '../components/createPlan/createPlan';
 import CreatePost from '../components/createPost/createPost';
 import { MyProfile } from '../components/profile/MyProfile';
-import ProfileEdit from '../components/profile/profileEdit';
+import { ProfileEdit } from '../components/profile/ProfileEdit';
 import { Search } from '../components/search/search';
 import { FollowerFollowingTab } from './FollowerFollowingTab';
 

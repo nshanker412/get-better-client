@@ -6,7 +6,7 @@ export const useProfileEditStyles = () => {
 
 	const profileEditStyles = StyleSheet.create({
 		editProfileContainer: {
-			...theme.container,
+			// ...theme.container,
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',

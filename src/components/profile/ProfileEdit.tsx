@@ -11,9 +11,9 @@ import { Keyboard, Text, View } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
-import { useProfileEditStyles } from './profileEdit.styles';
+import { useProfileEditStyles } from './ProfileEdit.styles';
 
-export default function ProfileEdit() {
+export const ProfileEdit: React.FC = () =>  {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
 	const navigate = useNavigation();
 	const [newProfileImage, setNewProfileImage] = useState(null);

@@ -19,8 +19,8 @@ import {
 import { Host } from 'react-native-portalize';
 import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
-import FeedPost from './feedPost';
-import { useHomeStyles } from './home.styles';
+import { FeedPost } from './FeedPost';
+import { useHomeStyles } from './Home.styles';
 import { NotificationsBell } from './notifications-drawer/NotificationsBell';
 
 export const Home: React.FC = () => {

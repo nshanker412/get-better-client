@@ -10,7 +10,7 @@ import {
 	GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import { Host } from 'react-native-portalize';
-import FeedPost from '../../../../home/feedPost';
+import { FeedPost } from '../../../../home/FeedPost';
 import { Modal } from '../../../../primitives/action-modal/ActionModal';
 import { DeletePostModal } from './DeletePostModal';
 

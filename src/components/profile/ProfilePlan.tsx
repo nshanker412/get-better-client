@@ -1,17 +1,18 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import React from 'react';
+import { SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
-import { useProfilePlanStyles } from './profilePlan.styles';
+import { useProfilePlanStyles } from './ProfilePlan.styles';
 
-export default function ProfilePlan() {
+export const  ProfilePlan: React.FC = () => {
 	const route = useRoute();
 	const profileUsername = route.params.profileUsername;
 	const planID = route.params.planID;

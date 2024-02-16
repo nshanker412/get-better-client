@@ -27,10 +27,10 @@ import { sanitize } from '../../utils/sanitize';
 import { timeAgo } from '../../utils/timeAgo';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
-import { useFeedPostStyles } from './feedPost.styles';
+import { useFeedPostStyles } from './FeedPost.styles';
 import { ConnectedPostCommentDrawer } from './post-comment-drawer/ConnectedPostCommentDrawer';
 
-export default function FeedPost(props) {
+export const  FeedPost: React.FC = (props) =>  {
 	const {
 		index,
 		loadMedia,
