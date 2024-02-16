@@ -11,15 +11,12 @@ export const useLeaderboardStyles = () => {
 			height: '100%',
 			display: 'flex',
 			flexDirection: 'column',
-			alignItems: 'space-evenly',
+			// alignItems: 'space-between',
 			marginTop: 100,
 			gap: 10,
 		},
 
-		leaderboardTitleText: {
-			...theme.text.header,
-			// fontSize: 20,
-		},
+		leaderboardTitleText: theme.text.header,
 		activeFeedToggleContainer: {
 			// display: 'flex',
 			backgroundColor: theme.backgroundColor,
@@ -44,22 +41,17 @@ export const useLeaderboardStyles = () => {
 			backgroundColor: '#1E1D1D',
 			display: 'flex',
 			flexDirection: 'row',
-			// justifyContent: 'space-evenly',
 			alignItems: 'center',
 			padding: 7,
-			// gap: 25,
-			// margin: 25
 		},
 
 		feedTypeText: {
 			...theme.text.header,
-			// fontWeight: 'bold',
-			// zIndex: 1,
+
 		},
 
 		feedTypeTextSelected: {
 			...theme.text.header,
-			// fontWeight: 'bold',
 		},
 
 		scrollHeader: {

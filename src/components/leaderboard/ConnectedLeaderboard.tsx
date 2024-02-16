@@ -1,40 +1,45 @@
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { useThemeContext } from '@context/theme/useThemeContext';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { Image, RefreshControl, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import Toast from 'react-native-toast-message';
+
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { useThemeContext } from '@context/theme/useThemeContext';
 import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
-import { useLeaderboardStyles } from './leaderboard.styles';
+import { useLeaderboardStyles } from './Leaderboard.styles';
 
+type Profile = {
+  username: string;
+  name: string;
+  consistency?: number;
+  challengesComplete?: number;
+};
 
-export const  ConnectedLeaderboard = ({navigation} ) => {
-	const [profiles, setProfiles] = useState([]);
-	// const [profileImages, setProfileImages] = useState({});
-	// const [myUsername, setMyUsername] = useState(null)
-	const [isFriendsFeed, setIsFriendsFeed] = useState(true);
-	const [leaderboardMetric, setLeaderboardMetric] = useState('consistency');
-	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
-	const limit = 100;
-	const { theme } = useThemeContext();
+type LeaderboardProps = {
+  navigation: StackNavigationProp<any, any>;
+};
 
-	const leaderboardStyles = useLeaderboardStyles();
-	const { username: myUsername } = useMyUserInfo();
+export const ConnectedLeaderboard: React.FC<LeaderboardProps> = ({ navigation }) => {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [isFriendsFeed, setIsFriendsFeed] = useState<boolean>(true);
+  const [leaderboardMetric, setLeaderboardMetric] = useState<string>('consistency');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { theme } = useThemeContext();
+  const leaderboardStyles = useLeaderboardStyles();
+  const { username: myUsername } = useMyUserInfo();
 
-	const onPressProfile = (username) => {
+  const onPressProfile = (username: string): void => {
+    navigation.navigate('profile', { profileUsername: username });
+  };
 
-		console.log('onPressProfile', username);
-		navigation.navigate('profile', { profileUsername: username});
-
-	}
 	  
-	  const renderItem = ({ item, index }) => (
+	  const renderItem = ({ item, index }: {item: any, index: number}) => (
 		<TouchableOpacity
 			onPressIn={() => {
 				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -65,219 +70,100 @@ export const  ConnectedLeaderboard = ({navigation} ) => {
 	  );
 	  
 
-	const onRefreshCallback = () => {
+	  const onRefreshCallback = async (): Promise<void> => {
 		setRefreshing(true);
-		setLoading(true);
-
 		if (myUsername) {
-			axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/${leaderboardMetric}`,
-					{
-						username: myUsername, // get this
-						feedType: isFriendsFeed ? 'friends' : 'public',
-						limit: limit,
-					},
-				)
-				.then((response) => {
-					console.log(
-						'fetchLeaderboardConsistency',
-						response.data.leaderboard.length,
-					);
-					setProfiles(response.data.leaderboard);
-					setLoading(false);
-					setRefreshing(false);
-				})
-				.catch((error) => {
-					console.log('fetchLeaderboardConsistencyError', error);
-					Toast.show({
-						type: 'error',
-						text1: 'Hmmm...',
-						text2: 'Something went wrong. Please try again.',
-						topOffset: 150,
-					
-					})
-				}).finally(() => {
-					setRefreshing(false);
-				})
+		  try {
+			const response = await axios.post(
+			  `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/${leaderboardMetric}`, {
+				username: myUsername,
+				feedType: isFriendsFeed ? 'friends' : 'public',
+				limit: 100,
+			  },
+			);
+			setProfiles(response.data.leaderboard);
+		  } catch (error) {
+			Toast.show({
+			  type: 'error',
+			  text1: 'Hmmm...',
+			  text2: 'Something went wrong. Please try again.',
+			  topOffset: 150,
+			});
+		  } finally {
+			setLoading(false);
+			setRefreshing(false);
+		  }
 		}
-	}
+	  };
 
 
-
-
-
-	useEffect(() => {
-		setProfiles([]);
-		setLoading(true);
-
-		if (myUsername) {
-			axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/${leaderboardMetric}`,
-					{
-						username: myUsername, // get this
-						feedType: isFriendsFeed ? 'friends' : 'public',
-						limit: limit,
-					},
-				)
-				.then((response) => {
-					console.log(
-						'fetchLeaderboardConsistency',
-						response.data.leaderboard.length,
-					);
-					setProfiles(response.data.leaderboard);
-					setLoading(false);
-				})
-				.catch((error) => {
-					console.log('fetchLeaderboardConsistencyError', error);
-				});
-		}
-	}, [myUsername, isFriendsFeed, leaderboardMetric]);
-
-
-	return (
-		<View style={{flex: 1}}>
-				<Header />
-				<View style={leaderboardStyles.leaderboardContainer}>
-					<View
-						style={{
-							display: 'flex',
-							width: '100%',
-							justifyContent: 'center',
-							alignItems: 'center',
-							padding: 15,
-						}}>
-						<Text style={leaderboardStyles.leaderboardTitleText}>
-							LeaderBoard
-						</Text>
-					</View>
-					<View
-						style={{
-							padding: 20,
-							display: 'flex',
-							width: '100%',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}>
-						<View style={leaderboardStyles.feedTypeContainer}>
-							<View style={{ flex: 1 }}>
-								<TouchableOpacity
-									onPress={() => {
-										Haptics.impactAsync(
-											Haptics.ImpactFeedbackStyle.Medium,
-										);
-										setIsFriendsFeed(true);
-									}}>
-									<View
-										style={
-											isFriendsFeed
-												? leaderboardStyles.activeFeedToggleContainer
-												: leaderboardStyles.inactiveFeedToggleContainer
-										}>
-										<Text
-											style={
-												isFriendsFeed
-													? leaderboardStyles.feedTypeTextSelected
-													: leaderboardStyles.feedTypeText
-											}>
-											Motivating
-										</Text>
-									</View>
-								</TouchableOpacity>
-							</View>
-							<View style={{ flex: 1, width: "100%", }}>
-								<TouchableOpacity
-									onPress={() => {
-										Haptics.impactAsync(
-											Haptics.ImpactFeedbackStyle.Medium,
-										);
-										setIsFriendsFeed(false);
-									}}>
-									<View
-										style={
-											isFriendsFeed
-												? leaderboardStyles.inactiveFeedToggleContainer
-												: leaderboardStyles.activeFeedToggleContainer
-										}>
-										<Text
-											style={
-												isFriendsFeed
-													? leaderboardStyles.feedTypeText
-													: leaderboardStyles.feedTypeTextSelected
-											}>
-											Public
-										</Text>
-									</View>
-								</TouchableOpacity>
-							</View>
-						</View>
-					</View>
-					<View style={leaderboardStyles.scrollHeader}>
-						<View style={leaderboardStyles.rankHeaderContainer}>
-							<Text style={leaderboardStyles.headerText}>
-								Rank
-							</Text>
-						</View>
-			
-						<View style={leaderboardStyles.metricHeaderContainer}>
-							<RNPickerSelect
-								onValueChange={(value) =>
-									setLeaderboardMetric(value)
-								}
-								items={[
-									{
-										label: 'Consistency',
-										value: 'consistency',
-									},
-									{
-										label: 'Challenges Complete',
-										value: 'challenges',
-									},
-								]}
-								value={leaderboardMetric}
-								placeholder={{}}>
-								<View style={leaderboardStyles.metricSelect}>
-									<Text style={leaderboardStyles.headerText}>
-										{leaderboardMetric
-											.charAt(0)
-											.toUpperCase() +
-											leaderboardMetric.slice(1)}
-									</Text>
-									<Image
-										style={leaderboardStyles.dropdownIcon}
-										source={require('../../img/dropdown.png')}></Image>
-								</View>
-							</RNPickerSelect>
-						</View>
-					</View>
-					<View style={leaderboardStyles.profilesContainer}>
-	</View>
-
-	<View style={{flex: 1,  width: "100%", height: 200}}> 
+	  useEffect(() => {
+		onRefreshCallback();
+	  }, [myUsername, isFriendsFeed, leaderboardMetric]);
 	
-					<FlashList
-						data={profiles}
-						renderItem={renderItem}
-						estimatedItemSize={100}
-						keyExtractor={(item) => item.username}
-						refreshing={refreshing}
-						onRefresh={onRefreshCallback}
-						estimatedListSize={{
-							height: 600, 
-							width: 400}}
-						refreshControl={   <RefreshControl
-							refreshing={refreshing}
-							onRefresh={onRefreshCallback}
-							colors={[theme.textColorPrimary]}
-							tintColor={theme.textColorPrimary}
-						  />}
-					/>
-
-	
-					</View>
-				</View>
-		
+	  return (
+		<View style={{ flex: 1 }}>
+		  <Header />
+		  <View style={leaderboardStyles.leaderboardContainer}>
+  <Text style={leaderboardStyles.leaderboardTitle}>Leaderboard</Text>
+  <View style={leaderboardStyles.feedTypeSwitch}>
+    <TouchableOpacity
+      onPress={() => setIsFriendsFeed(true)}
+      style={isFriendsFeed ? leaderboardStyles.activeFeedType : leaderboardStyles.inactiveFeedType}
+    >
+      <Text style={leaderboardStyles.feedTypeText}>Motivating</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => setIsFriendsFeed(false)}
+      style={!isFriendsFeed ? leaderboardStyles.activeFeedType : leaderboardStyles.inactiveFeedType}
+    >
+      <Text style={leaderboardStyles.feedTypeText}>Public</Text>
+    </TouchableOpacity>
+  </View>
+  <RNPickerSelect
+    onValueChange={setLeaderboardMetric}
+    items={[
+      { label: 'Consistency', value: 'consistency' },
+      { label: 'Challenges Complete', value: 'challenges' },
+    ]}
+    value={leaderboardMetric}
+    style={{
+      inputIOS: leaderboardStyles.pickerSelectStyles,
+      inputAndroid: leaderboardStyles.pickerSelectStyles,
+    }}
+  />
+  <FlashList
+    data={profiles}
+    renderItem={renderItem}
+    keyExtractor={(item) => item.username}
+    estimatedItemSize={100}
+    refreshing={refreshing}
+    onRefresh={onRefreshCallback}
+    refreshControl={
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={onRefreshCallback}
+        colors={[theme.textColorPrimary]}
+        tintColor={theme.textColorPrimary}
+      />
+    }
+  />
+</View>		  <FlashList
+			data={profiles}
+			renderItem={renderItem}
+			keyExtractor={(item) => item.username}
+			refreshing={refreshing}
+			onRefresh={onRefreshCallback}
+			estimatedItemSize={100}
+			refreshControl={
+			  <RefreshControl
+				refreshing={refreshing}
+				onRefresh={onRefreshCallback}
+				colors={[theme.textColorPrimary]}
+				tintColor={theme.textColorPrimary}
+			  />
+			}
+		  />
 		</View>
-	);
-}
+	  );
+	};
