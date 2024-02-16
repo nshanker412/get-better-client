@@ -6,12 +6,14 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 
 
 
+
+
 export const ShimmerTile = () => {
 	const { theme } = useThemeContext();
   
 	return (
   <>
-		<View style={{width: "100%", height: 90, flexDirection: "row", padding: 20, alignItems: "center", gap: 15}}>
+		<View style={{width: "100%", height: 90, flexDirection: "row", paddingBottom: 20, paddingRight: 20,  paddingTop: 20, alignItems: "center", gap: 15}}>
 	
 	
 			  <ShimmerPlaceholder

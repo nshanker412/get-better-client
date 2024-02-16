@@ -231,9 +231,6 @@ export const useLeaderboardStyles = () => {
 		name: {
 			...theme.text.header,
 			fontSize: 16,
-			// textAlign: 'left',
-
-			// alignSelf: 'flex-start'
 		},
 		username: {
 			fontFamily: theme.text.body.medium.fontFamily,
@@ -244,14 +241,7 @@ export const useLeaderboardStyles = () => {
 			// alignSelf: 'flex-start'
 		},
 
-		// profileInfoContainer: {
-		//     // width: "100%",
-		//     flex: 1,
-		//     display: 'flex',
-		//     flexDirection: 'column',
-		//     justifyContent: 'flex-start',
-		//     paddingLeft: 9
-		// },
+	
 	});
 
 	return leaderboardStyles;
