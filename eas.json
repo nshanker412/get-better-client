@@ -1,0 +1,62 @@
+{
+	"cli": {
+		"version": ">=1.0.0",
+		"appVersionSource": "remote"
+	},
+	"build": {
+		"base": {
+			"node": "18.16.0",
+			"yarn": "1.22.10",
+			"env": {
+				"EXPO_PUBLIC_SERVER_BASE_URL": "http://localhost:13131",
+				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936",
+				"EXPO_PUBLIC_ENVIRONMENT": "development"
+			},
+			"distribution": "internal"
+		},
+		"development": {
+			"extends": "base",
+			"developmentClient": true
+		},
+		"development-simulator": {
+			"extends": "base",
+			"developmentClient": true,
+			"ios": {
+				"simulator": true
+			},
+			"env": {
+				"EXPO_PUBLIC_ENVIRONMENT": "development",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
+
+			}
+		},
+		"staging": {
+			"extends": "base",
+			"distribution": "internal",
+			"env": {
+				"EXPO_PUBLIC_ENVIRONMENT": "staging",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
+
+			}
+		},
+		"production": {
+			"extends": "base",
+			"distribution": "store",
+			"autoIncrement": true,
+			"env": {
+				"EXPO_PUBLIC_ENVIRONMENT": "production",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
+			}
+		}
+	},
+	"submit": {
+		"production": {
+			"ios": {
+				"appleTeamId": "L6C35JVHVC"
+			}
+		}
+	}
+}

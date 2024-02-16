@@ -1,0 +1,62 @@
+{
+	"expo": {
+		"version": "1.0.9",
+		"name": "GetBetter.",
+		"slug": "getb",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"runtimeVersion": "1.0.0",
+		"platforms": ["ios"],
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#000000"
+		},
+		"assetBundlePatterns": ["**/*"],
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.bensone146.getbetter",
+			"config": {
+				"usesNonExemptEncryption": false
+			}
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"extra": {
+			"eas": {
+				"projectId": "a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
+			}
+		},
+		"owner": "bensone146",
+		"updates": {
+			"url": "https://u.expo.dev/a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
+		},
+		"plugins": [
+			[
+				"expo-camera",
+				{
+					"cameraPermission": "Allow GetBetter to access your camera."
+				}
+			],
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "The app accesses your photos to let you share them with your friends."
+				}
+			],
+			[
+				"@sentry/react-native/expo",
+				{
+				  "url": "https://sentry.io/",
+				  "organization": "benson-e4",
+				  "project": "get-better"
+				}
+			  ]
+		]
+	},
+	"packagerOpts": {
+		"config": "metro.config.js",
+		"sourceExts": ["js", "jsx", "svg", "ts", "tsx"]
+	}
+}

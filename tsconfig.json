@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react-native",
+		"lib": ["dom", "esnext"],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"noEmit": true,
+		"target": "es6",
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"strict": true,
+		"baseUrl": ".",
+		"paths": {
+			"@firebase/auth": [
+				"./node_modules/@firebase/auth/dist/index.rn.d.ts",
+			],
+			"@context/*": ["./src/context/*"],
+			"@assets/*": ["./assets/*"],
+			"@types/*": ["./src/types/*"],
+		},
+	},
+	"exclude": ["node_modules"],
+	"extends": "expo/tsconfig.base",
+}
