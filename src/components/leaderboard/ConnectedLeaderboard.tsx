@@ -17,12 +17,12 @@ import { ShimmerTile } from './skeleton/ShimmerTile';
 const LBPlaceholder = () => {
 	return (
 		<View style={{ flex: 1 }}>
-
-			<ShimmerTile />
-			<ShimmerTile />
-			<ShimmerTile />
-			<ShimmerTile />
-			<ShimmerTile />
+			<ShimmerTile opacity={0.5} />
+			<ShimmerTile opacity={0.4} />
+			<ShimmerTile opacity={0.3} />
+			<ShimmerTile opacity={0.2} />
+			<ShimmerTile opacity={0.1} />
+			
 		</View>
 	);
 }
