@@ -568,7 +568,7 @@ export default function CreatePost() {
 				</>
 			) : (
 				<>
-					<Header textColor='#ffffff' />
+					<Header  />
 					<TouchableHighlight
 						style={createPostStyles.retakeIconContainer}
 						onPress={
@@ -635,6 +635,7 @@ export default function CreatePost() {
 									placeholderTextColor={
 										theme.grayShades.gray500
 									}
+									keyboardAppearance='dark'
 									// multiline={true}
 									value={caption}
 									onChangeText={setCaption}
