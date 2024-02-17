@@ -23,6 +23,30 @@ import { FeedPost } from './FeedPost';
 import { useHomeStyles } from './Home.styles';
 import { NotificationsBell } from './notifications-drawer/NotificationsBell';
 
+
+type PostType = 'image' | 'video';
+
+interface PostMetadata {
+  caption: string;
+  challenge: string; 
+  comments: any[]; 
+  likes: any[];
+  timestamp: number;
+  type: PostType;
+  user: string;
+}
+
+interface FriendPost {
+  filename: string;
+  metadata: PostMetadata;
+}
+
+type FetchFriendsPostsResponse = FriendPost[];
+
+type FeedPostApiResponse = {
+	  posts: FriendPost[];
+};
+
 export const Home: React.FC = () => {
 	const [posts, setPosts] = useState([]);
 	const [loadingPosts, setLoadingPosts] = useState(false);
@@ -86,21 +110,18 @@ export const Home: React.FC = () => {
 			getLastReadTimeStorage,
 			new Date(parseInt(getLastReadTimeStorage)),
 		);
-		console.log('sixHoursAgo', sixHoursAgo);
 
 		//3.
 		const lastReadTime = getLastReadTimeStorage
 			? new Date(parseInt(getLastReadTimeStorage))
 			: sixHoursAgo;
 
-		console.log('lastReadTime', lastReadTime);
 
 		//4. fetch notificaitons
 		const response = await axios.get(
 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/fetch/${myUsername}`,
 		);
 		const notifications = response.data.notifications;
-		console.log('notifications', notifications);
 
 		//4. find the notifications that are newer than the last read time
 		const unreadNotifications = notifications.filter((notification) => {
@@ -124,18 +145,19 @@ export const Home: React.FC = () => {
 		setLoadingPosts(true);
 		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`)
 		await axios
-			.get(
+			.get<FeedPostApiResponse>(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`,
 			)
 			.then((response) => {
+				console.log('fetchFriendsPostsResponse', response.data.posts);
 				setPosts(response.data.posts);
-				console.log('setPosts');
+
 			})
 			.catch((error) => {
 				console.log('fetchFriendsPostsError', error);
 
 				// if no posts in friends feed, fetch the public feed
-				fetchPublicPosts();
+				 fetchPublicPosts();
 			})
 			.finally(() => {
 				setLoadingPosts(false);
@@ -143,10 +165,10 @@ export const Home: React.FC = () => {
 	};
 
 	// fetch public posts metadata (10 or all of them??)
-	function fetchPublicPosts() {
-		setPosts([]);
+	const fetchPublicPosts = async () =>  {
+
 		setLoadingPosts(true);
-		axios
+		await axios
 			.get(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/public/${myUsername}`,
 			)
@@ -162,9 +184,7 @@ export const Home: React.FC = () => {
 	}
 
 	useEffect(() => {
-		if (myUsername) {
 			fetchFriendsPosts();
-		}
 	}, [myUsername]);
 
 	const handleScroll = (event) => {
@@ -237,6 +257,34 @@ export const Home: React.FC = () => {
 		setRefreshing(false);
 	};
 
+
+	const renderPostList = () => posts.map((item, index) => {
+		const splitIndex = item['filename'].lastIndexOf('_');
+		return (
+			<FeedPost
+				key={index}
+				index={index}
+				loadMedia={
+					index === currentScrollIndex ||
+					index === currentScrollIndex + 1
+				}
+				profileUsername={item[
+					'filename'
+				].substring(0, splitIndex)}
+				postID={item['filename'].substring(
+					splitIndex + 1,
+				)}
+				postData={item['metadata']}
+				myUsername={myUsername}
+				storePost={true}
+				pauseVideo={
+					index !== currentScrollIndex ||
+					!isFocused
+				}
+			/>
+		);
+	});
+
 	return (
 		<View style={homeStyles.homeContainer}>
 			<Host>
@@ -280,6 +328,8 @@ export const Home: React.FC = () => {
 							{posts.map((item, index) => {
 								const splitIndex =
 									item['filename'].lastIndexOf('_');
+								
+								console.log('item', item);	
 								return (
 									<FeedPost
 										key={index}

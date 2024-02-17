@@ -275,11 +275,7 @@ export const  FeedPost: React.FC = (props) =>  {
 		}
 	}
 
-	useEffect(() => {
-		if (media && postData.type && postData.type === 'video') {
-			console.log('media', media);
-		}
-	}, [media]);
+
 
 	// const fetchPostProfileImage = useCallback(() => {
 	// 	const filePath = `${profileUsername}_profile.jpeg`;
@@ -338,6 +334,7 @@ export const  FeedPost: React.FC = (props) =>  {
 					}}>
 					<View style={feedPostStyles.postHeader}>
 						<ConnectedProfileAvatar
+							key={profileUsername}
 							username={profileUsername}
 							fetchSize={300}
 							size={40}

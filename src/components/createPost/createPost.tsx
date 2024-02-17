@@ -33,7 +33,6 @@ export default function CreatePost() {
 
 	const [permission, requestPermission] = Camera.useCameraPermissions();
 
-	const [cameraReady, setCameraReady] = useState(false);
 
 	const challengeUsername = route?.params?.challengeUsername;
 	const challengeID = route?.params?.challengeID;
@@ -96,16 +95,16 @@ export default function CreatePost() {
 
 	// pick an image from camera roll
 	const pickImage = async () => {
-		console.log('pickImage');
 
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: true,
+			allowsEditing: false,
 			quality: 1,
 			videoMaxDuration: 10,
 			allowsMultipleSelection: false,
 
 		});
+		
 
 		if (result.canceled && result.assets && result.assets[0].uri) {
 			console.log('picked image is null');	
@@ -134,14 +133,11 @@ export default function CreatePost() {
 
 	const takePhoto = async () => {
 		if (cameraRef) {
-			console.log("isCameraReady",cameraReady)
 
-			console.log('cameraRef: ', cameraRef?.current);
 
 			const photo = await cameraRef.takePictureAsync({
 				quality: 1,
 			});
-			console.log('photo', photo);
 
 			// // Calculate the aspect ratio of the camera image
 			// const aspectRatio = photo.width / photo.height;
@@ -167,11 +163,7 @@ export default function CreatePost() {
 		}
 	};
 
-	useEffect(() => {	
-		if (cameraReady) {
-			rt();
-		}
-	}, [cameraReady]);	
+
 
 	const handleVideoRecording = async () => {
 		if (cameraRef) {
@@ -259,51 +251,51 @@ export default function CreatePost() {
 				onSendSuccessToast();
 				setLoading(false);
 				// fetch friends notifications
-				axios
-					.get(
-						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/friends/fetch/${myUsername}`,
-					)
-					.then((response) => {
-						console.log('fetchFriendsNotifications', response.data);
-						// create notification objects
-						const notifications = response.data['tokens'].map(
-							(token) => ({
-								to: token,
-								sound: 'default',
-								title: `${myUsername} just got better today.`,
-								body: `will you?`,
-								data: { path: { screen: 'home' } },
-							}),
-						);
+				// axios
+				// 	.get(
+				// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/friends/fetch/${myUsername}`,
+				// 	)
+				// 	.then((response) => {
+				// 		console.log('fetchFriendsNotifications', response.data);
+				// 		// create notification objects
+				// 		const notifications = response.data['tokens'].map(
+				// 			(token) => ({
+				// 				to: token,
+				// 				sound: 'default',
+				// 				title: `${myUsername} just got better today.`,
+				// 				body: `will you?`,
+				// 				data: { path: { screen: 'home' } },
+				// 			}),
+				// 		);
 
-						console.log('notifications', notifications);
+				// 		console.log('notifications', notifications);
 
-						// send notifications
-						axios
-							.post(
-								'https://exp.host/--/api/v2/push/send',
-								notifications,
-								{
-									headers: {
-										Accept: 'application/json',
-										'Content-Type': 'application/json',
-									},
-								},
-							)
-							.then((response) => {
-								console.log(response.data);
-							})
-							.catch((error) => {
-								console.error(
-									'sendExpoNotificationsError',
-									error,
-								);
-							});
-					})
-					.catch((error) => {
-						console.log('fetchFriendsNotificationsError', error);
-						throw new Error(error);
-					});
+				// 		// send notifications
+				// 		axios
+				// 			.post(
+				// 				'https://exp.host/--/api/v2/push/send',
+				// 				notifications,
+				// 				{
+				// 					headers: {
+				// 						Accept: 'application/json',
+				// 						'Content-Type': 'application/json',
+				// 					},
+				// 				},
+				// 			)
+				// 			.then((response) => {
+				// 				console.log(response.data);
+				// 			})
+				// 			.catch((error) => {
+				// 				console.error(
+				// 					'sendExpoNotificationsError',
+				// 					error,
+				// 				);
+				// 			});
+				// 	})
+				// 	.catch((error) => {
+				// 		console.log('fetchFriendsNotificationsError', error);
+				// 		throw new Error(error);
+				// 	});
 
 				if (challengeUsername) {
 					axios
@@ -323,12 +315,18 @@ export default function CreatePost() {
 						});
 				}
 			})
-			.then(() => refreshMyUserInfo())
 			.catch((error) => {
 				console.log('sendPostError', error);
+				throw new Error(error);
 			})
 			.finally(() => {
+				setPhoto(null);
+				setVideo(null);
+				setCaption('');
+
 				navigate.goBack();
+				() => refreshMyUserInfo() 		
+
 			});
 	};
 
@@ -524,7 +522,7 @@ export default function CreatePost() {
 				</>
 			) : (
 				<>
-					<Header textColor='#ffffff' />
+					<Header  />
 					<TouchableHighlight
 						style={createPostStyles.retakeIconContainer}
 						onPress={

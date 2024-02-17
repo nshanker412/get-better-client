@@ -92,6 +92,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				// 	text2: 'no user token found ',
 				// });
 				console.log('MyUserInfoProvider no user token', userToken);
+				throw new Error('No user token found');
 			}
 		}
 		fetchUserInfo(userToken);
@@ -396,8 +397,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				console.log('it exsists', response.data);
 			})
 			.catch((error) => {
-				console.log('Post does not exist', error);
-				return;
+				throw new Error('trying to delete a post that does not exist');
 			});
 
 		//2. delete the post
@@ -406,20 +406,18 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/delete/${state.username}/${postID}`,
 			)
 			.then(async (response) => {
-				console.log('deletePost', response.data);
 
 				// REMOVE POST FROM FILE STORAGE
 				const directoryUri = FileSystem.documentDirectory;
 				const fileUri = `${directoryUri}${state.username}_${postID}.jpeg`;
 				FileSystem?.getInfoAsync(fileUri).then(async ({ exists }) => {
 					if (exists) {
-						console.log('delete', fileUri);
 						await FileSystem.deleteAsync(fileUri);
 					}
 				});
 			})
 			.catch((error) => {
-				console.log('deletePostError', error);
+				throw new Error('Error deleting post');
 			})
 			.finally(() => {
 				console.log('done deleting now refreshing user info');
