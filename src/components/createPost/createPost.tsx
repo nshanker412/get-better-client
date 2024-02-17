@@ -4,12 +4,11 @@ import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Video } from 'expo-av';
-import { Camera } from 'expo-camera';
+import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
-import { Image, ImageContentFit } from 'expo-image';
+import { Image } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-
 import React, { useEffect, useState } from 'react';
 import {
 	Dimensions,
@@ -34,6 +33,8 @@ export default function CreatePost() {
 
 	const [permission, requestPermission] = Camera.useCameraPermissions();
 
+	const [cameraReady, setCameraReady] = useState(false);
+
 	const challengeUsername = route?.params?.challengeUsername;
 	const challengeID = route?.params?.challengeID;
 	const challenge = route?.params?.challenge;
@@ -52,7 +53,7 @@ export default function CreatePost() {
 	const [isFocused, setIsFocused] = useState(false);
 	const [isPhoto, setIsPhoto] = useState(true);
 	const [isRecording, setIsRecording] = useState(false);
-	const [vid, setVideo] = useState(null);
+	const [video, setVideo] = useState(null);
 	const [timer, setTimer] = useState(10); // Initial countdown time
 	const [timerId, setTimerId] = useState(null); // To store the timer ID
 
@@ -60,9 +61,16 @@ export default function CreatePost() {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
 	const createPostStyles = useCreatePostStyles();
 
-	const [photoContentFit, setPhotoContentFit] = useState<ImageContentFit>('contain');
+	const picStyle = {
+		...createPostStyles.photoStyle,
+		width: '100%',
+		height: '100%',
+	};
 
+	
+	const [photoContentFit, setPhotoContentFit] = useState('contain');
 	const toggleContentFit = () => {
+
 		setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
 	};
 
@@ -88,107 +96,52 @@ export default function CreatePost() {
 
 	// pick an image from camera roll
 	const pickImage = async () => {
+		console.log('pickImage');
 
-			const result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
-				mediaTypes: ImagePicker.MediaTypeOptions.All,
-				allowsEditing: false,
-				quality: 1,
-				allowsMultipleSelection: false,
-				videoMaxDuration: 10,
-			});
-		
-		
-			if (result.assets[0].type === 'image') {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			quality: 1,
+			videoMaxDuration: 10,
+			allowsMultipleSelection: false,
 
-			console.log('result', result.assets);
+		});
 
-			if (!result.canceled && result.assets && result.assets[0].uri) {
-				console.log("think its an image")
+		if (result.canceled && result.assets && result.assets[0].uri) {
+			console.log('picked image is null');	
+			return
+		}
+
+	
+		if (result?.assets[0]?.type === "image") {
+
 				setVideo(null);
 				setPhoto(result.assets[0].uri);
 				return;
-				// const pickedImageWidth = result.assets[0].width;
-				// const pickedImageHeight = result.assets[0].height;
-
-				// console.log('pickedImageWidth', pickedImageWidth);
-				// console.log('pickedImageHeight', pickedImageHeight);
-				// const windowWidth = Dimensions.get('window').width;
-				// const windowHeight = Dimensions.get('window').height;
-
-				// console.log(
-				// 	pickedImageWidth,
-				// 	pickedImageHeight,
-				// 	windowWidth,
-				// 	windowHeight,
-				// );
-
-				// // Calculate the aspect ratios
-				// const pickedAspectRatio = pickedImageWidth / pickedImageHeight;
-				// const screenAspectRatio = windowWidth / windowHeight;
-
-				// // Initialize crop configuration
-				// let cropConfig = {
-				// 	originX: 0,
-				// 	originY: 0,
-				// 	width: pickedImageWidth,
-				// 	height: pickedImageHeight,
-				// };
-
-				// if (pickedAspectRatio > screenAspectRatio) {
-				// 	// Image is wider than screen aspect ratio, crop the sides
-				// 	const newWidth = pickedImageHeight * screenAspectRatio;
-				// 	cropConfig.originX = (pickedImageWidth - newWidth) / 2; // Center the crop
-				// 	cropConfig.width = newWidth;
-				// 	console.log('newWidth', newWidth);
-				// } else if (pickedAspectRatio < screenAspectRatio) {
-				// 	// Image is taller than screen aspect ratio, crop the top and bottom
-				// 	const newHeight = pickedImageWidth / screenAspectRatio;
-				// 	cropConfig.originY = (pickedImageHeight - newHeight) / 2; // Center the crop
-				// 	cropConfig.height = newHeight;
-				// 	console.log('newHeight', newHeight);
-				// }
-
-				// // Crop the image
-				// let croppedImage = await ImageManipulator.manipulateAsync(
-				// 	result.assets[0].uri,
-				// 	[{ crop: cropConfig }],
-				// 	{ format: ImageManipulator.SaveFormat.JPEG },
-				// );
-
-				// // Resize the cropped image to fit the screen
-				// let resizedImage = await ImageManipulator.manipulateAsync(
-				// 	croppedImage.uri,
-				// 	[{ resize: { width: windowWidth, height: windowHeight } }],
-				// 	{ format: ImageManipulator.SaveFormat.JPEG },
-				// );
-
-				// setPhoto(resizedImage.uri);
-			}
-		} else {
-			// let result = await ImagePicker.launchImageLibraryAsync({
-			// 	mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-			// 	allowsEditing: true,
-			// 	quality: 1,
-			// 	videoMaxDuration: 10,
-				// });
-				console.log("think its an image")
-
 				
-				console.log('result', result);
+			} else if (result?.assets[0]?.type === "video") {
 
-			if (!result.canceled && result.assets && result.assets[0].uri) {
-				setVideo(result.assets[0].uri);
+				setVideo(result.assets[0]?.uri);
 				setPhoto(null);
-			}
+				return;
 		}
-	};
+		else {
+				throw new Error('No image or video selected');
+			}
+		
+	}
+
 
 	const takePhoto = async () => {
-		console.log('takephoto');
 		if (cameraRef) {
-			let photo = await cameraRef.takePictureAsync({
+			console.log("isCameraReady",cameraReady)
+
+			console.log('cameraRef: ', cameraRef?.current);
+
+			const photo = await cameraRef.takePictureAsync({
 				quality: 1,
 			});
+			console.log('photo', photo);
 
 			// // Calculate the aspect ratio of the camera image
 			// const aspectRatio = photo.width / photo.height;
@@ -213,6 +166,12 @@ export default function CreatePost() {
 			}
 		}
 	};
+
+	useEffect(() => {	
+		if (cameraReady) {
+			rt();
+		}
+	}, [cameraReady]);	
 
 	const handleVideoRecording = async () => {
 		if (cameraRef) {
@@ -266,7 +225,7 @@ export default function CreatePost() {
 
 	const sendPost = async () => {
 		setLoading(true);
-		let formData = new FormData();
+		const formData = new FormData();
 		formData.append('user', myUsername);
 		formData.append('caption', caption);
 		formData.append('challenge', challenge ? true : false);
@@ -277,9 +236,9 @@ export default function CreatePost() {
 				type: 'image/jpeg', // Adjust based on your image format
 				name: `${Math.floor(Date.now() / 1000)}.jpeg`,
 			});
-		} else if (vid) {
+		} else if (video) {
 			formData.append('postMedia', {
-				uri: vid,
+				uri: video,
 				type: 'video/mp4', // Adjust based on your video format
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
@@ -298,8 +257,6 @@ export default function CreatePost() {
 			.then((response) => {
 				console.log('sendPost', response.data);
 				onSendSuccessToast();
-				setPhoto(null);
-				setVideo(null);
 				setLoading(false);
 				// fetch friends notifications
 				axios
@@ -366,14 +323,22 @@ export default function CreatePost() {
 						});
 				}
 			})
+			.then(() => refreshMyUserInfo())
 			.catch((error) => {
 				console.log('sendPostError', error);
 			})
 			.finally(() => {
-				refreshMyUserInfo()
 				navigate.goBack();
 			});
 	};
+
+
+	useEffect(() => {
+		console.log('permission', permission);
+		if (permission?.granted === false) {
+			requestPermission();
+		}
+	}, [permission]);
 
 	if (permission === null) {
 		return (
@@ -382,7 +347,7 @@ export default function CreatePost() {
 			</View>
 		);
 	}
-	if (permission === false) {
+	if (permission?.granted === false) {
 		return (
 			<View style={[createPostStyles.createPostContainer, { flex: 1 }]}>
 				<View
@@ -411,7 +376,7 @@ export default function CreatePost() {
 			style={{ flex: 1 }}
 			onPress={() => Keyboard.dismiss()}
 			accessible={false}>
-			{photo === null && vid === null ? (
+			{photo === null && video === null ? (
 				<>
 					<Header />
 					<TouchableHighlight
@@ -428,16 +393,17 @@ export default function CreatePost() {
 					<View style={createPostStyles.createPostContainer}>
 						<View style={createPostStyles.cameraContainer}>
 							<Camera
+								ratio='16:9'
 								style={createPostStyles.camera}
 								type={
 									isCameraFront
-										? Camera.Constants.Type.front
-										: Camera.Constants.Type.back
+										? CameraType.front
+										: CameraType.back
 								}
 								flashMode={
 									isFlashOn
-										? Camera.Constants.FlashMode.on
-										: Camera.Constants.FlashMode.off
+										?FlashMode.on
+										: FlashMode.off
 								}
 								ref={(ref) => setCameraRef(ref)}
 							/>
@@ -558,7 +524,7 @@ export default function CreatePost() {
 				</>
 			) : (
 				<>
-					<Header  />
+					<Header textColor='#ffffff' />
 					<TouchableHighlight
 						style={createPostStyles.retakeIconContainer}
 						onPress={
@@ -591,11 +557,7 @@ export default function CreatePost() {
 									}}
 									accessible={false}>
 									<Image
-										style={[createPostStyles.photoStyle,{
-												width: '100%',
-												height: '100%',
-										
-										}]}
+										style={picStyle}
 										transition={300}
 										contentFit={photoContentFit}
 										contentPosition={'center'}
@@ -604,19 +566,19 @@ export default function CreatePost() {
 										source={{ uri: photo }}></Image>
 								</TouchableWithoutFeedback>
 							)}
-							{vid && (
-								<View >
+							{video && (
+								<View>
 									<Video
-										source={{ uri: vid }}
+										source={{ uri: video }}
 										style={{
 											width: Dimensions.get('window')
 												.width,
 											height: '100%',
-											// resizeMode: 'cover',
+											resizeMode: 'cover',
 										}}
 										shouldPlay
-											isLooping
-											resizeMode='contain'
+										isLooping
+										resizeMode='cover'
 									/>
 								</View>
 							)}
@@ -629,7 +591,6 @@ export default function CreatePost() {
 									placeholderTextColor={
 										theme.grayShades.gray500
 									}
-									keyboardAppearance='dark'
 									// multiline={true}
 									value={caption}
 									onChangeText={setCaption}

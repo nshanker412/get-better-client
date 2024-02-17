@@ -14,14 +14,14 @@ export const useCreatePostStyles = () => {
 		},
 
 		createPostContainer: {
-			backgroundColor: theme.innerContainer.backgroundColor,
+			backgroundColor: theme.backgroundColor,
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
 			height: '100%',
 		},
 		photoStyle: {
-			backgroundColor: theme.innerContainer.backgroundColor,
+			backgroundColor: theme.backgroundColor,
 			shadowColor: theme.grayShades.gray900,
 			shadowRadius: 10,
 			shadowOffset: {
@@ -110,7 +110,7 @@ export const useCreatePostStyles = () => {
 			borderRadius: 50,
 			borderWidth: 7.5,
 			borderColor: theme.borderColor,
-			backgroundColor: theme.alertColor,
+			backgroundColor: theme.errorColor,
 		},
 
 		videoRecording: {
