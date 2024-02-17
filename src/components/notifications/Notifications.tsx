@@ -99,7 +99,6 @@ export const Notifications = () =>  {
 		<>
 			<Header />
 			<Link
-				underlayColor='transparent'
 				to={{ screen: 'home' }}
 				style={notificationStyles.backArrowContainer}>
 				<EvilIcons
@@ -199,12 +198,13 @@ export const Notifications = () =>  {
 									itemContent.includes('liked') ||
 									itemContent.includes('commented')
 								) {
+									console.log('liked or commented item', item);
 									// itemLink = `/profile/post/${item.linkUsername}/${item.postID}`;
 									itemLink = {
 										screen: 'profile',
 										params: {
-											profileUsername: itemUsername,
-											linkPostID: item?.postID,
+											profileUsername: item.linkUsername,
+											linkPostID: item?.postID
 										},
 									};
 								}
@@ -283,7 +283,6 @@ export const Notifications = () =>  {
 																notificationStyles.notificationContentContainer
 															}>
 															<Link
-																underlayColor='transparent'
 																to={{
 																	screen: 'profile',
 																	params: {

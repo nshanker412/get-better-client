@@ -13,6 +13,7 @@ module.exports = (api) => {
 						'@context': './src/context',
 						'@types': './src/types',
 						'@constants': './src/constants',
+						'@models': './src/models',
 
 					},
 				},

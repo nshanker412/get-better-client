@@ -2,6 +2,7 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign } from '@expo/vector-icons';
+import { Posts, PostsApiResponse } from '@models/posts';
 import { Link } from '@react-navigation/native';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
@@ -27,7 +28,7 @@ const MyProfilePosts: React.FC = () => {
 	const [currentScrollIndex, setCurrentScrollIndex] = useState(0);
 	const [loadedPosts, setLoadedPosts] = useState<boolean>(false);
 	const [isError, setIsError] = useState<boolean>(false);
-	const [posts, setPosts] = useState([]);
+	const [posts, setPosts] = useState<Posts[]>([]);
 
 	const [refreshing, setRefreshing] = useState(false);
 	const { theme } = useThemeContext();
@@ -47,7 +48,7 @@ const MyProfilePosts: React.FC = () => {
 		setLoadedPosts(false);
 		setPosts([]);
 		 await axios
-			.get(
+			.get<PostsApiResponse>(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${myUsername}`,
 			)
 			.then((response) => {

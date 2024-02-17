@@ -1,10 +1,13 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { Post } from '@models/posts';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TouchableHighlight } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { ProfilePost } from '../../ProfilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PostPreviewModal } from './modals/PostPreviewModal';
+
 
 export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	posts,
@@ -21,11 +24,10 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
 	const [previewModalVisible, setPreviewModalVisible] =
 		useState<boolean>(false); // Set initial state to false
-	const [postPreview, setPostPreview] = useState<any>();
+	const [postPreview, setPostPreview] = useState<Post>();
 	const [index, setIndex] = useState<number | undefined>(0);
 
 	const togglePreview = (index: number) => {
-		console.log('togglePreview', index);
 		setIndex(index);
 
 		posts.find((item, i) => {
@@ -41,20 +43,39 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	/**
 	 * Set the initial post to open if it came from a link
 	 */
+
+	const onCheckLinkPost = useCallback((linkPostID: number) => {
+		console.log('came from a linked post', linkPostID);
+		console.log('posts', posts);
+		
+	
+		const foundPost = posts.find(
+			(post) => post.metadata.timestamp == linkPostID,
+		);
+				if (foundPost) {
+				togglePreview(posts.indexOf(foundPost));
+			} else {
+				Toast.show({
+					type: 'info',
+					text1: 'Post not found',
+					text2: 'This post may have been deleted',
+					topOffset: 100,
+				});
+				navigation.setParams({ linkPostID: undefined })
+				//TODO: update server to unlink notifications from deleted post
+
+			} 	
+	}, [route, posts]);
+
+
 	useEffect(() => {
 		const linkedPostID = route?.params?.linkPostID;
 
 		if (linkedPostID) {
-			console.log('came from a linked post', linkedPostID);
-			const foundPost = posts.find(
-				(item) => item['metadata'].timestamp === linkedPostID,
-			);
-			if (foundPost) {
-				console.log('foundPost', foundPost);
-				togglePreview(posts.indexOf(foundPost));
-			}
+			onCheckLinkPost(linkedPostID);
+				
 		}
-	}, [route]);
+	}, [ onCheckLinkPost]);
 
 	const onClosePreviewPress = (wasPostDeleted: boolean) => {
 		console.log('onClosePreviewPress', wasPostDeleted);
@@ -70,17 +91,17 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	};
 
 	const onChangePost = (direction: 'prev' | 'next') => {
-		if ('prev' === direction && index === 0) {
+		if ('prev' == direction && index === 0) {
 			console.log('want previous but index is 0');
 			onClosePreviewPress(false);
 		}
-		if ('next' === direction && index === posts.length - 1) {
+		if ('next' == direction && index === posts.length - 1) {
 			console.log('want next but already at last');
 
 			onClosePreviewPress(false);
 		}
 		const currentIndex = posts.findIndex(
-			(item) => item['filename'] === postPreview['filename'],
+			(post) => post.filename == postPreview?.filename,
 		);
 		const newIndex =
 			direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
@@ -134,3 +155,4 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 		</>
 	);
 };
+
