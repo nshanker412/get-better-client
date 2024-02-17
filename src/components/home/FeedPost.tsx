@@ -341,7 +341,6 @@ export const  FeedPost: React.FC = (props) =>  {
 						/>
 						<View style={feedPostStyles.postHeaderInfoContainer}>
 							<Link
-								underlayColor='transparent'
 								to={{
 									screen: 'profile',
 									params: { profileUsername: postData.user },
@@ -452,7 +451,7 @@ export const  FeedPost: React.FC = (props) =>  {
 											return !prevLiked;
 										});
 									}}>
-									<View styles={feedPostStyles.icon}>
+									<View style={feedPostStyles.icon}>
 										<SvgXml
 											width={40}
 											height={40}
@@ -479,7 +478,7 @@ export const  FeedPost: React.FC = (props) =>  {
 											openCommentDrawer();
 											fetchPostComments();
 										}}>
-										<View styles={feedPostStyles.icon}>
+										<View style={feedPostStyles.icon}>
 											<SvgXml
 												style={feedPostStyles.iconStyle}
 												width={40}

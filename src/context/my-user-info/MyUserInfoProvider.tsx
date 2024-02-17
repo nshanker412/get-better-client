@@ -445,6 +445,18 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				});
 				return;
 			});
+		
+		// //4. remove the post from notifications if it exists
+		// await axios
+		// 	.get(
+		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notification/remove/${state.username}/${postID}`,
+		// 	)
+		// 	.then(async (response) => {
+		// 		console.log('notification removed', response.data);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log('Error removing notification', error);
+		// 	});
 	};
 
 	const contextValue: MyUserInfoContextProps = {

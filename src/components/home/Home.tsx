@@ -41,7 +41,6 @@ interface FriendPost {
   metadata: PostMetadata;
 }
 
-type FetchFriendsPostsResponse = FriendPost[];
 
 type FeedPostApiResponse = {
 	  posts: FriendPost[];
@@ -258,32 +257,7 @@ export const Home: React.FC = () => {
 	};
 
 
-	const renderPostList = () => posts.map((item, index) => {
-		const splitIndex = item['filename'].lastIndexOf('_');
-		return (
-			<FeedPost
-				key={index}
-				index={index}
-				loadMedia={
-					index === currentScrollIndex ||
-					index === currentScrollIndex + 1
-				}
-				profileUsername={item[
-					'filename'
-				].substring(0, splitIndex)}
-				postID={item['filename'].substring(
-					splitIndex + 1,
-				)}
-				postData={item['metadata']}
-				myUsername={myUsername}
-				storePost={true}
-				pauseVideo={
-					index !== currentScrollIndex ||
-					!isFocused
-				}
-			/>
-		);
-	});
+
 
 	return (
 		<View style={homeStyles.homeContainer}>
@@ -329,7 +303,6 @@ export const Home: React.FC = () => {
 								const splitIndex =
 									item['filename'].lastIndexOf('_');
 								
-								console.log('item', item);	
 								return (
 									<FeedPost
 										key={index}
