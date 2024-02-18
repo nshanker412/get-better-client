@@ -45,9 +45,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	 */
 
 	const onCheckLinkPost = useCallback((linkPostID: number) => {
-		console.log('came from a linked post', linkPostID);
-		console.log('posts', posts);
-		
+
 	
 		const foundPost = posts.find(
 			(post) => post.metadata.timestamp == linkPostID,

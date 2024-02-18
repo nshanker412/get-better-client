@@ -10,16 +10,9 @@ import { StyleSheet } from 'react-native';
 export const useFeedPostStyles = () => {
 	const { theme } = useThemeContext();
 
-	const shadowStyle = useMemo(() => {
-		return {
-			shadowColor: '#000000',
-			shadowOffset: { width: 2, height: 4 },
-			shadowOpacity: 0.3,
-			shadowRadius: 4,
-		};
-	}, []);
 
-	const feedPostStyles = StyleSheet.create({
+
+	const feedPostStyles = useMemo(() => StyleSheet.create({
 		userPostContainer: {
 			...theme.container,
 			width: '100%',
@@ -155,6 +148,7 @@ export const useFeedPostStyles = () => {
 
 		icon: {
 			justifyContent: 'center',
+			backgroundColor: 'transparent',
 			shadowColor: '#000000',
 			shadowOffset: { width: 2, height: 4 },
 			shadowOpacity: 0.3,
@@ -408,7 +402,8 @@ export const useFeedPostStyles = () => {
 			width: 75,
 			height: 75,
 		},
-	});
+	})
+	, [theme]);
 
 	return feedPostStyles;
 };

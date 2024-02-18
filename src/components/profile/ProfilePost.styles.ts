@@ -1,10 +1,11 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 export const useProfilePostStyles = () => {
 	const { theme } = useThemeContext();
 
-	const profilePostSyles = StyleSheet.create({
+	const profilePostSyles = useMemo(() => StyleSheet.create({
 		header: {
 			...theme.text.header,
 		},
@@ -41,10 +42,7 @@ export const useProfilePostStyles = () => {
 			zIndex: 1000,
 		},
 
-		deleteIcon: {
-			width: 30,
-			height: 30,
-		},
+	
 
 		postHeader: {
 			...theme.text.header,
@@ -379,7 +377,7 @@ export const useProfilePostStyles = () => {
 			width: 75,
 			height: 75,
 		},
-	});
+	}), [theme]);
 
 	return profilePostSyles;
 };

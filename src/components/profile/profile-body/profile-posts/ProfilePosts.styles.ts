@@ -1,10 +1,11 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 export const useProfilePostsStyles = () => {
 	const { theme } = useThemeContext();
 
-	const ProfilePostsStyles = StyleSheet.create({
+	const ProfilePostsStyles = useMemo(() => StyleSheet.create({
 		container: {
 			flex: 1,
 			justifyContent: 'center',
@@ -46,7 +47,7 @@ export const useProfilePostsStyles = () => {
 			height: 200,
 			alignSelf: 'flex-start',
 		},
-	});
+	}), [theme]);
 
 	return ProfilePostsStyles;
 };

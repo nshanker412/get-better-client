@@ -16,6 +16,7 @@ import {
 	TouchableOpacity,
 } from 'react-native-gesture-handler';
 import { sanitize } from '../../utils/sanitize';
+import { timeAgo } from '../../utils/timeAgo';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 
 export const  ProfilePost: React.FC = (props) => {
@@ -43,37 +44,13 @@ export const  ProfilePost: React.FC = (props) => {
 	const [commentProfileImages, setCommentProfileImages] = useState({});
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [preview] = useState(true);
-	const { isFocused } = useIsFocused();
+	const isFocused  = useIsFocused();
 
 	const { username: myUsername } = useMyUserInfo();
 
 	const doubleTapRef = useRef();
 
-	function timeAgo(epoch) {
-		const now = new Date();
-		const postTime = new Date(epoch * 1000);
-		const diffInSeconds = Math.floor((now - postTime) / 1000);
 
-		const minute = 60;
-		const hour = minute * 60;
-		const day = hour * 24;
-
-		if (diffInSeconds < minute) {
-			return `${diffInSeconds} seconds ago`;
-		} else if (diffInSeconds < hour) {
-			return `${Math.floor(diffInSeconds / minute)} minute${
-				Math.floor(diffInSeconds / minute) > 1 ? 's' : ''
-			} ago`;
-		} else if (diffInSeconds < day) {
-			return `${Math.floor(diffInSeconds / hour)} hour${
-				Math.floor(diffInSeconds / hour) > 1 ? 's' : ''
-			} ago`;
-		} else {
-			return `${Math.floor(diffInSeconds / day)} day${
-				Math.floor(diffInSeconds / day) > 1 ? 's' : ''
-			} ago`;
-		}
-	}
 
 	function updatePostLiked(status) {
 		axios

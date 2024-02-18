@@ -1,3 +1,4 @@
+import { TextStyle } from 'react-native';
 import { fonts } from './fonts';
 
 // Light Theme
@@ -303,10 +304,11 @@ const darkTheme = {
 			color: '#FFFFFF',
 			fontSize: 30,
 			textAlign: 'center',
+
 			textShadowColor: 'rgba(0, 0, 0, 0.25)', // Shadow color (black with 25% opacity)
 			textShadowOffset: { width: 0, height: 3 }, // Shadow offset (horizontal and vertical)
 			textShadowRadius: 3, // Shadow radius
-		},
+		} as TextStyle,
 		header:  {
 			fontFamily: fonts.inter.bold,
 			fontSize: 20,
