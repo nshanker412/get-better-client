@@ -62,10 +62,8 @@ export const Follower = ({ navigation }) => {
 			navigation.dispatch(TabActions.jumpTo('myProfile'));
 		}
 
-		console.log('onPressProfile', username);
-		navigation.dispatch(
-			TabActions.jumpTo('profile', { profileUsername: username }),
-		);
+		navigation.navigate('profile', { profileUsername: username })
+		
 	};
 
 	const renderItem = ({ item }) => (

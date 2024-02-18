@@ -2,7 +2,7 @@ import { NotificationsResponseV2 } from '@models/notifications';
 import { useNavigation } from '@react-navigation/native';
 import * as ExpoNotifications from 'expo-notifications';
 import React, { useEffect, useRef, useState } from 'react';
-import { NotificationContext, NotificationTokenApiResponse, NotificationsProviderProps, PushNotificationPacket } from './Notifications.types';
+import { NotificationContext, NotificationTokenApiResponse, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
 import { NotificationsContext } from './NotificationsContext';
 import { fetchNotifications } from './utils/fetchNotifications';
 import { fetchTokens } from './utils/fetchTokens';
@@ -204,10 +204,28 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
      * @param pushPacket
      * @returns
      */
-    const sendOutPushNotification = async (recipient: string, pushPacket: PushNotificationPacket) => {
+    const sendOutPushNotification = async (recipient: string, pushPacket: PushNotificationInfoPacket) => {
 
-        if (!recipient) return;
-        if (!pushPacket) return;
+
+        if (!recipient) {
+            console.log('No recipient, not sending push notification!');
+            return;
+        };
+
+        if (recipient === myUsername) {
+            console.log('Recipient is me, not sending push notification!');
+            return;
+        }
+
+        if (!pushPacket) {
+            console.log('No push packet, not sending push notification!');
+            return;
+        
+        };
+
+        console.log('SENDING OUT PUSH NOTIFICATION-->>', recipient, pushPacket)
+        console.log('recipient', recipient);
+        console.log('pushPacket', pushPacket);
 
         // 1. Get recipient's tokens
         let recipientTokens: NotificationTokenApiResponse | undefined;
@@ -217,16 +235,26 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         } catch (e) {
             console.log('Error getting recipient token', e);
             throw new Error('Failed to get recipient token');
+        } finally {
+            console.log('recipientTokens', recipientTokens);
         }
 
         // 2. Send out push notifications to all tokens
-        recipientTokens?.notificationTokens?.forEach(async (token) => {
+        recipientTokens?.tokens?.forEach(async (token) => {
             try {
-                await sendPushNotification({ ...pushPacket, to: token })
+                const payload: PushNotificationPacket = {
+                    to: token,
+                    sound: 'default',
+                    title: pushPacket.title,
+                    body: pushPacket.body,
+                    data: { path: pushPacket.data.path, params: pushPacket.data?.params },
+                }
+                console.log('actually sending payload', payload);    
+                await sendPushNotification(payload)
             
             } catch (e) {
                 console.log('Error sending out push notification', e);
-                throw new Error('Failed to send out push notification');
+                // throw new Error('Failed to send out push notification');
             }
         })
     }

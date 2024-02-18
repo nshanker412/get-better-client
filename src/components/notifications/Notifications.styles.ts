@@ -224,8 +224,7 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'flex-end',
 			paddingBottom: 15,
 			width: '100%',
-			borderBottomWidth: 1,
-			borderBottomColor: theme.textColorPrimary,
+	
 			// borderColor: 'blue',
 			// borderWidth: 1,
 			height: 60

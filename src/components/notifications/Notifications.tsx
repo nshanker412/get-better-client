@@ -54,7 +54,9 @@ export const Notifications = () => {
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        await refreshNotifications();
+        if (myUsername) {
+            await refreshNotifications(myUsername);
+        }
         setRefreshing(false);
     };
 
@@ -174,6 +176,26 @@ export const Notifications = () => {
                     </TouchableOpacity>
                 );
                   case NotificationType.CHALLENGE:
+                return (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        style={notificationStyles.notificationContainer}>
+                        <ConnectedProfileAvatar
+                            key={itemUsername}
+                            username={itemUsername}
+                            fetchSize={300}
+                            size={40}
+                        />
+                        <View style={notificationStyles.notificationInfoContainer}>
+                            <View style={{ flexDirection: 'row', gap: 5 }}>
+                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
+                            </View>
+                            <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+            default:
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}

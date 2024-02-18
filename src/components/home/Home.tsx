@@ -1,11 +1,11 @@
 import { useBottomTabEvent } from '@context/bottom-tab-nav/useBottomTabEvent';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
 
+import { Post, PostsApiResponse } from '@models/posts';
 import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -22,30 +22,9 @@ import { useHomeStyles } from './Home.styles';
 import { ConnectedNotificationsBell } from './notifications-drawer/bell/ConnectedNotificationsBell';
 
 
-type PostType = 'image' | 'video';
-
-interface PostMetadata {
-  caption: string;
-  challenge: string; 
-  comments: any[]; 
-  likes: any[];
-  timestamp: number;
-  type: PostType;
-  user: string;
-}
-
-interface FriendPost {
-  filename: string;
-  metadata: PostMetadata;
-}
-
-
-type FeedPostApiResponse = {
-	  posts: FriendPost[];
-};
 
 export const Home: React.FC = () => {
-	const [posts, setPosts] = useState([]);
+	const [posts, setPosts] = useState<Post[]| undefined>([]);
 	const [loadingPosts, setLoadingPosts] = useState(false);
 	const [currentScrollIndex, setCurrentScrollIndex] = useState(0);
 	const [publicPostsFetched, setPublicPostsFetched] = useState(false);
@@ -53,7 +32,6 @@ export const Home: React.FC = () => {
 	const window = Dimensions.get('window');
 	const homeStyles = useHomeStyles();
 	const { username: myUsername } = useMyUserInfo();
-	const navigation = useNavigation();
 	const { theme } = useThemeContext();
 	const isFocused = useIsFocused();
 	const { onHomeTabPressWhenFocused } = useBottomTabEvent();
@@ -90,11 +68,13 @@ export const Home: React.FC = () => {
 		setLoadingPosts(true);
 		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`)
 		await axios
-			.get<FeedPostApiResponse>(
+			.get<PostsApiResponse>(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`,
 			)
 			.then((response) => {
-				setPosts(response.data.posts);
+				console.log('fetchFriendsPosts', response.data);
+				const posts: Post[] = response.data.posts;
+				setPosts(posts);
 
 			})
 			.catch((error) => {
@@ -232,27 +212,21 @@ export const Home: React.FC = () => {
 						onScroll={handleScroll}
 						scrollEventThrottle={100}>
 						<>
-							{posts.map((item, index) => {
-								const splitIndex =
-									item['filename'].lastIndexOf('_');
+							{posts?.map((post, index) => {
+					
 								
 								return (
 									<FeedPost
-										key={index}
+										key={post.filename}
 										index={index}
 										loadMedia={
 											index === currentScrollIndex ||
 											index === currentScrollIndex + 1
 										}
-										profileUsername={item[
-											'filename'
-										].substring(0, splitIndex)}
-										postID={item['filename'].substring(
-											splitIndex + 1,
-										)}
-										postData={item['metadata']}
-										myUsername={myUsername}
-										storePost={true}
+										profileUsername={post.metadata.user}
+										postID={`${post.metadata.timestamp}`}
+										postData={post.metadata}
+										myUsername={myUsername!}
 										pauseVideo={
 											index !== currentScrollIndex ||
 											!isFocused

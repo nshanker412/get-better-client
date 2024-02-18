@@ -1,11 +1,11 @@
 
-interface Comment {
+export interface Comment {
 	content: string;
 	timestamp: number;
 	username: string;
   }
   
-  interface  PostMetadata {
+  export interface  PostMetadata {
 	caption: string;
 	challenge: string | boolean; 
 	comments: Comment[];

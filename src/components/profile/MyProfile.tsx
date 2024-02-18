@@ -1,5 +1,6 @@
 import { useAuth } from '@context/auth/useAuth';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { useNotifications } from '@context/notifications/useNotifications';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import React, { useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
@@ -74,6 +75,7 @@ export const MyProfile: React.FC = () => {
 	const profileStyles = useProfileStyles();
 
 	const { username: myUsername, onLogout } = useMyUserInfo();
+	const { removePushToken } = useNotifications();
 	const { signOut } = useAuth();
 
 

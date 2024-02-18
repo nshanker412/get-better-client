@@ -1,4 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { BlurView } from 'expo-blur';
@@ -25,11 +27,16 @@ import {
 	CommentDrawerRef,
 	ConnectedPostCommentDrawerProps,
 } from './PostCommentDrawer.types';
+import { useComments } from './hooks/useComments';
+
+
 
 export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 	ConnectedPostCommentDrawerProps & React.RefAttributes<CommentDrawerRef>
 > = forwardRef<CommentDrawerRef, ConnectedPostCommentDrawerProps>(
-	({ postID, comments, profileUsername }, ref) => {
+	({ postID, profileUsername }, ref) => {
+		
+		const { comments } = useComments(postID, profileUsername);
 		const [currentComment, setCurrentComment] = useState<string>('');
 		const [commentsLoading, setCommentsLoading] = useState<boolean>(false);
 
@@ -39,6 +46,9 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 		const [writingComment, setWritingComment] = useState<boolean>(false);
 		const [isSubmittingComment, setSubmittingComment] =
 			useState<boolean>(false);
+		
+		
+		const {sendOutPushNotification} = useNotifications();
 
 		useImperativeHandle(
 			ref,
@@ -103,49 +113,33 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 
 		const fetchAndSendNotifications = async () => {
 			try {
-				const notificationResponse = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
-				);
-				console.log(
-					'fetchUserNotificationTokens',
-					notificationResponse.data,
-				);
+	
 
-				const notifications = notificationResponse.data['tokens'].map(
-					(token) => ({
-						to: token,
-						sound: 'default',
-						title: `${myUsername} commented on your post.`,
-						body: currentComment,
-						data: {
-							path: `/profile/post/${profileUsername}/${postID}`,
-						},
-					}),
-				);
+				// const notifications = notificationResponse.data['tokens'].map(
+				// 	(token) => ({
+				// 		to: token,
+				// 		sound: 'default',
+				// 		title: `${myUsername} commented on your post.`,
+				// 		body: currentComment,
+				// 		data: {
+				// 			path: `/profile/post/${profileUsername}/${postID}`,
+				// 		},
+				// 	}),
+				// );
 
-				const pushSendResponse = await axios.post(
-					'https://exp.host/--/api/v2/push/send',
-					notifications,
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-					},
-				);
 
-				console.log(
-					'Notifications sent successfully',
-					pushSendResponse.data,
-				);
-			} catch (error) {
-				console.error(
-					'Error during notification fetching/sending:',
-					error,
-				);
-				throw new Error('Failed to send notifications.'); // Throw an error for the user
-			
-			}
+				
+					const pushNotifInfo: PushNotificationInfoPacket = {
+						title: `${myUsername} liked your post.`,
+						body: `check it out!`,
+						data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
+					};
+				
+					sendOutPushNotification(profileUsername, pushNotifInfo);
+				} catch (error) {
+					console.error('Notification send failed:', error);
+				}
+	
 		};
 
 		/**
@@ -156,12 +150,10 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 
 		const onAddComment = useCallback(async () => {
 			setCommentsLoading(true);
-
+			
+			// 1. Submit the comment
 			try {
-				const commentResponse = await submitComment();
-
-				await fetchAndSendNotifications(commentResponse);
-
+				await submitComment();
 			} catch (error) {
 				console.error('Comment post failed:', error);
 				throw new Error(error);
@@ -170,6 +162,14 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 				setWritingComment(false);
 				setSubmittingComment(false);
 			}
+
+			// 2. nonblocking Send out push notifications
+			try {
+				 fetchAndSendNotifications();
+			} catch (error) {
+				console.error('Notification send failed:', error);
+			}
+			
 		}, [currentComment, myUsername, postID, profileUsername]);
 
 		const onSubmitComment = useCallback(() => {

@@ -8,6 +8,9 @@ import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { BLUR_HASH } from '@constants/constants';
+import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
+import { PostMetadata } from '@models/posts';
 import { Link } from '@react-navigation/native';
 import axios from 'axios';
 import { Video } from 'expo-av';
@@ -30,17 +33,28 @@ import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar
 import { useFeedPostStyles } from './FeedPost.styles';
 import { ConnectedPostCommentDrawer } from './post-comment-drawer/ConnectedPostCommentDrawer';
 
-export const  FeedPost: React.FC = (props) =>  {
-	const {
-		index,
-		loadMedia,
-		postID,
-		postData,
-		myUsername,
-		storePost,
-		profileUsername,
-		pauseVideo,
-	} = props;
+
+export interface FeedPostProps {
+	index: number;
+	loadMedia: boolean;
+	postID: string;
+	postData: PostMetadata;
+	myUsername: string;
+	profileUsername: string;
+	pauseVideo: boolean;
+}
+
+
+export const FeedPost: React.FC<FeedPostProps> = ({
+	index,
+	loadMedia,
+	postID,
+	postData,
+	myUsername,
+	profileUsername,
+	pauseVideo
+}) => {
+
 
 	const [liked, setLiked] = useState(false);
 	const [likes, setLikes] = useState(null);
@@ -52,6 +66,9 @@ export const  FeedPost: React.FC = (props) =>  {
 	const [isPlaying, setIsPlaying] = useState(true);
 	const doubleTapRef = useRef();
 	const commentDrawerRef = useRef(null);
+	
+
+	const {sendOutPushNotification} = useNotifications();
 
 	// const { profileUsername } = useParams();
 
@@ -60,74 +77,26 @@ export const  FeedPost: React.FC = (props) =>  {
 	};
 	const feedPostStyles = useFeedPostStyles();
 
-	function updatePostLiked(status) {
+	async function updatePostLiked(isLiked: boolean): Promise<void> {
 		axios
 			.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
 				profileUsername: profileUsername,
 				postID: postID,
 				myUsername: myUsername,
-				status: status,
+				status: isLiked,
 			})
 			.then((response) => {
-				console.log('updatePostLiked', response.data);
 				setLikes(response.data.likes);
-				// fetch user's notification tokens
-				if (status) {
-					axios
-						.get(
-							`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
-						)
-						.then((response) => {
-							console.log(
-								'fetchUserNotificationTokens',
-								response.data,
-							);
 
-							// create notification objects
-							const notifications = response.data['tokens'].map(
-								(token) => ({
-									to: token,
-									sound: 'default',
-									title: `${myUsername} liked your post.`,
-									body: `check it out!`,
-									data: {
-										path: {
-											screen: 'profile',
-											params: {
-												profileUsername:
-													profileUsername,
-												postId: postID,
-											},
-										},
-									},
-								}),
-							);
-
-							// send notifications
-							axios
-								.post(
-									'https://exp.host/--/api/v2/push/send',
-									notifications,
-									{
-										headers: {
-											Accept: 'application/json',
-											'Content-Type': 'application/json',
-										},
-									},
-								)
-								.then((response) => {
-									console.log(response.data);
-								})
-								.catch((error) => {
-									console.error(error);
-								});
-						})
-						.catch((error) => {
-							console.log(
-								'fetchUserNotificationTokensError',
-								error,
-							);
-						});
+				if (isLiked) {
+				
+					const pushNotifInfo: PushNotificationInfoPacket = {
+						title: `${myUsername} liked your post.`,
+						body: `check it out!`,
+						data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
+					};
+				
+					sendOutPushNotification(profileUsername, pushNotifInfo);
 				}
 			})
 			.catch((error) => {
@@ -246,6 +215,7 @@ export const  FeedPost: React.FC = (props) =>  {
 							});
 					} else {
 						url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${profileUsername}/${postID}`;
+						console.log('fetchPostMedia', url);	
 						axios
 							.get(url)
 							.then(async (response) => {
@@ -275,55 +245,6 @@ export const  FeedPost: React.FC = (props) =>  {
 		}
 	}
 
-
-
-	// const fetchPostProfileImage = useCallback(() => {
-	// 	const filePath = `${profileUsername}_profile.jpeg`;
-	// 	const fileUri = FileSystem.documentDirectory + filePath;
-
-	// 	// FileSystem.getInfoAsync(fileUri).then(({ exists }) => {
-	// 	// 	if (exists) {
-	// 	// 		// Read the file and set the media
-	// 	// 		FileSystem.readAsStringAsync(fileUri, {
-	// 	// 			encoding: FileSystem.EncodingType.Base64,
-	// 	// 		})
-	// 	// 			.then((base64String) => {
-	// 	// 				setProfileImage(base64String);
-	// 	// 			})
-	// 	// 			.catch((readFileError) => {
-	// 	// 				console.log('readFileError', readFileError.message);
-	// 	// 			});
-	// 	// 	} else {
-	// 	axios
-	// 		.get(
-	// 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/${profileUsername}/profile/300/300`,
-	// 		)
-	// 		.then(async (response) => {
-	// 			setProfileImage(response.data.image);
-
-	// 			// write to file system
-	// 			await FileSystem.writeAsStringAsync(
-	// 				fileUri,
-	// 				response.data.image,
-	// 				{
-	// 					encoding: FileSystem.EncodingType.Base64,
-	// 				},
-	// 			);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.log('fetchPostMediaError', error);
-	// 		});
-	// 	// }
-	// 	// });
-	// }, [profileUsername]);
-
-	// useEffect(() => {
-	// 	if (postID && !profileImage) {
-	// 		fetchPostProfileImage();
-	// 	}
-	// }, [postID, profileUsername, fetchPostProfileImage]);
-
-	// sanitize caption by removing leading and trailing whitespace and newlines
 
 	return (
 		<>
@@ -377,6 +298,7 @@ export const  FeedPost: React.FC = (props) =>  {
 													backgroundColor: 'grey',
 												}}>
 												<Video
+													key={`{profileUsername}_${postID}-video`}
 													source={{ uri: media }}
 													rate={1.0}
 													volume={1.0}
@@ -412,7 +334,9 @@ export const  FeedPost: React.FC = (props) =>  {
 								<TapGestureHandler
 									onHandlerStateChange={onDoubleTapEvent}
 									numberOfTaps={2}>
-									<Image
+										<Image
+											key={`{profileUsername}_${postID}-image`}
+										
 										placeholder={BLUR_HASH}
 										transition={300}
 										style={{
@@ -528,3 +452,4 @@ export const  FeedPost: React.FC = (props) =>  {
 		</>
 	);
 }
+
