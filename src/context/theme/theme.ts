@@ -227,7 +227,7 @@ const darkTheme = {
 					fontFamily: fonts.inter.bold,
 					fontSize: 16,
 					textAlign: 'center',
-					fontWeight: 'bold',
+					// fontWeight: 'bold',
 					textShadowColor: 'rgba(255, 255,255, 0.25)', // Shadow color (black with 50% opacity)
 					textShadowOffset: { width: 0, height: 2 }, // Shadow offset (horizontal and vertical)
 					textShadowRadius: 2, // Shadow radius
@@ -240,7 +240,7 @@ const darkTheme = {
 					fontSize: 16,
 					color: '#FFFFFF',
 					textAlign: 'center',
-					fontWeight: 'bold',
+					// fontWeight: 'bold',
 					textShadowColor: 'rgba(255, 255,255, 0.25)', // Shadow color (black with 50% opacity)
 					textShadowOffset: { width: 0, height: 2 }, // Shadow offset (horizontal and vertical)
 					textShadowRadius: 2, // Shadow radius
@@ -256,7 +256,7 @@ const darkTheme = {
 					fontFamily: fonts.inter.regular,
 					fontSize: 16,
 					textAlign: 'center',
-					fontWeight: 'bold',
+					// fontWeight: 'bold',
 					textShadowColor: 'rgba(255, 255,255, 0.25)', // Shadow color (black with 50% opacity)
 					textShadowOffset: { width: 0, height: 2 }, // Shadow offset (horizontal and vertical)
 					textShadowRadius: 2, // Shadow radius

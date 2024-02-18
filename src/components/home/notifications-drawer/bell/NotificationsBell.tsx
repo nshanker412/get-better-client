@@ -72,8 +72,7 @@ export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum,
 	useEffect(() => {
 		console.log('unreadNum', unreadNum);
 		console.log(loading);
-	}
-		, [unreadNum]);
+	}, [unreadNum]);
 	
 
 	if (loading) {

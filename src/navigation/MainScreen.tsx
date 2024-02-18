@@ -89,7 +89,6 @@ export function MainScreen() {
 			initialRouteName='hometab'
 			screenOptions={{
 				tabBarTestID: 'bottom-tab-navigator-testid',
-
 				headerShown: false,
 				tabBarLabel: '',
 				tabBarStyle: tabBarStyles.safeArea,

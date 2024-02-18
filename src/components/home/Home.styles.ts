@@ -80,8 +80,8 @@ export const useHomeStyles = () => {
 
 		bellIconContainer: {
 			position: 'absolute',
-			right: 50,
-			top: 50,
+			right: 10,
+			top: 55,
 			zIndex: 1,
 		},
 

@@ -30,13 +30,12 @@ const MAX_CAPTION_LENGTH = 200;
 export default function CreatePost() {
 	const route = useRoute();
 	const { theme } = useThemeContext();
-
-	const [permission, requestPermission] = Camera.useCameraPermissions();
-
-
 	const challengeUsername = route?.params?.challengeUsername;
 	const challengeID = route?.params?.challengeID;
 	const challenge = route?.params?.challenge;
+
+	const [permission, requestPermission] = Camera.useCameraPermissions();
+
 
 	// const [hasPermission, setHasPermission] = useState(null);
 	const [cameraRef, setCameraRef] = useState(null);

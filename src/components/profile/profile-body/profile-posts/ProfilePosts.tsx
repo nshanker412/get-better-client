@@ -8,151 +8,120 @@ import { ProfilePost } from '../../ProfilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PostPreviewModal } from './modals/PostPreviewModal';
 
-
 export const ProfilePosts: React.FC<ProfilePostsProps> = ({
-	posts,
-	currentScrollIndex,
-	isMyProfile,
-	fetchUserPosts,
+    posts,
+    currentScrollIndex,
+    isMyProfile,
+    fetchUserPosts,
 }) => {
-	const route = useRoute();
-	const navigation = useNavigation();
+    const route = useRoute();
+    const navigation = useNavigation();
 
-	// if came from a link, find that post and open it, otherwise
+    const { username: myUsername } = useMyUserInfo() || { username: '' }; // Handle undefined myUsername
 
-	const { username: myUsername } = useMyUserInfo();
+    const [previewModalVisible, setPreviewModalVisible] = useState<boolean>(false);
+    const [postPreview, setPostPreview] = useState<Post>();
+    const [index, setIndex] = useState<number | undefined>(0);
 
-	const [previewModalVisible, setPreviewModalVisible] =
-		useState<boolean>(false); // Set initial state to false
-	const [postPreview, setPostPreview] = useState<Post>();
-	const [index, setIndex] = useState<number | undefined>(0);
+    const togglePreview = (index: number) => {
+        setIndex(index);
 
-	const togglePreview = (index: number) => {
-		console.log('togglePreview', index);	
-		setIndex(index);
+        const selectedPost = posts[index];
+        if (selectedPost) {
+            console.log('previewPost', selectedPost);
+            setPostPreview(selectedPost);
+            setPreviewModalVisible(true);
+        }
+    };
 
-		posts.find((item, i) => {
-			if (i === index) {
-				console.log('previewPost', item);
-				setPostPreview(item);
-			}
-		});
+    const onCheckLinkPost = useCallback((linkPostID: number) => {
+        console.log('onCheckLinkPost', linkPostID);
 
-		setPreviewModalVisible(true);
-	};
+        const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
+        if (index !== -1) {
+            togglePreview(index);
+        } else {
+            Toast.show({
+                type: 'info',
+                text1: 'Post not found',
+                text2: 'This post may have been deleted',
+                topOffset: 100,
+            });
+            navigation.setParams({ linkPostID: undefined });
+            //TODO: update server to unlink notifications from deleted post
+        }
+    }, [navigation, posts]);
 
-	/**
-	 * Set the initial post to open if it came from a link
-	 */
+    useEffect(() => {
+        const linkedPostID = route?.params?.linkPostID;
+        console.log('linkedPostID', linkedPostID);
 
-	const onCheckLinkPost = useCallback((linkPostID: number) => {
+        if (linkedPostID) {
+            onCheckLinkPost(linkedPostID);
+        }
+    }, [ onCheckLinkPost]);
 
-		console.log('onCheckLinkPost', linkPostID);
+    const onClosePreviewPress = (wasPostDeleted: boolean) => {
+        console.log('onClosePreviewPress', wasPostDeleted);
+        navigation.setParams({ linkPostID: undefined });
+        if (wasPostDeleted) {
+            fetchUserPosts();
+        }
+        setPostPreview(undefined);
+        setPreviewModalVisible(false);
+        setIndex(undefined);
+    };
 
-		posts.find((item, i) => {
-			if (item.metadata.timestamp === linkPostID) {
-				togglePreview(i);
-				return 
-			}
-		}
-		);
+    const onChangePost = (direction: 'prev' | 'next') => {
+        if (index === undefined || posts.length === 0) return; // Ensure posts and index exist
 
-		
-				Toast.show({
-					type: 'info',
-					text1: 'Post not found',
-					text2: 'This post may have been deleted',
-					topOffset: 100,
-				});
-				navigation.setParams({ linkPostID: undefined })
-				//TODO: update server to unlink notifications from deleted post
+        let newIndex = index + (direction === 'prev' ? -1 : 1);
+        if (newIndex < 0) newIndex = posts.length - 1;
+        if (newIndex >= posts.length) newIndex = 0;
 
-			
-	}, [route, posts]);
+        setIndex(newIndex);
+        setPostPreview(posts[newIndex]);
+    };
 
+    return (
+        <>
+            {posts.map((post, index) => (
+                <TouchableHighlight
+                    style={{ display: 'flex', width: '100%', height: 200 }}
+                    key={index}
+                    onPress={() => togglePreview(index)}
+                >
+                    <ProfilePost
+                        key={index}
+                        preview={[]}
+                        index={index}
+                        loadMedia={
+                            index === currentScrollIndex ||
+                            index === currentScrollIndex + 1 ||
+                            index === currentScrollIndex + 2
+                        }
+                        profileUsername={post.metadata.user}
+                        postID={post.metadata.timestamp}
+                        postData={post.metadata}
+                        storePost={true}
+                        pauseVideo={index !== currentScrollIndex}
+                        setPreview={() => togglePreview(index)}
+                        muted={true}
+                        isMyProfile={isMyProfile}
+                        fetchUserPosts={fetchUserPosts}
+                    />
+                </TouchableHighlight>
+            ))}
 
-	useEffect(() => {
-		const linkedPostID = route?.params?.linkPostID;
-		console.log('linkedPostID', linkedPostID);
-
-		if (linkedPostID) {
-			onCheckLinkPost(linkedPostID);
-				
-		}
-	}, [ onCheckLinkPost]);
-
-	const onClosePreviewPress = (wasPostDeleted: boolean) => {
-		console.log('onClosePreviewPress', wasPostDeleted);
-		navigation.setParams({ linkPostID: undefined })
-		if (wasPostDeleted) {
-			fetchUserPosts();
-		}
-		setPostPreview(undefined);
-		setPreviewModalVisible(false);
-		setIndex(undefined);
-
-
-	};
-
-	const onChangePost = (direction: 'prev' | 'next') => {
-		if ('prev' == direction && index === 0) {
-			console.log('want previous but index is 0');
-			onClosePreviewPress(false);
-		}
-		if ('next' == direction && index === posts.length - 1) {
-			console.log('want next but already at last');
-
-			onClosePreviewPress(false);
-		}
-		const currentIndex = posts.findIndex(
-			(post) => post.filename == postPreview?.filename,
-		);
-		const newIndex =
-			direction === 'prev' ? currentIndex - 1 : currentIndex + 1;
-		setIndex(newIndex);
-		setPostPreview(posts[newIndex]);
-	};
-	return (
-		<>
-			{posts.map((post, index) => {
-				return (
-					<TouchableHighlight
-						style={{ display: 'flex', width: '100%', height: 200 }}
-						key={index}
-						onPress={() => togglePreview(index)}>
-						<ProfilePost
-							key={index}
-							preview={[]}
-							index={index}
-							loadMedia={
-								index === currentScrollIndex ||
-								index === currentScrollIndex + 1 ||
-								index === currentScrollIndex + 2
-							}
-							profileUsername={post.metadata.user} 
-							postID={post.metadata.timestamp}
-							postData={post.metadata}
-							storePost={true}
-							pauseVideo={index !== currentScrollIndex}
-							setPreview={() => togglePreview(index)}
-							muted={true}
-							isMyProfile={isMyProfile}
-							fetchUserPosts={fetchUserPosts}
-						/>
-					</TouchableHighlight>
-				);
-			})}
-
-			<PostPreviewModal
-				isVisible={previewModalVisible}
-				onClosePress={onClosePreviewPress}
-				onChangePost={onChangePost}
-				post={postPreview}
-				index={index}
-				isMyProfile={isMyProfile}
-				myUsername={myUsername!}
-			/>
-		</>
-	);
+            <PostPreviewModal
+                isVisible={previewModalVisible}
+                onClosePress={onClosePreviewPress}
+                onChangePost={onChangePost}
+                post={postPreview}
+                index={index || 0} // Provide a default value for index
+                isMyProfile={isMyProfile}
+                myUsername={myUsername}
+            />
+        </>
+    );
 };
-

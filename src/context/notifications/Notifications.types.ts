@@ -11,7 +11,7 @@ export interface NotificationContext {
     configureMyNotifications: (myUsername: string) => void;
     sendOutPushNotification: (recipient: string, PushNotificationPacket: PushNotificationPacket) => void;
     removePushToken: () => Promise<void>;
-    refreshNotifications: () => Promise<void>;
+    refreshNotifications: (username: string) => Promise<void>;
     setNotificationsSeen: () => Promise<void>;
 }
   

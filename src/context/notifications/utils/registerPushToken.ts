@@ -24,7 +24,9 @@ export const registerPushToken = async (username: string): Promise<string | unde
 		}
 
 		const projectId = Constants.expoConfig.extra.eas.projectId;
-		const token = (await ExpoNotifications.getExpoPushTokenAsync({projectId: projectId})).data;
+	const token = (await ExpoNotifications.getExpoPushTokenAsync({ projectId: projectId })).data;
+	
+
 	
 		await axios
 				.post(

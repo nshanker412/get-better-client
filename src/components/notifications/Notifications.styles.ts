@@ -1,3 +1,4 @@
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
@@ -14,7 +15,7 @@ export const useNotificationsStyles = () => {
 			flexDirection: 'column',
 			justifyContent: 'center',
 			alignItems: 'center',
-			marginTop: 150,
+			marginTop: 100,
 		},
 
 		backArrowContainer: {
@@ -24,10 +25,10 @@ export const useNotificationsStyles = () => {
 			display: 'flex',
 			flexDirection: 'row',
 			justifyContent: 'flex-start',
-			top: 155,
-			left: 10,
-			width: '100%',
-			zIndex: 1000,
+			top: 100,
+			// left: 10,
+			width: 100,
+			zIndex: 1,
 		},
 
 		backArrow: {
@@ -59,13 +60,22 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'flex-start',
 			alignItems: 'center',
 		},
+		subcontentText: {
+			// fontFamily: theme.text.body.fontFamily,
+			fontFamily: fonts.inter.regular,
+			color: theme.textColorThird,
+			fontSize: 14,
+			fontWeight: 'normal',
+			
+			// paddingLeft: 10,
+		},
 
 		notificationContainer: {
 			width: '100%',
 			display: 'flex',
 			padding: 10,
-			borderBottomColor: theme.borderColor,
-			borderBottomWidth: 1,
+			// borderBottomColor: theme.borderColor,
+			// borderBottomWidth: 1,
 			flexDirection: 'row',
 			justifyContent: 'flex-start',
 			alignItems: 'center',
@@ -102,13 +112,14 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'space-between',
 			alignItems: 'flex-start',
 			paddingLeft: 10,
+			// gap: 2
 
 			// justifyContent: 'space-around',
 			// alignItems: 'flex-start',
 		},
 
 		notificationContentContainer: {
-			gap: 5,
+			// gap: 5,
 			// borderWidth: 1,
 			// borderColor: theme.borderColor,
 			// bottomBorderWidth: 1,
@@ -129,18 +140,27 @@ export const useNotificationsStyles = () => {
 			// gap: 5
 		},
 
-		notificationContent: {
-			fontFamily: theme.fontFamilyLight,
+		notificationTypeContent: {
+			// fontFamily: theme.fontFamily,
+			fontFamily: fonts.inter.regular,
 			color: theme.textColorPrimary,
+			textAlign: 'left',
 			fontSize: 16,
-			fontWeight: 'normal',
+		},
+
+		notificationContent: {
+			// fontFamily: theme.fontFamily,
+			fontFamily: fonts.inter.regular,
+			color: theme.textColorPrimary,
+			textAlign: 'left',
+			fontSize: 16,
 		},
 		timestamp: {
 			fontFamily: theme.text.body.medium.fontFamily,
 			color: theme.textColorThird,
 			textAlign: 'left',
 			fontWeight: '400',
-			fontSize: 12,
+			fontSize: 11,
 		},
 
 		challengeContainer: {
@@ -150,8 +170,8 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'center',
 			// justifyContent: 'center',
 			alignItems: 'center',
-			marginTop: 25,
-			marginBottom: 15,
+			// marginTop: 25,
+			// marginBottom: 15,
 		},
 
 		challengeButton: {
@@ -161,7 +181,7 @@ export const useNotificationsStyles = () => {
 			alignItems: 'center',
 			padding: 15,
 			borderRadius: 10,
-			marginTop: 15,
+			// marginTop: 15,
 		},
 
 		challengeButtonText: {
@@ -197,6 +217,41 @@ export const useNotificationsStyles = () => {
 			width: 75,
 			height: 75,
 		},
+		headerInnerContainer: {
+			display: 'flex',
+			// flexDirection: 'row',
+			alignItems: 'flex-start',
+			justifyContent: 'flex-end',
+			paddingBottom: 15,
+			width: '100%',
+			borderBottomWidth: 1,
+			borderBottomColor: theme.textColorPrimary,
+			// borderColor: 'blue',
+			// borderWidth: 1,
+			height: 60
+		},
+		headerContainer: {
+			// backgroundColor: theme.innerContainer.,
+			flexDirection: 'row',
+			width: '100%',
+			// height: 50,
+			justifyContent: 'flex-start',
+	
+		
+			// alignItems: 'center',
+		},
+		headerText: {
+			color: theme.textColorPrimary,
+			fontSize: 22,
+			fontFamily: theme.text.title.fontFamily,
+			// textAlign: 'center',
+
+		},
+		divider:{
+			backgroundColor: theme.borderColor,
+			height: 1,
+			width: '100%',
+		}
 	})
 	, [theme]);
 

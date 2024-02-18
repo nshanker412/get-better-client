@@ -202,16 +202,13 @@ export const Home: React.FC = () => {
 	};
 
 
-
-
-
 	return (
 		<View style={homeStyles.homeContainer}>
 			<Host>
 				<Header />
 				<View style={homeStyles.bellIconContainer}>
 				<ConnectedNotificationsBell />
-	</View>
+				</View>
 				<View style={{ height: Math.round(window.height * 1) }}>
 					<ScrollView
 						ref={scrollViewRef}

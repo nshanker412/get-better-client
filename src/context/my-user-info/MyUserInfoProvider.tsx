@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import React, { createContext, useCallback, useEffect, useReducer } from 'react';
 import Toast from 'react-native-toast-message';
 import { ApiLoadingState, UserData } from '../../types/types';
+
 import {
 	MyUserInfoAction,
 	MyUserInfoContextProps,
@@ -59,6 +60,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		myUserInfoReducer,
 		initialMyUserInfoState,
 	);
+
 
 	const { userToken } = useAuth();	
 
@@ -204,8 +206,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		await AsyncStorage.removeItem('profileImages');
 		await AsyncStorage.removeItem('username');
 		await AsyncStorage.removeItem('notificationToken');
-
-	
 	};
 
 	async function clearFileSystem() {

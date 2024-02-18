@@ -3,12 +3,42 @@ import { useNotifications } from '@context/notifications/useNotifications';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Linking, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { timeAgo } from '../../utils/timeAgo';
 import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useNotificationsStyles } from './Notifications.styles';
+import { ShimmerTile } from './skeleton/ShimmerTile';
+
+// helper to remove preceding " {username} commented " text from comment notifications
+const removeCommented = (content: string) => {
+    return content.split(' ').slice(1).join(' ');
+};
+
+
+
+const CommentLoadingShimmer = () => {
+	return (
+		<View style={{ flex: 1 }}>
+			<ShimmerTile opacity={0.6} />
+			<ShimmerTile opacity={0.5} />
+			<ShimmerTile opacity={0.4} />
+			<ShimmerTile opacity={0.3} />
+			<ShimmerTile opacity={0.2} />
+			<ShimmerTile opacity={0.1} />
+		</View>
+	);
+}
+
+
+enum NotificationType {
+    LIKE = 'like',
+    COMMENT = 'comment',
+    MOTIVATE = 'motivate',
+    CHALLENGE = 'challenge',
+}
 
 export const Notifications = () => {
     const { theme } = useThemeContext();
@@ -17,7 +47,6 @@ export const Notifications = () => {
     const { notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
     const [refreshing, setRefreshing] = useState(false);
     const {username: myUsername} = useMyUserInfo();
-
 
     useEffect(() => {
         setNotificationsSeen();
@@ -37,24 +66,37 @@ export const Notifications = () => {
             screen: 'profile',
             params: { profileUsername: itemUsername },
         };
+        let type: 'motivate' | 'like' | 'comment' | 'challenge' = 'motivate';
 
         if (itemContent.includes('motivating')){
             itemLink = {
                 screen: 'profile',
                 params: {
                     profileUsername: itemUsername,
-                    linkPostID: item.timestamp,
+                    linkPostID: undefined,
                 },
             };
+            type = 'motivate';
         }
-        else if (itemContent.includes('liked') || itemContent.includes('commented')) {
+        else if (itemContent.includes('liked')) {
             itemLink = {
                 screen: 'profile',
                 params: {
                     profileUsername: myUsername,
-                    linkPostID: item.timestamp,
+                    linkPostID: `${item.postID}`,
                 },
             };
+            type = 'like';
+        }
+        else if (itemContent.includes('commented')) {
+            itemLink = {
+                screen: 'profile',
+                params: {
+                    profileUsername: myUsername,
+                    linkPostID: `${item.postID}`,
+                },
+            };
+            type = 'comment';
         }
         else if (itemContent.includes('challenge')) {
             itemLink = {
@@ -63,32 +105,136 @@ export const Notifications = () => {
                     challengeUsername: itemUsername,
                     challengeID: item.challengeID,
                     challenge: item.content,
-
-
                 },
             };
+            type = 'challenge';
         }
 
-        return (
-            <TouchableOpacity onPress={() => navigation.navigate(itemLink.screen, itemLink.params)} style={notificationStyles.notificationContainer}>
-                <ConnectedProfileAvatar key={itemUsername} username={itemUsername} fetchSize={300} size={40} />
-                <View style={notificationStyles.notificationInfoContainer}>
-                    <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
-                    <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
-                    <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
-                </View>
-            </TouchableOpacity>
-        );
+
+        switch (type) {
+            case NotificationType.LIKE:
+                return (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        style={notificationStyles.notificationContainer}>
+                        <ConnectedProfileAvatar
+                            key={itemUsername}
+                            username={itemUsername}
+                            fetchSize={300}
+                            size={40}
+                        />
+                        <View style={notificationStyles.notificationInfoContainer}>
+                            <View style={{ flexDirection: 'row'  }}>
+                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationTypeContent}>{" liked your post"}</Text>
+                            </View>
+                            <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+            case NotificationType.COMMENT:
+                return (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        style={notificationStyles.notificationContainer}>
+                        <ConnectedProfileAvatar
+                            key={itemUsername}
+                            username={itemUsername}
+                            fetchSize={300}
+                            size={40}
+                        />
+                        <View style={notificationStyles.notificationInfoContainer}>
+                            <View style={{ flexDirection: 'row', alignItems: 'baseline'}}>
+                                <Text style={notificationStyles.notificationUser}>{`${itemUsername} `}</Text>
+                                <Text style={notificationStyles.notificationTypeContent}>{"commented"}</Text>
+                            </View>
+                            <Text style={notificationStyles.subcontentText}>{`"${removeCommented(itemContent)}"`}</Text>
+                            <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+            case NotificationType.MOTIVATE:
+                return (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        style={notificationStyles.notificationContainer}>
+                        <ConnectedProfileAvatar
+                            key={itemUsername}
+                            username={itemUsername}
+                            fetchSize={300}
+                            size={40}
+                        />
+                        <View style={notificationStyles.notificationInfoContainer}>
+                            <View style={{ flexDirection: 'row', gap: 5 }}>
+                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
+                            </View>
+                            <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+                  case NotificationType.CHALLENGE:
+                return (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        style={notificationStyles.notificationContainer}>
+                        <ConnectedProfileAvatar
+                            key={itemUsername}
+                            username={itemUsername}
+                            fetchSize={300}
+                            size={40}
+                        />
+                        <View style={notificationStyles.notificationInfoContainer}>
+                            <View style={{ flexDirection: 'row', gap: 5 }}>
+                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
+                            </View>
+                            <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
+                        </View>
+                    </TouchableOpacity>
+                );
+        }
+        
     };
+
+
+    const NotificationListHeader = () => {
+        return (
+            <View style={notificationStyles.headerContainer}>
+            <TouchableOpacity
+                    // style={notificationStyles.backArrowContainer}
+                style={{ height: 60, width: 50, justifyContent: 'center', alignItems: 'center'}}
+                onPress={() => navigation.goBack()}>
+                <EvilIcons name="chevron-left" size={50} color={theme.textColorPrimary} />
+            </TouchableOpacity>
+            <View
+                style={
+                    notificationStyles.headerInnerContainer
+                }>
+                <Text style={notificationStyles.headerText}>
+                    Notifications
+                </Text>
+            </View>
+        </View>
+        );
+    }
+
+	const Divider = () => {
+		return (
+			<View style={{
+				width: "80%",
+				alignSelf: "center",
+				backgroundColor: theme.div.color,
+				opacity: theme.div.opacity,
+				height: StyleSheet.hairlineWidth,
+			}} />
+		);
+	  };
 
     return (
         <>
             <Header />
-            <TouchableOpacity
-                style={notificationStyles.backArrowContainer}
-                onPress={() => navigation.goBack()}>
-                <EvilIcons name="chevron-left" size={50} color={theme.textColorPrimary} />
-            </TouchableOpacity>
+      
             <View style={notificationStyles.notificationsContainer}>
                 {!permissionsGranted && (
                     <View style={notificationStyles.settingsContainer}>
@@ -98,17 +244,24 @@ export const Notifications = () => {
                         <TouchableOpacity
                             style={notificationStyles.settingsButton}
                             onPress={() => Linking.openSettings()}>
-                            <Text style={notificationStyles.settingsButtonText}>Settings</Text>
+                            <Text style={notificationStyles.notificationUser}>Settings</Text>
                         </TouchableOpacity>
                     </View>
                 )}
-                <FlatList
-                    data={notifications}
+                <NotificationListHeader />
+                <View style={{flex: 1, width: "100%", minHeight: 400}}>
+                <FlashList
+                    data={notifications ??  []}
+                    ListEmptyComponent={CommentLoadingShimmer }
                     renderItem={renderItem}
+                    
+                    ItemSeparatorComponent={Divider}
                     keyExtractor={(item, index) => `notification-${index}`}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[theme.textColorPrimary]} />}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[theme.textColorPrimary]} tintColor={theme.textColorPrimary} />}
+                    estimatedItemSize={100}
                     contentContainerStyle={notificationStyles.notificationsScroll}
-                />
+                    />
+                    </View>
             </View>
         </>
     );

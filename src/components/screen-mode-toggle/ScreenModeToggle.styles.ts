@@ -11,6 +11,7 @@ export const useScreenModeToggleStyles = () => {
 			color: '#FFFFFF',
 			textAlign: 'center',
 			fontWeight: 'normal',
+			backgroundColor: 'transparent',
 			textShadowColor: 'rgba(255, 255,255, 0.25)', // Shadow color (black with 50% opacity)
 			textShadowOffset: { width: 0, height: 1 }, // Shadow offset (horizontal and vertical)
 			textShadowRadius: 1, // Shadow radius
