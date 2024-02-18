@@ -24,10 +24,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 
 	const onErrorCallback = (event: ImageErrorEventData) => {
 		throw new Error(event.error);
-		console.log(
-			`Error loading ProfileAvatar image for ${username}: `,
-			event,
-		);
+	
 	};
 
 	const onPressCallback = () => {

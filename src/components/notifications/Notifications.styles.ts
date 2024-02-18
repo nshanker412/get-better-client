@@ -1,10 +1,11 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 
 export const useNotificationsStyles = () => {
 	const { theme } = useThemeContext();
 
-	const notificationStyles = StyleSheet.create({
+	const notificationStyles = useMemo(() => StyleSheet.create({
 		notificationsContainer: {
 			...theme.innerContainer,
 			width: '100%',
@@ -196,7 +197,8 @@ export const useNotificationsStyles = () => {
 			width: 75,
 			height: 75,
 		},
-	});
+	})
+	, [theme]);
 
 	return notificationStyles;
 };

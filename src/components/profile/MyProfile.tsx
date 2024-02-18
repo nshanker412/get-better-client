@@ -69,23 +69,12 @@ const LogoutModal: React.FC<{
 export const MyProfile: React.FC = () => {
 	const [logoutModalVisible, setLogoutModalVisible] =
 		useState<boolean>(false); // Set initial state to false
-	// const [loadingHeader, setLoadingHeader] = useState<boolean>(true);
-	// const [loadingBody, setLoadingBody] = useState<boolean>(true);
-
+	
 	const profileStyles = useProfileStyles();
 
 	const { onLogout } = useMyUserInfo();
 	const { signOut } = useAuth();
 
-	// useEffect(() => {
-	// 	// Set loadingHeader based on loadUserInfoState
-	// 	setLoadingHeader(loadUserInfoState === ApiLoadingState.Loaded);
-	// }, [loadUserInfoState]);
-
-	// useEffect(() => {
-	// 	// Set loadingBody based on loadPlansState
-	// 	setLoadingBody(loadPlansState === ApiLoadingState.Loaded);
-	// }, [loadPlansState]);
 
 	const onClosePress = () => {
 		setLogoutModalVisible(false);

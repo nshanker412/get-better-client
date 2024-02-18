@@ -28,6 +28,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	const [index, setIndex] = useState<number | undefined>(0);
 
 	const togglePreview = (index: number) => {
+		console.log('togglePreview', index);	
 		setIndex(index);
 
 		posts.find((item, i) => {
@@ -46,13 +47,17 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
 	const onCheckLinkPost = useCallback((linkPostID: number) => {
 
-	
-		const foundPost = posts.find(
-			(post) => post.metadata.timestamp == linkPostID,
+		console.log('onCheckLinkPost', linkPostID);
+
+		posts.find((item, i) => {
+			if (item.metadata.timestamp === linkPostID) {
+				togglePreview(i);
+				return 
+			}
+		}
 		);
-				if (foundPost) {
-				togglePreview(posts.indexOf(foundPost));
-			} else {
+
+		
 				Toast.show({
 					type: 'info',
 					text1: 'Post not found',
@@ -62,12 +67,13 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 				navigation.setParams({ linkPostID: undefined })
 				//TODO: update server to unlink notifications from deleted post
 
-			} 	
+			
 	}, [route, posts]);
 
 
 	useEffect(() => {
 		const linkedPostID = route?.params?.linkPostID;
+		console.log('linkedPostID', linkedPostID);
 
 		if (linkedPostID) {
 			onCheckLinkPost(linkedPostID);
@@ -108,8 +114,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 	};
 	return (
 		<>
-			{posts.map((item, index) => {
-				const splitIndex = item['filename'].lastIndexOf('_');
+			{posts.map((post, index) => {
 				return (
 					<TouchableHighlight
 						style={{ display: 'flex', width: '100%', height: 200 }}
@@ -124,12 +129,9 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 								index === currentScrollIndex + 1 ||
 								index === currentScrollIndex + 2
 							}
-							profileUsername={item['filename'].substring(
-								0,
-								splitIndex,
-							)}
-							postID={item['filename'].substring(splitIndex + 1)}
-							postData={item['metadata']}
+							profileUsername={post.metadata.user} 
+							postID={post.metadata.timestamp}
+							postData={post.metadata}
 							storePost={true}
 							pauseVideo={index !== currentScrollIndex}
 							setPreview={() => togglePreview(index)}

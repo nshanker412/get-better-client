@@ -1,3 +1,4 @@
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
@@ -15,6 +16,7 @@ export const Notifications = () => {
     const notificationStyles = useNotificationsStyles();
     const { notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
     const [refreshing, setRefreshing] = useState(false);
+    const {username: myUsername} = useMyUserInfo();
 
 
     useEffect(() => {
@@ -36,12 +38,33 @@ export const Notifications = () => {
             params: { profileUsername: itemUsername },
         };
 
-        if (itemContent.includes('motivating') || itemContent.includes('liked') || itemContent.includes('commented')) {
+        if (itemContent.includes('motivating')){
             itemLink = {
-                screen: 'profilePost',
+                screen: 'profile',
                 params: {
                     profileUsername: itemUsername,
-                    postID: item.postID,
+                    linkPostID: item.timestamp,
+                },
+            };
+        }
+        else if (itemContent.includes('liked') || itemContent.includes('commented')) {
+            itemLink = {
+                screen: 'profile',
+                params: {
+                    profileUsername: myUsername,
+                    linkPostID: item.timestamp,
+                },
+            };
+        }
+        else if (itemContent.includes('challenge')) {
+            itemLink = {
+                screen: 'createPost',
+                params: {
+                    challengeUsername: itemUsername,
+                    challengeID: item.challengeID,
+                    challenge: item.content,
+
+
                 },
             };
         }
