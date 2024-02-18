@@ -1,9 +1,7 @@
 import { useAuth } from '@context/auth/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
-import * as ExpoNotifications from 'expo-notifications';
 import React, { createContext, useCallback, useEffect, useReducer } from 'react';
 import Toast from 'react-native-toast-message';
 import { ApiLoadingState, UserData } from '../../types/types';
@@ -86,11 +84,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				}
 			
 			} else {
-				// Toast.show({
-				// 	type: 'info',
-				// 	text1: `MyuserinfoProvider: ${userToken}`,
-				// 	text2: 'no user token found ',
-				// });
+
 				console.log('MyUserInfoProvider no user token', userToken);
 				throw new Error('No user token found');
 			}
@@ -99,70 +93,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 	}, [userToken]);
 
-	const scheduleDailyNotification = async () => {
-		// Check if notification already scheduled
-		const existingNotifications =
-			await ExpoNotifications.getAllScheduledNotificationsAsync();
-
-		// await ExpoNotifications.cancelAllScheduledNotificationsAsync();
-		if (existingNotifications.length === 0) {
-			// Schedule the notification if none are scheduled
-			await ExpoNotifications.scheduleNotificationAsync({
-				content: {
-					title: 'Get Better',
-					body: 'Did you get better today?',
-				},
-				trigger: {
-					hour: 18,
-					minute: 0,
-					repeats: true,
-				},
-			});
-		}
-	};
-
-	const registerForPushNotificationsAsync = async (username: string) => {
-		const { status: existingStatus } =
-			await ExpoNotifications.getPermissionsAsync();
-		let finalStatus = existingStatus;
-
-		if (existingStatus !== 'granted') {
-			const { status } =
-				await ExpoNotifications.requestPermissionsAsync();
-			finalStatus = status;
-		}
-
-		if (finalStatus !== 'granted') {
-			alert('Please enable notifications in your settings.');
-			return;
-		}
-
-		const tokenSaved = await AsyncStorage.getItem('notificationToken');
-
-		const projectId = Constants.expoConfig.extra.eas.projectId;
-		const token = (await ExpoNotifications.getExpoPushTokenAsync({projectId: projectId})).data;
-		if (tokenSaved !== token) {
-			await AsyncStorage.setItem('notificationToken', token);
-			console.log('New token ', token);
-
-			axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/save`,
-					{
-						username: username,
-						token: token,
-					},
-				)
-				.then((response) => {
-					console.log('saveNotificationToken', response.data);
-				})
-				.catch((error) => {
-					console.log('saveNotificationTokenError', error);
-				});
-		}
-
-		return token;
-	};
+	
 
 	/**
 	 * Initializes the MyUserInfo after the user logs in
@@ -185,8 +116,8 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			const username = usernameResponse.data.username;
 
 			// Initialize and register notifications
-			await registerForPushNotificationsAsync(username);
-			await scheduleDailyNotification();
+			// await registerForPushNotificationsAsync(username);
+			// await scheduleDailyNotification();
 
 			const userDataResponse = await axios.get<UserData>(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${username}/${username}/True`,
@@ -274,29 +205,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		await AsyncStorage.removeItem('username');
 		await AsyncStorage.removeItem('notificationToken');
 
-		try {
-			const projectId = Constants.expoConfig.extra.eas.projectId;
-			console.log('projectId', projectId);
-			const token = (await ExpoNotifications?.getExpoPushTokenAsync({projectId: projectId}))
-				?.data;
-
-			await axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/remove`,
-					{
-						username: state.username,
-						token: token,
-					},
-				)
-				.then(async (response) => {
-					console.log('removeNotificationToken', response.data);
-				})
-				.catch((error) => {
-					console.log('removeNotificationTokenError', error);
-				});
-		} catch (e) {
-			console.error('Error getting notification token', e);
-		}
+	
 	};
 
 	async function clearFileSystem() {

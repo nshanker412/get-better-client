@@ -176,7 +176,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 								/>
 							)}
 						</RootAuthStack.Navigator>
-					</NavigationContainer>
+						</NavigationContainer>
 				</MyUserInfoProvider>
 			</AuthContext.Provider>
 			<Toast config={toastConfig} />

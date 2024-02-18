@@ -1,10 +1,10 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
-import { Unread } from '@models/notification';
+import { Unread } from '@models/notifications';
 import axios from 'axios';
 import React from 'react';
 import { Circle, Path, Svg, Text as SvgText } from 'react-native-svg';
-import { LoadingSpinner } from '../../loading-spinner/LoadingSpinner';
-import { NotificationsBellProps } from './NotificationsDrawer.types';
+import { LoadingSpinner } from '../../../loading-spinner/LoadingSpinner';
+import { NotificationsBellProps } from '../NotificationsDrawer.types';
 
 
 /**

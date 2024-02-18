@@ -1,6 +1,6 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { Unread } from '@models/notification';
+import { Unread } from '@models/notifications';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';

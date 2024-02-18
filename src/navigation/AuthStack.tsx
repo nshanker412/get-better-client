@@ -1,4 +1,5 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { NotificationsProvider } from '@context/notifications/NotificationsProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import Intro from '../components/intro/intro';
@@ -15,7 +16,8 @@ export const AuthStack = () => {
 			<LoadingScreen/>
 		)
 	}
-		return (
+	return (
+			<NotificationsProvider>
 			<AuthStackNav.Navigator
 					screenOptions={{
 						headerShown: false,
@@ -34,6 +36,7 @@ export const AuthStack = () => {
 					component={MainScreen}
 				/>
 			</AuthStackNav.Navigator>
+			</NotificationsProvider>
 		);
 	
 };

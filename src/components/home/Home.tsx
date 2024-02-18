@@ -19,7 +19,7 @@ import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { FeedPost } from './FeedPost';
 import { useHomeStyles } from './Home.styles';
-import { ConnectedNotificationsBell } from './notifications-drawer/ConnectedNotificationsBell';
+import { ConnectedNotificationsBell } from './notifications-drawer/bell/ConnectedNotificationsBell';
 
 
 type PostType = 'image' | 'video';

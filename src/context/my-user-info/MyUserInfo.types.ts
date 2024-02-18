@@ -25,6 +25,7 @@ export interface MyUserInfoContextProps extends MyUserInfoState {
 	setShownIntroPage: () => void;
 	deletePost: (postId: string) => Promise<void>;
 	refreshMyUserInfo: () => void;
+	
 }
 
 // Define action types
