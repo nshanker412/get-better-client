@@ -30,9 +30,10 @@ import { setNotificationsSeen as _setNotificationsSeen } from './utils/setNotifi
  * @param param0 
  * @returns 
  */
-export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ children }) => {
+export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myUsername: _myUsername, children }) => {
     /** GB Service */
     const [myUsername, setMyUsername] = useState<string>('');
+    const [initialized, setInitialized] = useState<boolean>(false)
     const [notificationsResponse, setNotificationsResponse] = useState<NotificationsResponseV2| null>(null);
     // const [myToken, setMyToken] = useState<string>();
 
@@ -66,6 +67,14 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
         refreshNotifications();
 
     }
+
+
+    useEffect(() => {
+        if (_myUsername) {
+            configureMyNotifications(myUsername);
+        }
+        
+    }, [_myUsername]);
 
 
     /**
@@ -119,6 +128,8 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
             console.log('Error fetching unread notifications', e);
             throw new Error('Failed to fetch unread notifications from GB service');
         }
+
+        setInitialized(true);
 
     }
 
@@ -203,6 +214,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
     }
 
     const contextValue: NotificationContext = {
+        initialized,
         unreadNum: notificationsResponse?.unreadNum,
         lastReadTime: notificationsResponse?.lastReadTime,
         notifications: notificationsResponse?.notifications,
@@ -218,7 +230,6 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({ ch
 			<NotificationsContext.Provider value={contextValue}>
                 {children}
 			</NotificationsContext.Provider>
-	
 	);
 };
 

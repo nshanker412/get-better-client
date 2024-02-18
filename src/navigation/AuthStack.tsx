@@ -17,25 +17,25 @@ export const AuthStack = () => {
 		)
 	}
 	return (
-			<NotificationsProvider>
-			<AuthStackNav.Navigator
-					screenOptions={{
-						headerShown: false,
-						cardStyle: { 
-							backgroundColor: 'black' 
-						},
-				}}>
-				
-					{!hasPostedDaily && (
+			<NotificationsProvider myUsername={myUsername}>
+				<AuthStackNav.Navigator
+						screenOptions={{
+							headerShown: false,
+							cardStyle: { 
+								backgroundColor: 'black' 
+							},
+					}}>
+					
+						{!hasPostedDaily && (
+						<AuthStackNav.Screen
+							name='Intro'
+							component={Intro}
+						/>)}
 					<AuthStackNav.Screen
-						name='Intro'
-						component={Intro}
-					/>)}
-				<AuthStackNav.Screen
-					name='Main'
-					component={MainScreen}
-				/>
-			</AuthStackNav.Navigator>
+						name='Main'
+						component={MainScreen}
+					/>
+				</AuthStackNav.Navigator>
 			</NotificationsProvider>
 		);
 	

@@ -159,23 +159,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 								navigation,
 							);
 						}}>
-						<RootAuthStack.Navigator
-							screenOptions={{
-								headerShown: false,
-								cardStyle: { backgroundColor: 'black' },
-							}}>
-							{state.userToken === null ? (
-								<RootAuthStack.Screen
-									name='UnAuthStack'
-									component={UnAuthStack}
-								/>
-							) : (
-								<RootAuthStack.Screen
-									name='AuthStack'
-									component={AuthStack}
-								/>
-							)}
-						</RootAuthStack.Navigator>
+							<RootAuthStack.Navigator
+								screenOptions={{
+									headerShown: false,
+									cardStyle: { backgroundColor: 'black' },
+								}}>
+								{state.userToken === null ? (
+									<RootAuthStack.Screen
+										name='UnAuthStack'
+										component={UnAuthStack}
+									/>
+								) : (
+									<RootAuthStack.Screen
+										name='AuthStack'
+										component={AuthStack}
+									/>
+								)}
+							</RootAuthStack.Navigator>
 						</NavigationContainer>
 				</MyUserInfoProvider>
 			</AuthContext.Provider>

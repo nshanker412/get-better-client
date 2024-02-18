@@ -3,6 +3,7 @@ import React from 'react';
 
 export interface NotificationContext {
     /** GB service */
+    initialized: boolean;
     unreadNum: number | undefined;
     notifications: Notification[] | undefined;
     lastReadTime: number | undefined;
@@ -14,6 +15,7 @@ export interface NotificationContext {
 }
   
 export interface NotificationsProviderProps {
+    myUsername: string ,
     children: React.ReactNode;
 }
 
