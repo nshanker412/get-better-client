@@ -1,7 +1,5 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
-import { Unread } from '@models/notifications';
-import axios from 'axios';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Circle, Path, Svg, Text as SvgText } from 'react-native-svg';
 import { LoadingSpinner } from '../../../loading-spinner/LoadingSpinner';
 import { NotificationsBellProps } from '../NotificationsDrawer.types';
@@ -67,27 +65,22 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 	);
 };
 
-// function to get all notifications that occured before last timestamp saved in async storage
-export const checkForNotifications = async (
-	myUsername: string,
-): Promise<number> => {
 
-	// fetch unread notifications
-	const response = await axios.get<Unread>(
-		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/unread/${myUsername}`,
-	);
-	return response.data.unreadNum;
-};
 
-export const NotificationsBell: React.FC<NotificationsBellProps> = ({unreadNum, loading}) => {
+export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum, loading }) => {
+	
+	useEffect(() => {
+		console.log('unreadNum', unreadNum);
+		console.log(loading);
+	}
+		, [unreadNum]);
+	
 
 	if (loading) {
 		return <LoadingSpinner />;
 	}
 
 	return (
-	
-
 		<BellIconAlert
 			number={unreadNum}
 			height={35}

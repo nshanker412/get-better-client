@@ -22,3 +22,4 @@ export const timeAgo = (epoch: number): string => {
 		return `${days} day${days > 1 ? 's' : ''} ago`;
 	}
 };
+

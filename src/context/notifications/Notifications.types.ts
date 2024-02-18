@@ -3,6 +3,7 @@ import React from 'react';
 
 export interface NotificationContext {
     /** GB service */
+    permissionsGranted: boolean;
     initialized: boolean;
     unreadNum: number | undefined;
     notifications: Notification[] | undefined;

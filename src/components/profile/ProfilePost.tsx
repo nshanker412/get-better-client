@@ -212,6 +212,7 @@ export const  ProfilePost: React.FC = (props) => {
 											postID: postID,
 										},
 									},
+									type: 'comment',
 								},
 							}),
 						);

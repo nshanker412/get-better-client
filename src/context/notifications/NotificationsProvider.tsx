@@ -34,14 +34,12 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     /** GB Service */
     const [myUsername, setMyUsername] = useState<string>('');
     const [initialized, setInitialized] = useState<boolean>(false)
+    const [permissions, setPermissions] = useState<boolean>(false);
     const [notificationsResponse, setNotificationsResponse] = useState<NotificationsResponseV2| null>(null);
-    // const [myToken, setMyToken] = useState<string>();
 
     /** EXPO  */
-    // const [notification, setNotification] = useState<ExpoNotifications.Notification>();
     const notificationListener = useRef<ExpoNotifications.Subscription>(null);
     const responseListener = useRef<ExpoNotifications.Subscription>(null);
-
 
     const { navigate } = useNavigation();
 
@@ -70,10 +68,13 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
 
     useEffect(() => {
+        console.log('myUsername', _myUsername);
         if (_myUsername) {
-            configureMyNotifications(myUsername);
+            console.log('INSDE myUsername', _myUsername);
+
+            configureMyNotifications(_myUsername);
         }
-        
+
     }, [_myUsername]);
 
 
@@ -99,38 +100,55 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
        
         setMyUsername(myUsername);
 
-        // 1. (EXPO) Register for push notifications and get my push tokens
+        // 1. Check for notification permissions
+        try {
+            const { status } = await ExpoNotifications.getPermissionsAsync();
+            if (status !== 'granted') {
+                const { status: askStatus } = await ExpoNotifications.requestPermissionsAsync();
+                if (askStatus !== 'granted') {
+                    console.log('Notification permissions not granted');
+                    return;
+                }
+            } else {
+                setPermissions(true);
+            }
+        } catch (e) {
+            console.log('Error getting notification permissions', e);
+            throw new Error('Init NotifProvider: (1) Failed to get notification permissions');
+        }
+
+        // 2. (EXPO) Register for push notifications and get my push tokens
         try {
             const token = await registerPushToken(myUsername);
             // setMyToken(token);
             console.log('myToken', token);
         } catch (e) {
             console.log('Error getting notification token', e);
-            throw new Error('Failed to register my push tokens');
+            throw new Error('Init NotifProvider: (2) Failed to register my push tokens');
         }
 
-        // 2. (EXPO) Schedule daily notification
+        // 3. (EXPO) Schedule daily notification
         try {
             await scheduleDailyNotification();
         } catch (e) {
             console.log('Error scheduling daily notification', e);
-            throw new Error('Failed to schedule daily notification');
+            throw new Error('Init NotifProvider: (3) Failed to schedule daily notification');
         }
 
-        // 3. (GB) Fetch notifications
+        // 4. (GB) Fetch notifications
         try {
             const notifs = await fetchNotifications(myUsername);
+            console.log('notifs', notifs)
             if (notifs) {
                 setNotificationsResponse(notifs);
             }
             
         } catch (e) {
             console.log('Error fetching unread notifications', e);
-            throw new Error('Failed to fetch unread notifications from GB service');
+            throw new Error('Init NotifProvider: (4) Failed to fetch unread notifications from GB service');
         }
 
         setInitialized(true);
-
     }
 
     /**
@@ -215,6 +233,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
     const contextValue: NotificationContext = {
         initialized,
+        permissionsGranted: permissions,
         unreadNum: notificationsResponse?.unreadNum,
         lastReadTime: notificationsResponse?.lastReadTime,
         notifications: notificationsResponse?.notifications,
