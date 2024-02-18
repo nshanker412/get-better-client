@@ -176,8 +176,6 @@ export const useLeaderboardStyles = () => {
 		},
 
 		profileInfoContainer: {
-			// borderWidth: 1,
-			// borderColor: theme.borderColor,
 			flex: 3,
 			display: 'flex',
 			alignItems: 'flex-start',
@@ -197,11 +195,7 @@ export const useLeaderboardStyles = () => {
 		metricText: {
 			fontFamily: theme.text.body.medium.fontFamily,
 			fontSize: 18,
-			// color: '#59636D',
 			color: theme.textColorPrimary,
-
-			// fontWeight: 'bold',
-			// textAlign: 'right'
 		},
 
 		loadingContainer: {
