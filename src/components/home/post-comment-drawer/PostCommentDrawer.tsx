@@ -20,6 +20,8 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 	const postCommentDrawerStyles = usePostCommentDrawerStyles();
 	const [refreshing, setRefreshing] = useState(false);
 
+	
+
 	const genCommentsList = () =>
 		comments?.map((item, index) => {
 			return (

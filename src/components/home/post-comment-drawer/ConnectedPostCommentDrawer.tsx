@@ -86,8 +86,11 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 					text1: 'Comment posted successfully!',
 					type: 'success',
 				});
+				setCurrentComment('');
+				setCommentsLoading(false);
+				setWritingComment(false);
+				setSubmittingComment(false);
 
-				return commentResponse;
 			} catch (error) {
 				Toast.show({
 					text1: 'Failed to post comment. Please try again.',
@@ -98,7 +101,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 			}
 		};
 
-		const fetchAndSendNotifications = async (commentResponse) => {
+		const fetchAndSendNotifications = async () => {
 			try {
 				const notificationResponse = await axios.get(
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
@@ -136,12 +139,12 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 					pushSendResponse.data,
 				);
 			} catch (error) {
-				throw new Error('Failed to send notifications.'); // Throw an error for the user
 				console.error(
 					'Error during notification fetching/sending:',
 					error,
 				);
-				// Log the error, but don't throw an error to the user
+				throw new Error('Failed to send notifications.'); // Throw an error for the user
+			
 			}
 		};
 
@@ -156,11 +159,12 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 
 			try {
 				const commentResponse = await submitComment();
+
 				await fetchAndSendNotifications(commentResponse);
 
-				setCurrentComment('');
 			} catch (error) {
 				console.error('Comment post failed:', error);
+				throw new Error(error);
 			} finally {
 				setCommentsLoading(false);
 				setWritingComment(false);

@@ -30,5 +30,6 @@ export interface ConnectedNotificationsDrawerProps {
 }
 
 export interface NotificationsBellProps {
-	newNotificationsCount: number;
+	unreadNum: number;
+	loading: boolean;
 }

@@ -1,7 +1,6 @@
 import { useBottomTabEvent } from '@context/bottom-tab-nav/useBottomTabEvent';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
@@ -13,15 +12,14 @@ import {
 	Dimensions,
 	RefreshControl,
 	ScrollView,
-	TouchableOpacity,
-	View,
+	View
 } from 'react-native';
 import { Host } from 'react-native-portalize';
 import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { FeedPost } from './FeedPost';
 import { useHomeStyles } from './Home.styles';
-import { NotificationsBell } from './notifications-drawer/NotificationsBell';
+import { ConnectedNotificationsBell } from './notifications-drawer/ConnectedNotificationsBell';
 
 
 type PostType = 'image' | 'video';
@@ -86,58 +84,6 @@ export const Home: React.FC = () => {
 		console.log('currentScrollIndex', currentScrollIndex);
 	}, [currentScrollIndex]);
 
-	/**
-	 * TODO:
-	 * 1. if not focused on home tab, stop vid autoplay
-	 * 2. when focus resets on home tab restart vid autoplay
-	 */
-
-	const [unreadNotifications, setUnreadNotifications] = useState([]);
-
-	const getUnreadNotifications = async () => {
-		//1. get the last read time
-		const getLastReadTimeStorage = await AsyncStorage.getItem(
-			'lastNotificationReadTimestamp',
-		);
-
-		//2. get timestamnp of 6 hours ago
-		const now = new Date();
-		const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60);
-
-		console.log(
-			'getLastReadTimeStorage',
-			getLastReadTimeStorage,
-			new Date(parseInt(getLastReadTimeStorage)),
-		);
-
-		//3.
-		const lastReadTime = getLastReadTimeStorage
-			? new Date(parseInt(getLastReadTimeStorage))
-			: sixHoursAgo;
-
-
-		//4. fetch notificaitons
-		const response = await axios.get(
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/fetch/${myUsername}`,
-		);
-		const notifications = response.data.notifications;
-
-		//4. find the notifications that are newer than the last read time
-		const unreadNotifications = notifications.filter((notification) => {
-			const notificationTime = new Date(
-				parseInt(notification.timestamp) * 1000,
-			);
-
-			return notificationTime > lastReadTime;
-		});
-
-		//5. set the unread notifications
-		setUnreadNotifications(unreadNotifications);
-	};
-
-	useEffect(() => {
-		getUnreadNotifications();
-	}, []);
 
 	// fetch all friends post metadata
 	const fetchFriendsPosts = async () => {
@@ -148,7 +94,6 @@ export const Home: React.FC = () => {
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`,
 			)
 			.then((response) => {
-				console.log('fetchFriendsPostsResponse', response.data.posts);
 				setPosts(response.data.posts);
 
 			})
@@ -259,23 +204,14 @@ export const Home: React.FC = () => {
 
 
 
+
 	return (
 		<View style={homeStyles.homeContainer}>
 			<Host>
 				<Header />
-				<TouchableOpacity
-					style={homeStyles.bellIconContainer}
-					onPress={() => {
-						navigation.navigate('notifications', {
-							profileUsername: myUsername,
-						});
-					}}>
-					<View style={homeStyles.bellIconInnerContainer}>
-						<NotificationsBell
-							newNotificationsCount={unreadNotifications}
-						/>
-					</View>
-				</TouchableOpacity>
+				<View style={homeStyles.bellIconContainer}>
+				<ConnectedNotificationsBell />
+	</View>
 				<View style={{ height: Math.round(window.height * 1) }}>
 					<ScrollView
 						ref={scrollViewRef}

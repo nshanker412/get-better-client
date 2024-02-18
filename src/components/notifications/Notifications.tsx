@@ -1,6 +1,6 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Unread } from '@models/notifications';
 import { Link, useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import * as ExpoNotifications from 'expo-notifications';
@@ -10,48 +10,25 @@ import { RefreshControl, TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { timeAgo } from '../../utils/timeAgo';
 import { Header } from '../header/Header';
+import { setNotificationsRead } from '../home/notifications-drawer/utils/setNotificationsRead';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useNotificationsStyles } from './Notifications.styles';
 
-// const updateReadTimeToNow = async () => {
-// 	const now = new Date();
-// 	const now2 = Math.floor(now.getTime());
-// 	const nowString = now2.toString();
-
-// 	// get timestamp of 6 hours ago
-// 	const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-// 	await AsyncStorage.setItem('lastNotificationReadTimestamp', JSON.stringify(sixHoursAgo));
-// 	return;
-// };
 
 /**
  *
  * Convert to Notification Tiles and use Flatlist or Flashlist
  */
-export const Notifications = () =>  {
-	const profileUsername = useRoute()?.params?.profileUsername;
-	// const navigate = useNavigation();
+export const Notifications = () => {
+	const route = useRoute();
+	const profileUsername = route?.params.profileUsername;
+	const unreadNum = route?.params?.unreadNum;
+	const lastReadTime = route?.params?.lastReadTime;
+
 	const [notifications, setNotifications] = useState([]);
-	// const [profileImages, setProfileImages] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [notificationPermissions, setNotificationPermissions] = useState('');
-	const [lastReadTime, setLastReadTime] = useState('');
 	const navigation = useNavigation();
-
-	useEffect(() => {
-		// first get the timestamp
-		const getLastReadTime = async () => {
-			const getLastReadTime = await AsyncStorage.getItem(
-				'lastNotificationReadTimestamp',
-			);
-			console.log('getLastReadTime', getLastReadTime);
-			setLastReadTime(getLastReadTime);
-		};
-		getLastReadTime();
-
-		// on component unmount update the read time to now
-		// return () => updateReadTimeToNow();
-	}, []);
 
 	const notificationStyles = useNotificationsStyles();
 	const { theme } = useThemeContext();
@@ -67,9 +44,6 @@ export const Notifications = () =>  {
 		}
 	}
 
-	// useEffect(() => {
-	// 	fetchProfilePictures();
-	// }, [notifications]);
 
 	useEffect(() => {
 		fetchNotificationPermissions();
@@ -77,9 +51,8 @@ export const Notifications = () =>  {
 
 	useEffect(() => {
 		setLoading(true);
-		let url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/fetch/${profileUsername}`;
 		axios
-			.get(url)
+			.get<Unread>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/fetch/${profileUsername}`)
 			.then((response) => {
 				console.log(
 					'fetchNotifications',
@@ -91,9 +64,9 @@ export const Notifications = () =>  {
 			.catch((error) => {
 				console.log('fetchNotificationsError', error);
 			});
+		setNotificationsRead(profileUsername);
 	}, []);
 
-	console.log('notifications', notifications);
 
 	return (
 		<>
@@ -198,12 +171,11 @@ export const Notifications = () =>  {
 									itemContent.includes('liked') ||
 									itemContent.includes('commented')
 								) {
-									console.log('liked or commented item', item);
 									// itemLink = `/profile/post/${item.linkUsername}/${item.postID}`;
 									itemLink = {
 										screen: 'profile',
 										params: {
-											profileUsername: item.linkUsername,
+											profileUsername: itemUsername,
 											linkPostID: item?.postID
 										},
 									};
@@ -214,9 +186,8 @@ export const Notifications = () =>  {
 										to={itemLink}
 										key={index}>
 										<View
-											style={
-												notificationStyles.notificationContainer
-											}>
+											style={ (index+1 < unreadNum)  ? notificationStyles.notificationContainer : notificationStyles.unreadNotificationContainer }
+										>
 											<ConnectedProfileAvatar
 												username={itemUsername}
 												fetchSize={300}
@@ -241,7 +212,6 @@ export const Notifications = () =>  {
 														notificationStyles.notificationContentContainer
 													}>
 													<Link
-														underlayColor='transparent'
 														to={{
 															screen: 'profile',
 															params: {

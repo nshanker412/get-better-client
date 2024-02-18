@@ -69,6 +69,18 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'flex-start',
 			alignItems: 'center',
 		},
+		unreadNotificationContainer: {
+			width: '100%',
+			display: 'flex',
+			padding: 10,
+			borderColor: theme.grayShades.gray300,
+			backgroundColor: theme.grayShades.gray500,
+			borderBottomColor: theme.borderColor,
+			borderBottomWidth: 1,
+			flexDirection: 'row',
+			justifyContent: 'flex-start',
+			alignItems: 'center',
+		},
 
 		profileImage: {
 			alignItems: 'center',

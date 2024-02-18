@@ -1,12 +1,11 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Unread } from '@models/notification';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Circle, Path, Svg, Text as SvgText } from 'react-native-svg';
-import Toast from 'react-native-toast-message';
 import { LoadingSpinner } from '../../loading-spinner/LoadingSpinner';
 import { NotificationsBellProps } from './NotificationsDrawer.types';
+
 
 /**
  * SVG icon for the notifications bell
@@ -47,7 +46,7 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 			{showNotification && (
 				<Circle
 					cx='22.5'
-					cy='26.0234'
+					cy='10.0234'
 					r='7.5'
 					fill='#FF0000'
 				/>
@@ -55,7 +54,7 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 			{showNotification && (
 				<SvgText
 					x='22.5'
-					y='27.0234'
+					y='10.0234'
 					textAnchor='middle'
 					alignmentBaseline='middle'
 					fill='white'
@@ -72,93 +71,27 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 export const checkForNotifications = async (
 	myUsername: string,
 ): Promise<number> => {
-	//1. fetch last notification read timestamp from async storage
-	//2. if no timestamp to now
-	//3. fetch all notifications
-	//4. cont the number of notifications that occured after last timestamp
 
-	try {
-		// (1)
-		const lastReadFromStorage = await AsyncStorage.getItem(
-			'lastNotificationReadTimestamp',
-		);
-		// (2)
-		const lastTimestamp = lastReadFromStorage
-			? lastReadFromStorage
-			: Date.now();
-		const lastNotificationReadTimestamp = Math.floor(
-			new Date(lastTimestamp).getTime() / 1000,
-		);
-		console.log('twoDaysAgoTimestamp', lastNotificationReadTimestamp);
-
-		// (3)
-		const res = await axios.get(
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/fetch/${myUsername}`,
-		);
-
-		console.log('res', res.data.notifications);
-
-		// (4)
-		const newNotifications = res.data.notifications.filter(
-			(notification) => {
-				return notification.timestamp > lastNotificationReadTimestamp;
-			},
-		);
-
-		console.log('newNotifications', newNotifications?.length);
-		return newNotifications?.length;
-	} catch (err) {
-		console.error(err);
-		return 0;
-	}
+	// fetch unread notifications
+	const response = await axios.get<Unread>(
+		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/unread/${myUsername}`,
+	);
+	return response.data.unreadNum;
 };
 
-export const NotificationsBell: React.FC<NotificationsBellProps> = ({newNotificationsCount}) => {
-	const [loadingNotifications, setLoadingNotifications] =
-		useState<boolean>(true);
-	const [unreadNotifications, setUnreadNotifications] = useState<
-		number | undefined
-	>();
-	// const { theme } = useThemeContext();
-	const { username: myUsername } = useMyUserInfo();
+export const NotificationsBell: React.FC<NotificationsBellProps> = ({unreadNum, loading}) => {
 
-	useEffect(() => {
-		setLoadingNotifications(true);
-		const fetchNotifications = async (myUsername: string) => {
-			try {
-				const numNewNots = await checkForNotifications(myUsername);
-
-				setUnreadNotifications(numNewNots);
-			} catch (err) {
-				console.error(err);
-				Toast.show({
-					text1: 'Failed to fetch notifications. Please try again.',
-					text2: 'Please try again.',
-					type: 'error',
-				});
-			} finally {
-				setLoadingNotifications(false);
-			}
-		};
-
-		fetchNotifications(myUsername!);
-	}, []);
-
-
-	useEffect(() => {
-		console.log('newNotificationsCount', newNotificationsCount);
-	
-	}, [newNotificationsCount]);
-
-	if (loadingNotifications) {
+	if (loading) {
 		return <LoadingSpinner />;
 	}
 
 	return (
+	
+
 		<BellIconAlert
-			number={newNotificationsCount}
+			number={unreadNum}
 			height={35}
 			width={38}
-		/>
+			/>
 	);
 };
