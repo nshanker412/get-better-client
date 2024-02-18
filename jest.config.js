@@ -11,7 +11,7 @@ module.exports = {
 	},
 	// Add more Jest configurations as needed
 	// For example:
-	testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', ],
 	testMatch: [
 		'<rootDir>/src/**/*.test.tsx',
 		'<rootDir>/src/**/*.test.ts',

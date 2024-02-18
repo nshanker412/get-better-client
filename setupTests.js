@@ -62,3 +62,4 @@ jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 // In Jest setup file or test file
 jest.mock('@sentry/react-native');
+jest.mock('expo-constants');

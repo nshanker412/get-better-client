@@ -23,6 +23,7 @@ export const registerPushToken = async (username: string): Promise<string | unde
 			return;
 		}
 	
+	
 
 	
 	// if token is already saved in service, return it
