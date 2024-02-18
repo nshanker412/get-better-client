@@ -10,8 +10,6 @@ export type MyUserInfoState = {
 	username: string | null;
 	email: string | null;
 	hasPostedDaily: boolean | null;
-	notificationTokens: string[] | null;
-	unreadNotifications: string[] | null;
 	myData: UserData | null;
 	loadPlansState: ApiLoadingState;
 	plans: Array<any> | null;
@@ -47,7 +45,6 @@ export interface SetUserInfoAction {
 	payload: {
 		username: string | null;
 		email: string | null;
-		notificationTokens: string[] | null;
 		hasPostedDaily: boolean | null;
 		myData: UserData;
 	};
@@ -87,8 +84,6 @@ export const initialMyUserInfoState: MyUserInfoState = {
 	username: null,
 	email: null,
 	hasPostedDaily: null,
-	notificationTokens: null,
-	unreadNotifications: null,
 	myData: null,
 	loadPlansState: ApiLoadingState.Idle,
 	plans: null,

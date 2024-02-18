@@ -126,12 +126,12 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			);
 			const myData: UserData = userDataResponse.data;
 
-			const notificationTokensResponse = await axios.get<{
-				tokens: string[];
-			}>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${username}`,
-			);
-			const notificationTokens = notificationTokensResponse.data.tokens;
+			// const notificationTokensResponse = await axios.get<{
+			// 	tokens: string[];
+			// }>(
+			// 	`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${username}`,
+			// );
+			// const notificationTokens = notificationTokensResponse.data.tokens;
 
 			const hasPostedDailyResponse = await axios.get<{
 				hasPosted: boolean;
@@ -147,7 +147,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 					...state,
 					myData: myData,
 					username: username,
-					notificationTokens: notificationTokens,
 					hasPostedDaily: hasPostedDaily,
 				},
 			});
@@ -259,7 +258,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 		try {
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${state.username}/True`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${state.username}/False`,
 			);
 			const myData: UserData = userDataResponse.data;
 
@@ -354,18 +353,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				});
 				return;
 			});
-		
-		// //4. remove the post from notifications if it exists
-		// await axios
-		// 	.get(
-		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notification/remove/${state.username}/${postID}`,
-		// 	)
-		// 	.then(async (response) => {
-		// 		console.log('notification removed', response.data);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log('Error removing notification', error);
-		// 	});
+	
 	};
 
 	const contextValue: MyUserInfoContextProps = {

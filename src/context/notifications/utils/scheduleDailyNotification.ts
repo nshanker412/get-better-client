@@ -8,6 +8,7 @@ export const scheduleDailyNotification = async () => {
     // Check if notification already scheduled
     const existingNotifications =
         await ExpoNotifications.getAllScheduledNotificationsAsync();
+    
 
     // await ExpoNotifications.cancelAllScheduledNotificationsAsync();
     if (existingNotifications.length === 0) {

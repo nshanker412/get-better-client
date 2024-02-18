@@ -22,28 +22,30 @@ export const registerPushToken = async (username: string): Promise<string | unde
 			alert('Please enable notifications in your settings.');
 			return;
 		}
+	
 
-		const projectId = Constants.expoConfig.extra.eas.projectId;
+	
+	// if token is already saved in service, return it
+	const projectId = Constants.expoConfig.extra.eas.projectId;
 	const token = (await ExpoNotifications.getExpoPushTokenAsync({ projectId: projectId })).data;
-	
 
-	
-		await axios
-				.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/save`,
-					{
-						username: username,
-						token: token,
-					},
-				)
-				.then((response) => {
-					console.log('saveNotificationToken', response.data);
-				})
-				.catch((error) => {
-                    console.log('saveNotificationTokenError', error);
-                    throw new Error('Failed to save notification token');
-				});
-	
+	// should be non-blocking and not throw error
+	axios
+		.post(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/save`,
+			{
+				username: username,
+				token: token,
+			},
+		)
+		.then((response) => {
+			console.log('saveNotificationToken', response.data);
+		})
+		.catch((error) => {
+			console.log('saveNotificationTokenError', error.message);
+			// throw new Error('Failed to save notification token');
+		});
+
 
 		return token;
     };
