@@ -190,14 +190,13 @@ export const useLeaderboardStyles = () => {
 			display: 'flex',
 			alignItems: 'flex-end',
 			justifyContent: 'center',
-			// width: '25%',
-			// paddingRight: 15,
-			paddingRight: 20,
+			minWidth: 50,
+	
 		},
 
 		metricText: {
 			fontFamily: theme.text.body.medium.fontFamily,
-			fontSize: 20,
+			fontSize: 18,
 			// color: '#59636D',
 			color: theme.textColorPrimary,
 

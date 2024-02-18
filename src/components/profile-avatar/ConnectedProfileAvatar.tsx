@@ -6,6 +6,12 @@ import { TouchableOpacity } from 'react-native';
 import { ProfileAvatar } from './ProfileAvatar';
 import { ConnectedProfileAvatarProps } from './ProfileAvatar.types';
 
+
+interface FetchProfileImage {
+	readonly image: string;
+
+}
+
 /**
  * Connected ProfileAvatar Component
  * Details:
