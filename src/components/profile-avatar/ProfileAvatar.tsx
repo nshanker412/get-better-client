@@ -105,7 +105,7 @@ export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 									height: size,
 								}}
 								source={imgSrc}
-								// priority={priority}
+								priority={priority}
 								allowDownscaling={false}
 							/>
 						</Animated.View>

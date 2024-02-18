@@ -30,6 +30,7 @@
 		"@sentry/react-native": "5.17.0",
 		"@shopify/flash-list": "1.6.3",
 		"axios": "^1.5.0",
+		"axios-mock-adapter": "^1.22.0",
 		"expo": "~50.0.6",
 		"expo-av": "~13.10.5",
 		"expo-blur": "~12.9.1",

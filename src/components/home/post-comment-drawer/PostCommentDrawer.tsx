@@ -3,9 +3,9 @@ import { Link } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { ConnectedProfileAvatar } from 'src/components/profile-avatar/ConnectedProfileAvatar';
 import { timeAgo } from '../../../utils/timeAgo';
 import { LoadingSpinner } from '../../loading-spinner/LoadingSpinner';
+import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { usePostCommentDrawerStyles } from './PostCommentDrawer.styles';
 import { PostCommentDrawerProps } from './PostCommentDrawer.types';
 
@@ -40,7 +40,7 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 								alignItems: 'flex-start',
 								justifyContent: 'flex-start',
 							}}>
-							<ConnectedProfileAvatar username={item.username} />
+							<ConnectedProfileAvatar key={item.username} username={item.username} />
 						</View>
 						<View style={{ flex: 5, justifyContent: 'flex-start' }}>
 							<View
