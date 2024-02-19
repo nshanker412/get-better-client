@@ -8,12 +8,15 @@ import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { BLUR_HASH } from '@constants/constants';
+import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
 import { PostMetadata } from '@models/posts';
 import { Link } from '@react-navigation/native';
+import axios from 'axios';
 import { Video } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import {
 	State,
@@ -29,7 +32,6 @@ import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar
 import { useFeedPostStyles } from './FeedPost.styles';
 import { usePostLifecycle } from './hooks/usePostLifecycle';
 import { ConnectedPostCommentDrawer } from './post-comment-drawer/ConnectedPostCommentDrawer';
-
 
 export interface FeedPostProps {
 	index: number;
@@ -61,29 +63,30 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		liked,
 		commentsCount,
 		postMedia,
-		setPostLiked
+		// setPostLiked: hookSetIsPostLiked,
+		refresh,
 	} = usePostLifecycle({ filename, postID, metadata: postData, myUsername });
-	
 
 	const [isPlaying, setIsPlaying] = useState(true);
+	const [_liked, _setIsLiked] = useState(postData.likes.includes(myUsername));
+	const [_likesCount, _setLikesCount] = useState(postData.likes.length);
 	const doubleTapRef = useRef();
 	const commentDrawerRef = useRef(null);
+	const { sendOutPushNotification } = useNotifications();
 	const feedPostStyles = useFeedPostStyles();
-
 
 	const openCommentDrawer = () => {
 		commentDrawerRef.current?.openModal();
 	};
 
-
-	const onDoubleTapEvent = (event) => {
+	const onDoubleTapEvent = async (event): Promise<void>  => {
 		if (event.nativeEvent.state === State.ACTIVE) {
 			// Double tap was detected
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
 			// image wasn't already liked
-			if (!liked) {
-				setPostLiked(liked!);
+			if (!_liked) {
+				  onLikePress(true);
 			}
 		}
 	};
@@ -95,6 +98,49 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		}
 	};
 
+
+	const setPostLiked = async (isLiked: boolean): Promise<void> => {
+        
+		try {
+			const resp = await axios
+				.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
+					profileUsername: profileUsername,
+					postID: postID,
+					myUsername: myUsername,
+					status: isLiked,
+				})
+	
+		} catch (error) {
+			console.log('setPostLikedError', error);
+		}
+        
+		if (isLiked) {
+            
+			const pushNotifInfo: PushNotificationInfoPacket = {
+				title: `${myUsername} liked your post.`,
+				body: `check it out!`,
+				data: { path: 'profile', params: { profileUsername: postData.user, postId: postID } },
+			};
+        
+			sendOutPushNotification(postData.user, pushNotifInfo);
+		}
+		
+		refresh();
+	};
+
+	const onLikePress = useCallback( (newLikedStatus:boolean) => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+		if (!_likesCount &&newLikedStatus) {
+			_setLikesCount(1);
+		}
+	
+		const newCount = newLikedStatus ? _likesCount + 1 : _likesCount - 1;
+		_setLikesCount(newCount);
+
+		_setIsLiked(newLikedStatus);
+		 setPostLiked(newLikedStatus);
+	}, [_liked, _likesCount, setPostLiked]);
 
 
 	return (
@@ -217,37 +263,26 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 						<View style={feedPostStyles.postDataContainer}>
 							<View style={feedPostStyles.postDataInnerRow}>
 								<TouchableOpacity
-									onPress={() => {
-										Haptics.impactAsync(
-											Haptics.ImpactFeedbackStyle.Medium,
-										);
-										setPostLiked(!liked);
-									
-									}}>
+									onPress={() => onLikePress(!_liked)}>
 									<View style={feedPostStyles.icon}>
 										<SvgXml
 											width={40}
 											height={40}
 											xml={
-												liked
+												_liked
 													? StarIconFilled
 													: StarIcon
 											}
 										/>
 									</View>
 								</TouchableOpacity>
-								<Text style={feedPostStyles.username}>
-									{likesCount}
-								</Text>
-
-
 								{(loadingMedia && loadingLikesCount) ?
 								(<Text style={feedPostStyles.username}>
 									<LoadingSpinner />
 								</Text>
 								) : (
 									<Text style={feedPostStyles.username}>
-										{loadingLikesCount}
+										{_likesCount}
 									</Text>
 								)}
 							</View>

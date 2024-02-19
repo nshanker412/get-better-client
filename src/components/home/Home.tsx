@@ -213,6 +213,8 @@ export const Home: React.FC = () => {
 						scrollEventThrottle={100}>
 						<>
 							{posts?.map((post, index) => {
+
+								console.log('post', post);
 					
 								
 								return (

@@ -48,9 +48,9 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
 
     // flow control
     const [error, setError] = useState<string>('');
-    const [loadingMedia, setLoadingMedia] = useState<boolean>(false);
-    const [loadingLikesCount, setLoadingLikesCount] = useState<boolean>(false);
-    const [loadingCommentsCount, setLoadingCommentsCount] = useState<boolean>(false);
+    const [loadingMedia, setLoadingMedia] = useState<boolean>(true);
+    const [loadingLikesCount, setLoadingLikesCount] = useState<boolean>(true);
+    const [loadingCommentsCount, setLoadingCommentsCount] = useState<boolean>(true);
 
     // hooks
     const { sendOutPushNotification} = useNotifications();
@@ -59,7 +59,7 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
     //  1.a. Fetch media
     //  1.b. Fetch post data
     //  1.c. Fetch likes
-    useEffect(() => {
+     useEffect(() => {
         const fetchPostMedia = async () => {
             if (!postID || !metadata.user || !metadata.type || !filename || !myUsername) {
                 setError('Invalid post data');
@@ -70,7 +70,7 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
                 // If video
                 if (metadata.type === 'video') {
                     setPostMedia(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${metadata.user}_${postID}`);
-                    setPosterName(`${metadata.user}_${postID}`);
+                    setPosterName(metadata.user);
                     setLoadingMedia(false);
                 } else {
                     const filePath = `${metadata.user}_${postID}.jpeg`;
@@ -129,6 +129,8 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
                 setError('Failed to fetch post media');
             } finally {
                 setLoadingMedia(false);
+                setLoadingLikesCount(false);
+                setLoadingCommentsCount(false);
                 setLikesCount(metadata.likes.length);
                 setCommentsCount(metadata.comments.length);
                 setCaption(metadata.caption);
@@ -140,52 +142,47 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
         fetchPostMedia();
 
     }, []);
-    
 
-
-    const setPostLiked = async (isLiked: boolean): Promise<void> =>  {
-		await axios
-			.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
-				profileUsername: posterName,
-				postID: postID,
-				myUsername: myUsername,
-				status: isLiked,
-			})
-			.then((response) => {
-                setLikesCount(response.data.likes.length);
-                setLiked(true);
-
-				if (isLiked) {
-				
-					const pushNotifInfo: PushNotificationInfoPacket = {
-						title: `${myUsername} liked your post.`,
-						body: `check it out!`,
-						data: { path: 'profile', params: { profileUsername: posterName, postId: postID } },
-					};
-				
-					sendOutPushNotification(posterName, pushNotifInfo);
-				}
-			})
-			.catch((error) => {
-				console.log('updatePostLikeErrord', error);
-			});
+    const setPostLiked = async (isLiked: boolean): Promise<void> => {
+        try {
+            const resp = await axios
+                .post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
+                    profileUsername: posterName,
+                    postID: postID,
+                    myUsername: myUsername,
+                    status: isLiked,
+                })
+            setLikesCount(resp.data.likes.length);
+            setLiked(isLiked);
+        } catch (error) {
+            console.log('setPostLikedError', error);
+        } 
+        
+        if (isLiked) {
+            
+            const pushNotifInfo: PushNotificationInfoPacket = {
+                title: `${myUsername} liked your post.`,
+                body: `check it out!`,
+                data: { path: 'profile', params: { profileUsername: posterName, postId: postID } },
+            };
+        
+            sendOutPushNotification(posterName, pushNotifInfo);
+        }
 	}
 
 
 
-
     const fetchPostLikes = async () => {
-		 axios
+		 await axios
 			.post(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/likes`,
 				{
-					profileUsername: name,
+					profileUsername: posterName,
 					postID: postID,
 					myUsername: myUsername,
 				},
 			)
              .then((response) => {
-                console.log('fetchPostLikes', response.data);
                 const newLikesCount = response.data.likes;
                 const newDidILike = response.data.liked;
                 
@@ -204,7 +201,7 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
     }
 
     const fetchPostComments = async () => {
-         axios
+         await axios
             .post(
                 `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
                 {
@@ -215,7 +212,7 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
             .then((response) => {
                 const newCommentCount = response.data.comments.length;
                 if (newCommentCount !== commentsCount) {
-                    setLiked(response.data.liked);
+                    setCommentsCount(response.data.comments.length);
                 }
             })
 			.catch((error) => {
@@ -225,15 +222,14 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
     
     const refresh = async () => {
         try {
-            fetchPostComments();
-            fetchPostLikes();
+            await fetchPostComments();
+            await fetchPostLikes();
         } catch (error) {
             console.log('refreshError', error);
         }
-        
     }
 
-    
+
     return {
         loadingLikesCount,
         loadingCommentsCount,
