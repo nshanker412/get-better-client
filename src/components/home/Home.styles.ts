@@ -104,7 +104,6 @@ export const useHomeStyles = () => {
 			width: 10,
 			height: 10,
 			borderRadius: 5,
-			backgroundColor: theme.alertColor,
 		},
 	});
 

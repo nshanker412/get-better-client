@@ -8,16 +8,12 @@ import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { BLUR_HASH } from '@constants/constants';
-import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
-import { useNotifications } from '@context/notifications/useNotifications';
 import { PostMetadata } from '@models/posts';
 import { Link } from '@react-navigation/native';
-import axios from 'axios';
 import { Video } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import {
 	State,
@@ -31,6 +27,7 @@ import { timeAgo } from '../../utils/timeAgo';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useFeedPostStyles } from './FeedPost.styles';
+import { usePostLifecycle } from './hooks/usePostLifecycle';
 import { ConnectedPostCommentDrawer } from './post-comment-drawer/ConnectedPostCommentDrawer';
 
 
@@ -38,6 +35,7 @@ export interface FeedPostProps {
 	index: number;
 	loadMedia: boolean;
 	postID: string;
+	filename: string;
 	postData: PostMetadata;
 	myUsername: string;
 	profileUsername: string;
@@ -49,60 +47,34 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 	index,
 	loadMedia,
 	postID,
+	filename,
 	postData,
 	myUsername,
 	profileUsername,
 	pauseVideo
 }) => {
+	const {
+		loadingLikesCount,
+		loadingCommentsCount,
+		loadingMedia,
+		likesCount,
+		liked,
+		commentsCount,
+		postMedia,
+		setPostLiked
+	} = usePostLifecycle({ filename, postID, metadata: postData, myUsername });
+	
 
-
-	const [liked, setLiked] = useState(false);
-	const [likes, setLikes] = useState(null);
-	const [comments, setComments] = useState([]);
-	const [commentsLoading, setCommentsLoading] = useState(false);
-	const [media, setMedia] = useState(null);
-	const [loadingMedia, setLoadingMedia] = useState(false);
-	// const [profileImage, setProfileImage] = useState(null);
 	const [isPlaying, setIsPlaying] = useState(true);
 	const doubleTapRef = useRef();
 	const commentDrawerRef = useRef(null);
-	
+	const feedPostStyles = useFeedPostStyles();
 
-	const {sendOutPushNotification} = useNotifications();
-
-	// const { profileUsername } = useParams();
 
 	const openCommentDrawer = () => {
 		commentDrawerRef.current?.openModal();
 	};
-	const feedPostStyles = useFeedPostStyles();
 
-	async function updatePostLiked(isLiked: boolean): Promise<void> {
-		axios
-			.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
-				profileUsername: profileUsername,
-				postID: postID,
-				myUsername: myUsername,
-				status: isLiked,
-			})
-			.then((response) => {
-				setLikes(response.data.likes);
-
-				if (isLiked) {
-				
-					const pushNotifInfo: PushNotificationInfoPacket = {
-						title: `${myUsername} liked your post.`,
-						body: `check it out!`,
-						data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
-					};
-				
-					sendOutPushNotification(profileUsername, pushNotifInfo);
-				}
-			})
-			.catch((error) => {
-				console.log('updatePostLikeErrord', error);
-			});
-	}
 
 	const onDoubleTapEvent = (event) => {
 		if (event.nativeEvent.state === State.ACTIVE) {
@@ -111,10 +83,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 
 			// image wasn't already liked
 			if (!liked) {
-				updatePostLiked(true);
-				setLiked((prevLiked) => {
-					return !prevLiked;
-				});
+				setPostLiked(liked!);
 			}
 		}
 	};
@@ -126,124 +95,6 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		}
 	};
 
-	function fetchPostComments() {
-		setCommentsLoading(true);
-		axios
-			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
-				{
-					profileUsername: profileUsername,
-					postID: postID,
-				},
-			)
-			.then((response) => {
-				setComments(response.data.comments);
-				setCommentsLoading(false);
-			})
-			.catch((error) => {
-				console.log('fetchPostCommentsError', error);
-			});
-	}
-
-	useEffect(() => {
-		if (postID) {
-			setLiked(false);
-			setLikes(null);
-			setComments([]);
-			fetchPostLikes();
-			fetchPostComments();
-		}
-	}, [postID]);
-
-	function fetchPostLikes() {
-		axios
-			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/likes`,
-				{
-					profileUsername: profileUsername,
-					postID: postID,
-					myUsername: myUsername,
-				},
-			)
-			.then((response) => {
-				setLikes(response.data.likes);
-				setLiked(response.data.liked);
-			})
-			.catch((error) => {
-				console.log('fetchPostLikesError', error);
-			});
-	}
-
-	useEffect(() => {
-		// only load if props loaded, scroll is on or above post, and the image hasn't already been loaded
-		if (postID && loadMedia && !media) {
-			fetchPostMedia();
-		}
-	}, [postID, loadMedia]);
-
-	function fetchPostMedia() {
-		setLoadingMedia(true);
-
-		// If video
-		if (postData.type && postData.type === 'video') {
-			url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${profileUsername}_${postID}`;
-			setMedia(url);
-			setLoadingMedia(false);
-		} else {
-			let url = '';
-			const filePath = `${profileUsername}_${postID}.jpeg`;
-			const fileUri = FileSystem.documentDirectory + filePath;
-
-			// Check if the media file exists
-			FileSystem.getInfoAsync(fileUri)
-				.then(({ exists }) => {
-					if (exists) {
-						// Read the file and set the media
-						FileSystem.readAsStringAsync(fileUri, {
-							encoding: FileSystem.EncodingType.Base64,
-						})
-							.then((base64String) => {
-								setMedia(base64String);
-								setLoadingMedia(false);
-							})
-							.catch((readFileError) => {
-								console.log(
-									'readFileError',
-									readFileError.message,
-								);
-								setLoadingMedia(false);
-							});
-					} else {
-						url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${profileUsername}/${postID}`;
-						console.log('fetchPostMedia', url);	
-						axios
-							.get(url)
-							.then(async (response) => {
-								setMedia(response.data.media);
-								setLoadingMedia(false);
-
-								// write to file system
-								await FileSystem.writeAsStringAsync(
-									fileUri,
-									response.data.media,
-									{
-										encoding:
-											FileSystem.EncodingType.Base64,
-									},
-								);
-							})
-							.catch((error) => {
-								console.log('fetchPostMediaError', error);
-								setLoadingMedia(false);
-							});
-					}
-				})
-				.catch((existsError) => {
-					console.log('existsError', existsError.message);
-					setLoadingMedia(false);
-				});
-		}
-	}
 
 
 	return (
@@ -278,7 +129,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 					<View style={feedPostStyles.postImageContainer}>
 						{postData.type && postData.type === 'video' ? (
 							<>
-								{media && (
+								{postMedia && (
 									<TapGestureHandler
 										onHandlerStateChange={onDoubleTapEvent}
 										numberOfTaps={2}
@@ -299,7 +150,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 												}}>
 												<Video
 													key={`{profileUsername}_${postID}-video`}
-													source={{ uri: media }}
+													source={{ uri: postMedia }}
 													rate={1.0}
 													volume={1.0}
 													isMuted={false}
@@ -335,7 +186,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 									onHandlerStateChange={onDoubleTapEvent}
 									numberOfTaps={2}>
 										<Image
-											key={`{profileUsername}_${postID}-image`}
+											key={`${profileUsername}_${postID}-image`}
 										
 										placeholder={BLUR_HASH}
 										transition={300}
@@ -345,7 +196,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 											height: '100%',
 										}}
 										source={{
-											uri: `data:image/jpeg;base64,${media}`,
+											uri: `data:image/jpeg;base64,${postMedia}`,
 										}}
 										allowDownscaling={false}
 										contentFit='cover'
@@ -370,10 +221,8 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 										Haptics.impactAsync(
 											Haptics.ImpactFeedbackStyle.Medium,
 										);
-										setLiked((prevLiked) => {
-											updatePostLiked(!prevLiked);
-											return !prevLiked;
-										});
+										setPostLiked(!liked);
+									
 									}}>
 									<View style={feedPostStyles.icon}>
 										<SvgXml
@@ -388,8 +237,19 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 									</View>
 								</TouchableOpacity>
 								<Text style={feedPostStyles.username}>
-									{likes}
+									{likesCount}
 								</Text>
+
+
+								{(loadingMedia && loadingLikesCount) ?
+								(<Text style={feedPostStyles.username}>
+									<LoadingSpinner />
+								</Text>
+								) : (
+									<Text style={feedPostStyles.username}>
+										{loadingLikesCount}
+									</Text>
+								)}
 							</View>
 							<View style={feedPostStyles.postDataRow}>
 								<View style={feedPostStyles.postDataInnerRow}>
@@ -400,7 +260,6 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 													.Medium,
 											);
 											openCommentDrawer();
-											fetchPostComments();
 										}}>
 										<View style={feedPostStyles.icon}>
 											<SvgXml
@@ -411,9 +270,15 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 											/>
 										</View>
 									</TouchableOpacity>
-									<Text style={feedPostStyles.username}>
-										{comments?.length ?? 0}
-									</Text>
+									{(loadingMedia && loadingCommentsCount) ?
+										(<Text style={feedPostStyles.username}>
+											<LoadingSpinner />
+										</Text>
+										) : (
+											<Text style={feedPostStyles.username}>
+												{commentsCount}
+											</Text>
+										)}
 								</View>
 								{eval(postData.challenge) && (
 									<TouchableOpacity
@@ -445,7 +310,6 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 						ref={commentDrawerRef}
 						postID={postID}
 						profileUsername={profileUsername}
-						comments={comments}
 					/>
 				</Portal>
 			</View>

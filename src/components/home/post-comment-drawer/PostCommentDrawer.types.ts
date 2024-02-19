@@ -1,18 +1,15 @@
+import { Comment } from '@models/posts';
+
 export interface ConnectedPostCommentDrawerProps {
 	postID: string;
-	comments: Array<any>;
 	profileUsername: string;
 }
 
-export interface Comment {
-	username: string;
-	content: string;
-	timestamp: string;
-}
+
 
 export interface PostCommentDrawerProps {
-	comments: Array<any>;
 	commentsLoading: boolean;
+	comments: Comment[];
 }
 
 export interface CommentDrawerRef {

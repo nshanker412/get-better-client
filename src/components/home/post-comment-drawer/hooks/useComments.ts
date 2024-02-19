@@ -11,6 +11,7 @@ export interface UseCommentsReturnType {
     loadingAddComment: boolean;
     comments: Comment[];
     addComment: (comment: string) => Promise<void>;
+    fetchComments: () => Promise<void>;
 }
   
 /**
@@ -29,9 +30,9 @@ export const useComments = (postID: string, originalPoster: string): UseComments
     const fetchComments = async () => {
         setLoadingFetchComments(true);
         try {
-            const comments = await fetchPostComments(originalPoster, postID);
-            if (comments) {
-                setComments(comments);
+            const newComments = await fetchPostComments(originalPoster, postID);
+            if (newComments) {
+                setComments(newComments);
             }
         } catch (e) {
             console.log(`Error fetching comments for ${postID}`, e);
@@ -47,17 +48,16 @@ export const useComments = (postID: string, originalPoster: string): UseComments
             await addCommentToPost(originalPoster, postID, myUsername!, comment);
         } catch (e) {
             console.log('Error adding comment', e);
-        } finally {
-            setLoadingAddComment(false);
-        }
-
+        } 
         // 2. re-fetch comments
         try {
-            const comments = await fetchComments();
-                setComments(comments);
+            await fetchComments();
+     
         } catch (e) {
             console.log('Error re-fetching comments', e);
 
+        } finally {
+            setLoadingAddComment(false);
         }
   
     };
@@ -66,5 +66,5 @@ export const useComments = (postID: string, originalPoster: string): UseComments
         fetchComments();
     }, []);
 
-    return { loadingAddComment,  loadingFetchComments, comments, addComment };
+    return { loadingAddComment,  loadingFetchComments, comments, addComment, fetchComments };
 };

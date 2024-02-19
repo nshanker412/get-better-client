@@ -217,12 +217,13 @@ export const Home: React.FC = () => {
 								
 								return (
 									<FeedPost
-										key={post.filename}
+										key={`${post.filename}-home-feed`}
 										index={index}
 										loadMedia={
 											index === currentScrollIndex ||
 											index === currentScrollIndex + 1
 										}
+										filename={post.filename}
 										profileUsername={post.metadata.user}
 										postID={`${post.metadata.timestamp}`}
 										postData={post.metadata}
