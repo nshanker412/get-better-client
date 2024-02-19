@@ -27,8 +27,6 @@ import {
 } from './PostCommentDrawer.types';
 import { useComments } from './hooks/useComments';
 
-
-
 export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 	ConnectedPostCommentDrawerProps & React.RefAttributes<CommentDrawerRef>
 > = forwardRef<CommentDrawerRef, ConnectedPostCommentDrawerProps>(

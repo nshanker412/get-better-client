@@ -17,11 +17,11 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     const route = useRoute();
     const navigation = useNavigation();
 
-    const { username: myUsername } = useMyUserInfo() || { username: '' }; // Handle undefined myUsername
+    const { username: myUsername } = useMyUserInfo();
 
     const [previewModalVisible, setPreviewModalVisible] = useState<boolean>(false);
     const [postPreview, setPostPreview] = useState<Post>();
-    const [index, setIndex] = useState<number | undefined>(0);
+    const [index, setIndex] = useState<number>(0);
 
     const togglePreview = (index: number) => {
         setIndex(index);
@@ -38,6 +38,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         console.log('onCheckLinkPost', linkPostID);
 
         const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
+        console.log('index', index);
         if (index !== -1) {
             togglePreview(index);
         } else {
@@ -117,10 +118,10 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 isVisible={previewModalVisible}
                 onClosePress={onClosePreviewPress}
                 onChangePost={onChangePost}
-                post={postPreview}
+                post={ postPreview}
                 index={index || 0} // Provide a default value for index
                 isMyProfile={isMyProfile}
-                myUsername={myUsername}
+                myUsername={myUsername!}
             />
         </>
     );

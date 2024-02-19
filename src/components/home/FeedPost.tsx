@@ -102,7 +102,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 	const setPostLiked = async (isLiked: boolean): Promise<void> => {
         
 		try {
-			const resp = await axios
+		  await axios
 				.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
 					profileUsername: profileUsername,
 					postID: postID,
@@ -115,7 +115,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		}
         
 		if (isLiked) {
-            
+
 			const pushNotifInfo: PushNotificationInfoPacket = {
 				title: `${myUsername} liked your post.`,
 				body: `check it out!`,
@@ -233,19 +233,18 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 									numberOfTaps={2}>
 										<Image
 											key={`${profileUsername}_${postID}-image`}
-										
-										placeholder={BLUR_HASH}
-										transition={300}
-										style={{
-											width: Dimensions.get('window')
-												.width,
-											height: '100%',
-										}}
-										source={{
-											uri: `data:image/jpeg;base64,${postMedia}`,
-										}}
-										allowDownscaling={false}
-										contentFit='cover'
+											placeholder={BLUR_HASH}
+											transition={300}
+											style={{
+												width: Dimensions.get('window')
+													.width,
+												height: '100%',
+											}}
+											source={{
+												uri: `data:image/jpeg;base64,${postMedia}`,
+											}}
+											allowDownscaling={false}
+											contentFit='cover'
 									/>
 								</TapGestureHandler>
 								{loadingMedia && (

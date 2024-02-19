@@ -21,8 +21,6 @@ import { FeedPost } from './FeedPost';
 import { useHomeStyles } from './Home.styles';
 import { ConnectedNotificationsBell } from './notifications-drawer/bell/ConnectedNotificationsBell';
 
-
-
 export const Home: React.FC = () => {
 	const [posts, setPosts] = useState<Post[]| undefined>([]);
 	const [loadingPosts, setLoadingPosts] = useState(false);

@@ -18,7 +18,6 @@ const LogoutModal: React.FC<{
 	const { theme } = useThemeContext();
 	const [loading, setLoading] = useState<boolean>(false);
 
-
 	const onLogoutPressCb = async () => {
 		setLoading(true);
 		await onLogoutPress();
@@ -74,7 +73,7 @@ export const MyProfile: React.FC = () => {
 	
 	const profileStyles = useProfileStyles();
 
-	const { username: myUsername, onLogout } = useMyUserInfo();
+	const {  onLogout } = useMyUserInfo();
 	const { removePushToken } = useNotifications();
 	const { signOut } = useAuth();
 
@@ -90,7 +89,7 @@ export const MyProfile: React.FC = () => {
 	const onLogoutPress = async (): Promise<void> => {
 		try {
 			await onLogout();
-			await removePushToken(myUsername)
+			await removePushToken();
 			await signOut();
 		} catch (error) {
 			console.error('Error logging out:', error);

@@ -47,7 +47,6 @@ export const  ProfilePost: React.FC = (props) => {
 	const isFocused  = useIsFocused();
 
 	const { username: myUsername } = useMyUserInfo();
-
 	const doubleTapRef = useRef();
 
 
@@ -134,7 +133,7 @@ export const  ProfilePost: React.FC = (props) => {
 
 			// image wasn't already liked
 			if (!liked) {
-				updatePostLiked(true);
+				// updatePostLiked(true);
 				setLiked((prevLiked) => {
 					return !prevLiked;
 				});
