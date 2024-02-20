@@ -44,7 +44,6 @@ export interface FeedPostProps {
 	pauseVideo: boolean;
 }
 
-
 export const FeedPost: React.FC<FeedPostProps> = ({
 	index,
 	loadMedia,

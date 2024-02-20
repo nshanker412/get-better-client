@@ -5,19 +5,17 @@ import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import {
-	Directions,
-	Gesture,
-	GestureDetector,
-	GestureHandlerRootView,
+  Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView
 } from 'react-native-gesture-handler';
 import { Host } from 'react-native-portalize';
 import Animated, {
-	runOnJS,
-	useAnimatedStyle,
-	useSharedValue,
-	withSpring,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
 } from 'react-native-reanimated';
-import { FeedPost } from '../../../../home/FeedPost';
 import { Modal } from '../../../../primitives/action-modal/ActionModal';
 import { DeletePostModal } from './DeletePostModal';
 export interface PostPreviewModalProps {
@@ -28,16 +26,18 @@ export interface PostPreviewModalProps {
   myUsername: string;
   onChangePost: (direction: 'prev' | 'next') => void;
   onClosePress: (close: boolean) => void;
+  children: React.ReactNode;
 }
 
-export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
+ const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
   isVisible,
   post,
   myUsername,
   isMyProfile,
   index,
   onClosePress,
-  onChangePost,
+   onChangePost,
+  children,
 }) => {
   if (!post) return null;
 
@@ -78,24 +78,21 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
   const flingUp = Gesture.Fling()
     .direction(Directions.UP)
     .onStart(() => {
-      translateY.value = withSpring(-500, { damping: 20, stiffness: 100 });
-      setTimeout(() => runOnJS(onChangePostWrapper)('next'), 200);
+      // translateY.value = withSpring(-500, { damping: 20, stiffness: 100 });
+    onChangePostWrapper('next')
+      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     })
-    .onEnd(() => {
-      translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    });
+
 
   const flingDown = Gesture.Fling()
     .direction(Directions.DOWN)
     .onStart(() => {
-      translateY.value = withSpring(500, { damping: 20, stiffness: 100 });
-      setTimeout(() => runOnJS(onChangePostWrapper)('prev'), 200);
+      // translateY.value = withSpring(500, { damping: 20, stiffness: 100 });
+      onChangePostWrapper('prev');
+      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     })
-    .onEnd(() => {
-      translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    });
+  
 
   useEffect(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -137,26 +134,33 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
           </View>
         )}
         <Modal.Container containerStyle={{ backgroundColor: theme.innerContainer.backgroundColor, width: '100%', height: '100%' }}>
-            <Animated.View style={[{ width: "100%", height: "100%" }, animatedStyle]}>
-              <Host>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <GestureDetector gesture={allFlings}>
-                <FeedPost
-                  key={`${post.filename}-profile-preview`}
-                  filename={post.filename}
-                  index={index}
-                  loadMedia={true}
-                  profileUsername={profileUsername}
-                  postID={postId}
-                  postData={postData}
-                  myUsername={myUsername}
-                  pauseVideo={false}
-                />
-          </GestureDetector>
+              <Animated.View>
+                <Host>
+                  {children}
               </Host>
-            </Animated.View>
+              </Animated.View>
+          </GestureDetector>
+          </View>
         </Modal.Container>
       </Modal>
       <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={postId} />
     </GestureHandlerRootView>
   );
 };
+
+
+// Wrap your component with React.memo and define the comparison function
+const MemoizedPostPreviewModal = React.memo(PostPreviewModal, (prevProps, nextProps) => {
+  return (
+    prevProps.isVisible === nextProps.isVisible &&
+    prevProps.index === nextProps.index &&
+    prevProps.isMyProfile === nextProps.isMyProfile &&
+    prevProps.myUsername === nextProps.myUsername &&
+    prevProps.onChangePost === nextProps.onChangePost &&
+    prevProps.onClosePress === nextProps.onClosePress
+  );
+});
+
+export default MemoizedPostPreviewModal;

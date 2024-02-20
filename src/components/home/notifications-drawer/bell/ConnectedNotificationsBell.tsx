@@ -2,7 +2,7 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NotificationsBell } from './NotificationsBell';
 
@@ -14,11 +14,6 @@ export const ConnectedNotificationsBell: React.FC = () => {
 
     const { initialized, unreadNum, lastReadTime } = useNotifications();
     
-    useEffect(() => {
-        console.log('ConnectedNotificationsBell', unreadNum, lastReadTime);
-    }
-    , [unreadNum, lastReadTime]);
-
 
     const onPressNotification = useCallback(async () => {
         
@@ -33,10 +28,8 @@ export const ConnectedNotificationsBell: React.FC = () => {
 	}, [myUsername, unreadNum, lastReadTime, navigate]);
 
     return (
-        <TouchableOpacity onPress={onPressNotification} style={{
-         
-        }
-}>
+        <TouchableOpacity onPress={onPressNotification} 
+        >
 		<NotificationsBell
             unreadNum={unreadNum ?? 0}
             loading={!initialized}

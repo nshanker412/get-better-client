@@ -1,5 +1,5 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Circle, Path, Svg, Text as SvgText } from 'react-native-svg';
 import { LoadingSpinner } from '../../../loading-spinner/LoadingSpinner';
 import { NotificationsBellProps } from '../NotificationsDrawer.types';
@@ -68,12 +68,7 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 
 
 export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum, loading }) => {
-	
-	useEffect(() => {
-		console.log('unreadNum', unreadNum);
-		console.log(loading);
-	}, [unreadNum]);
-	
+
 
 	if (loading) {
 		return <LoadingSpinner />;

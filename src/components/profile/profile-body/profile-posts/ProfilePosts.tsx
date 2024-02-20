@@ -4,9 +4,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TouchableHighlight } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { FeedPost } from '../../../home/FeedPost';
 import { ProfilePost } from '../../ProfilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
-import { PostPreviewModal } from './modals/PostPreviewModal';
+import PostPreviewModal from './modals/PostPreviewModal';
+
+
 
 export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     posts,
@@ -97,9 +100,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                         preview={[]}
                         index={index}
                         loadMedia={
-                            index === currentScrollIndex ||
-                            index === currentScrollIndex + 1 ||
-                            index === currentScrollIndex + 2
+                            index < currentScrollIndex +4
                         }
                         profileUsername={post.metadata.user}
                         postID={post.metadata.timestamp}
@@ -113,7 +114,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                     />
                 </TouchableHighlight>
             ))}
-
             <PostPreviewModal
                 isVisible={previewModalVisible}
                 onClosePress={onClosePreviewPress}
@@ -122,7 +122,19 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 index={index || 0} // Provide a default value for index
                 isMyProfile={isMyProfile}
                 myUsername={myUsername!}
-            />
+            >
+
+                <FeedPost
+                    index={index || 0}
+                    loadMedia={true}
+                    filename={postPreview?.filename}
+                    profileUsername={postPreview?.metadata.user}
+                    postID={`${postPreview?.metadata.timestamp}`}
+                    postData={postPreview?.metadata}
+                    myUsername={myUsername!}
+                    pauseVideo={false}
+                />
+            </PostPreviewModal>
         </>
     );
 };

@@ -98,6 +98,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 			} catch (error) {
 				console.error('Notification send failed:', error);
 			}
+
 		}
 
 		const onSubmitComment = useCallback(async () => {

@@ -92,7 +92,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			}
 		}
 		fetchUserInfo(userToken);
-
 	}, [userToken]);
 
 	

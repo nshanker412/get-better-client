@@ -212,7 +212,6 @@ export const Home: React.FC = () => {
 						<>
 							{posts?.map((post, index) => {
 
-								console.log('post', post);
 					
 								
 								return (
