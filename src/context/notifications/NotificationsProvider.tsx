@@ -138,7 +138,6 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         // 4. (GB) Fetch notifications
         try {
             const notifs = await fetchNotifications(myUsername);
-            console.log('notifs', notifs)
             if (notifs) {
                 setNotificationsResponse(notifs);
             }

@@ -4,17 +4,14 @@ import { Post } from '@models/posts';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import {
-  Directions,
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView
-} from 'react-native-gesture-handler';
-import { Host } from 'react-native-portalize';
-import { runOnJS } from 'react-native-reanimated';
 import { FeedPost } from '../../../../home/FeedPost';
 import { Modal } from '../../../../primitives/action-modal/ActionModal';
 import { DeletePostModal } from './DeletePostModal';
+
+import { Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Host } from 'react-native-portalize';
+
 
 
 // // 1. Define the handler
@@ -66,8 +63,8 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
   onClosePress,
 }) => {
   if (posts === null || initialIndex < 0) return null;
-  
   if (initialIndex >= posts?.length) return null;
+  const window = Dimensions.get('window');
 
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { theme } = useThemeContext();
@@ -113,26 +110,42 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
     }
   }, [onClosePress, posts]);
 
-  const flingUp = Gesture.Fling()
-    .direction(Directions.UP)
-    .onStart(() => { runOnJS(onChangePostWrapper)('next', index) })
+  const scrollViewRef = React.useRef<ScrollView>(null);
 
-  const flingDown = Gesture.Fling()
-    .direction(Directions.DOWN)
-    .onStart(() => runOnJS(onChangePostWrapper)('prev', index))
+
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		// media loading handling
+		const yOffset = event.nativeEvent.contentOffset.y;
+    const index = Math.round(yOffset / window.height);
+    setIndex(index);
+		// setCurrentScrollIndex(index);
+		// currentScrollIndexRef.current = index;
+
+		// fetch public handling
+		const contentHeight = event.nativeEvent.contentSize.height;
+		const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+
+		// Check if the user has scrolled to the bottom
+		if (index === posts.length - 1) {
   
+      onClosePress(false);
+    }
 
+  };
+  
   useEffect(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }, [index]);
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
+    }
+  }, [index, scrollViewRef, window.height]);
 
-  const allFlings = Gesture.Exclusive(flingUp, flingDown);
 
-
+ 
 
   return (
-    <GestureHandlerRootView>
-      <Modal isVisible={isVisible}  hasBackdrop onBackdropPress={() => onClosePress(false)}>
+     
+      <Modal isVisible={isVisible} style={{width: Dimensions.get("screen").width}} hasBackdrop onBackdropPress={() => onClosePress(false)}>
         <View
           style={{
             // position: 'absolute',
@@ -141,7 +154,7 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
             // right: 0,
             // top: '10%',
             // marginRight: -30,
-            zIndex: 100,
+            // zIndex: 100,
           }}>
           <TouchableOpacity onPress={() => onClosePress(false)}>
             <AntDesign name='closecircle' size={24} color='black' />
@@ -156,31 +169,64 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
               // right: 0,
               // top: '20%',
               // marginRight: -30,
-              zIndex: 100,
+              // zIndex: 100,
             }}>
             <TouchableOpacity onLongPress={onDeletePressCb}>
               <AntDesign name='delete' size={24} color='white' />
             </TouchableOpacity>
           </View>
         )}
-                <Host>
-          <GestureDetector gesture={allFlings}>
-                  <FeedPost
-                    key={`${posts[index].filename}-post-preview`}
-                    filename={posts[index].filename}
-                    index={index}
+                  <Host>
+
+                
+          <View style={{ height: window.height , width:window.width  }}>
+					<ScrollView
+						ref={scrollViewRef}
+						id='post-preview-scroll-view'
+            contentContainerStyle={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'}}
+						snapToAlignment={'start'}
+            pagingEnabled
+            
+						onMomentumScrollEnd={() => {
+							Haptics.impactAsync(
+								Haptics.ImpactFeedbackStyle.Medium,
+							);
+						}}
+						onScroll={handleScroll}
+              scrollEventThrottle={20}
+          
+
+
+          >
+            <>
+            {posts?.map((post, _index) => {
+                 return( <FeedPost
+                    key={`${post.filename}-post-preview`}
+                    filename={post.filename}
+                    index={_index}
                     loadMedia={true}
-                    pauseVideo={false}
-                    profileUsername={posts[index].metadata.user}
-                    postID={`${posts[index].metadata.timestamp}`}
-                    postData={posts[index].metadata}
+                   pauseVideo={true}
+                    profileUsername={post.metadata.user}
+                    postID={`${post.metadata.timestamp}`}
+                    postData={post.metadata}
                     myUsername={myUsername}
-              />
-          </GestureDetector>
-                </Host>
-      </Modal>
+                 />
+                 )
+            }
+            )}
+            </>
+          </ScrollView>
+        </View>
+      </Host>
+      <>
       <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
-    </GestureHandlerRootView>
+</>
+          </Modal>
+    
   );
 };
 

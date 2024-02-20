@@ -1,8 +1,8 @@
+import FeedScreen from '@components/profile/profile-body/profile-posts/post-flashlist/Feed';
 import { BottomTabEventProvider } from '@context/bottom-tab-nav/BottomTabEventProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import CreatePost from '../components/createPost/createPost';
-import { Home } from '../components/home/Home';
 import { Notifications } from '../components/notifications/Notifications';
 import { Profile } from '../components/profile/Profile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
@@ -21,7 +21,7 @@ export const HomeStack: React.FC = ({ navigation }) => {
 				}}>
 				<HomeStackNav.Screen
 					name='home'
-					component={Home}
+					component={FeedScreen}
 				/>
 				<HomeStackNav.Screen
 					name='post'
