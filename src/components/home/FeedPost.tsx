@@ -194,9 +194,10 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 													backgroundColor: 'grey',
 												}}>
 												<Video
-													key={`{profileUsername}_${postID}-video`}
+													key={`${profileUsername}_${postID}-video`}
 													source={{ uri: postMedia }}
 													rate={1.0}
+													// transition={300}
 													volume={1.0}
 													isMuted={false}
 													style={{
@@ -233,7 +234,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 										<Image
 											key={`${profileUsername}_${postID}-image`}
 											placeholder={BLUR_HASH}
-											transition={300}
+											// transition={300}
 											style={{
 												width: Dimensions.get('window')
 													.width,

@@ -36,7 +36,6 @@ export interface UsePostLifecycleReturnType {
 
 
 export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: UsePostLifecycleProps): UsePostLifecycleReturnType => {
-    
     // data
     const [caption, setCaption] = useState<string>('');
     const [likesCount, setLikesCount] = useState<number | undefined>();

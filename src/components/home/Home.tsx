@@ -56,10 +56,6 @@ export const Home: React.FC = () => {
 		onHomeTabPressWhenFocused(onTabPressCb);
 	}, []);
 
-	useEffect(() => {
-		console.log('currentScrollIndex', currentScrollIndex);
-	}, [currentScrollIndex]);
-
 
 	// fetch all friends post metadata
 	const fetchFriendsPosts = async () => {

@@ -4,10 +4,9 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { TouchableHighlight } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { FeedPost } from '../../../home/FeedPost';
 import { ProfilePost } from '../../ProfilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
-import PostPreviewModal from './modals/PostPreviewModal';
+import { PostPreviewModal } from './modals/PostPreviewModal';
 
 
 
@@ -19,7 +18,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 }) => {
     const route = useRoute();
     const navigation = useNavigation();
-
     const { username: myUsername } = useMyUserInfo();
 
     const [previewModalVisible, setPreviewModalVisible] = useState<boolean>(false);
@@ -38,7 +36,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     };
 
     const onCheckLinkPost = useCallback((linkPostID: number) => {
-        console.log('onCheckLinkPost', linkPostID);
 
         const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
         console.log('index', index);
@@ -76,17 +73,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         setIndex(undefined);
     };
 
-    const onChangePost = (direction: 'prev' | 'next') => {
-        if (index === undefined || posts.length === 0) return; // Ensure posts and index exist
-
-        let newIndex = index + (direction === 'prev' ? -1 : 1);
-        if (newIndex < 0) newIndex = posts.length - 1;
-        if (newIndex >= posts.length) newIndex = 0;
-
-        setIndex(newIndex);
-        setPostPreview(posts[newIndex]);
-    };
-
     return (
         <>
             {posts.map((post, index) => (
@@ -115,26 +101,14 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 </TouchableHighlight>
             ))}
             <PostPreviewModal
+                posts={posts}
                 isVisible={previewModalVisible}
                 onClosePress={onClosePreviewPress}
-                onChangePost={onChangePost}
-                post={ postPreview}
                 index={index || 0} // Provide a default value for index
                 isMyProfile={isMyProfile}
                 myUsername={myUsername!}
-            >
+            />
 
-                <FeedPost
-                    index={index || 0}
-                    loadMedia={true}
-                    filename={postPreview?.filename}
-                    profileUsername={postPreview?.metadata.user}
-                    postID={`${postPreview?.metadata.timestamp}`}
-                    postData={postPreview?.metadata}
-                    myUsername={myUsername!}
-                    pauseVideo={false}
-                />
-            </PostPreviewModal>
         </>
     );
 };

@@ -2,7 +2,7 @@ import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import * as Haptics from 'expo-haptics';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import {
   Directions,
@@ -11,42 +11,67 @@ import {
   GestureHandlerRootView
 } from 'react-native-gesture-handler';
 import { Host } from 'react-native-portalize';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated';
+import { runOnJS } from 'react-native-reanimated';
+import { FeedPost } from '../../../../home/FeedPost';
 import { Modal } from '../../../../primitives/action-modal/ActionModal';
 import { DeletePostModal } from './DeletePostModal';
+
+
+// // 1. Define the handler
+// function usePageScrollHandler(handlers, dependencies) {
+//   const { context, doDependenciesDiffer } = useHandler(handlers, dependencies);
+//   const subscribeForEvents = ['onPageScroll'];
+
+//   return useEvent(
+//     (event) => {
+//       'worklet';
+//       const { onPageScroll } = handlers;
+//       if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
+//         onPageScroll(event, context);
+//       }
+//     },
+//     subscribeForEvents,
+//     doDependenciesDiffer
+//   );
+// }
+
+// // 2. Attach the event handler
+// const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
+
+// const pageScrollHandler = usePageScrollHandler({
+//   onPageScroll: (e) => {
+//     'worklet';
+//     offset.value = e.offset;
+//     console.log(e.offset, e.position);
+//   },
+// });
+
+// <AnimatedPagerView onPageScroll={pageScrollHandler} />;
+
 export interface PostPreviewModalProps {
+  posts: Post[];
   isVisible: boolean;
   index: number;
-  post: Post;
   isMyProfile: boolean;
   myUsername: string;
-  onChangePost: (direction: 'prev' | 'next') => void;
   onClosePress: (close: boolean) => void;
-  children: React.ReactNode;
 }
 
- const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
+export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
+  posts,
   isVisible,
-  post,
-  myUsername,
   isMyProfile,
-  index,
+  index: initialIndex,
+  myUsername,
   onClosePress,
-   onChangePost,
-  children,
 }) => {
-  if (!post) return null;
+  if (posts === null || initialIndex < 0) return null;
+  
+  if (initialIndex >= posts?.length) return null;
 
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { theme } = useThemeContext();
-
-  const postId = `${post?.metadata?.timestamp}`;
-  const profileUsername = post?.metadata?.user;
-  const postData = post?.metadata;
+  const [index, setIndex] = useState<number>(initialIndex);
 
   const onDeletePressCb = async () => {
     setDeleteModalVisible(true);
@@ -59,39 +84,42 @@ export interface PostPreviewModalProps {
     }
   };
 
-  const translateY = useSharedValue(0);
+  // const translateY = useSharedValue(0); 
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-    };
-  });
+  // const animatedStyle = useAnimatedStyle(() => {
+  //   return {
+  //     transform: [{ translateY: translateY.value }],
+  //   };
+  // });
 
-  useEffect(() => {
-    translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
-  }, [post, translateY]);
+  // useEffect(() => {
+  //   translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
+  // }, [ translateY]);
 
-  const onChangePostWrapper = (direction) => {
-    onChangePost(direction);
-  };
+  const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
+    if (direction === 'prev') {
+      if (index === 0) {
+        onClosePress(false);
+      } else {
+        setIndex(index - 1);
+      }
+    }
+    if (direction === 'next') {
+      if (index === posts.length - 1) {
+        onClosePress(false);
+      } else {
+        setIndex(index + 1);
+      }
+    }
+  }, [onClosePress, posts]);
 
   const flingUp = Gesture.Fling()
     .direction(Directions.UP)
-    .onStart(() => {
-      // translateY.value = withSpring(-500, { damping: 20, stiffness: 100 });
-    onChangePostWrapper('next')
-      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-    })
-
+    .onStart(() => { runOnJS(onChangePostWrapper)('next', index) })
 
   const flingDown = Gesture.Fling()
     .direction(Directions.DOWN)
-    .onStart(() => {
-      // translateY.value = withSpring(500, { damping: 20, stiffness: 100 });
-      onChangePostWrapper('prev');
-      // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    })
+    .onStart(() => runOnJS(onChangePostWrapper)('prev', index))
   
 
   useEffect(() => {
@@ -100,17 +128,19 @@ export interface PostPreviewModalProps {
 
   const allFlings = Gesture.Exclusive(flingUp, flingDown);
 
+
+
   return (
     <GestureHandlerRootView>
-      <Modal isVisible={isVisible} hasBackdrop onBackdropPress={() => onClosePress(false)}>
+      <Modal isVisible={isVisible}  hasBackdrop onBackdropPress={() => onClosePress(false)}>
         <View
           style={{
-            position: 'absolute',
-            width: 50,
-            height: 50,
-            right: 0,
-            top: '10%',
-            marginRight: -30,
+            // position: 'absolute',
+            // width: 50,
+            // height: 50,
+            // right: 0,
+            // top: '10%',
+            // marginRight: -30,
             zIndex: 100,
           }}>
           <TouchableOpacity onPress={() => onClosePress(false)}>
@@ -120,12 +150,12 @@ export interface PostPreviewModalProps {
         {isMyProfile && (
           <View
             style={{
-              position: 'absolute',
-              width: 50,
-              height: 50,
-              right: 0,
-              top: '20%',
-              marginRight: -30,
+              // position: 'absolute',
+              // width: 50,
+              // height: 50,
+              // right: 0,
+              // top: '20%',
+              // marginRight: -30,
               zIndex: 100,
             }}>
             <TouchableOpacity onLongPress={onDeletePressCb}>
@@ -133,34 +163,24 @@ export interface PostPreviewModalProps {
             </TouchableOpacity>
           </View>
         )}
-        <Modal.Container containerStyle={{ backgroundColor: theme.innerContainer.backgroundColor, width: '100%', height: '100%' }}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <GestureDetector gesture={allFlings}>
-              <Animated.View>
                 <Host>
-                  {children}
-              </Host>
-              </Animated.View>
+          <GestureDetector gesture={allFlings}>
+                  <FeedPost
+                    key={`${posts[index].filename}-post-preview`}
+                    filename={posts[index].filename}
+                    index={index}
+                    loadMedia={true}
+                    pauseVideo={false}
+                    profileUsername={posts[index].metadata.user}
+                    postID={`${posts[index].metadata.timestamp}`}
+                    postData={posts[index].metadata}
+                    myUsername={myUsername}
+              />
           </GestureDetector>
-          </View>
-        </Modal.Container>
+                </Host>
       </Modal>
-      <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={postId} />
+      <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
     </GestureHandlerRootView>
   );
 };
 
-
-// Wrap your component with React.memo and define the comparison function
-const MemoizedPostPreviewModal = React.memo(PostPreviewModal, (prevProps, nextProps) => {
-  return (
-    prevProps.isVisible === nextProps.isVisible &&
-    prevProps.index === nextProps.index &&
-    prevProps.isMyProfile === nextProps.isMyProfile &&
-    prevProps.myUsername === nextProps.myUsername &&
-    prevProps.onChangePost === nextProps.onChangePost &&
-    prevProps.onClosePress === nextProps.onClosePress
-  );
-});
-
-export default MemoizedPostPreviewModal;
