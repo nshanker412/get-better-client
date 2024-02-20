@@ -1,11 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, FlatList, ListRenderItem, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { PostTile } from './PostTile'
+
 
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo'
 import { Post } from '@models/posts'
+import { useScrollToTop } from '@react-navigation/native'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { ViewToken } from 'react-native'
+import { RefreshControl } from 'react-native-gesture-handler'
 import { getFeed } from './service/getFeed'
+
+
 
 // interface PostTileRef {
 //     play: () => void;
@@ -22,24 +28,20 @@ import { getFeed } from './service/getFeed'
  * to display/control the posts.
  */
 export default function FeedScreen() {
-    const [posts, setPosts] = useState<Post[] | []> ([])
+    const [posts, setPosts] = useState<Post[] | []>([])
+    const [refreshing, setRefreshing] = useState(false)
     const mediaRefs = useRef([]);
-    const {username: myUsername} = useMyUserInfo()
+    const { username: myUsername } = useMyUserInfo()
+    const feedRef = useRef(null)
+   
+    useScrollToTop(feedRef);
 
-    useEffect(() => {
-        console.log('fetching feed')
-        // if (false) {
-        //     getUserPosts(myUsername).then(setPosts)
-        // } else {
-        
-            getFeed(myUsername).then(setPosts)
-        // }
+    useEffect(() => {        
+        const fetchFeed = async () => {
+            await getFeed(myUsername).then(setPosts)
+        }
+        fetchFeed()
     }, [])
-
-    useEffect(() => {
-        console.log('FEED POSTS LENGEH', posts.length   )
-    }, [posts])
-
 
     /**
      * Called any time a new post is shown when a user scrolls
@@ -50,29 +52,18 @@ export default function FeedScreen() {
         changed.forEach(({ item, isViewable }) => {
 
             const cell = mediaRefs.current[item.filename];
-            if (cell) {
+            if (cell ) {
                 if (isViewable) {
-                    cell.play();
+                    cell?.play();
                 } else {
-                    cell.stop();
+                    cell?.stop();
                 }
             }
         });
     }, []);
 
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
-
-
     const feedItemHeight = Dimensions.get('window').height;
-
-    // const renderItem: ListRenderItem<Post> = ({ item }) => {
-    //     return (
-    //         <View style={{ height: feedItemHeight, backgroundColor: 'black' }}>
-    //             <PostTile post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
-    //             />
-    //         </View>
-    //     );
-    // };
 
 
     const renderItem: ListRenderItem<Post> = ({ item }) => {
@@ -84,22 +75,39 @@ export default function FeedScreen() {
         );
     };
 
+    const onRefreshCallback = async () => {   
+        setRefreshing(true);
+         await getFeed(myUsername).then(setPosts)
+        setRefreshing(false);
+    }
+
     return (
         <View style={{ flex: 1 }}>
-            <FlatList
+            <FlashList
+                id='home-feed-flash-list'
+                ref={feedRef}
                 data={posts}
-                windowSize={4}
-                initialNumToRender={1}
-                maxToRenderPerBatch={2}
+                estimatedItemSize={feedItemHeight}
+                showsVerticalScrollIndicator={false}
                 removeClippedSubviews
                 viewabilityConfig={{
                     itemVisiblePercentThreshold: 0
                 }}
                 renderItem={renderItem}
                 pagingEnabled
+                scrollEventThrottle={50}
+                snapToAlignment='start'
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefreshCallback}
+                        colors={['white']}
+                        tintColor={'white'}
+                    />
+                }  
             />
         </View>
     )

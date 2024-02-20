@@ -49,14 +49,18 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
         if (localRef.current == null) {
             return;
         }
+        if (post.metadata.type === 'image') {
+
+            return;
+        }
 
         // if video is already playing return
-        const status = await localRef.current.getStatusAsync();
+        const status = await localRef.current?.getStatusAsync();
         if (status?.isPlaying) {
             return;
         }
         try {
-            await localRef.current.playAsync();
+            await localRef.current?.playAsync();
         } catch (e) {
             console.log(e)
         }
@@ -73,14 +77,18 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
         if (localRef.current == null) {
             return;
         }
+        if (post.metadata.type === 'image') {
+            
+            return;
+        }
 
         // if video is already stopped return
-        const status = await localRef.current.getStatusAsync();
+        const status = await localRef.current?.getStatusAsync();
         if (!status?.isPlaying) {
             return;
         }
         try {
-            await localRef.current.stopAsync();
+            await localRef.current?.stopAsync();
         } catch (e) {
             console.log(e)
         }
@@ -100,50 +108,67 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
         if (localRef.current == null) {
             return;
         }
+        if (post.metadata.type === 'image') {
+            
+            return;
+        }
 
         // if video is already stopped return
         try {
-            await localRef.current.unloadAsync();
+            await localRef.current?.unloadAsync();
         } catch (e) {
             console.log(e)
         }
     }
 
-    const postUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
 
-
-    if (post.metadata.type === 'image') {
-        return (
-            <>
-                <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername } />
-                <Image
-                    ref={localRef}
-                    style={{flex: 1}}
-                    // posterSource={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-                    // posterStyle={{ resizeMode: 'cover', height: '100%' }}
-                    source={{
-                        uri: postUri
-                    }} />
-            </>
-        )
+    const onError = (error) => {
+        if (post.metadata.type === 'image') {
+            console.log('Image error: ', error)
+            return;
+        } else {
+            console.log('Video error: ', error)
+            return 
+        }
     }
+
+
+
+
+
+
+    const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
+    const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
 
 
     return (
         <>
-            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername } />
-            <Video
+            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} />
+            
+            
+            {post.metadata.type ===  'video' && (<Video
                 ref={localRef}
                 style={{flex: 1}}
-                resizeMode={ResizeMode.CONTAIN}
+                resizeMode={ResizeMode.COVER}
                 shouldPlay={false}
                 isLooping
                 // usePoster
                 // posterSource={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
                 posterStyle={{ resizeMode: 'cover', height: '100%' }}
                 source={{
-                    uri: postUri
+                    uri: videoUri
                 }} />
+            )}
+            {post.metadata.type ==='image' && (<Image
+                ref={localRef}
+                recyclingKey={post.filename}
+                style={{ flex: 1 }}
+                onError={onError}
+                source={{
+                    uri: imageUri
+                }}/>
+            )}
+        
         </>
     )
 })

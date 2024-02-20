@@ -57,7 +57,8 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
       </View>
 
       <View style={styles.leftContainer}>
-            <ConnectedProfileAvatar
+        <ConnectedProfileAvatar
+          key={`${user}-avatar`}
                 username={user}
                 size={50}
             />
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
         zIndex: 999,
         bottom: 0,
         paddingLeft: 20,
-        paddingBottom: 20,
+        paddingBottom: 80,
         paddingRight: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
