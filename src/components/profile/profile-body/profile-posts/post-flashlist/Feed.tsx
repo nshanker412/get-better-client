@@ -93,7 +93,7 @@ export default function FeedScreen() {
                 <>
                     
                     <Header />
-                    <View style={{position:"absolute", right:15, top:50, alignItems:"flex-end", justifyContent:"center"}}>
+                    <View style={{position:"absolute", right:15, top:56, alignItems:"flex-end", justifyContent:"center", zIndex: 1}}>
                         <ConnectedNotificationsBell />
                     </View>
                 </>

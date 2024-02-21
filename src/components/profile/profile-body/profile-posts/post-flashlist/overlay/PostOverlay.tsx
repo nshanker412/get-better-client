@@ -3,18 +3,22 @@ import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProfileAvatar";
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
+import { fonts } from '@context/theme/fonts';
 import { PostMetadata } from "@models/posts";
+import { Link } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import throttle from 'lodash/throttle';
 import React, { useCallback, useRef, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
+import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
 
 interface PostOverlayProps {
-    user: string;
-    postData: PostMetadata;
+  user: string;
+  postData: PostMetadata;
   myUsername: string;
   onToggleVideoState: () => void;
     }
@@ -35,8 +39,6 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   });
 
   const doubleTapRef = useRef(null);
-
-
   const { openDrawer} = useCommentDrawer();
      
 
@@ -85,34 +87,56 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       numberOfTaps={1}
        waitFor={doubleTapRef}
       >
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.displayName}>{user}</Text>
-        <Text style={styles.description}>{postData.caption}</Text>
-      </View>
+  
+      <View
+					style={{
+            height: Dimensions.get('window').height,
+            // width: Dimensions.get('window').width,
+            zIndex: 1,
+            position: 'absolute',
+					}}>
+					<View style={styles.postHeader}>
+						<ConnectedProfileAvatar
+							key={postData.user}
+							username={postData.user}
+							fetchSize={300}
+							size={40}
+						/>
+						<View style={styles.postHeaderInfoContainer}>
+							<Link
+								to={{
+									screen: 'profile',
+									params: { profileUsername: postData.user },
+								}}>
+								<Text style={styles.username}>
+									{postData.user}
+								</Text>
+							</Link>
+							<Text style={styles.timestamp}>
+								{timeAgo(postData.timestamp)}
+							</Text>
+						</View>
+          </View>
+          <BlurView
+        intensity={50}
+        blurReductionFactor={0.5}
+        style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
+        tint='dark'
+          />
+       <View style={{flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, }}>   
+   
+        <StarIconView 
+            likes={currentLikeState.counter}
+            isLiked={currentLikeState.state}
+            onLikePress={() => handleUpdateLike(currentLikeState)}
+          />
+          <CommentIcon
+            commentCount={postData?.comments?.length ?? 0}
+            openCommentDrawer={openDrawer} />
 
-          <View style={styles.leftContainer}>
-            
-        <ConnectedProfileAvatar
-              key={`${user}-avatar`}
-              username={user}
-              size={40}
-              fetchSize={300}
-            />
-
-      <StarIconView 
-          likes={currentLikeState.counter}
-          isLiked={currentLikeState.state}
-          onLikePress={() => handleUpdateLike(currentLikeState)}
-        />
-        <CommentIcon
-          commentCount={postData?.comments?.length ?? 0}
-          openCommentDrawer={openDrawer} />
-
-        
+        </View>
           
       </View>
-        </View>
       </TapGestureHandler>
     </TapGestureHandler>
   );
@@ -124,7 +148,8 @@ PostOverlay.displayName = 'PostOverlay';
 
 const styles = StyleSheet.create({
   postHeader: {
-    // ...theme.text.header,
+
+    // height: 50,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -137,6 +162,18 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 1,
     gap: 10,
+  },
+
+  postHeaderInfoContainer: {
+    // backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    // borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    // justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    marginLeft: -5,
+    paddingTop: 2,
+    paddingBottom: 2,
   },
   container: {
       height: Dimensions.get('window').height,  
@@ -179,14 +216,49 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         marginTop: 4
-    }
+  },
+  username: {
+    color: 'white',
+    fontFamily: fonts.inter.bold,
+    fontSize: 16,
+    // fontWeight: '700',
+    textAlign: 'left',
+    backgroundColor: 'transparent',
+    textShadowColor:'rgba(0, 0, 0, 0.55)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 2
+  },
+  timestamp: {
+    // fontFamily: theme.text.body.medium.fontFamily,
+    fontFamily: fonts.inter.medium,
+    fontSize: 11,
+    // color: 	'#9A9A9A',
+    textShadowColor: 'rgba(0, 0, 0, 0.55)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 2,
+    color: 'white',
+    // opacity: 0.9,
+
+    textAlign: 'left',
+    // fontWeight: '400',
+  },
 })
 
-
-
-
-
 const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => void; }> = ({ commentCount, openCommentDrawer }) => {
+
+  const styles = StyleSheet.create({
+    iconShadow: {
+      shadowColor: '#000000',
+      shadowOffset: { width: -3, height: 3 },
+      shadowOpacity: 0.65,
+      shadowRadius: 3,
+    },
+    actionButtonText: {
+      color: 'white',
+      textAlign: 'center',
+      marginTop: 4
+},
+  });
   return (
     <TouchableOpacity
       onPress={() => {
@@ -194,7 +266,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
         openCommentDrawer();
       }}>
       <SvgXml
-        // style={feedPostStyles.iconStyle} // Uncomment and use if you have specific styles
+        style={styles.iconShadow}
         width={40}
         height={40}
         xml={CI}
@@ -207,17 +279,38 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
 };
 
 const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () => void; }> = ({ likes, isLiked, onLikePress }) => {
+  
+  
+  const styles = StyleSheet.create({
+    iconShadow: {
+      shadowColor: '#000000',
+      shadowOffset: { width: -3, height: 3 },
+      shadowOpacity: 0.65,
+      shadowRadius: 3,
+    },
+    actionButtonText: {
+      color: 'white',
+      textAlign: 'center',
+      marginTop: 4
+},
+  });
+  
   return (
     <TouchableOpacity
       onPress={onLikePress}>
+  
       <SvgXml
+          style={styles.iconShadow}
+
         width={40}
         height={40}
         xml={isLiked ? StarIconFilled : StarIcon}
-      />
+        />
+    
+
       <Text style={styles.actionButtonText}>
         {likes}
-      </Text>
+        </Text>
     </TouchableOpacity>
   );
 };

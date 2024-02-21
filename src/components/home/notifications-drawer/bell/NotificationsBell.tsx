@@ -1,9 +1,10 @@
 // import { BellIconAlert } from '@assets/darkSvg/BellIconAlert.js';
+import { BlurView } from 'expo-blur';
 import React from 'react';
+import { View } from 'react-native';
 import { Circle, Path, Svg, Text as SvgText } from 'react-native-svg';
 import { LoadingSpinner } from '../../../loading-spinner/LoadingSpinner';
 import { NotificationsBellProps } from '../NotificationsDrawer.types';
-
 
 /**
  * SVG icon for the notifications bell
@@ -75,10 +76,24 @@ export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum,
 	}
 
 	return (
+		<View style={{ zIndex: 1, shadowColor:"#000", shadowOffset: {width: -2, height: 2}, shadowRadius: 2, shadowOpacity: 0.65 }}>
+		<BlurView
+			tint='dark'
+			intensity={80}
+			style={{
+				position: 'absolute',
+				right: 15,
+				top: 56,
+				alignItems: 'flex-end',
+				justifyContent: 'center',
+				zIndex: 1,
+			}}/>
+		
 		<BellIconAlert
 			number={unreadNum}
 			height={35}
 			width={38}
 			/>
-	);
+</View>
+				);
 };

@@ -9,8 +9,8 @@ export const useProfileAvatarStyles = () => {
 		container: {
 			backgroundColor: theme.grayShades.gray600,
 			shadowColor: '#000000',
-			shadowOffset: { width: 2, height: 4 },
-			shadowOpacity: 0.3,
+			shadowOffset: { width: -2, height: 4 },
+			shadowOpacity: 0.5,
 			shadowRadius: 4,
 		},
 		avatar: {
