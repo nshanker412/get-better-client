@@ -9,6 +9,7 @@ import { PostIcon } from '@assets/darkSvg/PostIcon.js';
 import { ProfileIcon } from '@assets/darkSvg/ProfileIcon.js';
 import { RankingIcon } from '@assets/darkSvg/RankingIcon.js';
 import { SearchIcon } from '@assets/darkSvg/SearchIcon.js';
+import { CommentDrawerProvider } from '@context/comment-drawer/CommentDrawerContext';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
@@ -84,6 +85,7 @@ export function MainScreen() {
 	const tabBarStyles = useFooterStyles();
 
 	return (
+		<CommentDrawerProvider>
 		<Tab.Navigator
 			id='bottom-tab-navigator'
 			initialRouteName='hometab'
@@ -126,6 +128,7 @@ export function MainScreen() {
 				options={{ tabBarIcon: ProfileTabIcon }}
 			/>
 		</Tab.Navigator>
+		</CommentDrawerProvider>
 	);
 }
 

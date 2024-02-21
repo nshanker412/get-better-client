@@ -1,15 +1,13 @@
+import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
-import { useNotifications } from '@context/notifications/useNotifications';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import React, {
-	forwardRef,
 	useCallback,
-	useImperativeHandle,
+	useEffect,
 	useRef,
-	useState,
+	useState
 } from 'react';
 import {
 	StyleSheet,
@@ -21,50 +19,71 @@ import {
 import { Modalize } from 'react-native-modalize';
 import { PostCommentDrawer } from './PostCommentDrawer';
 import { usePostCommentDrawerStyles } from './PostCommentDrawer.styles';
-import {
-	CommentDrawerRef,
-	ConnectedPostCommentDrawerProps,
-} from './PostCommentDrawer.types';
-import { useComments } from './hooks/useComments';
 
-export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
-	ConnectedPostCommentDrawerProps & React.RefAttributes<CommentDrawerRef>
-> = forwardRef<CommentDrawerRef, ConnectedPostCommentDrawerProps>(
-	({ postID, profileUsername }, ref) => {
-		const [currentComment, setCurrentComment] = useState<string>('');
-		const [writingComment, setWritingComment] = useState<boolean>(false);
-		
-		const { loadingAddComment, loadingFetchComments, comments, addComment } = useComments(postID, profileUsername);
-		const {sendOutPushNotification} = useNotifications();
+export const ConnectedPostCommentDrawer: React.FC = () => {
+	const [currentComment, setCurrentComment] = useState<string>('');
+	const [writingComment, setWritingComment] = useState<boolean>(false);
+	const modalizeRef = useRef<Modalize>(null);
+		const {
+			loading,
+			isOpen,
+			comments,
+			addComment,
+			closeDrawer,
+	} = useCommentDrawer();
+
+		// const {sendOutPushNotification} = useNotifications();
 		const { username: myUsername } = useMyUserInfo();
-		const postCommentDrawerStyles = usePostCommentDrawerStyles();
-		const modalizeRef = useRef(null);
+	const postCommentDrawerStyles = usePostCommentDrawerStyles();
+	
+	const [submittingComment, setSubmittingComment] = useState(false);
+
+	
+	useEffect(() => {
+		if(isOpen){
+			modalizeRef.current?.open();
+		} else {
+			modalizeRef.current?.close();
+		
+		}
+	}, [isOpen]);
 
 
-		useImperativeHandle(
-			ref,
-			() => ({
-				openModal: () => {
-					modalizeRef.current?.open();
-				},
-				closeModal: () => {
-					modalizeRef.current?.close();
-				},
-			}),
-			[],
-		);
+	useEffect(() => {
+		return () => {
+			modalizeRef.current?.close();
+		}
+	}, []);
 
+
+
+		// useImperativeHandle(
+		// 	ref,
+		// 	() => ({
+		// 		openModal: () => {
+		// 			modalizeRef.current?.open();
+		// 		},
+		// 		closeModal: () => {
+		// 			modalizeRef.current?.close();
+		// 		},
+		// 	}),
+		// 	[],
+	// );
+	
+
+	
+	
 		const onFocusTextInput = useCallback(
 			(isFocused) => {
 				if (isFocused) {
 					setWritingComment(true);
 				} else {
-					if (!loadingAddComment && currentComment === '') {
+					if (!loading && currentComment === '') {
 						setWritingComment(false);
 					}
 				}
 			},
-			[loadingAddComment, currentComment],
+			[loading, currentComment],
 		);
 
 
@@ -74,41 +93,43 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 		 *  as non blocking operation
 		 */
 
-		const onAddComment = async () => {
-			// 1. Submit the comment
-			try {
-				await addComment(currentComment);
-			} catch (error) {
-				console.error('Comment post failed:', error);
-				throw new Error(error);
-			} finally {
-				setWritingComment(false);
-				setCurrentComment('');
-			}
+		// const onAddComment = async () => {
+		// 	// 1. Submit the comment
+		// 	try {
+		// 		await addComment(currentComment);
+		// 	} catch (error) {
+		// 		console.error('Comment post failed:', error);
+		// 		throw new Error(error);
+		// 	} finally {
+		// 		setWritingComment(false);
+		// 		setCurrentComment('');
+		// 	}
 
-			// 2. nonblocking Send out push notifications
-			try {
-				const pushNotifInfo: PushNotificationInfoPacket = {
-					title: `${myUsername} liked your post.`,
-					body: `check it out!`,
-					data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
-				};
+		// 	// 2. nonblocking Send out push notifications
+		// 	try {
+		// 		const pushNotifInfo: PushNotificationInfoPacket = {
+		// 			title: `${myUsername} liked your post.`,
+		// 			body: `check it out!`,
+		// 			data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
+		// 		};
 				
-				sendOutPushNotification(profileUsername, pushNotifInfo);
-			} catch (error) {
-				console.error('Notification send failed:', error);
-			}
+		// 		sendOutPushNotification(profileUsername, pushNotifInfo);
+		// 	} catch (error) {
+		// 		console.error('Notification send failed:', error);
+		// 	}
 
-		}
+		// }
 
 		const onSubmitComment = useCallback(async () => {
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
 			console.log('submitting comment: ', currentComment);
 			if (currentComment !== '') {
-				await onAddComment();
+				setSubmittingComment(true);
+				await addComment(currentComment);
+				setSubmittingComment(false);
 			}
-		}, [currentComment, onAddComment]);
+		}, [currentComment, addComment]);
 
 
 
@@ -118,6 +139,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 				snapPoint={600}
 				panGestureEnabled={true}
 				modalStyle={postCommentDrawerStyles.modalContent}
+				onClose={closeDrawer}
 				HeaderComponent={
 					<View style={postCommentDrawerStyles.headerContainer}>
 						<View
@@ -171,7 +193,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 									postCommentDrawerStyles.submitCommentButton
 								}
 								onPress={onSubmitComment}
-								disabled={loadingAddComment}>
+								disabled={submittingComment}>
 								<View
 									style={
 										postCommentDrawerStyles.submitCommentButtonInnerContainer
@@ -180,7 +202,7 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 										name='send'
 										size={20}
 										color={
-											loadingAddComment
+											loading
 												? 'grey'
 												: 'white'
 										}
@@ -192,13 +214,12 @@ export const ConnectedPostCommentDrawer: React.ForwardRefExoticComponent<
 					<>
 						<PostCommentDrawer
 							comments={comments}
-							commentsLoading={loadingFetchComments}
+							commentsLoading={loading}
 						/>
 					</>
 				</View>
 			</Modalize>
 		);
-	},
-);
+	};
 
 ConnectedPostCommentDrawer.displayName = 'ConnectedPostCommentDrawer';

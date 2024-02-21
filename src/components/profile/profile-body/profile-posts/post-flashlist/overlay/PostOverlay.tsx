@@ -1,4 +1,5 @@
 import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProfileAvatar";
+import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { Ionicons } from "@expo/vector-icons";
 import { PostMetadata } from "@models/posts";
 import React, { useMemo, useState } from "react";
@@ -27,6 +28,10 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
     counter: postData.likes.length,
   });
 
+
+  const { openDrawer} = useCommentDrawer();
+    
+ 
 
   /**
    * Handles the like button action.
@@ -80,7 +85,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
 
         <TouchableOpacity
                   style={styles.actionButton}
-                  onPress={() => { console.log('commentOpen') }}
+                  onPress={() => openDrawer()  }
         >
           <Ionicons
             color="white"

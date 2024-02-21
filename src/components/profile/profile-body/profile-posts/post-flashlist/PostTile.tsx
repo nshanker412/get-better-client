@@ -152,8 +152,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
                 resizeMode={ResizeMode.COVER}
                 shouldPlay={false}
                 isLooping
-                // usePoster
-                // posterSource={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
                 posterStyle={{ resizeMode: 'cover', height: '100%' }}
                 source={{
                     uri: videoUri

@@ -6,10 +6,9 @@ export interface ConnectedPostCommentDrawerProps {
 }
 
 
-
 export interface PostCommentDrawerProps {
 	commentsLoading: boolean;
-	comments: Comment[];
+	comments: Comment[] | [];
 }
 
 export interface CommentDrawerRef {

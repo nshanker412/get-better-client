@@ -79,7 +79,7 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 								</View>
 
 								<Text style={postCommentDrawerStyles.timestamp}>
-									{timeAgo(parseInt(item.timestamp, 10))}
+									{timeAgo(parseInt(`{${item.timestamp}`, 10))}
 								</Text>
 							</View>
 							<View style={{ alignItems: 'flex-start' }}>

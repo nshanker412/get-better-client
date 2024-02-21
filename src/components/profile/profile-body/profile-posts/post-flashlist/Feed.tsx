@@ -3,15 +3,16 @@ import { Dimensions, View } from 'react-native'
 import { PostTile } from './PostTile'
 
 
+import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext'
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo'
 import { Post } from '@models/posts'
 import { useScrollToTop } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import * as Haptics from 'expo-haptics'
 import { ViewToken } from 'react-native'
 import { RefreshControl } from 'react-native-gesture-handler'
+import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
 import { getFeed } from './service/getFeed'
-
-
 
 // interface PostTileRef {
 //     play: () => void;
@@ -33,6 +34,9 @@ export default function FeedScreen() {
     const mediaRefs = useRef([]);
     const { username: myUsername } = useMyUserInfo()
     const feedRef = useRef(null)
+
+    const {onPostChange} = useCommentDrawer()
+
    
     useScrollToTop(feedRef);
 
@@ -50,17 +54,17 @@ export default function FeedScreen() {
      */
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
-
             const cell = mediaRefs.current[item.filename];
             if (cell ) {
                 if (isViewable) {
+                    onPostChange(item?.filename)
                     cell?.play();
                 } else {
                     cell?.stop();
                 }
             }
         });
-    }, []);
+    }, [onPostChange]);
 
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
     const feedItemHeight = Dimensions.get('window').height;
@@ -100,6 +104,11 @@ export default function FeedScreen() {
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
+                onMomentumScrollEnd={() => {
+                    Haptics.impactAsync(
+                        Haptics.ImpactFeedbackStyle.Medium,
+                    );
+                }}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -109,6 +118,8 @@ export default function FeedScreen() {
                     />
                 }  
             />
-        </View>
+
+            <ConnectedPostCommentDrawer/>
+            </View>
     )
 }
