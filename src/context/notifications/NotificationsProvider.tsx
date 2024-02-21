@@ -1,7 +1,7 @@
 import { NotificationsResponseV2 } from '@models/notifications';
 import { useNavigation } from '@react-navigation/native';
 import * as ExpoNotifications from 'expo-notifications';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { NotificationContext, NotificationTokenApiResponse, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
 import { NotificationsContext } from './NotificationsContext';
 import { fetchNotifications } from './utils/fetchNotifications';
@@ -36,6 +36,9 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const [initialized, setInitialized] = useState<boolean>(false)
     const [permissions, setPermissions] = useState<boolean>(false);
     const [notificationsResponse, setNotificationsResponse] = useState<NotificationsResponseV2| null>(null);
+    const [unreadNum, setUnreadNum] = useState<number | undefined>(undefined);
+    const [notifications, setNotifications] = useState<Notification[] | []>([])
+    const [lastReadTime, setLastReadTime] = useState<number | undefined>(undefined);
 
     /** EXPO  */
     const notificationListener = useRef<ExpoNotifications.Subscription>(null);
@@ -68,14 +71,20 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
 
     useEffect(() => {
-        console.log('myUsername', _myUsername);
         if (_myUsername) {
-            console.log('INSDE myUsername', _myUsername);
-
+            console.log('INSDE myUsername notifications', _myUsername);
             configureMyNotifications(_myUsername);
         }
-
     }, [_myUsername]);
+
+
+    useEffect(() => {
+        if (notificationsResponse) {
+            setUnreadNum(notificationsResponse.unreadNum);
+            setNotifications(notificationsResponse.notifications);
+            setLastReadTime(notificationsResponse.lastReadTime);
+        }
+    }, [notificationsResponse]);
 
 
     /**
@@ -158,6 +167,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             try {
                 // (GB) Set notifications seen
                 await _setNotificationsSeen(myUsername)
+                await refreshNotifications();
             } catch (e) {
                 console.log('Error setting notifications seen', e);
                 throw new Error('Failed to set notifications seen');
@@ -204,8 +214,6 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
      * @returns
      */
     const sendOutPushNotification = async (recipient: string, pushPacket: PushNotificationInfoPacket) => {
-
-
         if (!recipient) {
             console.log('No recipient, not sending push notification!');
             return;
@@ -258,18 +266,20 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         })
     }
 
-    const contextValue: NotificationContext = {
-        initialized,
-        permissionsGranted: permissions,
-        unreadNum: notificationsResponse?.unreadNum,
-        lastReadTime: notificationsResponse?.lastReadTime,
-        notifications: notificationsResponse?.notifications,
-        configureMyNotifications,
-        setNotificationsSeen,
-        refreshNotifications,
-        removePushToken,
-        sendOutPushNotification,
-	};
+    const contextValue: NotificationContext = useMemo(() => {
+        return {
+            initialized,
+            permissionsGranted: permissions,
+            unreadNum: unreadNum,
+            lastReadTime: lastReadTime,
+            notifications: notifications,
+            configureMyNotifications,
+            setNotificationsSeen,
+            refreshNotifications,
+            removePushToken,
+            sendOutPushNotification,
+	}
+    }, [initialized, permissions, unreadNum, lastReadTime, notifications, myUsername]);
 
 
 	return (

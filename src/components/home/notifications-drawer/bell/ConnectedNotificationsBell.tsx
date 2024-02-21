@@ -32,7 +32,7 @@ export const ConnectedNotificationsBell: React.FC = () => {
         if (initialized) {
             console.log('notifications changed', unreadNum, lastReadTime);
         }
-    }   , [unreadNum, lastReadTime, initialized]);
+    }, [unreadNum, lastReadTime, initialized]);
 
     return (
         <TouchableOpacity onPress={onPressNotification} 

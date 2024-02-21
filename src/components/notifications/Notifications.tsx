@@ -242,14 +242,16 @@ export const Notifications = () => {
     }
 
 	const Divider = () => {
-		return (
+        return (
+            <View style={{padding: 5}} >
 			<View style={{
-				width: "80%",
+				width: "90%",
 				alignSelf: "center",
 				backgroundColor: theme.div.color,
 				opacity: theme.div.opacity,
 				height: StyleSheet.hairlineWidth,
 			}} />
+            </View>
 		);
 	  };
 
@@ -275,13 +277,14 @@ export const Notifications = () => {
                 <FlashList
                     data={notifications ??  []}
                     ListEmptyComponent={CommentLoadingShimmer }
-                    renderItem={renderItem}
+                        renderItem={renderItem}
+                        
                     
                     ItemSeparatorComponent={Divider}
                     keyExtractor={(item, index) => `notification-${index}`}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[theme.textColorPrimary]} tintColor={theme.textColorPrimary} />}
                     estimatedItemSize={100}
-                    contentContainerStyle={notificationStyles.notificationsScroll}
+                    // contentContainerStyle={notificationStyles.notificationsScroll}
                     />
                     </View>
             </View>

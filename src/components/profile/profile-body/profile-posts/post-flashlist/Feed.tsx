@@ -5,6 +5,7 @@ import { PostTile } from './PostTile'
 
 import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext'
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo'
+import { useNotifications } from '@context/notifications/useNotifications'
 import { Post } from '@models/posts'
 import { useScrollToTop } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
@@ -16,6 +17,7 @@ import { Header } from '../../../../header/Header'
 import { ConnectedNotificationsBell } from '../../../../home/notifications-drawer/bell/ConnectedNotificationsBell'
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
 import { getFeed } from './service/getFeed'
+
 // interface PostTileRef {
 //     play: () => void;
 //     stop: () => void;
@@ -37,6 +39,7 @@ export default function FeedScreen() {
     const { username: myUsername } = useMyUserInfo()
     const feedRef = useRef(null)
     const currentPostFilenameRef = useRef<string>('')
+    const {refreshNotifications } = useNotifications()
 
     const {onPostChange} = useCommentDrawer()
 
@@ -82,7 +85,8 @@ export default function FeedScreen() {
 
     const onRefreshCallback = async () => {   
         setRefreshing(true);
-         await getFeed(myUsername).then(setPosts)
+        await getFeed(myUsername).then(setPosts)
+        refreshNotifications(myUsername)
         setRefreshing(false);
     }
 

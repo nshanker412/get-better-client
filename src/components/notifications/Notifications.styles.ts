@@ -74,6 +74,7 @@ export const useNotificationsStyles = () => {
 			width: '100%',
 			display: 'flex',
 			padding: 10,
+			paddingLeft: 20,
 			// borderBottomColor: theme.borderColor,
 			// borderBottomWidth: 1,
 			flexDirection: 'row',
