@@ -59,7 +59,6 @@ export default function FeedScreen() {
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
             if (isViewable) {
-                onPostChange(item.filename);
                 console.log('currentPostFilenameRef', currentPostFilenameRef.current)
                 currentPostFilenameRef.current = item.filename
             }
@@ -112,7 +111,7 @@ export default function FeedScreen() {
                 }}
                 renderItem={renderItem}
                 pagingEnabled
-                scrollEventThrottle={50}
+                scrollEventThrottle={100}
                 snapToAlignment='start'
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}

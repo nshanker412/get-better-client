@@ -11,10 +11,10 @@ import { NotificationsBellProps } from '../NotificationsDrawer.types';
  * shows a red circle with notification count in it if there are new notifications
  * @returns
  */
-const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
-	const showNotification = number >= 1;
+const BellIconAlert = ({ num = 0, width = 50, height = 54 }) => {
+	const showNotification = num >= 1;
 
-	const displayNumber = number <= 9 ? number : '9+';
+	const displayNumber = num <= 9 ? num : '9+';
 
 	return (
 		<Svg
@@ -91,10 +91,10 @@ export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum,
 			}}/>
 		
 		<BellIconAlert
-			number={unreadNum}
+			num={unreadNum}
 			height={40}
 			width={40}
 			/>
-</View>
+		</View>
 				);
 };

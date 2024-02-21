@@ -37,10 +37,15 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     state: false,
     counter: postData?.likes?.length,
   });
+  
+    const doubleTapRef = useRef(null);
+  const { onPostChange, openDrawer } = useCommentDrawer();
+  
+  const handleOpenCommentDrawer = useCallback(() => {
+    onPostChange(`${user}_${postData.timestamp}`);
+    openDrawer();
+  }, [onPostChange, openDrawer, user, postData.timestamp]);
 
-  const doubleTapRef = useRef(null);
-  const { openDrawer} = useCommentDrawer();
-     
 
   const handleUpdateLike = useCallback(
     throttle((currentLikeStateInst) => {
@@ -131,7 +136,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
           />
           <CommentIcon
             commentCount={postData?.comments?.length ?? 0}
-            openCommentDrawer={openDrawer} />
+            openCommentDrawer={handleOpenCommentDrawer} />
 
           </View>
         
