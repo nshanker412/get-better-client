@@ -30,16 +30,13 @@ import axios from 'axios';
    
 // }
 
-export const setPostLiked = async (filename: string, myUsername: string, isLiked: boolean): Promise<void> => {
+export const setPostLiked = async (user: string, id: string, myUsername: string, isLiked: boolean): Promise<void> => {
     
-    const user = filename.split('_')[0];
-    const postID = filename.split('_')[1];
-        
     try {
       await axios
             .post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
                 profileUsername: user,
-                postID: postID,
+                postID: id,
                 myUsername,
                 status: isLiked,
             })

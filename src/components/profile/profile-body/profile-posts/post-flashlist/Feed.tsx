@@ -34,6 +34,7 @@ export default function FeedScreen() {
     const mediaRefs = useRef([]);
     const { username: myUsername } = useMyUserInfo()
     const feedRef = useRef(null)
+    const currentPostFilenameRef = useRef<string>('')
 
     const {onPostChange} = useCommentDrawer()
 
@@ -47,6 +48,9 @@ export default function FeedScreen() {
         fetchFeed()
     }, [])
 
+
+
+
     /**
      * Called any time a new post is shown when a user scrolls
      * the FlatList, when this happens we should start playing 
@@ -54,14 +58,17 @@ export default function FeedScreen() {
      */
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
+            if (isViewable) {
+                console.log('currentPostFilenameRef', currentPostFilenameRef.current)
+                currentPostFilenameRef.current = item.filename
+            }
             const cell = mediaRefs.current[item.filename];
             if (cell ) {
-                if (isViewable) {
-                    onPostChange(item?.filename)
-                    cell?.play();
-                } else {
-                    cell?.stop();
-                }
+                // if (isViewable) {
+                //     cell?.play();
+                // } else {
+                //     cell?.stop();
+                // }
             }
         });
     }, [onPostChange]);

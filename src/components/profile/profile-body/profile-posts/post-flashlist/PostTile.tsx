@@ -1,7 +1,10 @@
+import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { Post } from '@models/posts';
 import { ResizeMode, Video } from 'expo-av';
+import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { View } from 'react-native';
 import { PostOverlay } from './overlay/PostOverlay';
 
 
@@ -22,12 +25,10 @@ interface PostTileRef {
  * The ref is forwarded to this component so that the parent component
  * can manage the play status of the video.
  */
-export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUsername}, ref) => {
+export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUsername }, ref) => {
+    const [status, setStatus] = useState<any>(null);
+    const [paused, setPaused] = useState(false);
 
-    useEffect(() => {
-        console.log('INSIDE POSTTILE', post.filename   )
-    }, [post])
-     
     const localRef = useRef(null);
     //  const user = useUser(item.creator).data
     useImperativeHandle(ref, () => ({
@@ -132,9 +133,11 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
         }
     }
 
-
-
-
+    const onToggleVideoState = () => {
+    
+        setPaused(!paused)
+  
+    }
 
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
@@ -143,19 +146,38 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
 
     return (
         <>
-            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} />
-            
-            
-            {post.metadata.type ===  'video' && (<Video
+            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState}/>
+            {post.metadata.type === 'video' && (
+                <Video
                 ref={localRef}
-                style={{flex: 1}}
-                resizeMode={ResizeMode.COVER}
-                shouldPlay={false}
+                    style={{ flex: 1 }}
+                
+                    resizeMode={ResizeMode.COVER}
+                    PosterComponent={() => {
+                        return (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <BlurView
+                                    intensity={100}
+                                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+                                    tint="dark"
+                                />
+                                <LoadingSpinner />
+                            </View>
+                        )
+                    }
+                    }
+        
+                shouldPlay={!paused}
                 isLooping
-                posterStyle={{ resizeMode: 'cover', height: '100%' }}
+                    // posterStyle={{ resizeMode: 'cover', height: '100%' }}
+                    onPlaybackStatusUpdate={status => setStatus(() => status)}
+
                 source={{
                     uri: videoUri
-                }} />
+                }}
+
+            
+            />
             )}
             {post.metadata.type ==='image' && (<Image
                 ref={localRef}
@@ -164,7 +186,9 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
                 onError={onError}
                 source={{
                     uri: imageUri
-                }}/>
+                }}
+                // allowDownscaling={false}
+            />
             )}
         
         </>

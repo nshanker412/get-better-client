@@ -1,7 +1,7 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { Comment } from '@models/posts';
 import axios from 'axios';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
 // Define the context shape
 interface CommentDrawerContextType {
@@ -29,7 +29,7 @@ const CommentDrawerContext = createContext<CommentDrawerContextType | undefined>
  */
 
 // Context provider component
-export const CommentDrawerProvider: React.FC = ({ children }) => {
+export const CommentDrawerProvider= ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPostID, setCurrentPostId] = useState<string | null>(null);    
     const [comments, setComments] = useState<Comment[]>([]);
@@ -123,18 +123,17 @@ export const CommentDrawerProvider: React.FC = ({ children }) => {
     const closeDrawer = () => setIsOpen(false);
         
 
-    const contextValue: CommentDrawerContextType = {
-        loading,
-        isOpen,
-        comments,
-        numComments: comments.length,
-        onPostChange,
-        openDrawer,
-        addComment,
-        onRefresh,
-        closeDrawer,
-    };
-
+    const contextValue: CommentDrawerContextType = useMemo(() => ({
+        loading: loading,
+        isOpen: isOpen,
+        comments: comments,
+        numComments: comments?.length || 0, // Fallback to 0 if comments is null/undefined
+        onPostChange: onPostChange,
+        openDrawer: openDrawer,
+        addComment: addComment,
+        onRefresh: onRefresh,
+        closeDrawer: closeDrawer,
+      }), [loading, isOpen, comments, currentPostID]);
 
   return (
     <CommentDrawerContext.Provider value={contextValue}>

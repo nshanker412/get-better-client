@@ -1,17 +1,23 @@
+import { CommentIcon as CI } from '@assets/darkSvg/CommentIcon';
+import { StarIcon } from '@assets/darkSvg/StarIcon.js';
+import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProfileAvatar";
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
-import { Ionicons } from "@expo/vector-icons";
 import { PostMetadata } from "@models/posts";
-import React, { useMemo, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { throttle } from "throttle-debounce";
+import * as Haptics from 'expo-haptics';
+import throttle from 'lodash/throttle';
+import React, { useCallback, useRef, useState } from "react";
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { State, TapGestureHandler } from 'react-native-gesture-handler';
+import { SvgXml } from 'react-native-svg';
 import { setPostLiked } from "../service/post";
 
 
 interface PostOverlayProps {
     user: string;
     postData: PostMetadata;
-    myUsername: string;
+  myUsername: string;
+  onToggleVideoState: () => void;
     }
 
 /**
@@ -22,39 +28,64 @@ interface PostOverlayProps {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUsername }) => {
+export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, onToggleVideoState }) => {
+  console.log('postData', postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: false,
-    counter: postData.likes.length,
+    counter: postData?.likes?.length,
   });
+
+  const doubleTapRef = useRef(null);
 
 
   const { openDrawer} = useCommentDrawer();
-    
- 
+     
 
-  /**
-   * Handles the like button action.
-   *
-   * In order to make the action more snappy the like action
-   * is optimistic, meaning we don't wait for a response from the
-   * server and always assume the write/delete action is successful
-   */
-  const handleUpdateLike = useMemo(
-    () =>
-          throttle(500, true, (currentLikeStateInst) => {
-              setCurrentLikeState({
-                  state: !currentLikeStateInst.state,
-                  counter:
-                      currentLikeStateInst.counter +
-                      (currentLikeStateInst.state ? -1 : 1),
-              });
-              setPostLiked(`${postData.timestamp}`, myUsername, currentLikeStateInst.state);
-      }),
-    []
+  const handleUpdateLike = useCallback(
+    throttle((currentLikeStateInst) => {
+      setCurrentLikeState({
+        state: !currentLikeStateInst.state,
+        counter: currentLikeStateInst.counter + (currentLikeStateInst.state ? -1 : 1),
+      });
+      setPostLiked(user, `${postData.timestamp}`, myUsername, currentLikeStateInst.state);
+    }, 500),
+    [] 
   );
 
+
+	const onDoubleTapEvent = async (event): Promise<void>  => {
+		if (event.nativeEvent.state === State.ACTIVE) {
+			// Double tap was detected
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      console.log('onDoubleTapEvent')
+
+			// image wasn't already liked
+			if (!currentLikeState.state) {
+        handleUpdateLike(currentLikeState);
+			}
+		}
+	};
+
+	const onSingleTapEvent =async  (event):  Promise<void>  => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+			// Toggle play/pause
+			onToggleVideoState();
+		}
+	};
+
+
   return (
+    <TapGestureHandler
+    onHandlerStateChange={onDoubleTapEvent}
+    numberOfTaps={2}
+    ref={doubleTapRef}>
+    <TapGestureHandler
+      onHandlerStateChange={
+        onSingleTapEvent
+      }
+      numberOfTaps={1}
+       waitFor={doubleTapRef}
+      >
     <View style={styles.container}>
       <View>
         <Text style={styles.displayName}>{user}</Text>
@@ -65,46 +96,34 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
         <ConnectedProfileAvatar
           key={`${user}-avatar`}
                 username={user}
-                size={50}
+                size={40}
             />
 
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleUpdateLike(currentLikeState)}
-        >
-          <Ionicons
-            color="white"
-            size={40}
-            name={currentLikeState.state ? "heart" : "heart-outline"}
-          />
-          <Text style={styles.actionButtonText}>
-            {currentLikeState.counter}
-          </Text>
-        </TouchableOpacity>
+      <StarIconView 
+          likes={currentLikeState.counter}
+          isLiked={currentLikeState.state}
+          onLikePress={() => handleUpdateLike(currentLikeState)}
+        />
+        <CommentIcon
+          commentCount={postData?.comments?.length ?? 0}
+          openCommentDrawer={openDrawer} />
 
-
-        <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => openDrawer()  }
-        >
-          <Ionicons
-            color="white"
-            size={40}
-            name={"chatbubble"}
-          />
-          <Text style={styles.actionButtonText}>
-            {postData?.comments?.length ?? 0}
-          </Text>
-        </TouchableOpacity>
+        
+          
       </View>
-    </View>
+        </View>
+      </TapGestureHandler>
+    </TapGestureHandler>
   );
-}
-
-import { Dimensions, StyleSheet } from 'react-native';
+}, (prevProps, nextProps) => {
+  return prevProps.postData === nextProps.postData;
+} );
+  
+PostOverlay.displayName = 'PostOverlay';
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
+      height: Dimensions.get('window').height,  
         width: Dimensions.get('window').width,
         position: 'absolute',
         zIndex: 999,
@@ -145,4 +164,53 @@ const styles = StyleSheet.create({
         marginTop: 4
     }
 })
+
+
+
+
+
+const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => void; }> = ({ commentCount, openCommentDrawer }) => {
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        openCommentDrawer();
+      }}>
+      <SvgXml
+        // style={feedPostStyles.iconStyle} // Uncomment and use if you have specific styles
+        width={40}
+        height={40}
+        xml={CI}
+      />
+      <Text style={styles.actionButtonText}>
+        {commentCount}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () => void; }> = ({ likes, isLiked, onLikePress }) => {
+  return (
+    <TouchableOpacity
+      onPress={onLikePress}>
+      <SvgXml
+        width={40}
+        height={40}
+        xml={isLiked ? StarIconFilled : StarIcon}
+      />
+      <Text style={styles.actionButtonText}>
+        {likes}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const ChallengeMedalIcon = () => {
+  return (
+    <Image
+    style={{width: 50, height: 50}}
+    source={require('../../../../../../img/medal.png')}/>
+  );
+}
+
 

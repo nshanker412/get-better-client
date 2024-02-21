@@ -17,6 +17,7 @@ import {
 	View,
 } from 'react-native';
 import { Modalize } from 'react-native-modalize';
+import Toast from 'react-native-toast-message';
 import { PostCommentDrawer } from './PostCommentDrawer';
 import { usePostCommentDrawerStyles } from './PostCommentDrawer.styles';
 
@@ -126,8 +127,21 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 			console.log('submitting comment: ', currentComment);
 			if (currentComment !== '') {
 				setSubmittingComment(true);
-				await addComment(currentComment);
-				setSubmittingComment(false);
+				try {
+					await addComment(currentComment);
+					setCurrentComment('');
+				} catch (error) {
+					console.error('Comment post failed:', error);
+					Toast.show({
+						type: 'error',
+						position: 'bottom',
+						text1: 'Failed to post comment',
+						visibilityTime: 3000,
+					
+					})
+				} finally {
+					setSubmittingComment(false);
+				}
 			}
 		}, [currentComment, addComment]);
 
