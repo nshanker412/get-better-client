@@ -91,7 +91,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       <View
 					style={{
             height: Dimensions.get('window').height,
-            // width: Dimensions.get('window').width,
+            width: Dimensions.get('window').width,
             zIndex: 1,
             position: 'absolute',
 					}}>
@@ -118,13 +118,12 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 						</View>
           </View>
           <BlurView
-        intensity={50}
-        blurReductionFactor={0.5}
-        style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
-        tint='dark'
+            intensity={50}
+            blurReductionFactor={0.5}
+            style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
+            tint='dark'
           />
-       <View style={{flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, }}>   
-   
+       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, paddingRight: 10}}>   
         <StarIconView 
             likes={currentLikeState.counter}
             isLiked={currentLikeState.state}
@@ -134,9 +133,15 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
             commentCount={postData?.comments?.length ?? 0}
             openCommentDrawer={openDrawer} />
 
-        </View>
+          </View>
+        
+          <View style={{flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, paddingRight: 10}}>   
+
+            {postData.challenge && postData.challenge !== "false" && (<ChallengeMedalIcon />)}
+            </View>
           
-      </View>
+        </View>
+       
       </TapGestureHandler>
     </TapGestureHandler>
   );
@@ -237,10 +242,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 2,
     color: 'white',
-    // opacity: 0.9,
-
     textAlign: 'left',
-    // fontWeight: '400',
   },
 })
 
@@ -254,6 +256,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       shadowRadius: 3,
     },
     actionButtonText: {
+      fontFamily: fonts.inter.bold,
       color: 'white',
       textAlign: 'center',
       marginTop: 4
@@ -267,8 +270,8 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       }}>
       <SvgXml
         style={styles.iconShadow}
-        width={40}
-        height={40}
+        width={45}
+        height={45}
         xml={CI}
       />
       <Text style={styles.actionButtonText}>
@@ -289,6 +292,7 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       shadowRadius: 3,
     },
     actionButtonText: {
+      fontFamily: fonts.inter.bold,
       color: 'white',
       textAlign: 'center',
       marginTop: 4
@@ -302,8 +306,8 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       <SvgXml
           style={styles.iconShadow}
 
-        width={40}
-        height={40}
+        width={45}
+        height={45}
         xml={isLiked ? StarIconFilled : StarIcon}
         />
     
@@ -318,7 +322,7 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
 const ChallengeMedalIcon = () => {
   return (
     <Image
-    style={{width: 50, height: 50}}
+    style={{width: 45, height: 45}}
     source={require('../../../../../../img/medal.png')}/>
   );
 }

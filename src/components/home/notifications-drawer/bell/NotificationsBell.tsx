@@ -22,7 +22,7 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 			height={height}
 			viewBox='0 0 30 34'
 			fill='none'
-			xmlns='http://www.w3.org/2000/svg'>
+		>
 			<Path
 				d='M14.2856 3.45898C10.3517 3.45898 7.15464 6.65603 7.15464 10.5899V14.0247C7.15464 14.7496 6.84563 15.8549 6.4772 16.473L5.11043 18.743C4.2666 20.1454 4.84896 21.7023 6.394 22.2253C11.5164 23.9367 17.0429 23.9367 22.1653 22.2253C23.6034 21.7499 24.2333 20.0503 23.4489 18.743L22.0821 16.473C21.7256 15.8549 21.4166 14.7496 21.4166 14.0247V10.5899C21.4166 6.66791 18.2076 3.45898 14.2856 3.45898Z'
 				stroke='white'
@@ -43,24 +43,25 @@ const BellIconAlert = ({ number = 0, width = 50, height = 54 }) => {
 			/>
 
 			{showNotification && (
+				<>
 				<Circle
 					cx='22.5'
-					cy='10.0234'
+					cy='8'
 					r='7.5'
 					fill='#FF0000'
 				/>
-			)}
-			{showNotification && (
+		
 				<SvgText
 					x='22.5'
-					y='10.0234'
+					y='8'
 					textAnchor='middle'
 					alignmentBaseline='middle'
 					fill='white'
-					fontSize='12'
+					fontSize='11'
 					fontWeight='bold'>
 					{displayNumber}
-				</SvgText>
+					</SvgText>
+					</>
 			)}
 		</Svg>
 	);
@@ -91,8 +92,8 @@ export const NotificationsBell: React.FC<NotificationsBellProps> = ({ unreadNum,
 		
 		<BellIconAlert
 			number={unreadNum}
-			height={35}
-			width={38}
+			height={40}
+			width={40}
 			/>
 </View>
 				);
