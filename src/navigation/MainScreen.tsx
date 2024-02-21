@@ -20,16 +20,13 @@ import { LeaderboardStack } from './LeaderboardStack';
 import { MyProfileStack } from './MyProfileStack';
 import { SearchStack } from './SearchStack';
 
-
 const HomeTabIcon = ({ focused }) => {
-  
-
 	return (
-	  <View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+	  <View style={{ alignItems: 'center', alignContent: 'center', justifyContent: 'flex-end', height: "100%" }}>
 		{focused && (
 		  <View style={{
 			width: '100%',
-					height: 3,
+			height: 3,
 			borderRadius: 2,
 			backgroundColor: 'white',
 			position: 'absolute',
@@ -37,9 +34,10 @@ const HomeTabIcon = ({ focused }) => {
 		  }} />
 		)}
 		<TouchableOpacity onPress={() => {
-		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		}}>
-			<SvgXml
+				<SvgXml
+					
 			  xml={HI}
 			  width={30}
 			  height={30}
@@ -53,27 +51,28 @@ const HomeTabIcon = ({ focused }) => {
 
 const SearchTabIcon = ({ focused }) => {
 	return (
-		<View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+		<View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%"}}>
 		{focused && (
 		  <View style={{
 			width: '100%',
 					height: 3,
 			borderRadius: 2,
 			backgroundColor: 'white',
-			position: 'absolute',
+					position: 'absolute',
 			top: 0,
 		  }} />
 		)}
 		<TouchableOpacity onPress={() => {
-		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			}}>
+				
 				<SvgXml
-				xml={SearchIcon}
-				width={40}
-				height={40}
-				fill={focused ? 'white' : 'none'}
-
-			/>
+					style={{ marginBottom: -2 }}
+					xml={SearchIcon}
+					width={40}
+					height={40}
+					fill={focused ? 'white' : 'none'}
+					/>
 			</TouchableOpacity>
 			</View>
 
@@ -83,8 +82,11 @@ const SearchTabIcon = ({ focused }) => {
 const PostTabIcon = ({ focused }) => {
 	return (
 		
-		<TouchableOpacity onPress={() => {
-			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		<TouchableOpacity
+			activeOpacity={0.9}
+
+			onPress={() => {
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		  }}>			
 		  <SvgXml
 				style={{ marginTop: -20 }}
@@ -93,6 +95,7 @@ const PostTabIcon = ({ focused }) => {
 				height={60}
 
 			/>
+			
 		</TouchableOpacity>
 	);
 };
@@ -110,16 +113,15 @@ const RankingTabIcon = ({ focused }) => {
 			top: 0,
 		  }} />
 		)}
-		<TouchableOpacity onPress={() => {
-		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+			<TouchableOpacity style={{paddingTop: 10}} onPress={() => {
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			}}>
 				<SvgXml
-				xml={RankingIcon}
-				width={35}
-				height={35}
-				fill={focused ? 'white' : 'none'}
-
-			/>
+					xml={RankingIcon}
+					width={35}
+					height={35}
+					fill={focused ? 'white' : 'none'}
+				/>
 			</TouchableOpacity>
 			</View>
 	);
@@ -138,8 +140,9 @@ const ProfileTabIcon = ({ focused }) => {
 			top: 0,
 		  }} />
 		)}
-		<TouchableOpacity onPress={() => {
-		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+			<TouchableOpacity
+				onPress={() => {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			}}>
 				<SvgXml
 				xml={ProfileIcon}
@@ -218,7 +221,8 @@ export const useFooterStyles = () => {
 	const footerStyles = StyleSheet.create({
 		safeArea: {
 			position: 'absolute',
-			borderColor: 'black',
+			borderColor: 'transparent',
+			borderWidth: 1,
 
 			// borderWidth: 1, 
 			// flex: 1,
@@ -229,7 +233,7 @@ export const useFooterStyles = () => {
 			alignItems: 'center',
 			justifyContent: 'center',
 			backgroundColor: 'rgba(0, 0, 0, 0.15)',
-			// backfaceVisibility: 'hidden',
+			backfaceVisibility: 'hidden',
 			shadowColor: '#000',
 		},
 		divbar: {
