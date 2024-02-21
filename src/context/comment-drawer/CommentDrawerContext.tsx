@@ -29,7 +29,7 @@ const CommentDrawerContext = createContext<CommentDrawerContextType | undefined>
  */
 
 // Context provider component
-export const CommentDrawerProvider= ({  }) => {
+export const CommentDrawerProvider= ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPostID, setCurrentPostId] = useState<string | null>(null);    
     const [comments, setComments] = useState<Comment[]>([]);
@@ -137,7 +137,7 @@ export const CommentDrawerProvider= ({  }) => {
 
   return (
     <CommentDrawerContext.Provider value={contextValue}>
-      {React.Children}
+      {children}
     </CommentDrawerContext.Provider>
   );
 };

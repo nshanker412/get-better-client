@@ -13,70 +13,142 @@ import { CommentDrawerProvider } from '@context/comment-drawer/CommentDrawerCont
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
-import { StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LeaderboardStack } from './LeaderboardStack';
 import { MyProfileStack } from './MyProfileStack';
 import { SearchStack } from './SearchStack';
 
-const HomeTabIcon = () => {
+
+const HomeTabIcon = ({ focused }) => {
+  
+
 	return (
-		<TouchableOpacity>
+	  <View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+		{focused && (
+		  <View style={{
+			width: '100%',
+					height: 3,
+			borderRadius: 2,
+			backgroundColor: 'white',
+			position: 'absolute',
+			top: 0,
+		  }} />
+		)}
+		<TouchableOpacity onPress={() => {
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		}}>
 			<SvgXml
-				xml={HI}
-				width={30}
-				height={30}
+			  xml={HI}
+			  width={30}
+			  height={30}
+			  fill={focused ? 'white' : 'none'}
 			/>
 		</TouchableOpacity>
+	  </View>
 	);
-};
+  };
+  
 
-const SearchTabIcon = () => {
+const SearchTabIcon = ({ focused }) => {
 	return (
-		<TouchableOpacity>
-			<SvgXml
+		<View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+		{focused && (
+		  <View style={{
+			width: '100%',
+					height: 3,
+			borderRadius: 2,
+			backgroundColor: 'white',
+			position: 'absolute',
+			top: 0,
+		  }} />
+		)}
+		<TouchableOpacity onPress={() => {
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+			}}>
+				<SvgXml
 				xml={SearchIcon}
 				width={40}
 				height={40}
+				fill={focused ? 'white' : 'none'}
+
 			/>
-		</TouchableOpacity>
+			</TouchableOpacity>
+			</View>
+
 	);
 };
 
-const PostTabIcon = () => {
+const PostTabIcon = ({ focused }) => {
 	return (
-		<TouchableOpacity>
-			<SvgXml
+		
+		<TouchableOpacity onPress={() => {
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+		  }}>			
+		  <SvgXml
 				style={{ marginTop: -20 }}
 				xml={PostIcon}
-				width={65}
-				height={65}
+				width={60}
+				height={60}
+
 			/>
 		</TouchableOpacity>
 	);
 };
 
-const RankingTabIcon = () => {
+const RankingTabIcon = ({ focused }) => {
 	return (
-		<TouchableOpacity>
-			<SvgXml
+		<View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+		{focused && (
+		  <View style={{
+			width: '100%',
+					height: 3,
+			borderRadius: 2,
+			backgroundColor: 'white',
+			position: 'absolute',
+			top: 0,
+		  }} />
+		)}
+		<TouchableOpacity onPress={() => {
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+			}}>
+				<SvgXml
 				xml={RankingIcon}
 				width={35}
 				height={35}
+				fill={focused ? 'white' : 'none'}
+
 			/>
-		</TouchableOpacity>
+			</TouchableOpacity>
+			</View>
 	);
 };
 
-const ProfileTabIcon = () => {
+const ProfileTabIcon = ({ focused }) => {
 	return (
-		<TouchableOpacity>
-			<SvgXml
+		<View style={{ alignItems: 'center', justifyContent: 'flex-end', height: "100%" }}>
+		{focused && (
+		  <View style={{
+			width: '100%',
+			height: 3,
+			borderRadius: 2,
+			backgroundColor: 'white',
+			position: 'absolute',
+			top: 0,
+		  }} />
+		)}
+		<TouchableOpacity onPress={() => {
+		  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+			}}>
+				<SvgXml
 				xml={ProfileIcon}
 				width={35}
 				height={35}
+				fill={focused ? 'white' : 'none'}
 			/>
-		</TouchableOpacity>
+			</TouchableOpacity>
+			</View>	
 	);
 };
 
@@ -92,12 +164,12 @@ export function MainScreen() {
 			screenOptions={{
 				tabBarTestID: 'bottom-tab-navigator-testid',
 				headerShown: false,
-				tabBarLabel: '',
+				tabBarShowLabel: false,
 				tabBarStyle: tabBarStyles.safeArea,
 				tabBarBackground: () => (
 					<BlurView
 						tint='dark'
-						intensity={10}
+						intensity={25}
 						style={{ ...StyleSheet.absoluteFillObject }}
 					/>
 				),
@@ -105,23 +177,31 @@ export function MainScreen() {
 			<Tab.Screen
 				name='hometab'
 				component={HomeStack}
-				options={{ tabBarIcon: HomeTabIcon }}
+				options={{
+					tabBarIcon: ({ focused }) => <HomeTabIcon focused={focused} />,
+				}}
 			/>
 			<Tab.Screen
 				name='searchtab'
 				component={SearchStack}
-				options={{ tabBarIcon: SearchTabIcon }}
+				options={{
+					tabBarIcon: ({ focused }) => <SearchTabIcon focused={focused} />,
+				}}
 			/>
 			<Tab.Screen
 				name='post'
 				component={CreatePost}
-				options={{ tabBarIcon: PostTabIcon }}
+					options={{
+						tabBarIcon: ({ focused }) => <PostTabIcon focused={focused} />
+					}}
 			/>
 			<Tab.Screen
 				name='leaderboard'
 				component={LeaderboardStack}
-				options={{ tabBarIcon: RankingTabIcon }}
-			/>
+				options={{
+					tabBarIcon: ({ focused }) => <RankingTabIcon focused={focused} />,
+					}}
+				/>
 			<Tab.Screen
 				name='profileTab'
 				component={MyProfileStack}
@@ -138,13 +218,18 @@ export const useFooterStyles = () => {
 	const footerStyles = StyleSheet.create({
 		safeArea: {
 			position: 'absolute',
-			borderWidth: 0,
-			borderColor: 'transparent',
-			paddingTop: 20,
+			borderColor: 'black',
+
+			// borderWidth: 1, 
+			// flex: 1,
+			// height: 80,
+			// borderColor: 'transparent',
+			// paddingTop: 20,
 			alignContent: 'center',
 			alignItems: 'center',
+			justifyContent: 'center',
 			backgroundColor: 'rgba(0, 0, 0, 0.15)',
-			backfaceVisibility: 'hidden',
+			// backfaceVisibility: 'hidden',
 			shadowColor: '#000',
 		},
 		divbar: {
@@ -152,9 +237,9 @@ export const useFooterStyles = () => {
 			opacity: theme.div.opacity,
 		},
 		footerContainer: {
-			borderTopWidth: 1,
-			borderTopColor: theme.innerBorderColor,
-			backgroundColor: 'transparent',
+			// borderTopWidth: 1,
+			// borderTopColor: theme.innerBorderColor,
+			// backgroundColor: 'transparent',
 		},
 
 		footerInnerContainer: {
