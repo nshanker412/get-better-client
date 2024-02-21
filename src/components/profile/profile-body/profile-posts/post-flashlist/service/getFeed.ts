@@ -26,7 +26,6 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
     
 
 
-
 	// fetch all friends post metadata
 const fetchFriendsPosts = async (myUsername: string): Promise<Post[] |[]> => {
         
