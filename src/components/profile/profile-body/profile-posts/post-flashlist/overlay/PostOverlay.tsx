@@ -12,7 +12,6 @@ import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
 import { setPostLiked } from "../service/post";
 
-
 interface PostOverlayProps {
     user: string;
     postData: PostMetadata;
@@ -92,11 +91,13 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
         <Text style={styles.description}>{postData.caption}</Text>
       </View>
 
-      <View style={styles.leftContainer}>
+          <View style={styles.leftContainer}>
+            
         <ConnectedProfileAvatar
-          key={`${user}-avatar`}
-                username={user}
-                size={40}
+              key={`${user}-avatar`}
+              username={user}
+              size={40}
+              fetchSize={300}
             />
 
       <StarIconView 
@@ -122,18 +123,33 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 PostOverlay.displayName = 'PostOverlay';
 
 const styles = StyleSheet.create({
+  postHeader: {
+    // ...theme.text.header,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'absolute',
+    width: 'auto',
+    height: 50, // todo - wrap uname incase some boi has long name
+    top: 100,
+    left: 0,
+    padding: 10,
+    zIndex: 1,
+    gap: 10,
+  },
   container: {
       height: Dimensions.get('window').height,  
         width: Dimensions.get('window').width,
         position: 'absolute',
-        zIndex: 999,
+        zIndex: 1,
         bottom: 0,
         paddingLeft: 20,
         paddingBottom: 80,
         paddingRight: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-end'
+        alignItems: 'flex-start',
     },
     displayName: {
         color: 'white',
@@ -153,7 +169,8 @@ const styles = StyleSheet.create({
         marginBottom: 30
     },
     leftContainer: {
-        alignItems: 'center'
+      alignItems: 'center',
+      paddingTop: 150,
     },
     actionButton: {
         paddingBottom: 16

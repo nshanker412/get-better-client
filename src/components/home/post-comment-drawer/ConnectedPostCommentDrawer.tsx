@@ -1,5 +1,4 @@
 import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
@@ -34,7 +33,6 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 	} = useCommentDrawer();
 
 		// const {sendOutPushNotification} = useNotifications();
-		const { username: myUsername } = useMyUserInfo();
 	const postCommentDrawerStyles = usePostCommentDrawerStyles();
 	
 	const [submittingComment, setSubmittingComment] = useState(false);
@@ -173,7 +171,7 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 				closeOnOverlayTap={true}>
 				<BlurView
 					tint='dark'
-					intensity={10}
+					intensity={50}
 					style={{ ...StyleSheet.absoluteFillObject }}
 				/>
 

@@ -11,9 +11,11 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import * as Haptics from 'expo-haptics'
 import { ViewToken } from 'react-native'
 import { RefreshControl } from 'react-native-gesture-handler'
+import { Host, Portal } from 'react-native-portalize'
+import { Header } from '../../../../header/Header'
+import { ConnectedNotificationsBell } from '../../../../home/notifications-drawer/bell/ConnectedNotificationsBell'
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
 import { getFeed } from './service/getFeed'
-
 // interface PostTileRef {
 //     play: () => void;
 //     stop: () => void;
@@ -49,8 +51,6 @@ export default function FeedScreen() {
     }, [])
 
 
-
-
     /**
      * Called any time a new post is shown when a user scrolls
      * the FlatList, when this happens we should start playing 
@@ -59,17 +59,12 @@ export default function FeedScreen() {
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
             if (isViewable) {
+                onPostChange(item.filename);
                 console.log('currentPostFilenameRef', currentPostFilenameRef.current)
                 currentPostFilenameRef.current = item.filename
             }
-            const cell = mediaRefs.current[item.filename];
-            if (cell ) {
-                // if (isViewable) {
-                //     cell?.play();
-                // } else {
-                //     cell?.stop();
-                // }
-            }
+      
+
         });
     }, [onPostChange]);
 
@@ -93,7 +88,18 @@ export default function FeedScreen() {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <Host>
+            <Portal>
+                <>
+                    
+                    <Header />
+                    <View style={{position:"absolute", right:15, top:50, alignItems:"flex-end", justifyContent:"center"}}>
+                        <ConnectedNotificationsBell />
+                    </View>
+                </>
+                </Portal>
+   
+        <View style={{ flex: 1, width: "100%", height:"100%" }}>
             <FlashList
                 id='home-feed-flash-list'
                 ref={feedRef}
@@ -126,7 +132,12 @@ export default function FeedScreen() {
                 }  
             />
 
+            <Portal>
+                
             <ConnectedPostCommentDrawer/>
+
+</Portal>
             </View>
+            </Host>
     )
 }

@@ -34,7 +34,7 @@ export const usePostCommentDrawerStyles = () => {
 			display: 'flex',
 			width: '100%',
 			backgroundColor: theme.innerContainer.backgroundColor,
-			opacity: 0.8,
+			opacity: 0.95,
 			paddingVertical: 20,
 			paddingHorizontal: 20,
 			borderTopRightRadius: 18,
@@ -99,6 +99,7 @@ export const usePostCommentDrawerStyles = () => {
 
 		commentContent: {
 			...theme.text.body.mediumer,
+			fontSize: 15
 		} as TextStyle,
 		timestamp: {
 			fontFamily: theme.text.body.medium.fontFamily,
@@ -248,7 +249,7 @@ export const usePostCommentDrawerStyles = () => {
 			display: 'flex',
 			flexDirection: 'row',
 			justifyContent: 'flex-start',
-			alignItems: 'center',
+			alignItems: 'flex-start',
 		},
 		ellipse: {
 			color: theme.textColorThird,
@@ -259,6 +260,12 @@ export const usePostCommentDrawerStyles = () => {
 		input: {
 			color: theme.textColorPrimary,
 			backgroundColor: theme.input.backgroundColor,
+			shadowColor: "#000",
+			shadowOffset: {
+				width: 0,
+				height: 3,
+			},
+			shadowOpacity: 0.27,
 			// width: '100%',
 			alignSelf: 'flex-start',
 		},

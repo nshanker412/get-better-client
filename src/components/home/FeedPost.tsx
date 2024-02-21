@@ -4,9 +4,9 @@
  * - get profile pic svg
  */
 
-import CommentIcon from '@assets/darkSvg/CommentIcon';
-import StarIcon from '@assets/darkSvg/StarIcon.js';
-import StarIconFilled from '@assets/darkSvg/StarIconFilled.js';
+import { CommentIcon } from '@assets/darkSvg/CommentIcon';
+import { StarIcon } from '@assets/darkSvg/StarIcon.js';
+import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { BLUR_HASH } from '@constants/constants';
 import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';

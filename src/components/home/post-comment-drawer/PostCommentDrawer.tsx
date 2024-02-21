@@ -20,8 +20,6 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 	const postCommentDrawerStyles = usePostCommentDrawerStyles();
 	const [refreshing, setRefreshing] = useState(false);
 
-	
-
 	const genCommentsList = () =>
 		comments?.map((item, index) => {
 			return (
@@ -40,7 +38,7 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 								alignItems: 'flex-start',
 								justifyContent: 'flex-start',
 							}}>
-							<ConnectedProfileAvatar key={item.username} username={item.username} />
+							<ConnectedProfileAvatar key={item.username} username={item.username} size={ 40} />
 						</View>
 						<View style={{ flex: 5, justifyContent: 'flex-start' }}>
 							<View
