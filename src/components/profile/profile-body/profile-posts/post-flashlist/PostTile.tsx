@@ -12,7 +12,7 @@ interface PostTileProps {
     post: Post
     myUsername: string
     isEmbeddedFeed?: boolean
-    handlePostPress?: (post: Post) => void
+    handlePostPress?: (post: string) => void
 }
 interface PostTileRef {
     play: () => void;

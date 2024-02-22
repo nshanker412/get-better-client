@@ -6,6 +6,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
+import { Host } from 'react-native-portalize';
 import { ChallengeModal } from '../challenge-modal/ChallengeModal';
 import { ConnectedProfileBody } from './profile-body/ConnectedProfileBody';
 import { ConnectedProfileHeader } from './profile-header/ConnectedProfileHeader';
@@ -62,10 +63,12 @@ export const OtherProfile: React.FC = () => {
 	if (!route?.params?.profileUsername) return null;
 	if (!myUsername) return null;
 	return (
+		<Host>
 		<OtherUserInfoProvider
 			otherProfileUsername={route.params.profileUsername}
 			myUsername={myUsername}>
 			<_OtherProfile />
-		</OtherUserInfoProvider>
+			</OtherUserInfoProvider>
+			</Host>
 	);
 };

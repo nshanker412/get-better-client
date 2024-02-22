@@ -4,6 +4,7 @@ import { useNotifications } from '@context/notifications/useNotifications';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import React, { useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
+import { Host } from 'react-native-portalize';
 import { ActionButton } from '../primitives/action-button/ActionButton';
 import { Modal } from '../primitives/action-modal/ActionModal';
 import { ConnectedProfileBody } from './profile-body/ConnectedProfileBody';
@@ -100,6 +101,7 @@ export const MyProfile: React.FC = () => {
 	};
 
 	return (
+		<Host>
 		<SafeAreaView style={profileStyles.safeAreaViewContainer}>
 			<View style={profileStyles.profileContainer}>
 				<View style={{ flex: 4 }}>
@@ -117,6 +119,7 @@ export const MyProfile: React.FC = () => {
 				onClosePress={onClosePress}
 				onLogoutPress={onLogoutPress}
 			/>
-		</SafeAreaView>
+			</SafeAreaView>
+			</Host>
 	);
 };

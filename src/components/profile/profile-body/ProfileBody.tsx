@@ -60,6 +60,7 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 					</View>
 				</View>
 			</View>
-		</View>
+			</View>
+
 	);
 };
