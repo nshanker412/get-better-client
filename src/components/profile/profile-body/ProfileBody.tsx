@@ -5,7 +5,7 @@
 
 import { useThemeContext } from '@context/theme/useThemeContext';
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useProfileBodyStyles } from './ProfileBody.styles';
 import { ProfileBodyProps } from './ProfileBody.types';
 import { ConnectedPlanList } from './plan-list/ConnectedPlanList';
@@ -15,14 +15,14 @@ import { ConnectedStatsList } from './stats-list/ConnectedStatsList';
 const Divider = () => {
 	const { theme} = useThemeContext();
 	return (
-		<View style={{padding: 5}} >
+		<View style={{padding: 1}} >
 		<View style={{
 			width: "100%",
 			alignSelf: "center",
 			backgroundColor: 'white',
-			opacity: 1, 
-			height: StyleSheet.hairlineWidth,
-
+			opacity: 0.2, 
+			// height: StyleSheet.hairlineWidth,
+			height: 1,
 		}} />
 		</View>
 	);
@@ -39,8 +39,8 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 	return (
 		<View style={profileBodyStyles.container}>
 	
-			<View style={{ width: Dimensions.get("screen").width, height: "100%", }}>
-			<Divider/>
+			{/* <View style={{ width: Dimensions.get("screen").width, height: "100%", }}> */}
+			{/* <Divider/> */}
 
 				<View style={[profileBodyStyles.statsCategoryColumn, {flex: 5}]}>
 					<View style={profileBodyStyles.statsContainer}>
@@ -60,7 +60,7 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 					</View>
 				</View>
 			</View>
-			</View>
+			// </View>
 
 	);
 };

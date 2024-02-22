@@ -2,11 +2,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { DeletePostModal } from './DeletePostModal';
-
-import { Dimensions } from 'react-native';
+import { Dimensions, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { Host } from 'react-native-portalize';
+import { DeletePostModal } from './DeletePostModal';
 
 
 
@@ -256,9 +254,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 id='preview-feed-flash-list-embedded'
                 ref={profileFeedRef}
                 data={posts}
-                estimatedItemSize={200}
+                estimatedItemSize={800}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
+                ListFooterComponent={<View style={{ height: 200, width: "100%" }}></View>}
                 viewabilityConfig={{
                   itemVisiblePercentThreshold: 0
                 }}
@@ -283,7 +282,13 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 refreshing={refreshing}
 
                 
-                onRefresh={onRefreshFeed}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefreshFeed}
+                    colors={['white']}
+                    tintColor={'white'}
+                  />}
               />
 
               <Portal>

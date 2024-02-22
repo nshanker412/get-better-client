@@ -12,6 +12,7 @@ import { SearchIcon } from '@assets/darkSvg/SearchIcon.js';
 import { CommentDrawerProvider } from '@context/comment-drawer/CommentDrawerContext';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -163,19 +164,18 @@ export function MainScreen() {
 		<Tab.Navigator
 			id='bottom-tab-navigator'
 				initialRouteName='hometab'
-				hiddenTabBar={true} 
-			screenOptions={{
+				screenOptions={{
 				tabBarTestID: 'bottom-tab-navigator-testid',
 				headerShown: false,
 				tabBarShowLabel: false,
 				tabBarStyle: tabBarStyles.safeArea,
-				// tabBarBackground: () => (
-				// 	<BlurView
-				// 		tint='dark'
-				// 		intensity={25}
-				// 		style={{ ...StyleSheet.absoluteFillObject }}
-				// 	/>
-				// ),
+				tabBarBackground: () => (
+					<BlurView
+						tint='dark'
+						intensity={25}
+						style={{ ...StyleSheet.absoluteFillObject }}
+					/>
+				),
 				
 			}}>
 			<Tab.Screen
@@ -223,7 +223,7 @@ export const useFooterStyles = () => {
 		safeArea: {
 			position: 'absolute',
 			borderColor: 'transparent',
-			borderWidth: 1,
+			// borderWidth: 1,
 
 			// borderWidth: 1, 
 			// flex: 1,
