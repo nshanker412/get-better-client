@@ -26,7 +26,7 @@
 			},
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "development",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
 				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
 
 			}
@@ -36,7 +36,7 @@
 			"distribution": "internal",
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "staging",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
 				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
 
 			}
@@ -47,7 +47,7 @@
 			"autoIncrement": true,
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "production",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserver.com:13131",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
 				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
 			}
 		}
