@@ -9,7 +9,7 @@ import { Link } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import throttle from 'lodash/throttle';
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
@@ -21,6 +21,7 @@ interface PostOverlayProps {
   postData: PostMetadata;
   myUsername: string;
   onToggleVideoState: () => void;
+  isEmbeddedFeed?: boolean;
     }
 
 /**
@@ -31,12 +32,13 @@ interface PostOverlayProps {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, onToggleVideoState }) => {
-  console.log('postData', postData)
+export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, onToggleVideoState, isEmbeddedFeed }) => {
   const [currentLikeState, setCurrentLikeState] = useState({
     state: false,
     counter: postData?.likes?.length,
   });
+
+  const styles = usePostOverlayStyles(isEmbeddedFeed);
   
     const doubleTapRef = useRef(null);
   const { onPostChange, openDrawer } = useCommentDrawer();
@@ -77,7 +79,12 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 			// Toggle play/pause
 			onToggleVideoState();
 		}
-	};
+  };
+  
+  useEffect(() => {
+    console.log('height', Dimensions.get('window').height)
+    console.log(Dimensions.get('window').width)
+  }, [])
 
 
   return (
@@ -95,31 +102,34 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   
       <View
 					style={{
-            height: Dimensions.get('window').height,
+            height: isEmbeddedFeed ? 200 : Dimensions.get('window').height,
             width: Dimensions.get('window').width,
             zIndex: 1,
             position: 'absolute',
 					}}>
 					<View style={styles.postHeader}>
-						<ConnectedProfileAvatar
-							key={postData.user}
-							username={postData.user}
-							fetchSize={300}
-							size={40}
-						/>
+            {!isEmbeddedFeed && (<ConnectedProfileAvatar
+              key={postData.user}
+              username={postData.user}
+              fetchSize={300}
+              size={40}
+            />)}
 						<View style={styles.postHeaderInfoContainer}>
-							<Link
-								to={{
-									screen: 'profile',
-									params: { profileUsername: postData.user },
-								}}>
-								<Text style={styles.username}>
-									{postData.user}
-								</Text>
-							</Link>
+              {!isEmbeddedFeed && (<Link
+                to={{
+                  screen: 'profile',
+                  params: { profileUsername: postData.user },
+                }}>
+                
+                <Text style={styles.username}>
+                  {postData.user}
+                </Text>
+              </Link>
+              )}
 							<Text style={styles.timestamp}>
 								{timeAgo(postData.timestamp)}
 							</Text>
+
 						</View>
           </View>
           <BlurView
@@ -128,21 +138,24 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
             style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
             tint='dark'
           />
-       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, paddingRight: 10}}>   
+       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10: 100, paddingLeft: isEmbeddedFeed ? 5: 10, paddingRight: 10}}>   
         <StarIconView 
             likes={currentLikeState.counter}
             isLiked={currentLikeState.state}
-            onLikePress={() => handleUpdateLike(currentLikeState)}
+              onLikePress={() => handleUpdateLike(currentLikeState)}
+              isEmbeddedFeed={isEmbeddedFeed} 
           />
           <CommentIcon
             commentCount={postData?.comments?.length ?? 0}
-            openCommentDrawer={handleOpenCommentDrawer} />
+            openCommentDrawer={handleOpenCommentDrawer} 
+            isEmbeddedFeed={isEmbeddedFeed} 
+/>
 
           </View>
         
           <View style={{flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, paddingRight: 10}}>   
 
-            {postData.challenge && postData.challenge !== "false" && (<ChallengeMedalIcon />)}
+            {postData.challenge && postData.challenge !== "false" && (<ChallengeMedalIcon isEmbeddedFeed={isEmbeddedFeed} />)}
             </View>
           
         </View>
@@ -156,7 +169,10 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   
 PostOverlay.displayName = 'PostOverlay';
 
-const styles = StyleSheet.create({
+
+const usePostOverlayStyles = (isEmbeddedFeed: boolean) => {
+
+const styles = useMemo(() => StyleSheet.create({
   postHeader: {
 
     // height: 50,
@@ -166,8 +182,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     position: 'absolute',
     width: 'auto',
-    height: 50, // todo - wrap uname incase some boi has long name
-    top: 100,
+    height: isEmbeddedFeed ? 40: 50, // todo - wrap uname incase some boi has long name
+    top: isEmbeddedFeed ? 0 : 100,
     left: 0,
     padding: 10,
     zIndex: 1,
@@ -186,13 +202,15 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
   },
   container: {
-      height: Dimensions.get('window').height,  
-        width: Dimensions.get('window').width,
+      // height: Dimensions.get('window').height,  
+    // width: Dimensions.get('window').width,
+    width: '100%',
+    height: '100%',
         position: 'absolute',
         zIndex: 1,
         bottom: 0,
         paddingLeft: 20,
-        paddingBottom: 80,
+        paddingBottom: isEmbeddedFeed ? 10: 80,
         paddingRight: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -217,7 +235,7 @@ const styles = StyleSheet.create({
     },
     leftContainer: {
       alignItems: 'center',
-      paddingTop: 150,
+      // paddingTop: 150,
     },
     actionButton: {
         paddingBottom: 16
@@ -244,14 +262,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     // color: 	'#9A9A9A',
     textShadowColor: 'rgba(0, 0, 0, 0.55)',
-    textShadowOffset: { width: -1, height: 1 },
+    textShadowOffset: { width: -2, height: 2 },
     textShadowRadius: 2,
     color: 'white',
     textAlign: 'left',
   },
-})
+}), [isEmbeddedFeed]);
+  
+return styles;
+}
 
-const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => void; }> = ({ commentCount, openCommentDrawer }) => {
+const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => void; isEmbeddedFeed: boolean}> = ({ commentCount, openCommentDrawer, isEmbeddedFeed }) => {
 
   const styles = StyleSheet.create({
     iconShadow: {
@@ -261,12 +282,19 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       shadowRadius: 3,
     },
     actionButtonText: {
+      textShadowColor: 'rgba(0, 0, 0, 0.55)',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 3,
       fontFamily: fonts.inter.bold,
       color: 'white',
       textAlign: 'center',
-      marginTop: 4
+      marginTop: isEmbeddedFeed ? 2:4,
+      fontSize: isEmbeddedFeed ? 12 : 16,
 },
   });
+
+  const size = isEmbeddedFeed ? 20 : 45;
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -275,8 +303,8 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       }}>
       <SvgXml
         style={styles.iconShadow}
-        width={45}
-        height={45}
+        width={size}
+        height={size}
         xml={CI}
       />
       <Text style={styles.actionButtonText}>
@@ -286,7 +314,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
   );
 };
 
-const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () => void; }> = ({ likes, isLiked, onLikePress }) => {
+const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () => void;isEmbeddedFeed: boolean }> = ({ likes, isLiked, onLikePress, isEmbeddedFeed }) => {
   
   
   const styles = StyleSheet.create({
@@ -297,12 +325,20 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       shadowRadius: 3,
     },
     actionButtonText: {
+      textShadowColor: 'rgba(0, 0, 0, 0.55)',
+      textShadowOffset: { width: -1, height: 0 },
+      textShadowRadius: 3,
       fontFamily: fonts.inter.bold,
       color: 'white',
       textAlign: 'center',
-      marginTop: 4
+      marginTop: isEmbeddedFeed ? 2:4,
+      fontSize: isEmbeddedFeed ? 12 : 16,
+
 },
   });
+
+
+  const size = isEmbeddedFeed ? 20 : 45;
   
   return (
     <TouchableOpacity
@@ -311,8 +347,8 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       <SvgXml
           style={styles.iconShadow}
 
-        width={45}
-        height={45}
+        width={size}
+        height={size}
         xml={isLiked ? StarIconFilled : StarIcon}
         />
     
@@ -324,10 +360,12 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
   );
 };
 
-const ChallengeMedalIcon = () => {
+const ChallengeMedalIcon: React.FC<{  isEmbeddedFeed: boolean }> = ({isEmbeddedFeed} ) => {
+
+  const style = isEmbeddedFeed ? { width: 20, height: 20 } : { width: 45, height: 45 }; 
   return (
     <Image
-    style={{width: 45, height: 45}}
+    style={style}
     source={require('../../../../../../img/medal.png')}/>
   );
 }

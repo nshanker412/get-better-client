@@ -1,18 +1,13 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { AntDesign } from '@expo/vector-icons';
 import { Post, PostsApiResponse } from '@models/posts';
-import { Link } from '@react-navigation/native';
 import axios from 'axios';
-import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { RefreshControl, Text, View } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { LoadingSpinner } from '../../../loading-spinner/LoadingSpinner';
 import { ProfilePosts } from './ProfilePosts';
 import { useProfilePostsStyles } from './ProfilePosts.styles';
 import { ConnectedProfilePostsProps } from './ProfilePosts.types';
+import { PreviewFeedScreen } from './modals/PostPreviewModal';
 
 /**
  * Connected ProfilePosts Component
@@ -33,7 +28,6 @@ const MyProfilePosts: React.FC = () => {
 	const [refreshing, setRefreshing] = useState(false);
 	const { theme } = useThemeContext();
 
-	
 
 	const handleScroll = (event: any) => {
 		// media loading handling
@@ -78,77 +72,15 @@ const MyProfilePosts: React.FC = () => {
 	}, [myUsername]);
 
 	return (
-		<ScrollView
-			contentContainerStyle={ProfilePostsStyles.profileFeedContainer}
-			onScroll={handleScroll}
-			refreshControl={
-				<RefreshControl
-				size={10}
-					refreshing={refreshing}
-					onRefresh={onRefreshFeed}
-					colors={[theme.textColorPrimary]}
-					tintColor={theme.textColorPrimary}
-				/>
-			}
-			scrollEventThrottle={3000}>
 
-			<>
-				{posts?.length > 0 ? (
-					<ProfilePosts
-						posts={posts}
-						currentScrollIndex={currentScrollIndex}
-						isError={isError}
-						isMyProfile={true}
-						fetchUserPosts={onRefreshFeed}
-					/>
-				) : loadedPosts ? (
-					// No posts, show a message
-					<Link
-						style={{ flex: 1 }}
-						to={{
-							screen: 'post',
-							params: { profileUsername: myUsername },
-						}}>
-						<TouchableOpacity
-							style={{
-								flex: 1,
-								alignItems: 'center',
-								justifyContent: 'center',
-							}}
-							onPress={() => {
-								Haptics.impactAsync(
-									Haptics.ImpactFeedbackStyle.Medium,
-								);
-							}}>
-							<View
-								style={{
-									flex: 1,
-									alignItems: 'center',
-									justifyContent: 'center',
-									height: 400,
-									width: 400,
-									gap: 10,
-								}}>
-								<AntDesign
-									name='pluscircleo'
-									size={50}
-									color={theme.textColorPrimary}
-								/>
-								<Text style={ProfilePostsStyles.noPostsText}>
-									Add your first post!
-								</Text>
-							</View>
-						</TouchableOpacity>
-					</Link>
-				) : (
-					// Loading spinner while posts are being fetched
-					<View style={ProfilePostsStyles.imageContainer}>
-						<LoadingSpinner />
-					</View>
-				)}
-				<View style={ProfilePostsStyles.imageScrollBuffer}></View>
-			</>
-		</ScrollView>
+		<ProfilePosts
+			posts={posts}
+			currentScrollIndex={currentScrollIndex}
+			isError={isError}
+			isMyProfile={true}
+			fetchUserPosts={onRefreshFeed}
+		/>
+
 	);
 };
 
@@ -206,45 +138,12 @@ const OtherProfilePosts: React.FC = () => {
 
 
 	return (
-		<ScrollView
-			contentContainerStyle={ProfilePostsStyles.profileFeedContainer}
-			onScroll={handleScroll}
-			refreshControl={
-				<RefreshControl
-					size={10}
-					refreshing={refreshing}
-					onRefresh={onRefreshFeed}
-					colors={[theme.textColorPrimary, theme.textColorSecondary]}
-					tintColor={theme.textColorPrimary}
-				/>
-			}
-			scrollEventThrottle={3000}>
-			<>
-				{posts?.length > 0 ? (
-					<ProfilePosts
-						posts={posts}
-						currentScrollIndex={currentScrollIndex}
-						isError={isError}
-						isMyProfile={false}
-						fetchUserPosts={fetchUserPosts}
-						onOpenDeletePostModal={null}
-					/>
-				) : loadedPosts ? (
-					// No posts, show a message
-
-					<View style={ProfilePostsStyles.noPostsContainer}>
-						<Text style={ProfilePostsStyles.noPostsText}>
-							User has no posts
-						</Text>
-					</View>
-				) : (
-					// Loading spinner while posts are being fetched
-					<View style={ProfilePostsStyles.imageContainer}>
-						<LoadingSpinner />
-					</View>
-				)}
-				<View style={ProfilePostsStyles.imageScrollBuffer}></View>
-			</>
-		</ScrollView>
+		<PreviewFeedScreen 
+			posts={posts}
+			currentScrollIndex={currentScrollIndex}
+			isMyProfile={false}
+			onClosePress={onRefreshFeed}
+			isPreviewMode={false}
+		/>
 	);
 };

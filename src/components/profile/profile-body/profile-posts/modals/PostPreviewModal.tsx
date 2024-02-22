@@ -1,15 +1,11 @@
-import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { FeedPost } from '../../../../home/FeedPost';
-import { Modal } from '../../../../primitives/action-modal/ActionModal';
 import { DeletePostModal } from './DeletePostModal';
 
-import { Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Dimensions } from 'react-native';
 import { Host } from 'react-native-portalize';
 
 
@@ -44,6 +40,132 @@ import { Host } from 'react-native-portalize';
 // });
 
 // <AnimatedPagerView onPageScroll={pageScrollHandler} />;
+
+
+import { PostTile } from '../post-flashlist/PostTile';
+
+
+import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import { ViewToken } from 'react-native';
+import { Portal } from 'react-native-portalize';
+import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer';
+
+// interface PostTileRef {
+//     play: () => void;
+//     stop: () => void;
+//     unload: () => void;
+//   }
+
+import { useRef } from 'react';
+/**
+ * Component that renders a list of posts meant to be 
+ * used for the feed screen.
+ * 
+ * On start make fetch for posts then use a flatList 
+ * to display/control the posts.
+ */
+export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onClosePress, onFetchPosts }: { posts: Post[]; currentIndex: number; onClosePress: (close: boolean) => void, onFetchPosts: ()=> Promise<void>, isFullscreen: boolean }) {
+    const mediaRefs = useRef([]);
+    const { username: myUsername } = useMyUserInfo()
+    const profileFeedRef = useRef(null)
+    const currentPostFilenameRef = useRef<string>('')
+  const { onPostChange } = useCommentDrawer()
+
+  const [refreshing, setRefreshing] = useState(false)
+  
+    /**
+     * Called any time a new post is shown when a user scrolls
+     * the FlatList, when this happens we should start playing 
+     * the post that is viewable and stop all the others
+     */
+    const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
+        changed.forEach(({ item, isViewable }) => {
+            if (isViewable) {
+                console.log('currentPostFilenameRef', currentPostFilenameRef.current)
+                currentPostFilenameRef.current = item.filename
+            }
+      
+
+        });
+    }, [onPostChange]);
+
+
+
+
+    const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
+    // const feedItemHeight = Dimensions.get('window').height;
+
+
+    const renderItem: ListRenderItem<Post> = ({ item }) => {
+        return (
+            <View style={{ height: 200, width: 200,  backgroundColor: 'black' }}>
+            <PostTile isEmbeddedFeed={ !isFullscreen} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
+                />
+            </View>
+        );
+    };
+  
+
+  
+  const onRefreshFeed = async () => {
+    if (isFullscreen) {
+      onClosePress(false);
+    } else {
+       setRefreshing(true);
+       await onFetchPosts();
+      setRefreshing(false);
+
+    }
+  }
+
+    return (
+        <Host>
+      
+          <View style={{ flex: 1, height: 600, minHeight: 600}} >
+              <FlashList
+                id='preview-feed-flash-list'
+                ref={profileFeedRef}
+                data={posts}
+                estimatedItemSize={200}
+                showsVerticalScrollIndicator={false}
+                removeClippedSubviews
+                viewabilityConfig={{
+                  itemVisiblePercentThreshold: 0
+                }}
+                renderItem={renderItem}
+                // pagingEnabled
+                scrollEventThrottle={20}
+                // snapToAlignment='start'
+                keyExtractor={item => item.filename}
+                decelerationRate={'normal'}
+                onViewableItemsChanged={onViewableItemsChangedRef.current}
+                onMomentumScrollEnd={() => {
+                  Haptics.impactAsync(
+                    Haptics.ImpactFeedbackStyle.Medium,
+                  );
+                }}
+                onScrollEndDrag={() => {
+                  Haptics.impactAsync(
+                    Haptics.ImpactFeedbackStyle.Medium,
+                  );
+                }}
+                onScrollToTop={() => onClosePress(false)}
+                refreshing={refreshing}
+
+                
+                onRefresh={onRefreshFeed}
+              />
+
+                <Portal>
+                  <ConnectedPostCommentDrawer/>
+            </Portal>
+            </View>
+      
+          </Host>
+    )
+}
 
 export interface PostPreviewModalProps {
   posts: Post[];
@@ -93,24 +215,24 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
   //   translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
   // }, [ translateY]);
 
-  const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
-    if (direction === 'prev') {
-      if (index === 0) {
-        onClosePress(false);
-      } else {
-        setIndex(index - 1);
-      }
-    }
-    if (direction === 'next') {
-      if (index === posts.length - 1) {
-        onClosePress(false);
-      } else {
-        setIndex(index + 1);
-      }
-    }
-  }, [onClosePress, posts]);
+  // const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
+  //   if (direction === 'prev') {
+  //     if (index === 0) {
+  //       onClosePress(false);
+  //     } else {
+  //       setIndex(index - 1);
+  //     }
+  //   }
+  //   if (direction === 'next') {
+  //     if (index === posts.length - 1) {
+  //       onClosePress(false);
+  //     } else {
+  //       setIndex(index + 1);
+  //     }
+  //   }
+  // }, [onClosePress, posts]);
 
-  const scrollViewRef = React.useRef<ScrollView>(null);
+  // const scrollViewRef = React.useRef<ScrollView>(null);
 
 
 
@@ -134,18 +256,18 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
 
   };
   
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
-    }
-  }, [index, scrollViewRef, window.height]);
+  // useEffect(() => {
+  //   if (scrollViewRef.current) {
+  //     scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
+  //   }
+  // }, [index, scrollViewRef, window.height]);
 
 
  
 
   return (
+    <>
      
-      <Modal isVisible={isVisible} style={{width: Dimensions.get("screen").width}} hasBackdrop onBackdropPress={() => onClosePress(false)}>
         <View
           style={{
             // position: 'absolute',
@@ -176,57 +298,15 @@ export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
             </TouchableOpacity>
           </View>
         )}
-                  <Host>
 
                 
-          <View style={{ height: window.height , width:window.width  }}>
-					<ScrollView
-						ref={scrollViewRef}
-						id='post-preview-scroll-view'
-            contentContainerStyle={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center'}}
-						snapToAlignment={'start'}
-            pagingEnabled
-            
-						onMomentumScrollEnd={() => {
-							Haptics.impactAsync(
-								Haptics.ImpactFeedbackStyle.Medium,
-							);
-						}}
-						onScroll={handleScroll}
-              scrollEventThrottle={20}
-          
-
-
-          >
-            <>
-            {posts?.map((post, _index) => {
-                 return( <FeedPost
-                    key={`${post.filename}-post-preview`}
-                    filename={post.filename}
-                    index={_index}
-                    loadMedia={true}
-                   pauseVideo={true}
-                    profileUsername={post.metadata.user}
-                    postID={`${post.metadata.timestamp}`}
-                    postData={post.metadata}
-                    myUsername={myUsername}
-                 />
-                 )
-            }
-            )}
-            </>
-          </ScrollView>
+          <View style={{ flex: 1, height: "100%" , width:"100%"  }}>
+        <PreviewFeedScreen posts={posts} currentIndex={index} onClosePress={onClosePress} />  
         </View>
-      </Host>
-      <>
-      <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+      
+          <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+ 
 </>
-          </Modal>
-    
   );
 };
 

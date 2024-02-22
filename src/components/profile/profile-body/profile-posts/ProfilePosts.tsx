@@ -2,11 +2,9 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { Post } from '@models/posts';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { TouchableHighlight } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { ProfilePost } from '../../ProfilePost';
 import { ProfilePostsProps } from './ProfilePosts.types';
-import { PostPreviewModal } from './modals/PostPreviewModal';
+import { PreviewFeedScreen } from './modals/PostPreviewModal';
 
 
 
@@ -36,9 +34,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     };
 
     const onCheckLinkPost = useCallback((linkPostID: number) => {
-
         const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
-        console.log('index', index);
         if (index !== -1) {
             togglePreview(index);
         } else {
@@ -73,42 +69,18 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         setIndex(undefined);
     };
 
+    const onFetchUserPosts = async () => {
+        await fetchUserPosts();
+    }
+
     return (
-        <>
-            {posts.map((post, index) => (
-                <TouchableHighlight
-                    style={{ display: 'flex', width: '100%', height: 200 }}
-                    key={index}
-                    onPress={() => togglePreview(index)}
-                >
-                    <ProfilePost
-                        key={index}
-                        preview={[]}
-                        index={index}
-                        loadMedia={
-                            index < currentScrollIndex +4
-                        }
-                        profileUsername={post.metadata.user}
-                        postID={post.metadata.timestamp}
-                        postData={post.metadata}
-                        storePost={true}
-                        pauseVideo={index !== currentScrollIndex}
-                        setPreview={() => togglePreview(index)}
-                        muted={true}
-                        isMyProfile={isMyProfile}
-                        fetchUserPosts={fetchUserPosts}
-                    />
-                </TouchableHighlight>
-            ))}
-            <PostPreviewModal
+            <PreviewFeedScreen
                 posts={posts}
-                isVisible={previewModalVisible}
+                isFullscreen={previewModalVisible}
                 onClosePress={onClosePreviewPress}
-                index={index || 0} // Provide a default value for index
-                isMyProfile={isMyProfile}
-                myUsername={myUsername!}
+                currentIndex={index}
+                onFetchPosts={onFetchUserPosts}
             />
 
-        </>
     );
 };

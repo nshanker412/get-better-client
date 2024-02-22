@@ -11,6 +11,7 @@ import { PostOverlay } from './overlay/PostOverlay';
 interface PostTileProps {
     post: Post
     myUsername: string
+    isEmbeddedFeed?: boolean
 }
 interface PostTileRef {
     play: () => void;
@@ -25,7 +26,7 @@ interface PostTileRef {
  * The ref is forwarded to this component so that the parent component
  * can manage the play status of the video.
  */
-export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUsername }, ref) => {
+export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUsername, isEmbeddedFeed }, ref) => {
     const [status, setStatus] = useState<any>(null);
     const [paused, setPaused] = useState(false);
 
@@ -123,21 +124,23 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
     }
 
 
-    const onError = (error) => {
-        if (post.metadata.type === 'image') {
-            console.log('Image error: ', error)
-            return;
-        } else {
-            console.log('Video error: ', error)
-            return 
-        }
-    }
-
     const onToggleVideoState = () => {
     
         setPaused(!paused)
   
     }
+
+    const onVideoError = (error) => {   
+        console.log('Video error: ', error)
+        throw new Error('Video error')
+    }
+
+
+    const onImageError = (error) => {   
+        console.log('Video error: ', error)
+        throw new Error('Video error')
+    }
+
 
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
@@ -146,13 +149,14 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
 
     return (
         <>
-            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState}/>
+            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState} isEmbeddedFeed={isEmbeddedFeed} />
             {post.metadata.type === 'video' && (
                 <Video
                 ref={localRef}
                     style={{ flex: 1 }}
-                
                     resizeMode={ResizeMode.COVER}
+                    isMuted={isEmbeddedFeed}
+                    onError={onVideoError}
                     PosterComponent={() => {
                         return (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -183,7 +187,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
                 ref={localRef}
                 recyclingKey={post.filename}
                 style={{ flex: 1 }}
-                onError={onError}
+                onError={onImageError}
                 source={{
                     uri: imageUri
                 }}

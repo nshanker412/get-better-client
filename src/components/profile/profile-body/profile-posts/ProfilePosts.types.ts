@@ -8,5 +8,5 @@ export interface ProfilePostsProps {
 	currentScrollIndex: number;
 	isError: boolean;
 	isMyProfile: boolean;
-	fetchUserPosts: () => void;
+	fetchUserPosts: () => Promise<void>;
 }
