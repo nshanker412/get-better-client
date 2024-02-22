@@ -33,8 +33,9 @@ interface PostOverlayProps {
  * @param {Object} post object
  */
 export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, onToggleVideoState, isEmbeddedFeed }) => {
+  console.log('PostOverlay', postData)
   const [currentLikeState, setCurrentLikeState] = useState({
-    state: false,
+    state: postData.likes.includes(myUsername),
     counter: postData?.likes?.length,
   });
 
@@ -61,6 +62,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   );
 
 
+  useEffect(() => {
+    console.log("is this post a challenge?", postData.challenge, postData.challenge == "true", postData.caption); 
+  }, [postData.challenge])
+
+
 	const onDoubleTapEvent = async (event): Promise<void>  => {
 		if (event.nativeEvent.state === State.ACTIVE) {
 			// Double tap was detected
@@ -85,6 +91,8 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     console.log('height', Dimensions.get('window').height)
     console.log(Dimensions.get('window').width)
   }, [])
+
+  const isChallenge = postData?.caption?.includes("challenge");
 
 
   return (
@@ -138,8 +146,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
             style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
             tint='dark'
           />
-       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10: 100, paddingLeft: isEmbeddedFeed ? 5: 10, paddingRight: 10}}>   
-        <StarIconView 
+       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10: 100, paddingLeft: isEmbeddedFeed ? 5: 10, paddingRight: 10, gap: 5}}>   
+       {eval(postData.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={isEmbeddedFeed} />)}
+
+            
+            <StarIconView 
             likes={currentLikeState.counter}
             isLiked={currentLikeState.state}
               onLikePress={() => handleUpdateLike(currentLikeState)}
@@ -149,22 +160,26 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
             commentCount={postData?.comments?.length ?? 0}
             openCommentDrawer={handleOpenCommentDrawer} 
             isEmbeddedFeed={isEmbeddedFeed} 
-/>
-
+            />
+            
           </View>
-        
-          <View style={{flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end", height: "100%", paddingBottom: 100, paddingLeft: 10, paddingRight: 10}}>   
+ 
 
-            {postData.challenge && postData.challenge !== "false" && (<ChallengeMedalIcon isEmbeddedFeed={isEmbeddedFeed} />)}
+          <View style={{ position: 'absolute', right: 0, bottom: 100}}>
+            
             </View>
-          
         </View>
+        
        
       </TapGestureHandler>
     </TapGestureHandler>
   );
 }, (prevProps, nextProps) => {
-  return prevProps.postData === nextProps.postData;
+  return prevProps.postData.likes.length === nextProps.postData.likes.length &&
+    prevProps.postData.comments.length === nextProps.postData.comments.length &&
+    prevProps.postData.timestamp === nextProps.postData.timestamp &&
+    prevProps.postData.user === nextProps.postData.user &&
+    prevProps.postData.challenge === nextProps.postData.challenge;
 } );
   
 PostOverlay.displayName = 'PostOverlay';
@@ -360,13 +375,14 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
   );
 };
 
-const ChallengeMedalIcon: React.FC<{  isEmbeddedFeed: boolean }> = ({isEmbeddedFeed} ) => {
+const ChallengeMedalIcon: React.FC<{ isEmbeddedFeed: boolean }> = ({ isEmbeddedFeed }) => {
 
-  const style = isEmbeddedFeed ? { width: 20, height: 20 } : { width: 45, height: 45 }; 
+  // const size = isEmbeddedFeed ? 20 : 45;
+const size = isEmbeddedFeed ? 20 : 45;
   return (
     <Image
-    style={style}
-    source={require('../../../../../../img/medal.png')}/>
+      style={{width: size, height: size}}
+      source={require('../../../../../../img/medal.png')}/>
   );
 }
 

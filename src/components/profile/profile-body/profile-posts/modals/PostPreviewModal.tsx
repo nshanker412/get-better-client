@@ -135,9 +135,9 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
                   itemVisiblePercentThreshold: 0
                 }}
                 renderItem={renderItem}
-                // pagingEnabled
+                pagingEnabled
                 scrollEventThrottle={20}
-                // snapToAlignment='start'
+                snapToAlignment='start'
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}

@@ -139,7 +139,7 @@ export default function FeedScreen() {
                 
             <ConnectedPostCommentDrawer/>
 
-</Portal>
+            </Portal>
             </View>
             </Host>
     )
