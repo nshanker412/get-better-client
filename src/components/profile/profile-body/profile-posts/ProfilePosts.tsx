@@ -22,25 +22,27 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     const [postPreview, setPostPreview] = useState<Post>();
     const [previewPostId, setPreviewPostId] = useState < string | undefined>(undefined);
 
-    const togglePreview = (postId: string) => {
-        setPreviewPostId(postId);
+    // const togglePreview = (postId: string) => {
+    //     setPreviewPostId(postId);
 
-        const selectedPost = posts[index];
-        if (selectedPost) {
-            console.log('previewPost', selectedPost);
-            setPostPreview(selectedPost);
-            setPreviewModalVisible(true);
-        }
-    };
+    //     const selectedPost = posts[index];
+    //     if (selectedPost) {
+    //         console.log('previewPost', selectedPost);
+    //         // setPostPreview(selectedPost);
+    //         // setPreviewModalVisible(true);
+    //     }
+    // };
 
     const onCheckLinkPost = useCallback((linkPostID: number) => {
-        const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
+        const index = posts.findIndex(item => `${item.metadata.timestamp}` == `${linkPostID}`);
+
+
 
         // find postid infilenames
         const postID = posts[index]?.metadata?.postID;
         // see if any posts match with the linkPostID
         if (index !== -1) {
-            togglePreview(postId);
+            setPreviewPostId(postId);
         } else {
             Toast.show({
                 type: 'info',
@@ -55,7 +57,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
     useEffect(() => {
         const linkedPostID = route?.params?.linkPostID;
-        console.log('linkedPostID', linkedPostID);
 
         if (linkedPostID) {
             onCheckLinkPost(linkedPostID);
@@ -83,7 +84,8 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 isFullscreen={previewModalVisible}
                 onClosePress={onClosePreviewPress}
                 currentPost={previewPostId}
-                onFetchPosts={onFetchUserPosts}
+            onFetchPosts={onFetchUserPosts}
+            isMyProfile={isMyProfile}
             />
 
     );

@@ -72,7 +72,11 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const currentPostFilenameRef = useRef<string>(currentPost)
   const { onPostChange } = useCommentDrawer()
   const [isFullscreenPreview, setFullscreenPreview] = useState(currentPost ? true : false);
-  const [currentFilename, setCurrentFilename] = useState<string>();
+  const [currentFilename, setCurrentFilename] = useState();
+  // const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
+  const [refreshing, setRefreshing] = useState(false)
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+
 
   const embeddedViewStyle = {
     flex: 1,
@@ -84,13 +88,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const fullViewStyle = {
     flex: 1,
     height: Dimensions.get("screen").height,
-      width: Dimensions.get("screen").width,
-  
+    width: Dimensions.get("screen").width,
   }
-
-  const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
-  const [refreshing, setRefreshing] = useState(false)
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
 
 
   const onDeletePressCb = async () => {
@@ -134,13 +133,21 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   
   const handlePostPress = (postID: string) => {
 
-    console.log(isFullscreenPreview);
+    console.log(postID, isFullscreenPreview);
       
     if (!isFullscreenPreview) {
       console.log("notfullscreenpreview")
-      setFullscreenPreview(true);
-
       scrollToItemWithKey(postID)
+
+      // find index of post
+      const index = posts.findIndex(post => post.filename === postID);
+      if (index !== -1) {
+        setCurrentFilename(index);
+        setFullscreenPreview(true);
+      } else {
+        console.log('WARN: post not found');
+      }
+
 
     } else {
       setFullscreenPreview(false);
@@ -173,8 +180,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   }
 
 
-
-
   return (
     <View style={{ width: "100%", height: "100%"}} > 
    
@@ -200,14 +205,15 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 id='preview-feed-flash-list-fullscreen'
                 ref={profileFeedRef}
                 data={posts}
-                estimatedItemSize={200}
+                estimatedItemSize={Dimensions.get("screen").height}
+                initialScrollIndex={currentFilename}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
                 viewabilityConfig={{
                   itemVisiblePercentThreshold: 0
                 }}
                 renderItem={renderItem}
-                numColumns={isFullscreenPreview ? 1 : 2}
+                numColumns={ 1 }
                 scrollEventThrottle={20}
                 snapToAlignment='start'
                 pagingEnabled={true}
@@ -254,7 +260,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 id='preview-feed-flash-list-embedded'
                 ref={profileFeedRef}
                 data={posts}
-                estimatedItemSize={800}
+                estimatedItemSize={200}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
                 ListFooterComponent={<View style={{ height: 200, width: "100%" }}></View>}
