@@ -167,7 +167,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
                     }
                     }
         
-                shouldPlay={!paused}
+                shouldPlay={false}
                 isLooping
                     // posterStyle={{ resizeMode: 'cover', height: '100%' }}
                     onPlaybackStatusUpdate={status => setStatus(() => status)}

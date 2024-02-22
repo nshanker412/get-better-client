@@ -1,11 +1,12 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useNotifications } from '@context/notifications/useNotifications';
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useState } from 'react';
-import { Linking, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { timeAgo } from '../../utils/timeAgo';
 import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
@@ -16,8 +17,6 @@ import { ShimmerTile } from './skeleton/ShimmerTile';
 const removeCommented = (content: string) => {
     return content.split(' ').slice(1).join(' ');
 };
-
-
 
 const CommentLoadingShimmer = () => {
 	return (
@@ -44,12 +43,14 @@ export const Notifications = () => {
     const { theme } = useThemeContext();
     const navigation = useNavigation();
     const notificationStyles = useNotificationsStyles();
-    const { notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
+    const { unreadNum, notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
     const [refreshing, setRefreshing] = useState(false);
-    const {username: myUsername} = useMyUserInfo();
+    const { username: myUsername } = useMyUserInfo();
+
 
     useEffect(() => {
-        setNotificationsSeen();
+
+        return () => setNotificationsSeen();
     }, []);
 
     const handleRefresh = async () => {
@@ -60,9 +61,10 @@ export const Notifications = () => {
         setRefreshing(false);
     };
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, index }) => {
         const itemUsername = item.content.split(' ')[0];
         const itemContent = item.content.split(' ').slice(1).join(' ');
+
         
         let itemLink = {
             screen: 'profile',
@@ -100,16 +102,23 @@ export const Notifications = () => {
             };
             type = 'comment';
         }
-        else if (itemContent.includes('challenge')) {
+        else if (itemContent.includes('challenged')) {
             itemLink = {
-                screen: 'createPost',
+                screen: 'post',
                 params: {
                     challengeUsername: itemUsername,
                     challengeID: item.challengeID,
-                    challenge: item.content,
+                    challenge: item.challenge,
                 },
             };
             type = 'challenge';
+        }
+
+        let notifStyle = notificationStyles.unreadNotificationContainer;
+        if (!unreadNum) {
+            notifStyle = notificationStyles.notificationContainer;
+        } else if (index >= unreadNum) {
+            notifStyle = notificationStyles.notificationContainer;
         }
 
 
@@ -118,7 +127,7 @@ export const Notifications = () => {
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
-                        style={notificationStyles.notificationContainer}>
+                        style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
@@ -138,7 +147,7 @@ export const Notifications = () => {
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
-                        style={notificationStyles.notificationContainer}>
+                        style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
@@ -159,7 +168,7 @@ export const Notifications = () => {
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
-                        style={notificationStyles.notificationContainer}>
+                        style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
@@ -179,27 +188,47 @@ export const Notifications = () => {
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
-                        style={notificationStyles.notificationContainer}>
+                        style={[notifStyle, {flexShrink: 1, maxHeight: 200, height: "auto", justifyContent: "flex-start", alignItems: "flex-start"} ] }>
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
                             fetchSize={300}
                             size={40}
                         />
-                        <View style={notificationStyles.notificationInfoContainer}>
+                        <View style={[notificationStyles.notificationInfoContainer, {gap: 10}]}>
                             <View style={{ flexDirection: 'row', gap: 5 }}>
                                 <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
                                 <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
                             </View>
+                   
+
                             <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
-                        </View>
+                            <View style={{ flexShrink: 1, alignSelf: "flex-start", borderColor: theme.innerBorderColor, borderWidth: 1,  borderRadius: 10, flexDirection: "column", justifyContent: "center", alignItems: "center",  width: "auto" , padding: 10 }}>
+                                <View style={{ width: "100%", alignSelf: "flex-start",  justifyContent: "flex-start", flexDirection: "row", alignItems: "center",   padding: 10 }}>
+                                    <Text style={{ color: theme.textColorPrimary, fontSize: 14, fontFamily: fonts.inter.black}}>{"Challenge:  "}</Text>
+                                    <Text style={{ color: theme.textColorPrimary, fontSize: 14, fontFamily: fonts.inter.extra_light }}>{item.challenge}</Text>
+                                </View>
+                                <Pressable
+                                    style={{ padding: 10, borderRadius: 10, backgroundColor: 'black', borderColor: theme.textColorPrimary, borderWidth: 1, width: "auto" }}
+                                   
+                                    onPress={() => 
+                                        navigation.navigate(itemLink.screen, itemLink.params)
+                                    }>
+
+                                    <Text style={{ color: theme.textColorPrimary, fontSize: 16, fontFamily: fonts.inter.black }}>Complete</Text>
+                                </Pressable>
+                                
+                            </View>
+                            </View>
+
+
                     </TouchableOpacity>
                 );
             default:
                 return (
                     <TouchableOpacity
                         onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
-                        style={notificationStyles.notificationContainer}>
+                        style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
@@ -278,8 +307,6 @@ export const Notifications = () => {
                     data={notifications ??  []}
                     ListEmptyComponent={CommentLoadingShimmer }
                         renderItem={renderItem}
-                        
-                    
                     ItemSeparatorComponent={Divider}
                     keyExtractor={(item, index) => `notification-${index}`}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[theme.textColorPrimary]} tintColor={theme.textColorPrimary} />}

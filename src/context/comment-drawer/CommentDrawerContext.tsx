@@ -107,7 +107,6 @@ export const CommentDrawerProvider= ({ children }) => {
             console.error('Adding comment failed:', error);
             throw new Error(error);
         }
-
     }
 
 

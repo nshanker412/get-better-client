@@ -33,7 +33,7 @@ export const  ProfilePlan: React.FC = () => {
 		setLoading(true);
 		axios
 			.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${profileUsername}/${planID}/2000/2000`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${profileUsername}/${planID}/400/400`,
 			)
 			.then((response) => {
 				console.log('fetchPlan', profileUsername, planID);

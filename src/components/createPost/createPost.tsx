@@ -103,14 +103,22 @@ export default function CreatePost() {
 			allowsMultipleSelection: false,
 
 		});
-		
 
-		if (result.canceled && result.assets && result.assets[0].uri) {
+		console.log('result', result);
+		if (result == null) {
+			console.log('picked image is null');
+			return;
+		}
+
+		if (result.canceled) {
+			return
+		}
+		
+		if (result.assets && result?.assets[0].uri) {
 			console.log('picked image is null');	
 			return
 		}
 
-	
 		if (result?.assets[0]?.type === "image") {
 
 				setVideo(null);
@@ -376,7 +384,8 @@ export default function CreatePost() {
 			{photo === null && video === null ? (
 				<>
 					<Header />
-					<TouchableHighlight
+					<TouchableOpacity
+						activeOpacity={0.7}
 						style={createPostStyles.cameraRollContainer}
 						onPress={pickImage}>
 						<FontAwesome
@@ -386,7 +395,7 @@ export default function CreatePost() {
 							// color='white'
 							// backgroundColor='white'
 						/>
-					</TouchableHighlight>
+					</TouchableOpacity>
 					<View style={createPostStyles.createPostContainer}>
 						<View style={createPostStyles.cameraContainer}>
 							<Camera

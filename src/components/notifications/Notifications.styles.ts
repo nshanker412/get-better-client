@@ -81,10 +81,14 @@ export const useNotificationsStyles = () => {
 			justifyContent: 'flex-start',
 			alignItems: 'center',
 		},
+
 		unreadNotificationContainer: {
 			width: '100%',
+			alignSelf: 'center',
 			display: 'flex',
 			padding: 10,
+			paddingLeft: 20,
+
 			borderColor: theme.grayShades.gray300,
 			backgroundColor: theme.grayShades.gray500,
 			borderBottomColor: theme.borderColor,
