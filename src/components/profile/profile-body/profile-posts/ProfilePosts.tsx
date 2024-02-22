@@ -20,10 +20,10 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
     const [previewModalVisible, setPreviewModalVisible] = useState<boolean>(false);
     const [postPreview, setPostPreview] = useState<Post>();
-    const [index, setIndex] = useState<number>(0);
+    const [previewPostId, setPreviewPostId] = useState < string | undefined>(undefined);
 
-    const togglePreview = (index: number) => {
-        setIndex(index);
+    const togglePreview = (postId: string) => {
+        setPreviewPostId(postId);
 
         const selectedPost = posts[index];
         if (selectedPost) {
@@ -35,8 +35,12 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
     const onCheckLinkPost = useCallback((linkPostID: number) => {
         const index = posts.findIndex(item => item.metadata.timestamp == linkPostID);
+
+        // find postid infilenames
+        const postID = posts[index]?.metadata?.postID;
+        // see if any posts match with the linkPostID
         if (index !== -1) {
-            togglePreview(index);
+            togglePreview(postId);
         } else {
             Toast.show({
                 type: 'info',
@@ -66,7 +70,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         }
         setPostPreview(undefined);
         setPreviewModalVisible(false);
-        setIndex(undefined);
+        setPreviewPostId(undefined);
     };
 
     const onFetchUserPosts = async () => {
@@ -78,7 +82,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 posts={posts}
                 isFullscreen={previewModalVisible}
                 onClosePress={onClosePreviewPress}
-                currentIndex={index}
+                currentPost={previewPostId}
                 onFetchPosts={onFetchUserPosts}
             />
 

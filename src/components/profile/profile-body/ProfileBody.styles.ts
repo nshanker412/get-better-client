@@ -61,7 +61,7 @@ export const useProfileBodyStyles = () => {
 			alignSelf: 'flex-start',
 		},
 		statsCategoryColumn: {
-			flexDirection: 'column',
+			flexDirection: 'row',
 			justifyContent: 'center',
 			alignContent: 'center',
 			flex: 1,
@@ -101,7 +101,7 @@ export const useProfileBodyStyles = () => {
 
 		profileFeedContainer: {
 			display: 'flex',
-			flexDirection: 'row',
+			flexDirection: 'column',
 			justifyContent: 'flex-start',
 			alignItems: 'flex-start',
 			flexWrap: 'wrap',

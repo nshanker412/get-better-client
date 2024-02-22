@@ -130,9 +130,6 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 	}, [leaderboardMetric, isFriendsFeed]);
 
 
-
-
-
 	return (
 		<View style={{ flex: 1 }}>
 			<Header />

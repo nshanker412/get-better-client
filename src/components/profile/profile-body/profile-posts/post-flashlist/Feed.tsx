@@ -77,7 +77,7 @@ export default function FeedScreen() {
     const renderItem: ListRenderItem<Post> = ({ item }) => {
         return (
             <View style={{ height: feedItemHeight, backgroundColor: 'black' }}>
-                <PostTile post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
+                <PostTile  post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
                 />
             </View>
         );
@@ -101,7 +101,7 @@ export default function FeedScreen() {
                     </View>
                 </>
                 </Portal>
-   
+        
         <View style={{ flex: 1, width: "100%", height:"100%" }}>
             <FlashList
                 id='home-feed-flash-list'

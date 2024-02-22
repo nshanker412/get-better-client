@@ -52,16 +52,20 @@ export const Search: React.FC = () => {
 		);
 	}
 
-
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			fetchData('');
-		}, 1000);
-
-
-		// make a 1000 ms delay to show the shimmer effect
-		return () => clearTimeout(timer);
+	useEffect(() => {	
+		fetchData('');
 	}, []);
+
+
+	// useEffect(() => {
+	// 	const timer = setTimeout(() => {
+	// 		fetchData('');
+	// 	}, 1000);
+
+
+	// 	// make a 1000 ms delay to show the shimmer effect
+	// 	return () => clearTimeout(timer);
+	// }, []);
 
 	const Divider = () => {
 		return (

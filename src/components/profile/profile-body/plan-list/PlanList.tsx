@@ -2,7 +2,6 @@ import { Link } from '@react-navigation/native';
 import { NativeEvent } from '@types';
 import React, { useRef, useState } from 'react';
 import { View } from 'react-native';
-import Dots from 'react-native-dots-pagination';
 import PagerView from 'react-native-pager-view';
 import { usePlanListStyles } from './PlanList.styles';
 import { PlanListProps } from './PlanList.types';
@@ -95,11 +94,11 @@ export const PlanList: React.FC<PlanListProps> = ({
 				{planListRef.current}
 			</PagerView>
 
-			<Dots
+			{/* <Dots
 				{...PlanListStyles.dotProps}
 				length={planListRef.current.length}
 				active={activeIndex}
-			/>
+			/> */}
 		</>
 	);
 };

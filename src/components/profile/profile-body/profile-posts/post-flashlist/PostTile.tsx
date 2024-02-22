@@ -12,6 +12,7 @@ interface PostTileProps {
     post: Post
     myUsername: string
     isEmbeddedFeed?: boolean
+    handlePostPress?: (post: Post) => void
 }
 interface PostTileRef {
     play: () => void;
@@ -26,7 +27,7 @@ interface PostTileRef {
  * The ref is forwarded to this component so that the parent component
  * can manage the play status of the video.
  */
-export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUsername, isEmbeddedFeed }, ref) => {
+export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, myUsername, isEmbeddedFeed }, ref) => {
     const [status, setStatus] = useState<any>(null);
     const [paused, setPaused] = useState(false);
 
@@ -149,7 +150,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ post, myUserna
 
     return (
         <>
-            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState} isEmbeddedFeed={isEmbeddedFeed} />
+            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState} handlePostPress={handlePostPress}  isEmbeddedFeed={isEmbeddedFeed} />
             {post.metadata.type === 'video' && (
                 <Video
                 ref={localRef}

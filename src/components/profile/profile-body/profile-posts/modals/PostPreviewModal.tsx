@@ -59,6 +59,7 @@ import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer
 //   }
 
 import { useRef } from 'react';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -66,15 +67,30 @@ import { useRef } from 'react';
  * On start make fetch for posts then use a flatList 
  * to display/control the posts.
  */
-export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onClosePress, onFetchPosts }: { posts: Post[]; currentIndex: number; onClosePress: (close: boolean) => void, onFetchPosts: ()=> Promise<void>, isFullscreen: boolean }) {
+export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts }: { isMyFeed: boolean;  posts: Post[]; currentPost: string; onClosePress: (close: boolean) => void, onFetchPosts: ()=> Promise<void>, isFullscreen: boolean }) {
     const mediaRefs = useRef([]);
     const { username: myUsername } = useMyUserInfo()
     const profileFeedRef = useRef(null)
-    const currentPostFilenameRef = useRef<string>('')
+    const currentPostFilenameRef = useRef<string>(currentPost)
   const { onPostChange } = useCommentDrawer()
 
+
   const [refreshing, setRefreshing] = useState(false)
-  
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+
+
+
+  const onDeletePressCb = async () => {
+    setDeleteModalVisible(true);
+  };
+
+  const onDeleteModalClose = (isPostDeleted: boolean) => {
+    setDeleteModalVisible(false);
+    if (isPostDeleted) {
+      onClosePress(true);
+    }
+  };
+
     /**
      * Called any time a new post is shown when a user scrolls
      * the FlatList, when this happens we should start playing 
@@ -92,7 +108,21 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
     }, [onPostChange]);
 
 
+  
+    const handlePostPress = (postID: string) => {
+      // Check if the clicked element is one of the children
 
+      // find/set the index and open the fullscreen feedlist
+      // const index = posts.(post => post.filename === postID);
+
+      mediaRefs.current
+ 
+      if (flashlistRef.current && flashlistRef.current.contains(event.target)) {
+        // You can access the clicked element using event.target
+        console.log('Child element clicked:', event.target);
+      }
+    };
+  
 
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
     // const feedItemHeight = Dimensions.get('window').height;
@@ -100,13 +130,13 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
 
     const renderItem: ListRenderItem<Post> = ({ item }) => {
         return (
-            <View style={{ height: 200, width: 200,  backgroundColor: 'black' }}>
-            <PostTile isEmbeddedFeed={ !isFullscreen} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
+            <View style={{ height: 200, width: "100%",  backgroundColor: 'black' }}>
+            <PostTile handlePostPress={handlePostPress}  isEmbeddedFeed={ !isFullscreen} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
                 />
             </View>
         );
     };
-  
+
 
   
   const onRefreshFeed = async () => {
@@ -120,14 +150,26 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
     }
   }
 
-    return (
-        <Host>
-      
-          <View style={{ flex: 1, height: 600, minHeight: 600}} >
+  return (
+    <View style={{ width: "100%", height: "100%"}} > 
+      <Host>
+        <TouchableWithoutFeedback onPress={handlePostPress} ref = {profileFeedRef}/>
+        {isFullscreen && (<TouchableOpacity onPress={() => onClosePress(false)}>
+          <AntDesign name='closecircle' size={24} color='black' />
+        </TouchableOpacity>
+        )}
+        {isMyFeed && (
+          <TouchableOpacity onLongPress={onDeletePressCb}>
+            <AntDesign name='delete' size={24} color='white' />
+          </TouchableOpacity>
+        )}
+
+          <View style={{ flex: 1, height: 600, minHeight: 600, width: Dimensions.get("screen").width}} >
               <FlashList
                 id='preview-feed-flash-list'
                 ref={profileFeedRef}
                 data={posts}
+                numColumns={1}
                 estimatedItemSize={200}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
@@ -135,11 +177,14 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
                   itemVisiblePercentThreshold: 0
                 }}
                 renderItem={renderItem}
-                pagingEnabled
+            // pagingEnabled
+              numColumns={2}
                 scrollEventThrottle={20}
                 snapToAlignment='start'
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
+
+                
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {
                   Haptics.impactAsync(
@@ -159,11 +204,17 @@ export  function PreviewFeedScreen({ posts, currentIndex, isFullscreen, onCloseP
               />
 
                 <Portal>
-                  <ConnectedPostCommentDrawer/>
-            </Portal>
-            </View>
+            {isFullscreen && <ConnectedPostCommentDrawer />}
+          </Portal>
+          
+          {isMyFeed && (<Portal>
+            <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+
+          </Portal>)}
+        </View>
       
           </Host>
+          </View>
     )
 }
 

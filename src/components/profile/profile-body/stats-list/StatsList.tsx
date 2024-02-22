@@ -1,7 +1,6 @@
 import { NativeEvent } from '@types';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import Dots from 'react-native-dots-pagination';
 import PagerView from 'react-native-pager-view';
 import { useStatsListStyles } from './StatsList.styles';
 import { StatsListProps } from './StatsList.types';
@@ -53,11 +52,11 @@ export const StatsList: React.FC<StatsListProps> = ({
 					<Text style={StatsListStyles.statsDataLabel}>Plans</Text>
 				</View>
 			</PagerView>
-			<Dots
+			{/* <Dots
 				{...StatsListStyles.dotProps}
 				length={statsListLength}
 				active={activeIndex}
-			/>
+			/> */}
 		</>
 	);
 };

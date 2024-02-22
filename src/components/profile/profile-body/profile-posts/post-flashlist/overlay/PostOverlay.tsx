@@ -21,6 +21,7 @@ interface PostOverlayProps {
   postData: PostMetadata;
   myUsername: string;
   onToggleVideoState: () => void;
+  handlePostPress?: (postID: string) => void;
   isEmbeddedFeed?: boolean;
     }
 
@@ -32,7 +33,7 @@ interface PostOverlayProps {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, onToggleVideoState, isEmbeddedFeed }) => {
+export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   console.log('PostOverlay', postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes.includes(myUsername),
@@ -82,7 +83,10 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 
 	const onSingleTapEvent =async  (event):  Promise<void>  => {
     if (event.nativeEvent.state === State.ACTIVE) {
-			// Toggle play/pause
+
+      if (isEmbeddedFeed) {
+        handlePostPress &&  handlePostPress(`${user}_${postData.timestamp}`);
+      }
 			onToggleVideoState();
 		}
   };
