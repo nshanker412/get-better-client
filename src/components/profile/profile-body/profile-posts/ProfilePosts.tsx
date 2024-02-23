@@ -85,7 +85,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 onClosePress={onClosePreviewPress}
                 currentPost={previewPostId}
             onFetchPosts={onFetchUserPosts}
-            isMyProfile={isMyProfile}
+            isMyFeed={isMyProfile}
             />
 
     );

@@ -70,7 +70,7 @@ export const ForgotPassword: React.FC = () => {
 	return (
 		<SafeAreaView>
 			<Header />
-			<View style={[loginStyles.loginContainer, { gap: 20 }]}>
+			<View style={[loginStyles.loginContainer, { gap: 20 , alignItems: "center"}]}>
 				<View style={{ gap: 10 }}>
 					<Text style={theme.text.title}>Password Reset </Text>
 					<Text
@@ -90,7 +90,7 @@ export const ForgotPassword: React.FC = () => {
 					placeholderTextColor={theme.containerDefaultTextColor}
 				/>
 
-				<View style={{ flexDirection: 'column', gap: 15 }}>
+				<View style={{ flexDirection: 'column', gap: 15, alignItems: "center" }}>
 					<TouchableOpacity
 						style={loginStyles.loginButton}
 						onPress={handlePasswordReset}>

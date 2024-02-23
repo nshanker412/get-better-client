@@ -72,7 +72,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const currentPostFilenameRef = useRef<string>(currentPost)
   const { onPostChange } = useCommentDrawer()
   const [isFullscreenPreview, setFullscreenPreview] = useState(currentPost ? true : false);
-  const [currentFilename, setCurrentFilename] = useState();
+  const [currentIndex, setCurrentIndex] = useState<number | undefined> (currentPost ?? undefined);
   // const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
   const [refreshing, setRefreshing] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -118,16 +118,16 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     }, [onPostChange]);
 
 
-    const scrollToItemWithKey = (key) => {
-      const index = posts.findIndex(item => item.filename === key);
-      if (index !== -1) {
-        profileFeedRef.current?.scrollToIndex({
-          index,
-          animated: true,
-          viewPosition: 0.5
-        });
-      }
-    };
+    // const scrollToItemWithKey = (key) => {
+    //   const 39 = posts.findIndex(item => item.filename === key);
+    //   if (index !== -1) {
+    //     profileFeedRef.current?.scrollToIndex({
+    //       index,
+    //       animated: true,
+    //       viewPosition: 0.5
+    //     });
+    //   }
+    // };
   
   
   
@@ -137,12 +137,12 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       
     if (!isFullscreenPreview) {
       console.log("notfullscreenpreview")
-      scrollToItemWithKey(postID)
+      // scrollToItemWithKey(postID)
 
       // find index of post
       const index = posts.findIndex(post => post.filename === postID);
       if (index !== -1) {
-        setCurrentFilename(index);
+        setCurrentIndex(index);
         setFullscreenPreview(true);
       } else {
         console.log('WARN: post not found');
@@ -194,10 +194,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
           </TouchableOpacity>
             </View>
 
-            {!isMyFeed && (
-          <TouchableOpacity onLongPress={onDeletePressCb} style={{ position: "absolute" , zIndex: 100, right: 10, top: 140}}>
-            <AntDesign name='delete' size={24} color='white' />
-                </TouchableOpacity>
+            {isMyFeed && (
+            <TouchableOpacity onLongPress={onDeletePressCb} style={{ position: "absolute" , zIndex: 100, right: 10, top: 140}}>
+              <AntDesign name='delete' size={24} color='white' />
+                  </TouchableOpacity>
         )}
 
             <View style={fullViewStyle} >
@@ -206,7 +206,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 ref={profileFeedRef}
                 data={posts}
                 estimatedItemSize={Dimensions.get("screen").height}
-                initialScrollIndex={currentFilename}
+                initialScrollIndex={currentIndex}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
                 viewabilityConfig={{
@@ -242,7 +242,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               </Portal>
             
               {isMyFeed && (<Portal>
-                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[currentIndex].filename}`} />
 
               </Portal>)}
             </View>
@@ -302,7 +302,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               </Portal>
           
               {isMyFeed && (<Portal>
-                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[currentIndex]?.filename}`} />
 
               </Portal>)}
             </View>
@@ -314,146 +314,146 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     )
 }
 
-export interface PostPreviewModalProps {
-  posts: Post[];
-  isVisible: boolean;
-  index: number;
-  isMyProfile: boolean;
-  myUsername: string;
-  onClosePress: (close: boolean) => void;
-}
+// export interface PostPreviewModalProps {
+//   posts: Post[];
+//   isVisible: boolean;
+//   index: number;
+//   isMyProfile: boolean;
+//   myUsername: string;
+//   onClosePress: (close: boolean) => void;
+// }
 
-export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
-  posts,
-  isVisible,
-  isMyProfile,
-  index: initialIndex,
-  myUsername,
-  onClosePress,
-}) => {
-  if (posts === null || initialIndex < 0) return null;
-  if (initialIndex >= posts?.length) return null;
-  const window = Dimensions.get('window');
+// export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
+//   posts,
+//   isVisible,
+//   isMyProfile,
+//   index: initialIndex,
+//   myUsername,
+//   onClosePress,
+// }) => {
+//   if (posts === null || initialIndex < 0) return null;
+//   if (initialIndex >= posts?.length) return null;
+//   const window = Dimensions.get('window');
 
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const { theme } = useThemeContext();
-  const [index, setIndex] = useState<number>(initialIndex);
+//   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+//   const { theme } = useThemeContext();
+//   const [index, setIndex] = useState<number>(initialIndex);
 
-  const onDeletePressCb = async () => {
-    setDeleteModalVisible(true);
-  };
+//   const onDeletePressCb = async () => {
+//     setDeleteModalVisible(true);
+//   };
 
-  const onDeleteModalClose = (isPostDeleted: boolean) => {
-    setDeleteModalVisible(false);
-    if (isPostDeleted) {
-      onClosePress(true);
-    }
-  };
+//   const onDeleteModalClose = (isPostDeleted: boolean) => {
+//     setDeleteModalVisible(false);
+//     if (isPostDeleted) {
+//       onClosePress(true);
+//     }
+//   };
 
-  // const translateY = useSharedValue(0); 
+//   // const translateY = useSharedValue(0); 
 
-  // const animatedStyle = useAnimatedStyle(() => {
-  //   return {
-  //     transform: [{ translateY: translateY.value }],
-  //   };
-  // });
+//   // const animatedStyle = useAnimatedStyle(() => {
+//   //   return {
+//   //     transform: [{ translateY: translateY.value }],
+//   //   };
+//   // });
 
-  // useEffect(() => {
-  //   translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
-  // }, [ translateY]);
+//   // useEffect(() => {
+//   //   translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
+//   // }, [ translateY]);
 
-  // const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
-  //   if (direction === 'prev') {
-  //     if (index === 0) {
-  //       onClosePress(false);
-  //     } else {
-  //       setIndex(index - 1);
-  //     }
-  //   }
-  //   if (direction === 'next') {
-  //     if (index === posts.length - 1) {
-  //       onClosePress(false);
-  //     } else {
-  //       setIndex(index + 1);
-  //     }
-  //   }
-  // }, [onClosePress, posts]);
+//   // const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
+//   //   if (direction === 'prev') {
+//   //     if (index === 0) {
+//   //       onClosePress(false);
+//   //     } else {
+//   //       setIndex(index - 1);
+//   //     }
+//   //   }
+//   //   if (direction === 'next') {
+//   //     if (index === posts.length - 1) {
+//   //       onClosePress(false);
+//   //     } else {
+//   //       setIndex(index + 1);
+//   //     }
+//   //   }
+//   // }, [onClosePress, posts]);
 
-  // const scrollViewRef = React.useRef<ScrollView>(null);
+//   // const scrollViewRef = React.useRef<ScrollView>(null);
 
 
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-		// media loading handling
-		const yOffset = event.nativeEvent.contentOffset.y;
-    const index = Math.round(yOffset / window.height);
-    setIndex(index);
-		// setCurrentScrollIndex(index);
-		// currentScrollIndexRef.current = index;
+//   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+// 		// media loading handling
+// 		const yOffset = event.nativeEvent.contentOffset.y;
+//     const index = Math.round(yOffset / window.height);
+//     setIndex(index);
+// 		// setCurrentScrollIndex(index);
+// 		// currentScrollIndexRef.current = index;
 
-		// fetch public handling
-		const contentHeight = event.nativeEvent.contentSize.height;
-		const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+// 		// fetch public handling
+// 		const contentHeight = event.nativeEvent.contentSize.height;
+// 		const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
 
-		// Check if the user has scrolled to the bottom
-		if (index === posts.length - 1) {
+// 		// Check if the user has scrolled to the bottom
+// 		if (index === posts.length - 1) {
   
-      onClosePress(false);
-    }
+//       onClosePress(false);
+//     }
 
-  };
+//   };
   
-  // useEffect(() => {
-  //   if (scrollViewRef.current) {
-  //     scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
-  //   }
-  // }, [index, scrollViewRef, window.height]);
+//   // useEffect(() => {
+//   //   if (scrollViewRef.current) {
+//   //     scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
+//   //   }
+//   // }, [index, scrollViewRef, window.height]);
 
 
  
 
-  return (
-    <>
+//   return (
+//     <>
      
-        <View
-          style={{
-            // position: 'absolute',
-            // width: 50,
-            // height: 50,
-            // right: 0,
-            // top: '10%',
-            // marginRight: -30,
-            // zIndex: 100,
-          }}>
-          <TouchableOpacity onPress={() => onClosePress(false)}>
-            <AntDesign name='closecircle' size={24} color='black' />
-          </TouchableOpacity>
-        </View>
-        {isMyProfile && (
-          <View
-            style={{
-              // position: 'absolute',
-              // width: 50,
-              // height: 50,
-              // right: 0,
-              // top: '20%',
-              // marginRight: -30,
-              // zIndex: 100,
-            }}>
-            <TouchableOpacity onLongPress={onDeletePressCb}>
-              <AntDesign name='delete' size={24} color='white' />
-            </TouchableOpacity>
-          </View>
-        )}
+//         <View
+//           style={{
+//             // position: 'absolute',
+//             // width: 50,
+//             // height: 50,
+//             // right: 0,
+//             // top: '10%',
+//             // marginRight: -30,
+//             // zIndex: 100,
+//           }}>
+//           <TouchableOpacity onPress={() => onClosePress(false)}>
+//             <AntDesign name='closecircle' size={24} color='black' />
+//           </TouchableOpacity>
+//         </View>
+//         {isMyProfile && (
+//           <View
+//             style={{
+//               // position: 'absolute',
+//               // width: 50,
+//               // height: 50,
+//               // right: 0,
+//               // top: '20%',
+//               // marginRight: -30,
+//               // zIndex: 100,
+//             }}>
+//             <TouchableOpacity onLongPress={onDeletePressCb}>
+//               <AntDesign name='delete' size={24} color='white' />
+//             </TouchableOpacity>
+//           </View>
+//         )}
 
                 
-          <View style={{ flex: 1, height: "100%" , width:"100%"  }}>
-        <PreviewFeedScreen posts={posts} currentIndex={index} onClosePress={onClosePress} />  
-        </View>
+//           <View style={{ flex: 1, height: "100%" , width:"100%"  }}>
+//         <PreviewFeedScreen posts={posts} currentIndex={index} onClosePress={onClosePress} />  
+//         </View>
       
-          <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
+//           <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
  
-</>
-  );
-};
+// </>
+//   );
+// };
 

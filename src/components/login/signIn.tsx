@@ -107,7 +107,7 @@ export const SignIn: React.FC = () => {
 					returnKeyType='next'
 					onSubmitEditing={Keyboard.dismiss}
 				/>
-				<View style={{ flexDirection: 'column', gap: 15 }}>
+				<View style={{ flexDirection: 'column', gap: 15, alignItems: "center" }}>
 					<TouchableOpacity
 						style={[
 							loginStyles.loginButton,
