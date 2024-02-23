@@ -153,11 +153,17 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       setFullscreenPreview(false);
     }
  
-    };
+  };
+  
+
+
+
   
 
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
-    // const feedItemHeight = Dimensions.get('window').height;
+  // const feedItemHeight = Dimensions.get('window').height;
+  
+
 
 
     const renderItem: ListRenderItem<Post> = ({ item }) => {
@@ -242,7 +248,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               </Portal>
             
               {isMyFeed && (<Portal>
-                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[currentIndex].filename}`} />
+                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${currentPostFilenameRef.current}`} />
 
               </Portal>)}
             </View>
@@ -302,7 +308,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               </Portal>
           
               {isMyFeed && (<Portal>
-                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[currentIndex]?.filename}`} />
+                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${currentPostFilenameRef.current}`} />
 
               </Portal>)}
             </View>
