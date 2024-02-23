@@ -123,6 +123,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
           if (isViewable) {
+            console.log('isViewable', item?.filename, isViewable)
     
             if (mediaRefs?.current[item?.filename]) {
               mediaRefs.current[item?.filename]?.play();
@@ -136,31 +137,9 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
           }
         });
     }, [onPostChange]);
-
-
-    // const scrollToItemWithKey = (key) => {
-    //   const 39 = posts.findIndex(item => item.filename === key);
-    //   if (index !== -1) {
-    //     profileFeedRef.current?.scrollToIndex({
-    //       index,
-    //       animated: true,
-    //       viewPosition: 0.5
-    //     });
-    //   }
-  // };
-  
-
-  const playOrPause = ( filename: string) => {
-    if (mediaRefs.current[filename].isPlaying) {
-      mediaRefs.current[filename].play();
-    } else {
-       mediaRefs.current[filename].pause();
-    }
-  }
-
   
   
-  const handlePostPress = (index: number, filename: string) => {      
+  const handlePostPress = (index: number) => {      
     if (!isFullscreenPreview) {
         setCurrentIndex(index);
         setFullscreenPreview(true);
@@ -169,7 +148,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       // playOrPause(filename);
       setFullscreenPreview(false);
     }
- 
   };
   
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
@@ -177,7 +155,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     const renderItem: ListRenderItem<Post> = ({ item, index }) => {
         return (
             <View style={{ height: isFullscreenPreview? Dimensions.get("screen").height : 200, width: "100%",  backgroundColor: 'black' }}>
-             <PostTile isFullscreenPreview={ isFullscreenPreview}  handlePostPress={() => handlePostPress(index, item.filename)}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
+            <PostTile isFullscreenPreview={isFullscreenPreview} handlePostPress={() => handlePostPress(index)}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
             </View>
         );
     };
@@ -220,7 +198,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
                 viewabilityConfig={{
-                  itemVisiblePercentThreshold: 0
+                  itemVisiblePercentThreshold: 10
                 }}
                 renderItem={renderItem}
                 numColumns={ 1 }
@@ -229,6 +207,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 pagingEnabled={true}
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
+          
+
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {
                   Haptics.impactAsync(
@@ -265,7 +245,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 removeClippedSubviews
                 ListFooterComponent={<View style={{ height: 200, width: "100%" }}></View>}
                 viewabilityConfig={{
-                  itemVisiblePercentThreshold: 0
+                  itemVisiblePercentThreshold: 5
                 }}
                 renderItem={renderItem}
                 numColumns={isFullscreenPreview ? 1 : 2}

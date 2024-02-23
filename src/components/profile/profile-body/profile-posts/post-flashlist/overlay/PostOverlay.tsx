@@ -35,7 +35,7 @@ interface PostOverlayProps {
  */
 export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   const [currentLikeState, setCurrentLikeState] = useState({
-    state: postData.likes.includes(myUsername),
+    state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
   });
 

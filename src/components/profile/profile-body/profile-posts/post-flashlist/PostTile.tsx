@@ -1,46 +1,86 @@
 import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
-import { grayDark } from '@context/theme/colors_neon';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import { ResizeMode, Video } from 'expo-av';
 import { Image } from 'expo-image';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
     Easing,
     useAnimatedStyle,
     useSharedValue,
+    withSequence,
     withTiming
 } from 'react-native-reanimated';
 import { PostOverlay } from './overlay/PostOverlay';
 
 
-const FadeOverlayComponent = forwardRef((props, ref) => {
+const PauseAnimated = forwardRef((props, ref) => {
     const opacity = useSharedValue(0);
-  
+
     useImperativeHandle(ref, () => ({
         fadeIn() {
-        opacity.value = withTiming(0.5, { duration: 500, easing: Easing.linear });
-      },
-      fadeOut() {
-        opacity.value = withTiming(0, { duration: 500, easing: Easing.linear });
-      },
+            // First, immediately set opacity to 0.5 without any duration
+            opacity.value = withSequence(
+                withTiming(0.5, { duration: 0 }), // Immediate step to 50% visibility
+                withTiming(0, { duration: 1500, easing: Easing.out(Easing.quad) }) // Then ease out to 0% over a second
+            );
+        },
+        fadeOut() {
+            // If needed, you can define logic to fade out or reset opacity immediately
+            opacity.value = withTiming(0, { duration: 500, easing: Easing.linear });
+        },
     }));
-  
+
     const animatedStyle = useAnimatedStyle(() => ({
-      opacity: opacity.value,
+        opacity: opacity.value,
     }));
-  
+
     return (
-      <Animated.View style={[stylesl.overlay, animatedStyle]}>
-        <Text style={stylesl.overlayText}>Paused</Text>
-      </Animated.View>
+        <Animated.View style={[stylesl.overlay, animatedStyle]}>
+            <FontAwesome6 name="pause" size={100} color="black" />
+        </Animated.View>
     );
 });
-  FadeOverlayComponent.displayName = 'FadeOverlayComponent';
+PauseAnimated.displayName = 'PauseAnimated';
+  
+const PlayAnimated = forwardRef((props, ref) => {
+    const opacity = useSharedValue(0);
+
+    useImperativeHandle(ref, () => ({
+        fadeIn() {
+            // First, immediately set opacity to 0.5 without any duration
+            opacity.value = withSequence(
+                withTiming(0.5, { duration: 0 }), // Immediate step to 50% visibility
+                withTiming(0, { duration: 1500, easing: Easing.out(Easing.quad) }) // Then ease out to 0% over a second
+            );
+        },
+        fadeOut() {
+            // If needed, you can define logic to fade out or reset opacity immediately
+            opacity.value = withTiming(0, { duration: 500, easing: Easing.linear });
+        },
+    }));
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+    }));
+
+    return (
+        <Animated.View style={[stylesl.overlay, animatedStyle]}>
+            <FontAwesome6 name="play" size={100} color="black" />
+        </Animated.View>
+    );
+});
+PlayAnimated.displayName = 'PlayAnimated';
+
+
+
+
   
   const stylesl = StyleSheet.create({
     overlay: {
-      position: 'absolute',
+          position: 'absolute',
+        zIndex: 10,
       top: 0,
       left: 0,
       right: 0,
@@ -53,44 +93,6 @@ const FadeOverlayComponent = forwardRef((props, ref) => {
       fontSize: 24,
     },
   });
-
-// const PauseAnimated = ({ trigger }) => {
-//     const opacity = useSharedValue(0);
-  
-//     useEffect(() => {
-//       if (trigger) {
-//         // Trigger the fade animation when the external trigger changes
-//         opacity.value = withSequence(
-//           withTiming(0.5, { duration: 0, easing: Easing.linear }), // Immediately set to 50% opacity
-//           withTiming(0, { duration: 1000, easing: Easing.linear }) // Then go back down to 0% over 1 second
-//         );
-//       }
-//     }, [trigger]); // Depend on the external trigger
-  
-//     const animatedStyle = useAnimatedStyle(() => {
-//       return {
-//         opacity: opacity.value,
-//       };
-//     });
-  
-//     return (
-//       <View style={styles.container}>
-//         <Animated.View style={[animatedStyle]}>
-//         <FontAwesome6 name="pause" size={40} color="white" />
-//         </Animated.View>
-//       </View>
-//     );
-//   };
-
-
-// const styles = StyleSheet.create({
-//   box: {
-//     width: 100,
-//     height: 100,
-//     backgroundColor: 'blue',
-//   },
-// });
-
 
 
 
@@ -129,8 +131,8 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     //     // }
     // }, [])
 
-    const overlayRef = useRef(null);
-
+    const pauseAniRef = useRef(null);
+    const playAniRef = useRef(null);
 
 
     const localRef = useRef(null);
@@ -143,9 +145,9 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         mute,
         unMute
     }))
-    useEffect(() => {
-        return () => unload();
-    }, [])
+    // useEffect(() => {
+    //     return () => unload();
+    // }, [])
 
     /**
      * Plays the video in the component if the ref
@@ -154,7 +156,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
      * @returns {void} 
      */
     const play = async () => {
-        console.log('we in play boid')
         if (localRef.current == null) {
             return;
         }
@@ -168,12 +169,12 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             return;
         }
         try {
+            playAniRef.current?.fadeIn(); // Trigger fade-out when the video is played
             await localRef.current?.playAsync();
         } catch (e) {
             console.log(e)
         }
     }
-
 
     /**
      * Stops the video in the component if the ref
@@ -186,7 +187,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             return;
         }
         if (post.metadata.type === 'image') {
-            
             return;
         }
 
@@ -268,8 +268,10 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         }
         const status = await localRef.current?.getStatusAsync();
         if (status?.isPlaying) {
+            pauseAniRef.current?.fadeIn(); // Trigger fade-in when the video is paused
             await localRef.current?.pauseAsync();
         } else {
+            playAniRef.current?.fadeIn(); // Trigger fade-out when the video is played
             await localRef.current?.playAsync();
         }
     }
@@ -287,7 +289,8 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             return;
         }
         try {
-            overlayRef.current?.fadeIn(); // Trigger fade-in when the video is paused
+            playAniRef.current?.fadeOut(); // Trigger fade-out when the video is played
+
             await localRef.current?.pauseAsync();
         } catch (e) {
             console.log(e)
@@ -307,12 +310,8 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
 
     const onImageError = (error) => {   
         console.log('Video error: ', error)
-        throw new Error('Video error')
+        throw new Error('Image error')
     }
-
-
-    // const onPlaybackStatusUpdateRef = useRef(onPlaybackStatusUpdate);
-
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
     const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
@@ -329,28 +328,28 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
                 isEmbeddedFeed={isEmbeddedFeed}
                  />
             {post.metadata.type === 'video' && (
-        <>
+        <View   style={{ flex: 1, backfaceVisibility: 'visible'}}>
                 <Video
                     ref={localRef}
                     style={{ flex: 1 }}
                     resizeMode={ResizeMode.COVER}
-                    isMuted={isEmbeddedFeed}
                     onError={onVideoError}
                     // shouldPlay={loaded && !paused}
-
                     isLooping={true}
                     volume={1.0}
                     PosterComponent={() => <LoadingSpinner />}
-                    posterStyle={{ width: '100%', height: '100%', backgroundColor: grayDark.gray7, backfaceVisibility: 'visible'}}
+                    posterStyle={{ width: '100%', height: '100%', backgroundColor: 'transparent', backfaceVisibility: 'visible'}}
                     // onPlaybackStatusUpdate={onPlaybackStatusUpdateRef.current}
                     usePoster={true}
                     source={{
                         uri: videoUri
                     }}
                 />
-                <FadeOverlayComponent ref={overlayRef} />
-                    </>
 
+                    <PauseAnimated ref={pauseAniRef} />
+                    <PlayAnimated ref={playAniRef} />
+          
+</View>
             )}
             {post.metadata.type ==='image' && (<Image
                 ref={localRef}
