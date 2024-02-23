@@ -76,6 +76,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   // const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
   const [refreshing, setRefreshing] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [scrollViewHeight, setScrollViewHeight] = useState(0);
 
   useScrollToTop(profileFeedRef);
 
@@ -167,9 +169,49 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
        setRefreshing(true);
        await onFetchPosts();
       setRefreshing(false);
-
     }
   }
+
+
+
+  const onScroll = useCallback((event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const { contentSize, layoutMeasurement } = event.nativeEvent;
+
+    // Update state on first scroll, if necessary
+    if (contentHeight !== contentSize.height) {
+      setContentHeight(contentSize.height);
+    }
+    if (scrollViewHeight !== layoutMeasurement.height) {
+      setScrollViewHeight(layoutMeasurement.height);
+    }
+
+    // Top boundary check
+    if (offsetY <= -40) {
+      console.log('Reached the top of the list');
+      // Trigger any function you want here
+      onClosePress(false);
+      setFullscreenPreview(false);
+
+
+    }
+
+    // Bottom boundary check
+    if (offsetY + layoutMeasurement.height  >= contentSize.height +80 ) {
+      console.log('Reached the bottom of the list');
+      onClosePress(false);
+      setFullscreenPreview(false);
+
+
+
+      // Trigger any function you want here
+    }
+  }, [contentHeight, scrollViewHeight]);
+
+  // Use onContentSizeChange to get the total height of the FlashList content
+  const onContentSizeChange = useCallback((contentWidth, contentHeight) => {
+    setContentHeight(contentHeight);
+  }, []);
 
   return (
     <View style={{ width: "100%", height: "100%"}} >
@@ -200,6 +242,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 viewabilityConfig={{
                   itemVisiblePercentThreshold: 10
                 }}
+                onScroll={onScroll}
+                onContentSizeChange={onContentSizeChange}
                 renderItem={renderItem}
                 numColumns={ 1 }
                 scrollEventThrottle={20}
