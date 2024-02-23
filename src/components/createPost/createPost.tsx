@@ -101,10 +101,9 @@ export default function CreatePost() {
 			quality: 1,
 			videoMaxDuration: 10,
 			allowsMultipleSelection: false,
-
 		});
 
-		console.log('result', result);
+		// console.log('result', result);
 		if (result == null) {
 			console.log('picked image is null');
 			return;

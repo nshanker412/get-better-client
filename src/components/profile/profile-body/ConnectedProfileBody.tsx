@@ -7,6 +7,7 @@ import { ConnectedProfileBodyProps } from './ProfileBody.types';
  */
 export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	isMyProfile,
+	username, 
 }) => {
-	return <ProfileBody isMyProfile={isMyProfile} />;
+	return <ProfileBody isMyProfile={isMyProfile} username={username} />;
 };

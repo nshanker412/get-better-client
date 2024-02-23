@@ -25,7 +25,6 @@ export function FollowerFollowingTab() {
 	 * Todo: add text hygene to follower count
 	 * once gets > 1000
 	 */
-	console.log('uname', uname);
 
 	return (
 		<Tab.Navigator

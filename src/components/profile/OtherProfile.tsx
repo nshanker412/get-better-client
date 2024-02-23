@@ -40,7 +40,7 @@ const _OtherProfile: React.FC = () => {
 					/>
 				</View>
 				<View style={{ flex: 7 }}>
-					<ConnectedProfileBody isMyProfile={false} />
+					<ConnectedProfileBody isMyProfile={false} username={profileUsername}  />
 				</View>
 			</View>
 

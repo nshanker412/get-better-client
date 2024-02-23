@@ -74,7 +74,7 @@ export const MyProfile: React.FC = () => {
 	
 	const profileStyles = useProfileStyles();
 
-	const {  onLogout } = useMyUserInfo();
+	const { username: myUsername,  onLogout } = useMyUserInfo();
 	const { removePushToken } = useNotifications();
 	const { signOut } = useAuth();
 
@@ -111,7 +111,7 @@ export const MyProfile: React.FC = () => {
 					/>
 				</View>
 				<View style={{ flex: 7 }}>
-					<ConnectedProfileBody isMyProfile={true} />
+					<ConnectedProfileBody isMyProfile={true} username={myUsername} />
 				</View>
 			</View>
 			<LogoutModal
