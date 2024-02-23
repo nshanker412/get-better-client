@@ -114,10 +114,10 @@ export default function CreatePost() {
 			return
 		}
 		
-		if (result.assets && result?.assets[0].uri) {
-			console.log('picked image is null');	
-			return
-		}
+		// if (result.assets && result?.assets[0].uri) {
+		// 	console.log('picked image is null');	
+		// 	return
+		// }
 
 		if (result?.assets[0]?.type === "image") {
 
