@@ -21,7 +21,7 @@ interface PostOverlayProps {
   postData: PostMetadata;
   myUsername: string;
   onToggleVideoState: () => void;
-  handlePostPress?: (postID: string) => void;
+  handlePostPress: () => void;
   isEmbeddedFeed?: boolean;
     }
 
@@ -61,7 +61,6 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     [] 
   );
 
-
 	const onDoubleTapEvent = async (event): Promise<void>  => {
 		if (event.nativeEvent.state === State.ACTIVE) {
 			// Double tap was detected
@@ -75,21 +74,18 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 		}
 	};
 
-	const onSingleTapEvent =async  (event):  Promise<void>  => {
+  const onSingleTapEvent =  (event)  => {
     if (event.nativeEvent.state === State.ACTIVE) {
+      // handlePostPress();
 
       if (isEmbeddedFeed) {
-        handlePostPress &&  handlePostPress(`${user}_${postData.timestamp}`);
+        handlePostPress();
+      } else {
+        onToggleVideoState();
       }
-			onToggleVideoState();
-		}
+    }
   };
   
-
-
-  const isChallenge = postData?.caption?.includes("challenge");
-
-
   return (
     <TapGestureHandler
     onHandlerStateChange={onDoubleTapEvent}
@@ -102,7 +98,6 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       numberOfTaps={1}
        waitFor={doubleTapRef}
       >
-  
       <View
 					style={{
             height: isEmbeddedFeed ? 200 : Dimensions.get('window').height,

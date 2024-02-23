@@ -38,8 +38,6 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 
 	return (
 		<View style={profileBodyStyles.container}>
-	
-
 				<View style={[profileBodyStyles.statsCategoryColumn, {flex: 5}]}>
 					<View style={profileBodyStyles.statsContainer}>
 						<ConnectedStatsList isMyProfile={isMyProfile} />

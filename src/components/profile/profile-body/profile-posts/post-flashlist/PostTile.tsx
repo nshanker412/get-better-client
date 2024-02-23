@@ -1,11 +1,97 @@
 import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
+import { grayDark } from '@context/theme/colors_neon';
 import { Post } from '@models/posts';
 import { ResizeMode, Video } from 'expo-av';
-import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View } from 'react-native';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import Animated, {
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming
+} from 'react-native-reanimated';
 import { PostOverlay } from './overlay/PostOverlay';
+
+
+const FadeOverlayComponent = forwardRef((props, ref) => {
+    const opacity = useSharedValue(0);
+  
+    useImperativeHandle(ref, () => ({
+        fadeIn() {
+        opacity.value = withTiming(0.5, { duration: 500, easing: Easing.linear });
+      },
+      fadeOut() {
+        opacity.value = withTiming(0, { duration: 500, easing: Easing.linear });
+      },
+    }));
+  
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value,
+    }));
+  
+    return (
+      <Animated.View style={[stylesl.overlay, animatedStyle]}>
+        <Text style={stylesl.overlayText}>Paused</Text>
+      </Animated.View>
+    );
+});
+  FadeOverlayComponent.displayName = 'FadeOverlayComponent';
+  
+  const stylesl = StyleSheet.create({
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlayText: {
+      color: 'white',
+      fontSize: 24,
+    },
+  });
+
+// const PauseAnimated = ({ trigger }) => {
+//     const opacity = useSharedValue(0);
+  
+//     useEffect(() => {
+//       if (trigger) {
+//         // Trigger the fade animation when the external trigger changes
+//         opacity.value = withSequence(
+//           withTiming(0.5, { duration: 0, easing: Easing.linear }), // Immediately set to 50% opacity
+//           withTiming(0, { duration: 1000, easing: Easing.linear }) // Then go back down to 0% over 1 second
+//         );
+//       }
+//     }, [trigger]); // Depend on the external trigger
+  
+//     const animatedStyle = useAnimatedStyle(() => {
+//       return {
+//         opacity: opacity.value,
+//       };
+//     });
+  
+//     return (
+//       <View style={styles.container}>
+//         <Animated.View style={[animatedStyle]}>
+//         <FontAwesome6 name="pause" size={40} color="white" />
+//         </Animated.View>
+//       </View>
+//     );
+//   };
+
+
+// const styles = StyleSheet.create({
+//   box: {
+//     width: 100,
+//     height: 100,
+//     backgroundColor: 'blue',
+//   },
+// });
+
+
 
 
 interface PostTileProps {
@@ -17,8 +103,11 @@ interface PostTileProps {
 }
 interface PostTileRef {
     play: () => void;
+    pause: () => void;
     stop: () => void;
     unload: () => void;
+    mute: () => void;
+    unMute: () => void;
   }
 
 /**
@@ -29,15 +118,30 @@ interface PostTileRef {
  * can manage the play status of the video.
  */
 export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, isFullscreenPreview, myUsername, isEmbeddedFeed }, ref) => {
-    const [status, setStatus] = useState<any>(null);
-    const [paused, setPaused] = useState(false);
+    // const [loaded, setLoaded] = useState(false);
+
+    // const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
+    //     // if (status.isLoaded ) {
+    //     //     // setLoaded(true);
+    //     //     console.log('loaded')
+    //     // } else if (!status.isLoaded) {
+    //     //     // setLoaded(false);
+    //     // }
+    // }, [])
+
+    const overlayRef = useRef(null);
+
+
 
     const localRef = useRef(null);
     //  const user = useUser(item.creator).data
     useImperativeHandle(ref, () => ({
         play,
         unload,
-        stop
+        pause,
+        stop, 
+        mute,
+        unMute
     }))
     useEffect(() => {
         return () => unload();
@@ -50,6 +154,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
      * @returns {void} 
      */
     const play = async () => {
+        console.log('we in play boid')
         if (localRef.current == null) {
             return;
         }
@@ -57,7 +162,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
 
             return;
         }
-
         // if video is already playing return
         const status = await localRef.current?.getStatusAsync();
         if (status?.isPlaying) {
@@ -112,7 +216,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             return;
         }
         if (post.metadata.type === 'image') {
-            
             return;
         }
 
@@ -125,10 +228,75 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     }
 
 
+    const mute = async () => {
+        if (localRef.current == null) {
+            return;
+        }
+        if (post.metadata.type === 'image') {
+            return;
+        }
+
+        try {
+            await localRef.current?.setIsMutedAsync(true);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const unMute = async () => {
+        if (localRef.current == null) {
+            return;
+        }
+        if (post.metadata.type === 'image') {
+            return;
+        }
+
+        try {
+            await localRef.current?.setIsMutedAsync(false);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+
+    const togglePausePlay = async () => {
+        if (localRef.current == null) {
+            return;
+        }
+        if (post.metadata.type === 'image') {
+            return;
+        }
+        const status = await localRef.current?.getStatusAsync();
+        if (status?.isPlaying) {
+            await localRef.current?.pauseAsync();
+        } else {
+            await localRef.current?.playAsync();
+        }
+    }
+
+    const pause = async () => {
+        console.log('we in pause boid')
+        if (localRef.current == null) {
+            return;
+        }
+        if (post.metadata.type === 'image') {
+            return;
+        }
+        const status = await localRef.current?.getStatusAsync();
+        if (status?.isPlaying) {
+            return;
+        }
+        try {
+            overlayRef.current?.fadeIn(); // Trigger fade-in when the video is paused
+            await localRef.current?.pauseAsync();
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+
     const onToggleVideoState = () => {
-    
-        setPaused(!paused)
-  
+        togglePausePlay();
     }
 
     const onVideoError = (error) => {   
@@ -143,6 +311,8 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     }
 
 
+    // const onPlaybackStatusUpdateRef = useRef(onPlaybackStatusUpdate);
+
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
     const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
@@ -150,39 +320,37 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
 
     return (
         <>
-            <PostOverlay user={post.metadata.user} postData={post.metadata} myUsername={myUsername} onToggleVideoState={onToggleVideoState} handlePostPress={handlePostPress}  isEmbeddedFeed={isEmbeddedFeed} />
+            <PostOverlay
+                user={post.metadata.user}
+                postData={post.metadata}
+                myUsername={myUsername}
+                onToggleVideoState={onToggleVideoState}
+                handlePostPress={handlePostPress}
+                isEmbeddedFeed={isEmbeddedFeed}
+                 />
             {post.metadata.type === 'video' && (
+        <>
                 <Video
-                ref={localRef}
+                    ref={localRef}
                     style={{ flex: 1 }}
                     resizeMode={ResizeMode.COVER}
                     isMuted={isEmbeddedFeed}
                     onError={onVideoError}
-                    PosterComponent={() => {
-                        return (
-                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                <BlurView
-                                    intensity={100}
-                                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-                                    tint="dark"
-                                />
-                                <LoadingSpinner />
-                            </View>
-                        )
-                    }
-                    }
-        
-                shouldPlay={false}
-                isLooping
-                    // posterStyle={{ resizeMode: 'cover', height: '100%' }}
-                    onPlaybackStatusUpdate={status => setStatus(() => status)}
+                    // shouldPlay={loaded && !paused}
 
-                source={{
-                    uri: videoUri
-                }}
+                    isLooping={true}
+                    volume={1.0}
+                    PosterComponent={() => <LoadingSpinner />}
+                    posterStyle={{ width: '100%', height: '100%', backgroundColor: grayDark.gray7, backfaceVisibility: 'visible'}}
+                    // onPlaybackStatusUpdate={onPlaybackStatusUpdateRef.current}
+                    usePoster={true}
+                    source={{
+                        uri: videoUri
+                    }}
+                />
+                <FadeOverlayComponent ref={overlayRef} />
+                    </>
 
-            
-            />
             )}
             {post.metadata.type ==='image' && (<Image
                 ref={localRef}

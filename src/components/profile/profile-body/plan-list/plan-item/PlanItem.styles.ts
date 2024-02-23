@@ -15,8 +15,8 @@ export const usePlanItemStyles = () => {
 		},
 		text: {
 			color: theme.grayShades.gray700,
-			fontSize: 16,
-			fontFamily: fonts.inter.regular,
+			fontSize: 14,
+			fontFamily: fonts.inter.bold,
 			textAlign: 'center',
 			justifyContent: 'center',
 			alignSelf: 'center',

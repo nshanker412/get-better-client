@@ -122,9 +122,18 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
      */
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
-            if (isViewable) {
-                currentPostFilenameRef.current = item.filename
+          if (isViewable) {
+    
+            if (mediaRefs?.current[item?.filename]) {
+              mediaRefs.current[item?.filename]?.play();
+            } 
+          }
+          else
+          {
+            if (mediaRefs?.current[item?.filename]) {
+              mediaRefs?.current[item?.filename]?.stop();
             }
+          }
         });
     }, [onPostChange]);
 
@@ -138,20 +147,26 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     //       viewPosition: 0.5
     //     });
     //   }
-    // };
+  // };
+  
+
+  const playOrPause = ( filename: string) => {
+    if (mediaRefs.current[filename].isPlaying) {
+      mediaRefs.current[filename].play();
+    } else {
+       mediaRefs.current[filename].pause();
+    }
+  }
+
   
   
-  
-  const handlePostPress = (postID: string) => {      
+  const handlePostPress = (index: number, filename: string) => {      
     if (!isFullscreenPreview) {
-      const index = posts.findIndex(post => post.filename === postID);
-      if (index !== -1) {
         setCurrentIndex(index);
         setFullscreenPreview(true);
-      } else {
-        console.log('WARN: post not found');
-      }
+    
     } else {
+      // playOrPause(filename);
       setFullscreenPreview(false);
     }
  
@@ -159,10 +174,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
   
-    const renderItem: ListRenderItem<Post> = ({ item }) => {
+    const renderItem: ListRenderItem<Post> = ({ item, index }) => {
         return (
             <View style={{ height: isFullscreenPreview? Dimensions.get("screen").height : 200, width: "100%",  backgroundColor: 'black' }}>
-             <PostTile isFullscreenPreview={ isFullscreenPreview}  handlePostPress={handlePostPress}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
+             <PostTile isFullscreenPreview={ isFullscreenPreview}  handlePostPress={() => handlePostPress(index, item.filename)}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
             </View>
         );
     };
