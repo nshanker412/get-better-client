@@ -9,7 +9,7 @@ import { Link } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import throttle from 'lodash/throttle';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
@@ -34,7 +34,6 @@ interface PostOverlayProps {
  * @param {Object} post object
  */
 export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
-  console.log('PostOverlay', postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes.includes(myUsername),
     counter: postData?.likes?.length,
@@ -63,11 +62,6 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   );
 
 
-  useEffect(() => {
-    console.log("is this post a challenge?", postData.challenge, postData.challenge == "true", postData.caption); 
-  }, [postData.challenge])
-
-
 	const onDoubleTapEvent = async (event): Promise<void>  => {
 		if (event.nativeEvent.state === State.ACTIVE) {
 			// Double tap was detected
@@ -91,10 +85,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 		}
   };
   
-  useEffect(() => {
-    console.log('height', Dimensions.get('window').height)
-    console.log(Dimensions.get('window').width)
-  }, [])
+
 
   const isChallenge = postData?.caption?.includes("challenge");
 

@@ -1,3 +1,4 @@
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { StyleSheet } from 'react-native';
 import { DotsProperties } from 'react-native-dots-pagination';
@@ -14,8 +15,9 @@ export const useStatsListStyles = () => {
 		},
 		statsDataLabel: {
 			color: theme.grayShades.gray700,
-			fontSize: 16,
-			fontFamily: theme.text.body.medium.fontFamily,
+		
+			fontSize: 14,
+			fontFamily: fonts.inter.bold,
 			textAlign: 'center',
 			maxWidth: '60%',
 			alignSelf: 'center',
@@ -30,7 +32,7 @@ export const useStatsListStyles = () => {
 			flex: 1,
 			justifyContent: 'center',
 			alignItems: 'stretch',
-			gap: 7,
+			// gap: 2,
 		},
 		dotProps: {
 			activeDotHeight: 12,

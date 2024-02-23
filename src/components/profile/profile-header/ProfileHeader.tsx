@@ -51,8 +51,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 			followers: followers,
 			initial: 'Followers',
 		} });
-	
-
 
 	};
 

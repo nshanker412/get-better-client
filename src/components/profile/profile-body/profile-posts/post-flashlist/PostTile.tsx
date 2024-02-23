@@ -9,10 +9,11 @@ import { PostOverlay } from './overlay/PostOverlay';
 
 
 interface PostTileProps {
-    post: Post
-    myUsername: string
-    isEmbeddedFeed?: boolean
-    handlePostPress?: (post: string) => void
+    post: Post;
+    myUsername: string;
+    isEmbeddedFeed?: boolean;
+    isFullscreenPreview?: boolean;
+    handlePostPress?: (post: string) => void;
 }
 interface PostTileRef {
     play: () => void;
@@ -27,7 +28,7 @@ interface PostTileRef {
  * The ref is forwarded to this component so that the parent component
  * can manage the play status of the video.
  */
-export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, myUsername, isEmbeddedFeed }, ref) => {
+export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, isFullscreenPreview, myUsername, isEmbeddedFeed }, ref) => {
     const [status, setStatus] = useState<any>(null);
     const [paused, setPaused] = useState(false);
 
@@ -96,7 +97,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             console.log(e)
         }
     }
-
 
     /**
      * Unloads the video in the component if the ref

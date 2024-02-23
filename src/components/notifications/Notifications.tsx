@@ -65,7 +65,6 @@ export const Notifications = () => {
         const itemUsername = item.content.split(' ')[0];
         const itemContent = item.content.split(' ').slice(1).join(' ');
 
-        
         let itemLink = {
             screen: 'profile',
             params: { profileUsername: itemUsername },
@@ -87,7 +86,7 @@ export const Notifications = () => {
                 screen: 'profile',
                 params: {
                     profileUsername: myUsername,
-                    linkPostID: `${item.postID}`,
+                    linkPostID: item.postID,
                 },
             };
             type = 'like';
@@ -97,7 +96,7 @@ export const Notifications = () => {
                 screen: 'profile',
                 params: {
                     profileUsername: myUsername,
-                    linkPostID: `${item.postID}`,
+                    linkPostID: item.postID,
                 },
             };
             type = 'comment';

@@ -144,6 +144,8 @@ const OtherProfilePosts: React.FC = () => {
 			isMyProfile={false}
 			onClosePress={onRefreshFeed}
 			isPreviewMode={false}
+			fetchUserPosts={onRefreshFeed}
+
 		/>
 	);
 };

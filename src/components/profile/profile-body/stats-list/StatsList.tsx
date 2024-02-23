@@ -52,11 +52,7 @@ export const StatsList: React.FC<StatsListProps> = ({
 					<Text style={StatsListStyles.statsDataLabel}>Plans</Text>
 				</View>
 			</PagerView>
-			{/* <Dots
-				{...StatsListStyles.dotProps}
-				length={statsListLength}
-				active={activeIndex}
-			/> */}
+		
 		</>
 	);
 };

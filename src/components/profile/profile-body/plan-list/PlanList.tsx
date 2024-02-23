@@ -82,7 +82,6 @@ export const PlanList: React.FC<PlanListProps> = ({
 	}
 
 	return (
-		<>
 			<PagerView
 				style={{
 					flex: 1,
@@ -94,11 +93,5 @@ export const PlanList: React.FC<PlanListProps> = ({
 				{planListRef.current}
 			</PagerView>
 
-			{/* <Dots
-				{...PlanListStyles.dotProps}
-				length={planListRef.current.length}
-				active={activeIndex}
-			/> */}
-		</>
 	);
 };

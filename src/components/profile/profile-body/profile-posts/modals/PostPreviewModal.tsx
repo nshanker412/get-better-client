@@ -1,7 +1,8 @@
 import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
+import { useScrollToTop } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { Host } from 'react-native-portalize';
 import { DeletePostModal } from './DeletePostModal';
@@ -57,7 +58,6 @@ import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer
 //   }
 
 import { useRef } from 'react';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -65,17 +65,27 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
  * On start make fetch for posts then use a flatList 
  * to display/control the posts.
  */
-export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts }: { isMyFeed: boolean; posts: Post[]; currentPost: string; onClosePress: (close: boolean) => void, onFetchPosts: () => Promise<void>, isFullscreen: boolean }) {
+export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts }: { isMyFeed: boolean; posts: Post[]; currentPost: number | undefined; onClosePress: (close: boolean) => void, onFetchPosts: () => Promise<void>, isFullscreen: boolean }) {
   const mediaRefs = useRef([]);
   const { username: myUsername } = useMyUserInfo()
   const profileFeedRef = useRef(null)
-  const currentPostFilenameRef = useRef<string>(currentPost)
+  const currentPostFilenameRef = useRef<string>(currentPost ? posts[currentPost]?.filename : '')
   const { onPostChange } = useCommentDrawer()
-  const [isFullscreenPreview, setFullscreenPreview] = useState(currentPost ? true : false);
-  const [currentIndex, setCurrentIndex] = useState<number | undefined> (currentPost ?? undefined);
+  const [isFullscreenPreview, setFullscreenPreview] = useState( false);
+  const [currentIndex, setCurrentIndex] = useState<number | undefined> ( undefined);
   // const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
   const [refreshing, setRefreshing] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+
+  useScrollToTop(profileFeedRef);
+
+
+  useEffect(() => {
+    if (isFullscreen) {
+      setCurrentIndex(currentPost);
+      setFullscreenPreview(true);
+    }
+  }, [isFullscreen, currentPost]);
 
 
   const embeddedViewStyle = {
@@ -99,7 +109,9 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const onDeleteModalClose = (isPostDeleted: boolean) => {
     setDeleteModalVisible(false);
     if (isPostDeleted) {
+      setFullscreenPreview(false);
       onClosePress(true);
+      onRefreshFeed();
     }
   };
 
@@ -111,7 +123,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
         changed.forEach(({ item, isViewable }) => {
             if (isViewable) {
-                console.log('currentPostFilenameRef', currentPostFilenameRef.current)
                 currentPostFilenameRef.current = item.filename
             }
         });
@@ -131,15 +142,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   
   
   
-  const handlePostPress = (postID: string) => {
-
-    console.log(postID, isFullscreenPreview);
-      
+  const handlePostPress = (postID: string) => {      
     if (!isFullscreenPreview) {
-      console.log("notfullscreenpreview")
-      // scrollToItemWithKey(postID)
-
-      // find index of post
       const index = posts.findIndex(post => post.filename === postID);
       if (index !== -1) {
         setCurrentIndex(index);
@@ -147,29 +151,18 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       } else {
         console.log('WARN: post not found');
       }
-
-
     } else {
       setFullscreenPreview(false);
     }
  
   };
   
-
-
-
-  
-
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
-  // const feedItemHeight = Dimensions.get('window').height;
   
-
-
-
     const renderItem: ListRenderItem<Post> = ({ item }) => {
         return (
             <View style={{ height: isFullscreenPreview? Dimensions.get("screen").height : 200, width: "100%",  backgroundColor: 'black' }}>
-              <PostTile handlePostPress={handlePostPress}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
+             <PostTile isFullscreenPreview={ isFullscreenPreview}  handlePostPress={handlePostPress}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
             </View>
         );
     };
@@ -185,12 +178,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     }
   }
 
-
   return (
-    <View style={{ width: "100%", height: "100%"}} > 
-   
-   <TouchableWithoutFeedback onPress={handlePostPress} ref={profileFeedRef}/>
-
+    <View style={{ width: "100%", height: "100%"}} >
         {isFullscreenPreview ? (
           <Portal>
           <Host>
@@ -231,18 +220,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                     Haptics.ImpactFeedbackStyle.Medium,
                   );
                 }}
-                onScrollEndDrag={() => {
-                  Haptics.impactAsync(
-                    Haptics.ImpactFeedbackStyle.Medium,
-                  );
-                }}
-                onScrollToTop={() => onClosePress(false)}
-              
-
-                  
-            />
-            
-
+  
+                onScrollToTop={() => onClosePress(false)}          
+            />         
+        
               <Portal>
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
@@ -254,8 +235,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
             </View>
             </Host>
             </Portal>
-
-
 
         ) : (
           <Host>

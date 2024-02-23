@@ -25,23 +25,23 @@ export const PlanItem: React.FC<PlanItemProps> = ({ planType }) => {
 			return (
 				<SvgXml
 					xml={BarbellIcon}
-					width={50}
-					height={50}
+					width={40}
+					height={40}
 				/>
 			);
 		case PlanType.Nutrition:
 			return (
 				<SvgXml
 					xml={DinnerIcon}
-					width={50}
-					height={50}
+					width={40}
+					height={40}
 				/>
 			);
 		case PlanType.NewPlan:
 			return (
 					<AntDesign
 						name='pluscircleo'
-						size={50}
+						size={40}
 						color={theme.textColorPrimary}
 					/>
 			);

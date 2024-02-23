@@ -18,7 +18,6 @@ export const usePlanListStyles = () => {
 			alignItems: 'center',
 		},
 		statContainer: {
-
 			justifyContent: 'center',
 			alignItems: 'center',
 		},

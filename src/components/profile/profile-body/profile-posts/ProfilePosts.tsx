@@ -1,10 +1,18 @@
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { Post } from '@models/posts';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PreviewFeedScreen } from './modals/PostPreviewModal';
+
+//helper to take in a postID and check if it exists in the posts array
+// if it does, set the previewPostId to the index of the post
+// else return -1 
+const findIdxByID = (postId: string, posts: Post[]) => {
+    const postIDint = parseInt(postId);
+    const index = posts.findIndex((post) => (post.metadata.timestamp as number) === postIDint);
+    return index;
+}
 
 
 
@@ -16,61 +24,41 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 }) => {
     const route = useRoute();
     const navigation = useNavigation();
-    const { username: myUsername } = useMyUserInfo();
-
-    const [previewModalVisible, setPreviewModalVisible] = useState<boolean>(false);
-    const [postPreview, setPostPreview] = useState<Post>();
-    const [previewPostId, setPreviewPostId] = useState < string | undefined>(undefined);
-
-    // const togglePreview = (postId: string) => {
-    //     setPreviewPostId(postId);
-
-    //     const selectedPost = posts[index];
-    //     if (selectedPost) {
-    //         console.log('previewPost', selectedPost);
-    //         // setPostPreview(selectedPost);
-    //         // setPreviewModalVisible(true);
-    //     }
-    // };
-
-    const onCheckLinkPost = useCallback((linkPostID: number) => {
-        const index = posts.findIndex(item => `${item.metadata.timestamp}` == `${linkPostID}`);
-
-
-
-        // find postid infilenames
-        const postID = posts[index]?.metadata?.postID;
-        // see if any posts match with the linkPostID
-        if (index !== -1) {
-            setPreviewPostId(postId);
-        } else {
-            Toast.show({
-                type: 'info',
-                text1: 'Post not found',
-                text2: 'This post may have been deleted',
-                topOffset: 100,
-            });
-            navigation.setParams({ linkPostID: undefined });
-            //TODO: update server to unlink notifications from deleted post
-        }
-    }, [navigation, posts]);
-
+    const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
+    
+    // check if linked from notification
     useEffect(() => {
-        const linkedPostID = route?.params?.linkPostID;
+        if (!posts.length) return;
 
+        const linkedPostID = route?.params?.linkPostID;
+        console.log('linkedPostID', linkedPostID);
         if (linkedPostID) {
-            onCheckLinkPost(linkedPostID);
-        }
-    }, [ onCheckLinkPost]);
+            console.log('it exists' , linkedPostID);
+            const idx = findIdxByID(linkedPostID, posts);
+            console.log('idx', idx);
+            if (idx < 0) {
+                Toast.show({
+                    type: 'info',
+                    text1: 'Post not found',
+                    text2: 'This post may have been deleted',
+                    topOffset: 100,
+                });
+                navigation.setParams({ linkPostID: undefined });
+
+            } else {
+                setPreviewPostId(idx);
+            }
+            }
+        }, [ posts,  route]);
+
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
+        
         console.log('onClosePreviewPress', wasPostDeleted);
         navigation.setParams({ linkPostID: undefined });
         if (wasPostDeleted) {
-            fetchUserPosts();
+             fetchUserPosts();
         }
-        setPostPreview(undefined);
-        setPreviewModalVisible(false);
         setPreviewPostId(undefined);
     };
 
@@ -81,11 +69,11 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     return (
             <PreviewFeedScreen
                 posts={posts}
-                isFullscreen={previewModalVisible}
+                isFullscreen={!!previewPostId}
                 onClosePress={onClosePreviewPress}
                 currentPost={previewPostId}
-            onFetchPosts={onFetchUserPosts}
-            isMyFeed={isMyProfile}
+                onFetchPosts={onFetchUserPosts}
+                isMyFeed={isMyProfile}
             />
 
     );

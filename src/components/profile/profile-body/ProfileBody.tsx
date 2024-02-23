@@ -39,8 +39,6 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 	return (
 		<View style={profileBodyStyles.container}>
 	
-			{/* <View style={{ width: Dimensions.get("screen").width, height: "100%", }}> */}
-			{/* <Divider/> */}
 
 				<View style={[profileBodyStyles.statsCategoryColumn, {flex: 5}]}>
 					<View style={profileBodyStyles.statsContainer}>
@@ -54,13 +52,9 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 
 				<View style={[profileBodyStyles.postsColumn, {flex: 26 , }]}>
 					<View style={profileBodyStyles.scrollInnerContainer}>
-					<ConnectedProfilePosts isMyProfile={isMyProfile}
-					
-					/>
+					<ConnectedProfilePosts isMyProfile={isMyProfile}/>
 					</View>
 				</View>
 			</View>
-			// </View>
-
 	);
 };
