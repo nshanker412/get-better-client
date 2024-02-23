@@ -18,7 +18,6 @@ const findIdxByID = (postId: string, posts: Post[]) => {
 
 export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     posts,
-    currentScrollIndex,
     isMyProfile,
     fetchUserPosts,
 }) => {
@@ -31,7 +30,6 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         if (!posts.length) return;
 
         const linkedPostID = route?.params?.linkPostID;
-        console.log('linkedPostID', linkedPostID);
         if (linkedPostID) {
             console.log('it exists' , linkedPostID);
             const idx = findIdxByID(linkedPostID, posts);
@@ -53,9 +51,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
-        
-        console.log('onClosePreviewPress', wasPostDeleted);
-        navigation.setParams({ linkPostID: undefined });
+         navigation.setParams({ linkPostID: undefined });
         if (wasPostDeleted) {
              fetchUserPosts();
         }

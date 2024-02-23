@@ -5,7 +5,6 @@ export interface ConnectedProfilePostsProps {
 
 export interface ProfilePostsProps {
 	posts: Post[];
-	currentScrollIndex: number;
 	isError: boolean;
 	isMyProfile: boolean;
 	fetchUserPosts: () => Promise<void>;

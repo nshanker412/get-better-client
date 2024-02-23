@@ -1,63 +1,17 @@
+import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import { useScrollToTop } from '@react-navigation/native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Dimensions, RefreshControl, TouchableOpacity, View } from 'react-native';
-import { Host } from 'react-native-portalize';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, RefreshControl, TouchableOpacity, View, ViewToken } from 'react-native';
+import { Host, Portal } from 'react-native-portalize';
+import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer';
+import { PostTile } from '../post-flashlist/PostTile';
 import { DeletePostModal } from './DeletePostModal';
 
-
-
-// // 1. Define the handler
-// function usePageScrollHandler(handlers, dependencies) {
-//   const { context, doDependenciesDiffer } = useHandler(handlers, dependencies);
-//   const subscribeForEvents = ['onPageScroll'];
-
-//   return useEvent(
-//     (event) => {
-//       'worklet';
-//       const { onPageScroll } = handlers;
-//       if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
-//         onPageScroll(event, context);
-//       }
-//     },
-//     subscribeForEvents,
-//     doDependenciesDiffer
-//   );
-// }
-
-// // 2. Attach the event handler
-// const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
-
-// const pageScrollHandler = usePageScrollHandler({
-//   onPageScroll: (e) => {
-//     'worklet';
-//     offset.value = e.offset;
-//     console.log(e.offset, e.position);
-//   },
-// });
-
-// <AnimatedPagerView onPageScroll={pageScrollHandler} />;
-
-
-import { PostTile } from '../post-flashlist/PostTile';
-
-
-import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { ViewToken } from 'react-native';
-import { Portal } from 'react-native-portalize';
-import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer';
-
-// interface PostTileRef {
-//     play: () => void;
-//     stop: () => void;
-//     unload: () => void;
-//   }
-
-import { useRef } from 'react';
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -73,13 +27,13 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const { onPostChange } = useCommentDrawer()
   const [isFullscreenPreview, setFullscreenPreview] = useState( false);
   const [currentIndex, setCurrentIndex] = useState<number | undefined> ( undefined);
-  // const [viewState, setViewState] = useState(isFullscreen ? fullViewStyle : embeddedViewStyle)
   const [refreshing, setRefreshing] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [contentHeight, setContentHeight] = useState(0);
   const [scrollViewHeight, setScrollViewHeight] = useState(0);
 
   useScrollToTop(profileFeedRef);
+
 
 
   useEffect(() => {
@@ -123,7 +77,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
      * the post that is viewable and stop all the others
      */
     const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
-        changed.forEach(({ item, isViewable }) => {
+      changed.forEach(({ item, isViewable }) => {
+        if (!isFullscreenPreview) {
+          mediaRefs.current[item?.filename]?.mute();
+        }
           if (isViewable) {
             console.log('isViewable', item?.filename, isViewable)
     
@@ -140,6 +97,9 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
         });
     }, [onPostChange]);
   
+    const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
+
+  
   
   const handlePostPress = (index: number) => {      
     if (!isFullscreenPreview) {
@@ -152,12 +112,21 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     }
   };
   
-    const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
   
     const renderItem: ListRenderItem<Post> = ({ item, index }) => {
         return (
-            <View style={{ height: isFullscreenPreview? Dimensions.get("screen").height : 200, width: "100%",  backgroundColor: 'black' }}>
-            <PostTile isFullscreenPreview={isFullscreenPreview} handlePostPress={() => handlePostPress(index)}  isEmbeddedFeed={ !isFullscreenPreview} post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
+          <View
+            style={{
+              height: isFullscreenPreview ? Dimensions.get("screen").height : 200,
+              width: "100%",
+              backgroundColor: 'black'
+            }}>
+            <PostTile
+                isFullscreenPreview={isFullscreenPreview}
+                handlePostPress={() => handlePostPress(index)}
+                isEmbeddedFeed={!isFullscreenPreview}
+                post={item} myUsername={myUsername ?? ''}
+                ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
             </View>
         );
     };
@@ -171,8 +140,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       setRefreshing(false);
     }
   }
-
-
 
   const onScroll = useCallback((event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -192,8 +159,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       // Trigger any function you want here
       onClosePress(false);
       setFullscreenPreview(false);
-
-
     }
 
     // Bottom boundary check
@@ -201,10 +166,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       console.log('Reached the bottom of the list');
       onClosePress(false);
       setFullscreenPreview(false);
-
-
-
-      // Trigger any function you want here
     }
   }, [contentHeight, scrollViewHeight]);
 
@@ -330,154 +291,11 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
               </Portal>)}
             </View>
-                      </Host>
+           </Host>
 
         )}
       
           </View>
     )
 }
-
-// export interface PostPreviewModalProps {
-//   posts: Post[];
-//   isVisible: boolean;
-//   index: number;
-//   isMyProfile: boolean;
-//   myUsername: string;
-//   onClosePress: (close: boolean) => void;
-// }
-
-// export const PostPreviewModal: React.FC<PostPreviewModalProps> = ({
-//   posts,
-//   isVisible,
-//   isMyProfile,
-//   index: initialIndex,
-//   myUsername,
-//   onClosePress,
-// }) => {
-//   if (posts === null || initialIndex < 0) return null;
-//   if (initialIndex >= posts?.length) return null;
-//   const window = Dimensions.get('window');
-
-//   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-//   const { theme } = useThemeContext();
-//   const [index, setIndex] = useState<number>(initialIndex);
-
-//   const onDeletePressCb = async () => {
-//     setDeleteModalVisible(true);
-//   };
-
-//   const onDeleteModalClose = (isPostDeleted: boolean) => {
-//     setDeleteModalVisible(false);
-//     if (isPostDeleted) {
-//       onClosePress(true);
-//     }
-//   };
-
-//   // const translateY = useSharedValue(0); 
-
-//   // const animatedStyle = useAnimatedStyle(() => {
-//   //   return {
-//   //     transform: [{ translateY: translateY.value }],
-//   //   };
-//   // });
-
-//   // useEffect(() => {
-//   //   translateY.value = withSpring(0, { damping: 20, stiffness: 100 });
-//   // }, [ translateY]);
-
-//   // const onChangePostWrapper = useCallback((direction: 'prev' | 'next', index: number) => {
-//   //   if (direction === 'prev') {
-//   //     if (index === 0) {
-//   //       onClosePress(false);
-//   //     } else {
-//   //       setIndex(index - 1);
-//   //     }
-//   //   }
-//   //   if (direction === 'next') {
-//   //     if (index === posts.length - 1) {
-//   //       onClosePress(false);
-//   //     } else {
-//   //       setIndex(index + 1);
-//   //     }
-//   //   }
-//   // }, [onClosePress, posts]);
-
-//   // const scrollViewRef = React.useRef<ScrollView>(null);
-
-
-
-//   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-// 		// media loading handling
-// 		const yOffset = event.nativeEvent.contentOffset.y;
-//     const index = Math.round(yOffset / window.height);
-//     setIndex(index);
-// 		// setCurrentScrollIndex(index);
-// 		// currentScrollIndexRef.current = index;
-
-// 		// fetch public handling
-// 		const contentHeight = event.nativeEvent.contentSize.height;
-// 		const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
-
-// 		// Check if the user has scrolled to the bottom
-// 		if (index === posts.length - 1) {
-  
-//       onClosePress(false);
-//     }
-
-//   };
-  
-//   // useEffect(() => {
-//   //   if (scrollViewRef.current) {
-//   //     scrollViewRef.current.scrollTo({ x: 0, y: window.height * index, animated: false });
-//   //   }
-//   // }, [index, scrollViewRef, window.height]);
-
-
- 
-
-//   return (
-//     <>
-     
-//         <View
-//           style={{
-//             // position: 'absolute',
-//             // width: 50,
-//             // height: 50,
-//             // right: 0,
-//             // top: '10%',
-//             // marginRight: -30,
-//             // zIndex: 100,
-//           }}>
-//           <TouchableOpacity onPress={() => onClosePress(false)}>
-//             <AntDesign name='closecircle' size={24} color='black' />
-//           </TouchableOpacity>
-//         </View>
-//         {isMyProfile && (
-//           <View
-//             style={{
-//               // position: 'absolute',
-//               // width: 50,
-//               // height: 50,
-//               // right: 0,
-//               // top: '20%',
-//               // marginRight: -30,
-//               // zIndex: 100,
-//             }}>
-//             <TouchableOpacity onLongPress={onDeletePressCb}>
-//               <AntDesign name='delete' size={24} color='white' />
-//             </TouchableOpacity>
-//           </View>
-//         )}
-
-                
-//           <View style={{ flex: 1, height: "100%" , width:"100%"  }}>
-//         <PreviewFeedScreen posts={posts} currentIndex={index} onClosePress={onClosePress} />  
-//         </View>
-      
-//           <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${posts[index].filename}`} />
- 
-// </>
-//   );
-// };
 

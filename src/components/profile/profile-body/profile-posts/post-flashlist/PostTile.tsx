@@ -3,7 +3,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import { ResizeMode, Video } from 'expo-av';
 import { Image } from 'expo-image';
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
     Easing,
@@ -101,7 +101,7 @@ interface PostTileProps {
     myUsername: string;
     isEmbeddedFeed?: boolean;
     isFullscreenPreview?: boolean;
-    handlePostPress?: (post: string) => void;
+    handlePostPress?: () => void;
 }
 interface PostTileRef {
     play: () => void;
@@ -120,23 +120,10 @@ interface PostTileRef {
  * can manage the play status of the video.
  */
 export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, isFullscreenPreview, myUsername, isEmbeddedFeed }, ref) => {
-    // const [loaded, setLoaded] = useState(false);
-
-    // const onPlaybackStatusUpdate = useCallback((status: AVPlaybackStatus) => {
-    //     // if (status.isLoaded ) {
-    //     //     // setLoaded(true);
-    //     //     console.log('loaded')
-    //     // } else if (!status.isLoaded) {
-    //     //     // setLoaded(false);
-    //     // }
-    // }, [])
-
     const pauseAniRef = useRef(null);
     const playAniRef = useRef(null);
-
-
     const localRef = useRef(null);
-    //  const user = useUser(item.creator).data
+
     useImperativeHandle(ref, () => ({
         play,
         unload,
@@ -145,9 +132,10 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         mute,
         unMute
     }))
-    // useEffect(() => {
-    //     return () => unload();
-    // }, [])
+
+    useEffect(() => {
+        return () => unload();
+    }, [])
 
     /**
      * Plays the video in the component if the ref
@@ -296,7 +284,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             console.log(e)
         }
     }
-
 
     const onToggleVideoState = () => {
         togglePausePlay();
