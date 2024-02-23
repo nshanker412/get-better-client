@@ -64,11 +64,11 @@ export const OtherProfile: React.FC = () => {
 	if (!myUsername) return null;
 	return (
 		<Host>
-		<OtherUserInfoProvider
-			otherProfileUsername={route.params.profileUsername}
-			myUsername={myUsername}>
-			<_OtherProfile />
+			<OtherUserInfoProvider
+				otherProfileUsername={route.params.profileUsername}
+				myUsername={myUsername}>
+				<_OtherProfile />
 			</OtherUserInfoProvider>
-			</Host>
+		</Host>
 	);
 };
