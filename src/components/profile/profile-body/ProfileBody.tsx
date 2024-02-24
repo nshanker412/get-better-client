@@ -142,7 +142,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	return (
 		<ProfileTab.Navigator
 			screenOptions={{
-					
 					tabBarLabelStyle: {
 						fontSize: 15,
 						fontFamily: theme.fontFamily,

@@ -26,6 +26,20 @@ export const ProfileEdit: React.FC = () =>  {
 	const [updateLoading, setUpdateLoading] = useState(false);
 	const { theme } = useThemeContext();
 
+	// todo update to make dynamic 
+
+	const [box1Title, setBox1Title] = useState<string| undefined> (undefined );
+	const [box1Stat, setBox1Stat]  =useState<string| undefined> (undefined );
+
+	const [box2Title, setBox2Title] = useState<string| undefined> (undefined );
+	const [box2Stat, setBox2Stat] = useState<string| undefined> (undefined );
+
+	const [box3Title, setBox3Title] = useState<string| undefined> (undefined );
+	const [box3Stat, setBox3Stat] = useState<string| undefined> (undefined );
+
+	const [box4Title, setBox4Title] = useState<string| undefined> (undefined );
+	const [box4Stat, setBox4Stat] = useState<string| undefined> (undefined );
+
 	const profileEditStyles = useProfileEditStyles();
 
 	// fetch user info
@@ -222,6 +236,51 @@ export const ProfileEdit: React.FC = () =>  {
 						multiline={true}
 						numberOfLines={4}
 						value={bio}
+						onChangeText={setBio}
+						blurOnSubmit={true}
+						onSubmitEditing={() => Keyboard.dismiss()}
+					/>
+				</View>
+
+				
+				<View
+					style={[
+						profileEditStyles.inputContainer,
+						profileEditStyles.lastInputContainer,
+					]}>
+					<Text style={profileEditStyles.inputText}>Info box 1</Text>
+					<TextInput
+						style={[
+							profileEditStyles.input,
+							profileEditStyles.multiLineInput,
+						]}
+						placeholder='box1'
+						textAlign='left'
+						multiline={true}
+						numberOfLines={1}
+						// value={bio}
+						onChangeText={setBio}
+						blurOnSubmit={true}
+						onSubmitEditing={() => Keyboard.dismiss()}
+					/>
+				</View>
+
+				<View
+					style={[
+						profileEditStyles.inputContainer,
+						profileEditStyles.lastInputContainer,
+					]}>
+					<Text style={profileEditStyles.inputText}>bio</Text>
+					<TextInput
+						style={[
+							profileEditStyles.input,
+							profileEditStyles.multiLineInput,
+						]}
+						placeholder='enter box2'
+						textAlign='left'
+						multiline={true}
+						numberOfLines={1}
+						// value={bio}
 						onChangeText={setBio}
 						blurOnSubmit={true}
 						onSubmitEditing={() => Keyboard.dismiss()}

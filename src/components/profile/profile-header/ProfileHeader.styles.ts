@@ -24,6 +24,7 @@ export const useProfileHeaderStyles = () => {
 			flexDirection: 'row',
 			width: '90%',
 			height: 90,
+
 			// overflow: 'visible',
 			borderRadius: 20,
 			// padding: 5,
@@ -54,6 +55,7 @@ export const useProfileHeaderStyles = () => {
 			// borderWidth: 1,
 			// borderColor: theme.grayShades.gray600,
 			display: 'flex',
+			height: "100%",
 			// alignItems: 'center',
 			justifyContent: 'center',
 			flexDirection: 'column',

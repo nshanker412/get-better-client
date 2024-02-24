@@ -51,7 +51,6 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 			h: "Flights climbed", 
 			s: "2000 flights"
 		}
-	
 	]
 
 
