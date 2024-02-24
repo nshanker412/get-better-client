@@ -23,7 +23,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const mediaRefs = useRef([]);
   const { username: myUsername } = useMyUserInfo()
   const profileFeedRef = useRef(null)
-  const currentPostFilenameRef = useRef<string>(currentPost ? posts[currentPost]?.filename : '')
+  const currentPostFilenameRef = useRef<string>(currentPost !== undefined ? posts[currentPost]?.filename : '')
   const { onPostChange } = useCommentDrawer()
   const [isFullscreenPreview, setFullscreenPreview] = useState( false);
   const [currentIndex, setCurrentIndex] = useState<number | undefined> ( undefined);
@@ -37,7 +37,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
 
   useEffect(() => {
-    if (isFullscreen) {
+    if (isFullscreen && currentPost !== undefined) {
       setCurrentIndex(currentPost);
       setFullscreenPreview(true);
     }

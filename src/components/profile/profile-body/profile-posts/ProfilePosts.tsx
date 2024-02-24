@@ -31,7 +31,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
         console.log('inprofile', route?.params);
         const linkPostID = route?.params?.linkPostID;
-        if (linkPostID) {
+        if (linkPostID !== undefined) {
             console.log('it exists' , linkPostID);
             const idx = findIdxByID(linkPostID, posts);
             console.log('idx', idx);
@@ -53,7 +53,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
          navigation.setParams({ linkPostID: undefined });
-        if (wasPostDeleted) {
+        if (wasPostDeleted) {R
              fetchUserPosts();
         }
         setPreviewPostId(undefined);
@@ -68,7 +68,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 posts={posts}
                 isFullscreen={previewPostId === undefined}
                 onClosePress={onClosePreviewPress}
-                currentPost={previewPostId}
+                currentPost={previewPostId } //TODO FIX YOU FUCK
                 onFetchPosts={onFetchUserPosts}
                 isMyFeed={isMyProfile}
             />

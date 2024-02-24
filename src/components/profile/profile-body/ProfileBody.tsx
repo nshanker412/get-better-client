@@ -56,8 +56,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const navig = useNavigation();
 	
 	useEffect(() => {
-		console.log("FETCHING NEW PLANLIST")
-
 		const foo = async () => {
 			console.log(username)
 			try {
