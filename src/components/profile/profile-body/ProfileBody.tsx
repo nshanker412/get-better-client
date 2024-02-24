@@ -3,36 +3,26 @@
  * - move stats container to separate internally driven component (reduce prop spam & unnecessary rerenders)
  */
 
+import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { MasonryFlashList } from '@shopify/flash-list';
+import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useProfileBodyStyles } from './ProfileBody.styles';
 import { ProfileBodyProps } from './ProfileBody.types';
 import { ConnectedPlanItem } from './plan-list/plan-item/ConnectedPlanItem';
+import { PlanType } from './plan-list/plan-item/PlanItem.types';
 import { ConnectedProfilePosts } from './profile-posts/ConnectedProfilePosts';
 
-
-const Divider = () => {
-	const { theme} = useThemeContext();
-	return (
-		<View style={{padding: 1}} >
-		<View style={{
-			width: "100%",
-			alignSelf: "center",
-			backgroundColor: 'white',
-			opacity: 0.2, 
-			// height: StyleSheet.hairlineWidth,
-			height: 1,
-		}} />
-		</View>
-	);
-};
+interface PlanTileType {
+	planType: PlanType;
+	title: string;
+}
   
-
-
 const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 	const profileBodyStyles = useProfileBodyStyles();
 
@@ -43,7 +33,7 @@ const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 					<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
 						<View style={profileBodyStyles.scrollInnerContainer}>
 							<View style={profileBodyStyles.scrollInnerContainer}>
-								<ConnectedProfilePosts isMyProfile={isMyProfile} />
+								<ConnectedProfilePosts isMyProfile={isMyProfile}  />
 							</View>
 						</View>
 					</View>
@@ -56,43 +46,67 @@ const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 
 
 
-export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username }) => {
+export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username }) => {
 	const { theme } = useThemeContext();
 	const profileBodyStyles = useProfileBodyStyles();
 	const ProfileTab = createMaterialTopTabNavigator();
-	const [plans, setPlans] = useState([]);
+	const [pla, setPla] = useState<PlanTileType[] | []> ([]);
 	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
-	
 
+	const navig = useNavigation();
+	
 	useEffect(() => {
+		console.log("FETCHING NEW PLANLIST")
+
 		const foo = async () => {
 			console.log(username)
 			try {
-				await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/fetch/plans/${username}`).then((response) => {
-					setPlans(response.data.plans);
-					console.log('FETCH PLANS: => ', response?.data);
+				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${username}`);
+					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanTileType) => ({
+						id: `${plan?.timestamp}`,
+						title: plan?.title,
+						planType: plan?.planType,
+					}));
+				
+					
+					if (isMyProfile) {
+						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
+						const newArr = [...newPlan, ...planList];
 
-				});
+						setPla(newArr);
+
+					} else {
+						setPla(planList);
+					}
 			} catch (error) {
 				console.log("couldnt fetch plans", error);
 			}
 		}
 		foo();	
-	}, [username]);
+	}, [username, isMyProfile]);
 
+	const onPressTile = (planType: PlanType) => {
 
-	const PlanItem = (item ) => {
-		return (
-			<View style={{ flex: 1, width: 300 }}>
+		if (planType === PlanType.NewPlan) {
+			navig.navigate('CreatePlan');
+		} else {
+			navig.navigate('plan', { planType });
+		
+		}
 
-				<ConnectedPlanItem planType={item } planTitle="Daily" />
-
-			</View>
-		)
 	}
 
-
-
+	const PlanItem = ({ item } ) => {
+		return (
+			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
+			<TouchableOpacity	onPress={onPressTile}>
+				<View style={{ flex: 1, width: 130, height: 130, borderColor: grayDark.gray9, borderWidth: 1, borderRadius: 5, padding: 10, backgroundColor: grayDark.gray5, alignItems: "center", justifyContent: "center" }}>
+				<ConnectedPlanItem planType={item?.planType } planTitle={item?.title} />
+					</View>
+					</TouchableOpacity>
+				</View>
+		)
+	}
 
 	const Plans = () => {
 
@@ -101,11 +115,13 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username 
 			<View style={profileBodyStyles.container}>
 				<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
 					<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
-						<View style={[profileBodyStyles.scrollInnerContainer, {width: 200, minHeight: 500}]}>
-								<MasonryFlashList 
-									data={plans}
-									renderItem={({ item }) => <PlanItem {...item} />}
-									keyExtractor={(item) => item.id}
+						<View style={[profileBodyStyles.scrollInnerContainer, {flex: 1, width: Dimensions.get("screen").width, height: 500, minHeight: 500}]}>
+								<FlashList 
+									estimatedItemSize={100}
+									data={pla}
+									numColumns={2}
+									keyExtractor={(item) => `${item.id}`}
+									renderItem={PlanItem}
 
 								/>
 						</View>
@@ -116,32 +132,19 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username 
 			)
 	}
 
-	// const Posts = () => {
 
-	// 	return (
-	// 		<View style={{flex: 1, width: "100%", height: "auto"}}>
-	// 		<View style={profileBodyStyles.container}>
-	// 			<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
-	// 				<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
-	// 					<View style={profileBodyStyles.scrollInnerContainer}>
-	// 						<ConnectedProfilePosts isMyProfile={isMyProfile} />
-	// 					</View>
-	// 				</View>
-	// 			</View>
-	// 				</View>
-	// 		</View>
-	// 		)
-	// }
-
-	const _MemoFeed = () => {
+	const _MemoFeed = React.memo(() => {
 		return (
-			<MemoFeed isMyProfile={isMyProfile} />
+			<MemoFeed isMyProfile={isMyProfile}  />
 		)
-	}
+	});
+	
+
 
 	return (
 		<ProfileTab.Navigator
-				screenOptions={{
+			screenOptions={{
+					
 					tabBarLabelStyle: {
 						fontSize: 15,
 						fontFamily: theme.fontFamily,
@@ -170,3 +173,6 @@ export const ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username 
 	
 	);
 };
+
+
+export const ProfileBody = React.memo(_ProfileBody);

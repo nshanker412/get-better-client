@@ -70,10 +70,8 @@ const LogoutModal: React.FC<{
 
 export const MyProfile: React.FC = () => {
 	const [logoutModalVisible, setLogoutModalVisible] =
-		useState<boolean>(false); // Set initial state to false
-	
+		useState<boolean>(false); 
 	const profileStyles = useProfileStyles();
-
 	const { username: myUsername,  onLogout } = useMyUserInfo();
 	const { removePushToken } = useNotifications();
 	const { signOut } = useAuth();

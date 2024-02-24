@@ -5,7 +5,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ProfilePosts } from './ProfilePosts';
 import { ConnectedProfilePostsProps } from './ProfilePosts.types';
-import { PreviewFeedScreen } from './modals/PostPreviewModal';
 
 /**
  * Connected ProfilePosts Component
@@ -103,13 +102,11 @@ const OtherProfilePosts: React.FC = () => {
 		await fetchUserPosts();
 	}
 	return (
-		<PreviewFeedScreen 
+		<ProfilePosts
 			posts={posts}
+			isError={isError}
 			isMyProfile={false}
-			onClosePress={onRefreshFeed}
-			isPreviewMode={false}
 			fetchUserPosts={onRefreshFeed}
-
 		/>
 	);
 };

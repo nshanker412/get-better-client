@@ -29,10 +29,11 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     useEffect(() => {
         if (!posts.length) return;
 
-        const linkedPostID = route?.params?.linkPostID;
-        if (linkedPostID) {
-            console.log('it exists' , linkedPostID);
-            const idx = findIdxByID(linkedPostID, posts);
+        console.log('inprofile', route?.params);
+        const linkPostID = route?.params?.linkPostID;
+        if (linkPostID) {
+            console.log('it exists' , linkPostID);
+            const idx = findIdxByID(linkPostID, posts);
             console.log('idx', idx);
             if (idx < 0) {
                 Toast.show({
@@ -65,7 +66,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     return (
             <PreviewFeedScreen
                 posts={posts}
-                isFullscreen={!!previewPostId}
+                isFullscreen={previewPostId === undefined}
                 onClosePress={onClosePreviewPress}
                 currentPost={previewPostId}
                 onFetchPosts={onFetchUserPosts}

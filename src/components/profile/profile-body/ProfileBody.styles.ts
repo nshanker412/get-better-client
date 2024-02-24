@@ -12,7 +12,7 @@ export const useProfileBodyStyles = () => {
 			backgroundColor: theme.backgroundColor,
 			width: '100%',
 			height: '100%',
-			borderRadius: 5,
+			// borderRadius: 5,
 			borderWidth: 1,
 		},
 
@@ -65,7 +65,7 @@ export const useProfileBodyStyles = () => {
 			borderLeftWidth: 1,
 			borderTopColor: theme.innerBorderColor,
 			borderTopWidth: 1,
-			borderTopLeftRadius: 5,
+			// borderTopLeftRadius: 5,
 			// borderTopRightRadius: 5,
 
 			flexDirection: 'row',
@@ -87,7 +87,7 @@ export const useProfileBodyStyles = () => {
 			flex: 1,
 			// borderTopWidth: 1,
 			// borderTopColor: theme.innerBorderColor,
-			borderTopRightRadius: 5,
+			// borderTopRightRadius: 5,
 			borderRightWidth: 1,
 			borderRightColor: theme.innerBorderColor,
 		},
