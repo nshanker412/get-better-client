@@ -1,6 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { ActionButton } from '../../../../primitives/action-button/ActionButton';
 import { Modal } from '../../../../primitives/action-modal/ActionModal';
@@ -20,8 +20,14 @@ export const DeletePostModal: React.FC<DeletePostModalProps> = ({
 	const { theme } = useThemeContext();
 	const [loading, setLoading] = useState<boolean>(false);
 
+	useEffect(() => {
+		
+		console.log("delete post id", deletePostId)
+	}, [deletePostId])
+
 	const onDeletePressCb = async () => {
 		setLoading(true);
+		console.log("deletepost ID: ",deletePostId )
 		deletePost(deletePostId);
 		setLoading(false);
 		onClosePress(true);

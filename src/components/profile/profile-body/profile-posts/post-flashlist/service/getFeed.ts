@@ -11,8 +11,7 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
     try {
         const friendsFeed: Post[] | [] = await fetchFriendsPosts(myUsername);
         const publicFeed: Post[] | [] = await fetchPublicPosts(myUsername);
-        
-       
+
         const feed = [...friendsFeed, ...publicFeed];
 
         // TODO - add filtering for duplicates
@@ -27,8 +26,7 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
 
 
 	// fetch all friends post metadata
-const fetchFriendsPosts = async (myUsername: string): Promise<Post[] |[]> => {
-        
+const fetchFriendsPosts = async (myUsername: string): Promise<Post[] | []> => {
     try {
         const response = await axios.get<PostsApiResponse>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`);
         return response.data.posts;
@@ -45,11 +43,9 @@ const fetchFriendsPosts = async (myUsername: string): Promise<Post[] |[]> => {
  * @returns 
  */
 const fetchPublicPosts = async (myUsername: string): Promise<Post[] | []> => {
-
         try {
             const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/public/${myUsername}`);
             return response.data.posts;
-    
         }
         catch (error) {
             console.log('fetchPublicPostsError', error);

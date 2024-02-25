@@ -18,12 +18,6 @@ import { ConnectedNotificationsBell } from '../../../../home/notifications-drawe
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
 import { getFeed } from './service/getFeed'
 
-// interface PostTileRef {
-//     play: () => void;
-//     stop: () => void;
-//     unload: () => void;
-//   }
-
 
 /**
  * Component that renders a list of posts meant to be 
@@ -40,10 +34,9 @@ export default function FeedScreen() {
     const feedRef = useRef(null)
     const currentPostFilenameRef = useRef<string>('')
     const {refreshNotifications } = useNotifications()
-
     const {onPostChange} = useCommentDrawer()
 
-   
+
     useScrollToTop(feedRef);
 
     useEffect(() => {        

@@ -53,7 +53,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
          navigation.setParams({ linkPostID: undefined });
-        if (wasPostDeleted) {R
+        if (wasPostDeleted) {
              fetchUserPosts();
         }
         setPreviewPostId(undefined);

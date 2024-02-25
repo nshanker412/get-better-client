@@ -81,6 +81,9 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
         }
           if (isViewable) {
             console.log('isViewable', item?.filename, isViewable)
+            currentPostFilenameRef.current = `${item?.metadata?.timestamp}`;
+            console.log("CurrentPostFilenameRef, ", currentPostFilenameRef.current )
+            
     
             if (mediaRefs?.current[item?.filename]) {
               mediaRefs.current[item?.filename]?.play();
@@ -186,7 +189,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
             {isMyFeed && (
             <TouchableOpacity onLongPress={onDeletePressCb} style={{ position: "absolute" , zIndex: 100, right: 10, top: 140}}>
               <AntDesign name='delete' size={24} color='white' />
-                  </TouchableOpacity>
+            </TouchableOpacity>
         )}
 
             <View style={fullViewStyle} >
@@ -210,15 +213,12 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 pagingEnabled={true}
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
-          
-
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {
                   Haptics.impactAsync(
                     Haptics.ImpactFeedbackStyle.Medium,
                   );
                 }}
-  
                 onScrollToTop={() => onClosePress(false)}          
             />         
         
@@ -227,7 +227,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               </Portal>
             
               {isMyFeed && (<Portal>
-                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${currentPostFilenameRef.current}`} />
+                <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={currentPostFilenameRef.current} />
 
               </Portal>)}
             </View>
