@@ -1,6 +1,6 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { Link, useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -51,6 +51,8 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 			followers: followers,
 			initial: 'Followers',
 		} });
+	
+
 
 	};
 
@@ -96,7 +98,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 					</View>
 
 					<View
-						style={{ flex: 2, width: '100%', alignSelf: 'center' }}>
+						style={{ flex: 4, width: '100%', alignSelf: 'center' }}>
 						{isLoading ? (
 							<ShimmerPlaceholder
 								style={{
@@ -189,45 +191,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 						style={[
 							profileHeaderStyles.nameBioContainer,
 							{
-								flex: 2,
+								flex: 4,
 								alignItems: 'center',
 								justifyContent: 'center',
 							},
 						]}>
-						<View
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-								justifyContent: 'center',
-								gap: 2,
-							}}>
-							<View
-								style={{
-									alignSelf: 'center',
-									justifyContent: 'center',
-								}}>
-								<Text style={profileHeaderStyles.name}>
-									{myUsername}
-								</Text>
-							</View>
-
-							<Link
-								style={{
-									alignSelf: 'center',
-								}}
-								to={{
-									screen: 'profileEdit',
-									params: {
-										profileUsername: myUsername,
-									},
-								}}>
-								<AntDesign
-									name='edit'
-									size={18}
-									color={'lightblue'}
-								/>
-							</Link>
-						</View>
+						
 
 						<View
 							style={{

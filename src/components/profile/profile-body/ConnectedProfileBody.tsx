@@ -56,12 +56,16 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 
 	const renderItemS = ({ item }: { item: Bar }) => {
 		return (
-			<View style={{ flex: 2, height: 80,  width: "100%", padding: 5, backgroundColor: "black", shadowColor: grayDark.gray4, shadowOffset: {width: -1, height: 1} }}>
-			<View style={{ height: 60, width: 150, backgroundColor: 'transparent',  borderWidth:1 ,padding: 2, borderRadius: 5, borderColor: grayDark.gray8}}>
+			
+			<View style={{ flex: 2, height: 80, width: "100%", padding: 5, backgroundColor: "black" }}>
+				
+			<View style={{ height: 60, width: 150,  borderWidth:1 ,padding: 2, borderRadius: 5, backgroundColor: "black", borderColor: grayDark.gray9, shadowColor: grayDark.gray4, shadowOffset: {width: -5, height: 5}, shadowRadius:8, shadowOpacity:0}}>
 					<Text style={{ padding: 2, fontSize: 14, color: "white", fontFamily: fonts.inter.extra_bold }}>{item.h}</Text>
 					<Text style={{ padding: 2,  fontSize: 25, color: grayDark.gray10, fontFamily: fonts.inter.extra_light }}>{item.s}</Text>
 
-				</View>
+					</View>
+					
+			
 			</View>
 		)
 	}

@@ -34,8 +34,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
   useScrollToTop(profileFeedRef);
 
-
-
   useEffect(() => {
     if (isFullscreen && currentPost !== undefined) {
       setCurrentIndex(currentPost);

@@ -165,11 +165,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     </TapGestureHandler>
   );
 }, (prevProps, nextProps) => {
-  return prevProps.postData.likes.length === nextProps.postData.likes.length &&
-    prevProps.postData.comments.length === nextProps.postData.comments.length &&
-    prevProps.postData.timestamp === nextProps.postData.timestamp &&
-    prevProps.postData.user === nextProps.postData.user &&
-    prevProps.postData.challenge === nextProps.postData.challenge;
+  return prevProps?.postData?.likes?.length === nextProps?.postData?.likes?.length &&
+    prevProps?.postData?.comments?.length === nextProps?.postData?.comments?.length &&
+    prevProps?.postData?.timestamp === nextProps?.postData?.timestamp &&
+    prevProps?.postData?.user === nextProps?.postData?.user &&
+    prevProps?.postData?.challenge === nextProps?.postData?.challenge;
 } );
   
 PostOverlay.displayName = 'PostOverlay';

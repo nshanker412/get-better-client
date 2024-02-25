@@ -1,3 +1,4 @@
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { StyleSheet } from 'react-native';
 
@@ -121,13 +122,13 @@ export const useProfileHeaderStyles = () => {
 			justifyContent: 'center',
 		},
 		motivatorText: {
-			fontSize: 15,
+			fontSize: 14,
 			color: theme.grayShades.gray700,
 			textAlign: 'center',
-			fontWeight: '400',
+			fontFamily: fonts.inter.light,
 		},
 		motivateNum: {
-			fontFamily: theme.fontFamily,
+			fontFamily: fonts.inter.bold,
 			fontSize: 15,
 			color: theme.textColorPrimary,
 			textAlign: 'center',
