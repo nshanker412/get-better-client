@@ -14,8 +14,6 @@ const findIdxByID = (postId: string, posts: Post[]) => {
     return index;
 }
 
-
-
 export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     posts,
     isMyProfile,

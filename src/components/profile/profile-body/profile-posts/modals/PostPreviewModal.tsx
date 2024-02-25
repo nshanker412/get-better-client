@@ -80,9 +80,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
           mediaRefs.current[item?.filename]?.mute();
         }
           if (isViewable) {
-            console.log('isViewable', item?.filename, isViewable)
             currentPostFilenameRef.current = `${item?.metadata?.timestamp}`;
-            console.log("CurrentPostFilenameRef, ", currentPostFilenameRef.current )
             
     
             if (mediaRefs?.current[item?.filename]) {

@@ -31,7 +31,6 @@ const MyProfilePosts: React.FC = () => {
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${myUsername}`,
 			)
 			.then((response) => {
-				console.log('FETCH POSTS: => ', response?.data);
 				setPosts(response?.data.posts);
 				// setPostPreviews(response?.data?.posts.map(() => true));
 			})

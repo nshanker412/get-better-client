@@ -83,21 +83,22 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		foo();	
 	}, [username, isMyProfile]);
 
-	const onPressTile = (planType: PlanType) => {
-
+	const onPressTile =  (planID: string, planType: PlanType) => {
+		console.log(planID, planType);
 		if (planType === PlanType.NewPlan) {
-			navig.navigate('CreatePlan');
+			navig.navigate('createPlan');
 		} else {
-			navig.navigate('plan', { planType });
+			navig.navigate('profilePlan', { planID: planID, profileUsername: username });
 		
 		}
 
 	}
 
-	const PlanItem = ({ item } ) => {
+	const PlanItem = ({ item }) => {
+		console.log(item)
 		return (
 			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
-			<TouchableOpacity	onPress={onPressTile}>
+			<TouchableOpacity	onPress={() => onPressTile(item?.id, item.planType)}>
 				<View style={{ flex: 1, width: 130, height: 130, borderColor: grayDark.gray9, borderWidth: 1, borderRadius: 5, padding: 10, backgroundColor: grayDark.gray5, alignItems: "center", justifyContent: "center" }}>
 				<ConnectedPlanItem planType={item?.planType } planTitle={item?.title} />
 					</View>

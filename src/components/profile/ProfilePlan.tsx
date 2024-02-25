@@ -14,8 +14,8 @@ import { useProfilePlanStyles } from './ProfilePlan.styles';
 
 export const  ProfilePlan: React.FC = () => {
 	const route = useRoute();
-	const profileUsername = route.params.profileUsername;
-	const planID = route.params.planID;
+	const profileUsername = route.params?.profileUsername;
+	const planID = route.params?.planID;
 	const { theme } = useThemeContext();
 	const navigate = useNavigation();
 	const [planData, setPlanData] = useState({});
@@ -86,7 +86,7 @@ export const  ProfilePlan: React.FC = () => {
 								width: '100%',
 								height: '100%',
 							}}
-							contentFit='contain'
+							contentFit={'contain'}
 							allowDownscaling={false}
 							source={{
 								uri: `data:image/jpeg;base64,${planData.image}`,

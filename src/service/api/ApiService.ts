@@ -683,7 +683,7 @@ class ApiService implements ApiServiceInterface {
 			const response = await axios.get(
 				`${this.baseUrl}/user/fetch/posts/${profileUsername}`,
 			);
-			console.log('FETCH POSTS: => ', response?.data);
+			// console.log('FETCH POSTS: => ', response?.data);
 			// Assuming these state variables are part of your class
 			// Set posts and post previews accordingly
 			// this.setPosts(response?.data.posts);
