@@ -61,12 +61,7 @@ export default function FeedScreen() {
                 //shits delayed 1 post, autoplay posts and mute posts that are "currently visible"
 
                 mediaRefs?.current[item?.filename]?.stop();
-
             }
-            //
-    
-      
-
         });
     }, [onPostChange]);
 
