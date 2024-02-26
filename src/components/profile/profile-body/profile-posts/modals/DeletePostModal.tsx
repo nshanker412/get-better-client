@@ -28,7 +28,7 @@ export const DeletePostModal: React.FC<DeletePostModalProps> = ({
 	const onDeletePressCb = async () => {
 		setLoading(true);
 		console.log("deletepost ID: ",deletePostId )
-		deletePost(deletePostId);
+		await deletePost(deletePostId);
 		setLoading(false);
 		onClosePress(true);
 	};

@@ -294,8 +294,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 	};
 
-	const deletePost = async (postID: string) => {
-		console.log('actually in deleting post', postID);
+	const deletePost = async (postID: string): Promise<void> => {
 		//1. confirm the post exists and its my post
 
 		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`)
