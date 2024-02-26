@@ -295,17 +295,20 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	};
 
 	const deletePost = async (postID: string) => {
+		console.log('actually in deleting post', postID);
 		//1. confirm the post exists and its my post
-		await axios
-			.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
-			)
-			.then(async (response) => {
-				console.log('it exsists', response.data);
-			})
-			.catch((error) => {
-				throw new Error('trying to delete a post that does not exist');
-			});
+
+		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`)
+		// await axios
+		// 	.get(
+		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
+		// 	)
+		// 	.then(async (response) => {
+		// 		console.log('it exsists', response.data);
+		// 	})
+		// 	.catch((error) => {
+		// 		throw new Error('trying to delete a post that does not exist');
+		// 	});
 
 		//2. delete the post
 		await axios
@@ -330,28 +333,32 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				console.log('done deleting now refreshing user info');
 				refreshMyUserInfo();
 			});
+		
+			console.log('actually in deleting post', postID);
 
-		//3. fetch to configm the post is deleted (may need to flush cache when configured)
-		await axios
-			.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
-			)
-			.then(async (response) => {
-				console.log('post deletion unsuccessful', response.data);
-				Toast.show({
-					type: 'error',
-					text1: 'There was an issue deleting the post',
-					text2: 'Please try again',
-				});
-			})
-			.catch((error) => {
-				console.log('Post does not exist', error);
-				Toast.show({
-					type: 'success',
-					text1: 'Post successfully deleted!',
-				});
-				return;
-			});
+
+
+		// //3. fetch to configm the post is deleted (may need to flush cache when configured)
+		// await axios
+		// 	.get(
+		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
+		// 	)
+		// 	.then(async (response) => {
+		// 		console.log('post deletion unsuccessful', response.data);
+		// 		Toast.show({
+		// 			type: 'error',
+		// 			text1: 'There was an issue deleting the post',
+		// 			text2: 'Please try again',
+		// 		});
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log('Post does not exist', error);
+		// 		Toast.show({
+		// 			type: 'success',
+		// 			text1: 'Post successfully deleted!',
+		// 		});
+		// 		return;
+		// 	});
 	
 	};
 

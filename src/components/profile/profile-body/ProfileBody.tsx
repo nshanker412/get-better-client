@@ -91,7 +91,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 			navig.navigate('profilePlan', { planID: planID, profileUsername: username });
 		
 		}
-
 	}
 
 	const PlanItem = ({ item }) => {
