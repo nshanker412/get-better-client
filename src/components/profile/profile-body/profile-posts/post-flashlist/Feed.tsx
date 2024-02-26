@@ -56,8 +56,15 @@ export default function FeedScreen() {
         changed.forEach(({ item, isViewable }) => {
             if (isViewable) {
                 console.log('currentPostFilenameRef', currentPostFilenameRef.current)
+
                 currentPostFilenameRef.current = item.filename
+                //shits delayed 1 post, autoplay posts and mute posts that are "currently visible"
+
+                mediaRefs?.current[item?.filename]?.stop();
+
             }
+            //
+    
       
 
         });
@@ -87,7 +94,6 @@ export default function FeedScreen() {
         <Host>
             <Portal>
                 <>
-                    
                     <Header />
                     <View style={{position:"absolute", right:15, top:56, alignItems:"flex-end", justifyContent:"center", zIndex: 1}}>
                         <ConnectedNotificationsBell />
@@ -102,10 +108,11 @@ export default function FeedScreen() {
                 data={posts}
                 estimatedItemSize={feedItemHeight}
                 showsVerticalScrollIndicator={false}
-                removeClippedSubviews
-                viewabilityConfig={{
-                    itemVisiblePercentThreshold: 0
-                }}
+                removeClippedSubviews={true}
+                    viewabilityConfig={{
+                        waitForInteraction: false,
+                        viewAreaCoveragePercentThreshold:90
+                  }}
                 renderItem={renderItem}
                 pagingEnabled
                 scrollEventThrottle={100}
