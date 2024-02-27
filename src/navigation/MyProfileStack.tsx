@@ -1,7 +1,7 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import CreatePlan from '../components/createPlan/createPlan';
+import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
 import CreatePost from '../components/createPost/createPost';
 import { MyProfile } from '../components/profile/MyProfile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
@@ -41,7 +41,7 @@ export const MyProfileStack = () => {
 			/>
 			<HomeStackNav.Screen
 				name='createPlan'
-				component={CreatePlan}
+				component={CreatePlanScreen}
 			/>
 			<HomeStackNav.Screen
 				name='createPost'
