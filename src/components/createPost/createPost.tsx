@@ -1,6 +1,7 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { fonts } from "@context/theme/fonts";
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Video } from 'expo-av';
@@ -18,12 +19,44 @@ import {
 	TouchableHighlight,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
-	View,
+	View
 } from 'react-native';
+import { FloatingAction } from "react-native-floating-action";
 import Toast from 'react-native-toast-message';
 import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useCreatePostStyles } from './createPost.styles';
+import { PlanSelectModal } from "./modal/PlanSelectModal";
+
+const actions = [
+
+	{
+	  text: "Plan",
+		//   icon: require("./images/ic_language_white.png"),
+		name: "bt_link_post",
+		textStyle: {fontFamily: fonts.inter.light},
+		color: "rgba(137, 133, 133, 0.9)",
+		icon: <FontAwesome5 name="link" size={24} color="white" />,
+
+	  position: 1
+	},
+	{
+	  text: "Location",
+		//   icon: require("./images/ic_room_white.png"),
+		// icon: <MapIcon />,
+		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
+
+
+		name: "bt_room",
+		textStyle: { fontFamily: fonts.inter.light },
+	  color: "rgba(137, 133, 133, 0.9)",
+
+	  position: 3
+	},
+
+  ];
+
+
 
 const MAX_CAPTION_LENGTH = 200;
 
@@ -54,6 +87,7 @@ export default function CreatePost() {
 	const [video, setVideo] = useState(null);
 	const [timer, setTimer] = useState(10); // Initial countdown time
 	const [timerId, setTimerId] = useState(null); // To store the timer ID
+	const [linkedPlans, setLinkedPlans] = useState<string[] | []>([]);
 
 	const navigate = useNavigation();
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
@@ -65,9 +99,24 @@ export default function CreatePost() {
 		height: '100%',
 	};
 
-	const [photoContentFit, setPhotoContentFit] = useState('contain');
-	const toggleContentFit = () => {
+	const onFloatingActionPress = (name) => {
+		if (name === "bt_link_post") {
+			setIsVisible(true);
+		}
+		console.log(`selected button: ${name}`);
+	}
 
+	const onPlanModalClose = (plans: string[] | []) => {
+		console.log('onPlanModalClose', plans);
+		setLinkedPlans(plans)
+		setIsVisible(false);
+	}
+
+
+	const [isVisible, setIsVisible] = useState(false);
+	const [photoContentFit, setPhotoContentFit] = useState('contain');
+
+	const toggleContentFit = () => {
 		setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
 	};
 
@@ -551,7 +600,7 @@ export default function CreatePost() {
 						/>
 					</TouchableHighlight>
 					<View style={createPostStyles.createPostContainer}>
-						<View style={createPostStyles.takenPhotoContainer}>
+						<View style={[createPostStyles.takenPhotoContainer]}>
 							{photo && (
 								<TouchableWithoutFeedback
 									style={{ flex: 1 }}
@@ -585,9 +634,10 @@ export default function CreatePost() {
 										resizeMode='cover'
 									/>
 								</View>
-							)}
+								)}
+				
 
-							<View style={createPostStyles.inputContainer}>
+							<View style={[createPostStyles.inputContainer]}>
 								<TextInput
 									style={createPostStyles.input}
 									maxLength={MAX_CAPTION_LENGTH}
@@ -623,10 +673,22 @@ export default function CreatePost() {
 										</Text>
 									</TouchableOpacity>
 								) : null}
+								</View>
+				
 							</View>
-						</View>
+							<View style={{ height: 80,  bottom: 100, width: "100%", alignItems: "flex-end", justifyContent: "flex-end"  }}>
+								<View style={{width: "100%", height: 40}}> 
+									<FloatingAction
+										onPressItem={onFloatingActionPress}
+										color={"rgba(137, 133, 133, 0.9)"}
+										overlayColor={"transparent"}
+										actions={actions}
+									/>
+									</View>
+								
+								<View style={{display: "flex", right: 0}}>
 						<TouchableHighlight
-							style={createPostStyles.sendPostContainer}
+							style={[createPostStyles.sendPostContainer, {right: 0}]}
 							onPress={
 								loading
 									? null
@@ -654,15 +716,32 @@ export default function CreatePost() {
 									color='#ffffff'
 								/>
 							</View>
-						</TouchableHighlight>
+									</TouchableHighlight>
+									
+									</View> 
+							
+								
+						
+					
 					</View>
+						
+						</View>
 					{loading ? (
 						<View style={createPostStyles.sendLoadingContainer}>
 							<LoadingSpinner />
 						</View>
 					) : null}
-				</>
+					
+					
+					<PlanSelectModal isVisible={isVisible} onPlanModalClose={onPlanModalClose} />
+
+					</>
+					
+
 			)}
+						
+						
 		</TouchableWithoutFeedback>
+
 	);
 }

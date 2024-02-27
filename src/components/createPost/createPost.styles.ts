@@ -1,3 +1,4 @@
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { StyleSheet } from 'react-native';
 
@@ -204,27 +205,35 @@ export const useCreatePostStyles = () => {
 		},
 
 		sendPostContainer: {
-			position: 'absolute',
-			borderRadius: 25,
+			// position: 'absolute',
+			// borderRadius: 25,
+			borderRadius: 16,
 			backgroundColor: theme.grayShades.gray300,
 			opacity: 0.95,
+
+			// width: 200,
 			// bottom: 125,
-			bottom: 100,
-			right: 0,
+
+			// bottom: 100,
+			// right: 0,
 			display: 'flex',
 			flexDirection: 'row',
 			justifyContent: 'center',
 			alignItems: 'center',
 			// width: '100%',
 			gap: 15,
-			padding: 15,
+			// padding: 20,
+			paddingTop: 10,
+			paddingBottom: 10,
+			paddingLeft: 25,
+			paddingRight: 25,
 			// marginTop: '7.5%'
 		},
 
 		sendPostText: {
-			fontFamily: theme.fontFamily,
+			fontFamily: fonts.inter.bold,
 			color: theme.textColorPrimary,
-			fontSize: 25,
+			fontSize: 20,
 			alignSelf: 'center',
 			// fontSize: 44,
 			// fontWeight: 'bold',
@@ -242,7 +251,7 @@ export const useCreatePostStyles = () => {
 			backgroundColor: theme.grayShades.gray900,
 			borderRadius: 60,
 			opacity: 0.95,
-			zIndex: 100000,
+			zIndex: 1,
 			// alignItems: 'center',
 			// justifyContent: 'center',
 		},
