@@ -12,4 +12,5 @@ export interface ConnectedPlanItemProps {
 
 export interface PlanItemProps {
 	planType: PlanType;
+	size?: number;
 }

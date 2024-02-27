@@ -1,5 +1,4 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { fonts } from "@context/theme/fonts";
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,37 +20,59 @@ import {
 	TouchableWithoutFeedback,
 	View
 } from 'react-native';
-import { FloatingAction } from "react-native-floating-action";
+import { FloatingAction, IActionProps } from "react-native-floating-action";
 import Toast from 'react-native-toast-message';
 import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useCreatePostStyles } from './createPost.styles';
 import { PlanSelectModal } from "./modal/PlanSelectModal";
 
-const actions = [
+
+// color: PropTypes.string,
+// icon: PropTypes.any,
+// name: PropTypes.string.isRequired,
+// buttonSize: PropTypes.number,
+// text: PropTypes.string,
+// textBackground: PropTypes.string,
+// textColor: PropTypes.string,
+// component: PropTypes.func,
+// animated: PropTypes.bool,
+// 	tintColor: PropTypes.string
+
+
+// 	export interface IActionProps {
+// 		color?: string;
+// 		icon?: JSX.Element;
+// 		name: string;
+// 		text?: string;
+// 		textBackground?: string;
+// 		textColor?: string;
+// 		textElevation?: number;
+// 		margin?: number;
+// 		component?: () => void;
+// 		render?: () => void;
+// 		animated?: boolean;
+// 		shadow?: shadowType;
+// 		tintColor?: string
+// 	  }
+
+const actions: IActionProps[] = [
 
 	{
+	
+	
 	  text: "Plan",
-		//   icon: require("./images/ic_language_white.png"),
 		name: "bt_link_post",
-		textStyle: {fontFamily: fonts.inter.light},
 		color: "rgba(137, 133, 133, 0.9)",
 		icon: <FontAwesome5 name="link" size={24} color="white" />,
 
-	  position: 1
 	},
 	{
 	  text: "Location",
-		//   icon: require("./images/ic_room_white.png"),
-		// icon: <MapIcon />,
+
 		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
-
-
 		name: "bt_room",
-		textStyle: { fontFamily: fonts.inter.light },
-	  color: "rgba(137, 133, 133, 0.9)",
-
-	  position: 3
+	 	color: "rgba(137, 133, 133, 0.9)",
 	},
 
   ];
@@ -685,6 +706,8 @@ export default function CreatePost() {
 										onPressItem={onFloatingActionPress}
 										color={"rgba(137, 133, 133, 0.9)"}
 										overlayColor={"transparent"}
+										showBackground={true}
+
 										actions={actions}
 									/>
 									</View>

@@ -103,7 +103,7 @@ export default function FeedScreen() {
                 estimatedItemSize={feedItemHeight}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews={true}
-                    viewabilityConfig={{
+                viewabilityConfig={{
                         waitForInteraction: false,
                         viewAreaCoveragePercentThreshold:90
                   }}

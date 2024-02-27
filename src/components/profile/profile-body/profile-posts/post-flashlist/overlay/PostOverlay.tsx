@@ -15,12 +15,56 @@ import * as Haptics from 'expo-haptics';
 import throttle from 'lodash/throttle';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { FloatingAction } from 'react-native-floating-action';
+import { FloatingAction, IFloatingActionProps } from 'react-native-floating-action';
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
 import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
 
+
+// export interface IFloatingActionProps {
+//   color?: string;
+//   icon?: JSX.Element;
+//   name: string;
+//   text?: string;
+//   textBackground?: string;
+//   textColor?: string;
+//   textElevation?: number;
+//   margin?: number;
+//   component?: () => void;
+//   render?: () => void;
+//   animated?: boolean;
+//   shadow?: shadowType;
+//   tintColor?: string
+// }
+
+// export interface IFloatingActionProps {
+//   tintColor?: string;
+//   actions?: IActionProps[];
+//   color?: string;
+//   distanceToEdge?: number | { vertical: number; horizontal: number };
+//   visible?: boolean;
+//   overlayColor?: string;
+//   position?: positionType;
+//   overrideWithAction?: boolean;
+//   floatingIcon?: JSX.Element;
+//   showBackground?: boolean;
+//   openOnMount?: boolean;
+//   actionsPaddingTopBottom?: number;
+//   iconWidth?: number;
+//   iconHeight?: number;
+//   buttonSize?: number;
+//   listenKeyboard?: boolean;
+//   dismissKeyboardOnPress?: boolean;
+//   shadow?: shadowType;
+//   onPressItem?: (name?: string) => void;
+//   onPressMain?: () => void;
+//   onPressBackdrop?: () => void;
+//   onClose?: () => void;
+//   onOpen?: () => void;
+//   onStateChange?: () => void;
+//   animated?: boolean;
+// }
 
 
 interface PostOverlayProps {
@@ -47,9 +91,7 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
   if (!linkedPlans || linkedPlans?.length == 0 || !allPlans || allPlans.length === 0) {
     return [];
   }
-
   console.log('linkedPlans', linkedPlans, linkedPlans?.length);
-
 
   // filter out the plans that dontn have matching id
 
@@ -63,19 +105,19 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
 
   //1 - filter out plans that are not linked
 
-  const planIconList = included.map((plan, index) => {
-    
-    console.log('leftover', plan);
+  const planIconList: IFloatingActionProps[] = included.map((plan, index) => {
     return {
       id: index, 
       text: plan.title,
-      icon: <PlanItem planType={plan.planType} />,
+      icon: <PlanItem planType={plan.planType} size={30}  />,
       name: plan.id,
       textStyle: { fontFamily: fonts.inter.light },
-      color: "black",
+      color: "rgba(0, 0, 0, 0.9)",
+      textBackground: "rgba(0, 0, 0, 0.5)",
+      textColor: "white",
+      textStyles: { fontFamily: fonts.inter.medium, backgroundColor: "transparent" },
       opacity: 0.5,
-      position: 1,
-    };
+    } as IFloatingActionProps;
   });
 
   return planIconList;
@@ -90,12 +132,15 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
  * @param {Object} post object
  */
 export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
+  console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
   });
 
-  const [linkedActionFab, setLinkedActionFab] = useState();
+
+  const [linkedActionFab, setLinkedActionFab] = useState([]);
+
   const navigation = useNavigation();
 
   const onPressAction = (name: string) => {
@@ -108,7 +153,6 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       planID: planId, profileUsername: user 
     });
   };
-
 
   useEffect(() => {
     const fetchLinkedPlans = async () => {
@@ -240,11 +284,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
        <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10: 100, paddingLeft: isEmbeddedFeed ? 5: 10, paddingRight: 10, gap: 5}}>   
        {eval(postData?.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={isEmbeddedFeed} />)}
               <View style={{position: "absolute", bottom: 80, right: 0, width: Dimensions.get("window").width}}>
-              {linkedActionFab && <FloatingAction
+              {linkedActionFab?.length > 0 && <FloatingAction
                 actions={linkedActionFab}
-
-                showBackground={false}
+                showBackground={true}
                 color={"rgba(0, 0, 0, 0.5)"}
+                style={{padding: 10,  backgroundColor: "transparent"}}
                 onPressItem={onPressAction}
                 floatingIcon={
                   <Entypo name="dots-three-vertical" size={30} color="white" />
@@ -269,14 +313,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       </TapGestureHandler>
     </TapGestureHandler>
   );
-}, (prevProps, nextProps) => {
-  return prevProps?.postData?.likes?.length === nextProps?.postData?.likes?.length &&
-    prevProps?.postData?.comments?.length === nextProps?.postData?.comments?.length &&
-    prevProps?.postData?.timestamp === nextProps?.postData?.timestamp &&
-    prevProps?.postData?.user === nextProps?.postData?.user &&
-    prevProps?.postData?.challenge === nextProps?.postData?.challenge &&
-    prevProps?.postData?.linkedPlans === nextProps?.postData?.linkedPlans;
-} );
+});
   
 PostOverlay.displayName = 'PostOverlay';
 
