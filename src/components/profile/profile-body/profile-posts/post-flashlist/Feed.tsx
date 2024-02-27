@@ -80,7 +80,7 @@ export default function FeedScreen() {
     const onRefreshCallback = async () => {   
         setRefreshing(true);
         await getFeed(myUsername).then(setPosts)
-        refreshNotifications(myUsername)
+        refreshNotifications(myUsername!)
         setRefreshing(false);
     }
 
@@ -129,12 +129,10 @@ export default function FeedScreen() {
                 }  
             />
 
-            <Portal>
-                
-            <ConnectedPostCommentDrawer/>
-
-            </Portal>
+                <Portal>
+                     <ConnectedPostCommentDrawer/>
+                </Portal>
             </View>
-            </Host>
+        </Host>
     )
 }

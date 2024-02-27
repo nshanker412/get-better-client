@@ -81,31 +81,6 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
   return planIconList;
 }
 
-
-
-
-// const acts = [
-
-// 	{
-// 	  text: "Plan",
-// 		//   icon: require("./images/ic_language_white.png"),
-// 		name: "bt_link_post",
-// 		textStyle: {fontFamily: fonts.inter.light},
-//     color: "black",
-//     opacity: 0.5,
-// 		icon: <FontAwesome5 name="link" size={24} color="white" />,
-// 	  position: 1
-// 	},
-// 	{
-// 	  text: "Location",
-// 		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
-// 		name: "bt_room",
-//     textStyle: { fontFamily: fonts.inter.light },
-//     color: "black",
-// 	  position: 2
-// 	},
-//   ];
-
 /**
  * Function that renders a component meant to be overlapped on
  * top of the post with the post info like user's display name and avatar
@@ -133,34 +108,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       planID: planId, profileUsername: user 
     });
   };
-  // jump to other tab then into a nested screen in that stack
 
-
-  // const goToProfilePlan = (planID:string) => {
-  //   navigation.dispatch((state) => {
-  //     //update navigation state as you want.
-  //     const routes = [
-  //       //current state
-  //       ...state.routes, 
-  //       //add 2 new route to state.
-  //       { name: 'profile', params: {profileUsername: user} }, //you can also add params 
-  //       {name: 'plan', params: {planID: planID, profileUsername: user}}
-  //     ];
-  
-  //     return CommonActions.reset({
-  //       ...state,
-  //       routes,
-  //       index: routes.length - 1,
-  //     });
-  //   });
-  // }
-  
-
-
-  // const onPressPlan = (planId: string) => {
-  //   navigation.navigate('profile', {profileUsername: user });
-  // };
-  
 
   useEffect(() => {
     const fetchLinkedPlans = async () => {
@@ -352,30 +300,25 @@ const styles = useMemo(() => StyleSheet.create({
   },
 
   postHeaderInfoContainer: {
-    // backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    // borderRadius: 4,
     display: 'flex',
     flexDirection: 'column',
-    // justifyContent: 'space-around',
     alignItems: 'flex-start',
     marginLeft: -5,
     paddingTop: 2,
     paddingBottom: 2,
   },
   container: {
-      // height: Dimensions.get('window').height,  
-    // width: Dimensions.get('window').width,
     width: '100%',
     height: '100%',
-        position: 'absolute',
-        zIndex: 1,
-        bottom: 0,
-        paddingLeft: 20,
-        paddingBottom: isEmbeddedFeed ? 10: 80,
-        paddingRight: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
+      position: 'absolute',
+      zIndex: 1,
+      bottom: 0,
+      paddingLeft: 20,
+      paddingBottom: isEmbeddedFeed ? 10: 80,
+      paddingRight: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
     },
     displayName: {
         color: 'white',

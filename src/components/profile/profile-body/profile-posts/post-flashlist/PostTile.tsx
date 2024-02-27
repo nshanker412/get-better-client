@@ -1,8 +1,9 @@
 import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
+import * as Sentry from '@sentry/react-native';
 import { ResizeMode, Video } from 'expo-av';
-import { Image } from 'expo-image';
+import { Image, ImageErrorEventData } from 'expo-image';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
@@ -289,15 +290,16 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         togglePausePlay();
     }
 
-    const onVideoError = (error) => {   
+    const onVideoError = (error: string) => {   
         console.log('Video error: ', error)
-        throw new Error('Video error')
+        Sentry.captureException(error)
     }
 
 
-    const onImageError = (error) => {   
+    const onImageError = (error: ImageErrorEventData) => {   
         console.log('Video error: ', error)
-        throw new Error('Image error')
+        Sentry.captureException(error)
+
     }
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
@@ -315,7 +317,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
                 isEmbeddedFeed={isEmbeddedFeed}
                  />
             {post.metadata.type === 'video' && (
-        <View   style={{ flex: 1, backfaceVisibility: 'visible'}}>
+        <View style={{ flex: 1, backfaceVisibility: 'visible'}}>
                 <Video
                     ref={localRef}
                     style={{ flex: 1 }}
