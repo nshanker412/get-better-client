@@ -190,7 +190,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     };
 
     fetchLinkedPlans();
-  }, [user, postData?.timestamp,  postData?.linkedPlans]);
+  }, [user, postData?.timestamp,  postData?.linkedPlans, postData]);
 
   const styles = usePostOverlayStyles(isEmbeddedFeed);
   
