@@ -94,11 +94,11 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 	 
 
 	  const onToggleSelection = (planID: string | undefined) => {
-		  if (chosenPlansRef.current.includes(planID)) {
-			chosenPlansRef.current = chosenPlansRef.current.filter((plan) => plan !== planID);
+		  if (chosenPlansRef.current.includes(`${planID}`)) {
+			chosenPlansRef.current = chosenPlansRef.current.filter((plan) => plan !== `${planID}`);
 
 		  } else {
-			chosenPlansRef.current.push(planID!);
+			chosenPlansRef.current.push(`${planID}`!);
 
 		  }
 
@@ -115,7 +115,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 
 		  const onPlanPress = (planID: string) => {
 			  console.log('plan pressed', planID);
-			  if (chosenPlansRef.current?.includes(planID)) {
+			  if (chosenPlansRef.current?.includes(`${planID}`)) {
 				  setSty(planModalStyles.planItemDefault);
 
 

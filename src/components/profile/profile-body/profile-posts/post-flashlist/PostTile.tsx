@@ -336,7 +336,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
                     <PauseAnimated ref={pauseAniRef} />
                     <PlayAnimated ref={playAniRef} />
           
-</View>
+            </View>
             )}
             {post.metadata.type ==='image' && (<Image
                 ref={localRef}

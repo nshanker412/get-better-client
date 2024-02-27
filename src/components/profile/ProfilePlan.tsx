@@ -14,8 +14,11 @@ import { useProfilePlanStyles } from './ProfilePlan.styles';
 
 export const  ProfilePlan: React.FC = () => {
 	const route = useRoute();
+	console.log(route);
 	const profileUsername = route.params?.profileUsername;
 	const planID = route.params?.planID;
+
+	console.log("in profile plan", profileUsername, planID);
 	const { theme } = useThemeContext();
 	const navigate = useNavigation();
 	const [planData, setPlanData] = useState({});

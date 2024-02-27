@@ -275,6 +275,9 @@ export default function CreatePost() {
 		formData.append('user', myUsername);
 		formData.append('caption', caption);
 		formData.append('challenge', challenge ? true : false);
+		if (linkedPlans) {
+			formData.append('linkedPlans', JSON.stringify(linkedPlans));
+		}
 
 		if (photo) {
 			formData.append('postMedia', {
@@ -292,7 +295,7 @@ export default function CreatePost() {
 
 		axios
 			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/save`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/post/save`,
 				formData,
 				{
 					headers: {
@@ -716,13 +719,8 @@ export default function CreatePost() {
 									color='#ffffff'
 								/>
 							</View>
-									</TouchableHighlight>
-									
-									</View> 
-							
-								
-						
-					
+							</TouchableHighlight>
+						</View> 
 					</View>
 						
 						</View>

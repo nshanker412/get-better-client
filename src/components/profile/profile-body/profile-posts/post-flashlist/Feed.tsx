@@ -18,7 +18,6 @@ import { ConnectedNotificationsBell } from '../../../../home/notifications-drawe
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
 import { getFeed } from './service/getFeed'
 
-
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.

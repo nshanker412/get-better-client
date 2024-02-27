@@ -12,7 +12,8 @@ export interface Comment {
 	likes: string[];
 	timestamp: number;
 	type: 'image' | 'video'; 
-	user: string;
+	  user: string;
+	  linkedPlans?: string[];
   }
   
   export interface Post {
