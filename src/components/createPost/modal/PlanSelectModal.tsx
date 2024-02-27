@@ -4,7 +4,7 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { grayDark, greenDark } from '@context/theme/colors_neon';
 import { fonts } from "@context/theme/fonts";
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
@@ -19,34 +19,6 @@ import {
 import { Modal } from '../../primitives/action-modal/ActionModal';
 import { useProfileBodyStyles } from '../../profile/profile-body/ProfileBody.styles';
 import { ConnectedPlanItem } from '../../profile/profile-body/plan-list/plan-item/ConnectedPlanItem';
-
-const actions = [
-
-	{
-	  text: "Plan",
-		//   icon: require("./images/ic_language_white.png"),
-		name: "bt_link_post",
-		textStyle: {fontFamily: fonts.inter.light},
-		color: "rgba(137, 133, 133, 0.9)",
-		icon: <FontAwesome5 name="link" size={24} color="white" />,
-
-	  position: 1
-	},
-	{
-	  text: "Location",
-		//   icon: require("./images/ic_room_white.png"),
-		// icon: <MapIcon />,
-		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
-
-
-		name: "bt_room",
-		textStyle: { fontFamily: fonts.inter.light },
-	  color: "rgba(137, 133, 133, 0.9)",
-
-	  position: 3
-	},
-
-  ];
 
 
 
@@ -218,8 +190,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 				  </View>
 			  </Modal.Body>
 			  <Modal.Footer>
-							  <ActionButton
-								  
+            <ActionButton
 				  	loading={false}
 					isPrimary={true}
 					onPress={() => onPlanModalClose(chosenPlansRef.current!)}
