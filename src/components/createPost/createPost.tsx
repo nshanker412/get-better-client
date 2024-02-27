@@ -65,7 +65,6 @@ export default function CreatePost() {
 		height: '100%',
 	};
 
-	
 	const [photoContentFit, setPhotoContentFit] = useState('contain');
 	const toggleContentFit = () => {
 
