@@ -6,7 +6,7 @@ import { PlanItem } from '@components/profile/profile-body/plan-list/plan-item/P
 import { PlanType } from '@components/profile/profile-body/plan-list/plan-item/PlanItem.types';
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { fonts } from '@context/theme/fonts';
-import { Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { PostMetadata } from "@models/posts";
 import { Link, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -84,27 +84,27 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
 
 
 
-const acts = [
+// const acts = [
 
-	{
-	  text: "Plan",
-		//   icon: require("./images/ic_language_white.png"),
-		name: "bt_link_post",
-		textStyle: {fontFamily: fonts.inter.light},
-    color: "black",
-    opacity: 0.5,
-		icon: <FontAwesome5 name="link" size={24} color="white" />,
-	  position: 1
-	},
-	{
-	  text: "Location",
-		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
-		name: "bt_room",
-    textStyle: { fontFamily: fonts.inter.light },
-    color: "black",
-	  position: 2
-	},
-  ];
+// 	{
+// 	  text: "Plan",
+// 		//   icon: require("./images/ic_language_white.png"),
+// 		name: "bt_link_post",
+// 		textStyle: {fontFamily: fonts.inter.light},
+//     color: "black",
+//     opacity: 0.5,
+// 		icon: <FontAwesome5 name="link" size={24} color="white" />,
+// 	  position: 1
+// 	},
+// 	{
+// 	  text: "Location",
+// 		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
+// 		name: "bt_room",
+//     textStyle: { fontFamily: fonts.inter.light },
+//     color: "black",
+// 	  position: 2
+// 	},
+//   ];
 
 /**
  * Function that renders a component meant to be overlapped on
@@ -120,7 +120,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
     counter: postData?.likes?.length,
   });
 
-  const [linkedActionFab, setLinkedActionFab] = useState(acts);
+  const [linkedActionFab, setLinkedActionFab] = useState();
   const navigation = useNavigation();
 
   const onPressAction = (name: string) => {
