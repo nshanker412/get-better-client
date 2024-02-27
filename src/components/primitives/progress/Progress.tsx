@@ -49,7 +49,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ totalSteps, currentSte
 
 const styles = StyleSheet.create({
   container: {
-    height: 20,
+    height: 5,
     backgroundColor: '#f2f2f2',
     borderRadius: 10,
     position: 'relative',
@@ -64,15 +64,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0, // Adjust based on your UI needs
     width: 20,
-    height: 20,
+      height: 20,
+    opacity: 0.5,
     borderRadius: 10,
-    backgroundColor: 'white',
+    backgroundColor: `rgba(255, 255, 255, 0.5)`, // Replace with your color or
     justifyContent: 'center',
     alignItems: 'center',
     transform: [{ translateX: -10 }, { translateY: -10 }], // Adjust to align with the progress bar properly
   },
   stepText: {
     fontSize: 10,
-    color: 'black',
+    color: 'white',
   },
 });

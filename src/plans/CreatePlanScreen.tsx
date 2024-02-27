@@ -1,4 +1,5 @@
 import { Dropdown } from '@components/primitives/dropdown/Dropdown';
+import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelect';
 import { ProgressBar } from '@components/primitives/progress/Progress';
 import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
@@ -89,10 +90,10 @@ const getStepTitle = (step: Step) => {
 
 
 
-const ButtonBase = ({ title, onPress }: { title: string; onPress: () => void }) => {
+const ButtonBase = ({disabled=false,  title, onPress }: { disabled?: boolean, title: string; onPress: () => void }) => {
   return (
     <View style={{ padding: 10 }}>
-    <Pressable  style={{ padding: 10, backgroundColor: "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={onPress} >
+      <Pressable disabled={disabled}  style={{ padding: 15, backgroundColor: disabled ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={onPress} >
       <Text style={{ fontFamily: fonts.inter.black }}>{title}</Text>
       </Pressable>
     </View>
@@ -106,7 +107,6 @@ export const CreatePlanScreen: React.FC = () => {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>();
   const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>();
-
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
 
@@ -120,19 +120,17 @@ export const CreatePlanScreen: React.FC = () => {
     setSelectedSubcategory(item.type);
   }
 
-  const onExercisesChange = (item: ExerciseDropdownItem) => {
-    console.log('onSubcategoryChange', item);
-    setSelectedExercises([item.type]);
+  const onExercisesChange = (items: ExerciseDropdownItem[]) => {
+    console.log('onSubcategoryChange', items);
+    setSelectedExercises(items);
   }
 
-  useEffect(() => {
-    console.log('selectedExercises', selectedExercises);
-  }, [selectedExercises]);
 
   useEffect(() => {
     return () => {
       setSelectedCategory(undefined);
       setSelectedSubcategory(undefined);
+      setSelectedExercises([]);
       dispatch({ type: ActionType.Reset });
     };
   }
@@ -152,13 +150,30 @@ export const CreatePlanScreen: React.FC = () => {
           <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(state.currentStep)}</Text>
       </View>
       
-      <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch",  borderColor: "red", borderWidth: 1 , width: "100%", height: "100%"}}>
+      <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch",  width: "100%", height: "100%"}}>
 
    
           <Dropdown<CategoryDropdownItem> key="plan-category" label="Category" data={planCategoryDropdownItems} onSelectionChange={onCategorySelectionChange} />
+          {selectedCategory === PlanCategory.Workout && (
+            <>
+              <Dropdown
+                key="subcategory"
+                label="Workout Type"
+                data={workoutSubcategoryDropdownItems}
+                onSelectionChange={onSubcategoryChange}
+              />
+              {selectedSubcategory && (
+                <MultiSelectComponent
+                  icon="weight-lifter"
+                  key="exerciseType"
+                  label="Exercise"
+                  data={generateExerciseDropdownItems(selectedSubcategory)}
+                  onSelectionChange={onExercisesChange}
+                />
+              )}
+            </>
+          )}
 
-          {selectedCategory === PlanCategory.Workout && <Dropdown<WorkoutSubcategoryDropdownItem> key="subcategory" label="Workout type" data={workoutSubcategoryDropdownItems} onSelectionChange={onSubcategoryChange} />}
-          {selectedSubcategory && <Dropdown<ExerciseDropdownItem> key="exerciseType" label="Exercise" data={generateExerciseDropdownItems(selectedSubcategory)} onSelectionChange={onExercisesChange} />}
 
 
 
@@ -166,7 +181,7 @@ export const CreatePlanScreen: React.FC = () => {
       <View style={{ flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
        
         {state.currentStep !== Step.ChooseCategory && (<ButtonBase title="Back" onPress={() => dispatch({ type: ActionType.PrevStep })} />)}
-        {state.currentStep !== Step.Submit && <ButtonBase title="Next Step" onPress={() => dispatch({ type: ActionType.NextStep })} /> }
+        {state.currentStep !== Step.Submit && <ButtonBase title="Next" disabled={selectedExercises.length <= 0}  onPress={() => dispatch({ type: ActionType.NextStep })} /> }
         {state.currentStep === Step.Submit && (<ButtonBase title="Submit" onPress={onSubmit} />)}
 
 

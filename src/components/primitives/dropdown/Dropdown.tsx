@@ -5,17 +5,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Dropdown as DD } from 'react-native-element-dropdown';
 import { BaseDropdownItem, DropdownProps } from './Dropdown.types';
 
-// const data = [
-//   { label: 'Item 1', value: '1', search: 'Item 1' },
-//   { label: 'Item 2', value: '2', search: 'Item 2' },
-//   { label: 'Item 3', value: '3', search: 'Item 3' },
-//   { label: 'Item 4', value: '4', search: 'Item 4' },
-//   { label: 'Item 5', value: '5', search: 'Item 5' },
-//   { label: 'Item 6', value: '6', search: 'Item 6' },
-//   { label: 'Item 7', value: '7', search: 'Item 7' },
-//   { label: 'Item 8', value: '8', search: 'Item 8' },
-// ];
-
 
 export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionChange, styles = ddstyles, search = false }: DropdownProps<T>) => {
     const [value, setValue] = useState<T>();
@@ -37,7 +26,7 @@ export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionC
     <View style={styles.container}>
       {renderLabel()}
           <DD
-                containerStyle={{ backgroundColor: 'transparent'}}
+              containerStyle={{ backgroundColor: 'transparent'}}
               style={[styles.dropdown, isFocus && { borderColor: grayDark.gray12 }]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}

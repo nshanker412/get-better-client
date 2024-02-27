@@ -320,7 +320,7 @@ export const workoutSubcategoryDropdownItems: WorkoutSubcategoryDropdownItem[] =
 }));
 
 
-type ExerciseType = {
+export type ExerciseType = {
     parent: ExerciseMainCategory; // Enum representing the main category of the exercise
     type: string; // Additional detail or sub-category of the exercise
 };
