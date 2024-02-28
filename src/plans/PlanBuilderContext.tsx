@@ -1,6 +1,6 @@
 // PlanContext.tsx
 import React, { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react';
-import { CardioExerciseDetail, ExerciseMainCategory, ExerciseType, PlanCategory } from './plan.types'; // Adjust import paths as needed
+import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, PlanCategory } from './plan.types';
 
 export type MediaSource = {
   id: string;
@@ -11,7 +11,7 @@ export type MediaSource = {
 export type PlanInitSelection = {
   planCategory: PlanCategory | null;
   subcategory: ExerciseMainCategory | null;
-  selectedExercises: ExerciseType[] | null;
+  selectedExercises: ExerciseDetail[] | null;
   selectedCardioExercise: CardioExerciseDetail | null;
 };
 
@@ -24,11 +24,15 @@ export type PlanMetadata = {
   extra?: any;
 };
 
+
+
+
 // Define the state shape
 export interface State {
   name: string | null;
   init: PlanInitSelection;
   description: string | null;
+  routine: ExerciseRoutine[] | [];
   private: boolean;
   media: MediaSource[] | null;
   metadata: PlanMetadata | null;
@@ -36,8 +40,9 @@ export interface State {
 
 // Define action types and payload structures
 type Action =
-  { type: 'SET_PLAN_BASE'; payload: PlanInitSelection  }
+  { type: 'SET_PLAN_BASE'; payload: { init: PlanInitSelection, routine: ExerciseRoutine[] } }
   | { type: 'SET_PLAN_DETAILS'; payload: { name: string, description: string } }
+  | { type: 'SET_PLAN_ROUTINE'; payload: ExerciseRoutine[]}
   | { type: 'SET_PLAN_MEDIA'; payload: MediaSource[] | null}
   | { type: 'SET_PLAN_METADATA'; payload: PlanMetadata  }
   | { type: 'RESET' };
@@ -50,6 +55,7 @@ const initialState: State = {
     selectedExercises: [],
     selectedCardioExercise: null,
   },
+  routine:  [],
   description: null,
   name: null,
   private: false,
@@ -64,9 +70,11 @@ const initialState: State = {
 function planReducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SET_PLAN_BASE':
-      return { ...state, init: action.payload };
+      return { ...state, init: action.payload.init, routine: action.payload.routine};
     case 'SET_PLAN_DETAILS':
       return { ...state, name: action.payload.name, description: action.payload.description};
+    case 'SET_PLAN_ROUTINE':
+      return { ...state,  routine: action.payload };
     case 'SET_PLAN_MEDIA':
       return { ...state, media: action.payload };
     case 'SET_PLAN_METADATA':

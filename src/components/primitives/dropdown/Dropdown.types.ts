@@ -17,5 +17,6 @@ export interface DropdownProps<T extends BaseDropdownItem> {
     data: T[];
     onSelectionChange: (value: T) => void;
     styles?: any;
+    placeholder?: string;
     search?: boolean;
   }

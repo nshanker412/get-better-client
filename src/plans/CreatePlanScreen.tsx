@@ -3,11 +3,10 @@ import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelec
 import { ProgressBar } from '@components/primitives/progress/Progress';
 import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { Input } from 'react-native-elements';
+import { Input, ListItem } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanBuilderProvider, PlanInitSelection, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
@@ -15,16 +14,18 @@ import {
   CardioDropdownItem,
   CardioExerciseDetail,
   CategoryDropdownItem,
+  ExerciseDetail,
   ExerciseDropdownItem,
   ExerciseMainCategory,
-  ExerciseType,
+  ExerciseRoutine,
   PlanCategory,
-  WorkoutSubcategoryDropdownItem,
-  generateCardioDropdownItems,
+  WorkoutSubcategoryDropdownItem, findExerciseByName, generateCardioDropdownItems,
   generateExerciseDropdownItems,
   planCategoryDropdownItems,
   workoutSubcategoryDropdownItems
 } from './plan.types';
+
+import { ExerciseItemModal } from './modals/ExerciseItemModal';
 
 // Helper functions
 const getStepNumber = (step: Step) => {
@@ -137,7 +138,7 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
   const { state: planState, dispatch } = usePlanBuilder();
   const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>(planState?.init?.planCategory);
   const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>(planState?.init?.subcategory);
-  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>(planState?.init?.selectedExercises || []);
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseDetail[]>(planState?.init?.selectedExercises || []);
   const [selectedCardioExercise, setSelectedCardioExercise] = useState<CardioExerciseDetail | undefined>(planState?.init?.selectedCardioExercise); 
   const {  dispatch: screenDispatch } = usePlanScreen();
 
@@ -157,26 +158,49 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
     setSelectedSubcategory(item.type);
   }
 
-  const onExercisesChange = (items: ExerciseDropdownItem[]) => {
+  const onExercisesChange = (items: string[]) => {
     console.log('onSubcategoryChange', items);
-    setSelectedExercises(items);
-  }
+      if (selectedSubcategory) {
+        const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(selectedSubcategory, ex)!);
+        console.log('exerciseList', exerciseList);
+        setSelectedExercises(exerciseList!);
+      }
+    }
+
 
   const handleNextPress = () => {
     console.log("handlingPress")
     if (selectedCategory === PlanCategory.Workout) {
 
-      console.log('selectedCategory', selectedCategory);
+      const routineInit: ExerciseRoutine[] = [];
+
+      selectedExercises?.forEach((ex) => {  
+        routineInit.push({
+          id: ex.id,
+          weight: undefined,
+          reps: undefined,
+          sets: undefined,
+          notes: undefined,
+          init: false,
+        });
+      })
+    
+
       const packet: PlanInitSelection = {
         planCategory: selectedCategory,
         subcategory: selectedSubcategory!,
         selectedExercises: selectedExercises,
         selectedCardioExercise: null,
       };
+
+
       dispatch(
         {
           type: 'SET_PLAN_BASE',
-          payload: packet
+          payload: {
+            init: packet,
+            routine: routineInit,
+          }
         }
       );
     } else if (selectedCategory === PlanCategory.Cardio) {
@@ -191,7 +215,11 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
       dispatch(
         {
           type: 'SET_PLAN_BASE',
-          payload: packet
+          payload:
+          {
+            init: packet,
+            routine: [],
+          }
         }
       );
     } else if (selectedCategory === PlanCategory.Nutrition) {
@@ -206,7 +234,11 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
       dispatch(
         {
           type: 'SET_PLAN_BASE',
-          payload: packet
+          payload:
+          {
+            init: packet,
+            routine: [],
+          }
         }
       );
     }
@@ -244,7 +276,7 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
               onSelectionChange={onSubcategoryChange}
             />
             {selectedSubcategory && (
-              <MultiSelectComponent
+              <MultiSelectComponent<ExerciseDropdownItem>
                 icon="weight-lifter"
                 key="exerciseType"
                 label="Exercise"
@@ -279,28 +311,49 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
 
 
 
-const FillPlanDetails: React.FC<{ name: string, onAdd: () => void }> = ({ name, onAdd }) => {
-  const [planDeets, setPlanDeets] = useState<string>("");
-  
-  const addCb = () => {
 
-    onAdd();
-  }
-  
-  return (
-    <View style={{ flex: 1 }}>  
-      
-      <Text>Fill Plan Details</Text>
-      <Text>{name}</Text>
-      <Picker selectedValue={planDeets} onValueChange={(itemValue, itemIndex) => setPlanDeets(itemValue)}>
-        <Picker.Item label="Strength" value="strength" />
-        <Picker.Item label="Endurance" value="endurance" />
-        <Picker.Item label="HIIT" value="hiit" />
-      </Picker>
-      <ButtonBase title="Add" onPress={onAdd} />
-    </View>
-      )
+
+
+interface ExerciseListProps {
+  list: ExerciseDetail[];
 }
+
+const ExerciseList: React.FC<ExerciseListProps> = ({ list }) => {
+  const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
+
+  const closeModal = () => {
+    setSelected(undefined);
+  }
+
+
+  return (
+    <>
+      {
+        list?.map((item, index) => (
+          <ListItem.Accordion
+            key={item.id} 
+            animation={true}
+            content={
+              <ListItem.Content>
+                <ListItem.Title style={{ color: "black" }}>{item?.name}</ListItem.Title>
+              </ListItem.Content>
+            }
+            isExpanded={false}
+            onPress={() =>   setSelected(list[index])}
+            containerStyle={{ backgroundColor: 'gray' }} // Replace 'gray' with your actual color variable
+          >
+            <ExerciseItemModal key={ `${item.id}-modal`} exercise={selected} isOpen={selected !== undefined} onClose={closeModal} />
+
+          </ListItem.Accordion>
+        ))
+
+      }
+      
+    </>
+  );
+};
+
+
 
 const styleszz = {
   inputContainerStyle: {
@@ -323,11 +376,10 @@ const styleszz = {
 
 const AddPlanDetails: React.FC = () => {
   const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
-  const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+  const { dispatch: screenDispatch } = usePlanScreen();
 
   const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
   const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
-
   const ableToGoNext = planName !== "" && planDescription !== "";
 
 
@@ -364,16 +416,10 @@ const AddPlanDetails: React.FC = () => {
         />
       </View>
 
-      {/* {planState?.init.planCategory === PlanCategory.Workout &&
-        planState?.init?.selectedExercises?.map((item, index) => (
-          <DD
-            key={ index} // Adjust according to your data structure
-            placeholder="Select an exercise"
-            containerStyle={styleszz.ddContainerStyle}
-            label={item}
-            // Ensure this prop is used correctly according to the DD component's documentation
-          />
-        ))} */}
+      <>
+      {planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises &&(< ExerciseList list={planState.init.selectedExercises} />)}
+      </>
+        
 
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Plan Image</Text>
@@ -398,26 +444,13 @@ const Review: React.FC = () => {
   const { state: planState, dispatch } = usePlanBuilder();
   const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
 
-  const exercises = planState?.init?.selectedExercises?.map((item) => {
-    return {
-      "label": item,
-      "value": item,
-      "complete": false,
-      "key": item
-    };
-  })
-    
+  useEffect(() => {
+    console.log('planState', planState);
+  }, [planState]);
+
+
   return (
     <View style={{ flex: 1 }}>
-
-      {exercises && (<Dropdown
-        key="planName"
-        label="PlanDetails"
-        data={exercises}
-        onSelectionChange={(item) => console.log(item)}
-        placeholder={"Select an exercise"}
-      />)}
-      
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{color: "white"}}>Plan Name</Text>
         <Text style={{color: "white"}}>{planState?.name}</Text>

@@ -48,7 +48,7 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, data, 
 
   return (
     <View style={styles.container}>
-      <MultiSelect
+      <MultiSelect<T>
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
@@ -58,7 +58,8 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, data, 
         data={data}
         labelField="label"
         valueField="value"
-              placeholder={selected.length ? `(${selected.length}) Selected` : "Choose your exercises..."}
+        label="search"
+        placeholder={selected.length ? `(${selected.length}) Selected` : "Choose your exercises..."}
         value={selected}
         search={search}
         searchPlaceholder="Search..."
