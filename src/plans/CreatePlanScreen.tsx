@@ -1,23 +1,21 @@
 import { Dropdown } from '@components/primitives/dropdown/Dropdown';
 import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelect';
 import { ProgressBar } from '@components/primitives/progress/Progress';
-import { grayDark } from '@context/theme/colors_neon';
+import { grayDark, greenDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { Input, ListItem } from 'react-native-elements';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button, Input, ListItem } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { PlanBuilderProvider, PlanInitSelection, usePlanBuilder } from './PlanBuilderContext';
+import { PlanBuilderProvider, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
 import {
   CardioDropdownItem,
-  CardioExerciseDetail,
   CategoryDropdownItem,
   ExerciseDetail,
   ExerciseDropdownItem,
-  ExerciseMainCategory,
-  ExerciseRoutine,
   PlanCategory,
   WorkoutSubcategoryDropdownItem, findExerciseByName, generateCardioDropdownItems,
   generateExerciseDropdownItems,
@@ -102,8 +100,9 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
         <ProgressBar totalSteps={3} currentStep={getStepNumber(screenState.currentStep)} />
           <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(screenState.currentStep)}</Text>
       </View>
+      <View style={{flex: 1}} />
       
-      <View style={{ flex: 10, padding: 10 }}>     
+      <View style={{ flex: 12, margin: 10 }}>     
         
         {screenState.currentStep === Step.ChooseCategory && (
           <ChooseCategoryBody
@@ -136,157 +135,156 @@ interface ChooseCategoryBodyProps {
 
 const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => {
   const { state: planState, dispatch } = usePlanBuilder();
-  const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>(planState?.init?.planCategory);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>(planState?.init?.subcategory);
-  const [selectedExercises, setSelectedExercises] = useState<ExerciseDetail[]>(planState?.init?.selectedExercises || []);
-  const [selectedCardioExercise, setSelectedCardioExercise] = useState<CardioExerciseDetail | undefined>(planState?.init?.selectedCardioExercise); 
+
   const {  dispatch: screenDispatch } = usePlanScreen();
 
 
   const onCardioTypeChange = (item: CardioDropdownItem) => {
     console.log('onCardioTypeChange', item);
-    setSelectedCardioExercise(item);
+    // setSelectedCardioExercise(item);
+
+    dispatch(
+      {
+        type: 'SET_PLAN_BASE',
+        payload: {
+          init: {
+            planCategory: PlanCategory.Cardio,
+            subcategory: null,
+            selectedExercises: [],
+            selectedCardioExercise: {
+              id: item.id,
+              name: item.label,
+              type: item.type,
+            }
+          },
+          routine: [],
+        }
+      }
+    );
   }
 
   const onCategorySelectionChange = (item: CategoryDropdownItem) => {
     console.log('onSelectionChange', item);
-    setSelectedCategory(item.type);
+    // setSelectedCategory(item.type);
+    dispatch(
+      {
+        type: 'SET_PLAN_BASE',
+        payload: {
+          init: {
+            planCategory: item.type,
+            subcategory: null,
+            selectedExercises: [],
+            selectedCardioExercise: null,
+          },
+          routine: [],
+        }
+      }
+    );
   }
 
   const onSubcategoryChange = (item: WorkoutSubcategoryDropdownItem) => {
     console.log('onSubcategoryChange', item);
-    setSelectedSubcategory(item.type);
+    // setSelectedSubcategory(item.type);
+    dispatch(
+      {
+        type: 'SET_PLAN_BASE',
+        payload: {
+          init: {
+            planCategory: PlanCategory.Workout,
+            subcategory: item.type,
+            selectedExercises: [],
+            selectedCardioExercise: null,
+          },
+          routine: [],
+        }
+      }
+    );
   }
 
   const onExercisesChange = (items: string[]) => {
     console.log('onSubcategoryChange', items);
-      if (selectedSubcategory) {
-        const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(selectedSubcategory, ex)!);
+      if (planState.init?.subcategory && items.length > 0) {
+        const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(planState.init.subcategory!, ex)!);
         console.log('exerciseList', exerciseList);
-        setSelectedExercises(exerciseList!);
+        // setSelectedExercises(exerciseList!);
+
+        const routines = exerciseList.map((item) => {
+          return {
+            id: item.id,
+            sets: undefined,
+            reps: undefined,
+            weight: undefined,
+            notes: undefined,
+            init: false
+          }
+        })
+        
+        dispatch(
+          {
+            type: 'SET_PLAN_BASE',
+            payload: {
+              init: {
+                ...planState.init,
+                selectedExercises: exerciseList,
+                selectedCardioExercise: null,
+              },
+              routine: routines
+
+            }
+          }
+        );
       }
     }
 
 
   const handleNextPress = () => {
-    console.log("handlingPress")
-    if (selectedCategory === PlanCategory.Workout) {
-
-      const routineInit: ExerciseRoutine[] = [];
-
-      selectedExercises?.forEach((ex) => {  
-        routineInit.push({
-          id: ex.id,
-          weight: undefined,
-          reps: undefined,
-          sets: undefined,
-          notes: undefined,
-          init: false,
-        });
-      })
-    
-
-      const packet: PlanInitSelection = {
-        planCategory: selectedCategory,
-        subcategory: selectedSubcategory!,
-        selectedExercises: selectedExercises,
-        selectedCardioExercise: null,
-      };
-
-
-      dispatch(
-        {
-          type: 'SET_PLAN_BASE',
-          payload: {
-            init: packet,
-            routine: routineInit,
-          }
-        }
-      );
-    } else if (selectedCategory === PlanCategory.Cardio) {
-      console.log('cardio', selectedCategory);
-
-      const packet: PlanInitSelection = {
-        planCategory: selectedCategory,
-        subcategory: null,
-        selectedExercises: [],
-        selectedCardioExercise: selectedCardioExercise!,
-      };
-      dispatch(
-        {
-          type: 'SET_PLAN_BASE',
-          payload:
-          {
-            init: packet,
-            routine: [],
-          }
-        }
-      );
-    } else if (selectedCategory === PlanCategory.Nutrition) {
-      console.log('nutrition', selectedCategory);
-
-      const packet: PlanInitSelection = {
-        planCategory: selectedCategory,
-        subcategory: null,
-        selectedExercises: [],
-        selectedCardioExercise: null,
-      };
-      dispatch(
-        {
-          type: 'SET_PLAN_BASE',
-          payload:
-          {
-            init: packet,
-            routine: [],
-          }
-        }
-      );
-    }
-
-    console.log('starting dispatch', selectedCategory);
-
     screenDispatch({ type: ActionType.NextStep });
   }
 
-
   const handleClosePress = () => {
-    setSelectedCategory(undefined);
-    setSelectedSubcategory(undefined);
-    setSelectedExercises([]);
-    setSelectedCardioExercise(undefined);
     dispatch({ type: ActionType.Reset });
   }
 
-  const canGoNext = selectedCategory === PlanCategory.Workout && selectedSubcategory && selectedExercises.length > 0 || selectedCategory === PlanCategory.Cardio && selectedCardioExercise !== undefined || selectedCategory === PlanCategory.Nutrition;
+  const cardoSet = planState?.init?.planCategory === PlanCategory.Cardio && planState?.init?.selectedCardioExercise !== undefined;
+  const workoutSet = planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises && planState?.init?.selectedExercises?.length > 0 && planState?.init?.subcategory !== undefined;
+  const nutritionSet = planState?.init?.planCategory === PlanCategory.Nutrition;
 
+  const canGoNext = cardoSet || workoutSet || nutritionSet;
   return (
     <>
         <Dropdown<CategoryDropdownItem>
-          key="plan-category"
+        key="plan-category"
+
+          placeholder={planState.init.planCategory ?? "select category"}
           label="Category"
           data={planCategoryDropdownItems}
           onSelectionChange={onCategorySelectionChange}
          />
-        {selectedCategory === PlanCategory.Workout && (
+        {planState.init.planCategory === PlanCategory.Workout && (
           <>
             <Dropdown
-              key="subcategory"
+            key="subcategory"
+            placeholder={planState.init.subcategory ?? "select type"}
               label="Workout Type"
               data={workoutSubcategoryDropdownItems}
               onSelectionChange={onSubcategoryChange}
             />
-            {selectedSubcategory && (
-              <MultiSelectComponent<ExerciseDropdownItem>
-                icon="weight-lifter"
-                key="exerciseType"
-                label="Exercise"
-                data={generateExerciseDropdownItems(selectedSubcategory)}
+          {planState.init.subcategory && (
+            <MultiSelectComponent<ExerciseDropdownItem>
+              icon="weight-lifter"
+              key="exerciseType"
+              label="Exercise"
+              initial={
+                planState.init.selectedExercises 
+                ? planState.init.selectedExercises.map(exercise => exercise.name) 
+                : []
+            }                data={generateExerciseDropdownItems(planState.init.subcategory)}
                 onSelectionChange={onExercisesChange}
               />
             )}
           </>
       )}
-      {selectedCategory === PlanCategory.Cardio && (
+      {planState.init.planCategory === PlanCategory.Cardio && (
         <>
             <Dropdown
                 key="cardioType"
@@ -309,21 +307,28 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
 }
 
 
-
-
-
-
-
 interface ExerciseListProps {
   list: ExerciseDetail[];
+  onInitChanged: (ready: boolean) => void;
 }
 
-const ExerciseList: React.FC<ExerciseListProps> = ({ list }) => {
+const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
   const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
+  const { state: planState, dispatch } = usePlanBuilder();
 
   const closeModal = () => {
     setSelected(undefined);
   }
+
+
+  useEffect(() => {
+    planState.routine.forEach((item) => {
+      if (item.init === false) {
+        onInitChanged(false);
+        return;
+      }
+    });
+  }, [planState.routine])
 
 
   return (
@@ -331,16 +336,19 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ list }) => {
       {
         list?.map((item, index) => (
           <ListItem.Accordion
+          bottomDivider
             key={item.id} 
+            style={{ borderRadius: 8}}
+            icon={{ name: 'check-circle', type: 'font-awesome-5', color: planState.routine[index].init ? greenDark.green11 : grayDark.gray8 }}
             animation={true}
             content={
-              <ListItem.Content>
-                <ListItem.Title style={{ color: "black" }}>{item?.name}</ListItem.Title>
+              <ListItem.Content style={{borderRadius: 8}}>
+                <ListItem.Title style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular  }}>{item?.name}</ListItem.Title>
               </ListItem.Content>
             }
             isExpanded={false}
             onPress={() =>   setSelected(list[index])}
-            containerStyle={{ backgroundColor: 'gray' }} // Replace 'gray' with your actual color variable
+            containerStyle={{ backgroundColor: grayDark.gray5 , borderRadius: 2}} // Replace 'gray' with your actual color variable
           >
             <ExerciseItemModal key={ `${item.id}-modal`} exercise={selected} isOpen={selected !== undefined} onClose={closeModal} />
 
@@ -374,12 +382,54 @@ const styleszz = {
 };
 
 
+
+// containerStyle?: StyleProp<ViewStyle>;
+// disabled?: boolean;
+// disabledInputStyle?: StyleProp<TextStyle>;
+// inputContainerStyle?: StyleProp<ViewStyle>;
+// leftIcon?: IconNode;
+// leftIconContainerStyle?: StyleProp<ViewStyle>;
+// rightIcon?: IconNode;
+// rightIconContainerStyle?: StyleProp<ViewStyle>;
+// inputStyle?: StyleProp<TextStyle>;
+// InputComponent?: typeof React.Component;
+// errorProps?: object;
+// errorStyle?: StyleProp<TextStyle>;
+// errorMessage?: string;
+// label?: string | React.ReactNode;
+// labelStyle?: StyleProp<TextStyle>;
+// labelProps?: object;
+// renderErrorMessage?: boolean;
+
+
+const detailsStyles = StyleSheet.create({
+  button: {
+    backgroundColor: grayDark.gray11,
+    borderRadius: 10,
+    padding: 10,
+    color: grayDark.gray5,
+    // width: '50%',
+    // marginTop: 10,
+  },
+  buttonTitle: {
+    color: grayDark.gray5,
+    fontFamily: fonts.inter.semi_bold,
+    fontSize: 16,
+  },
+  label: {
+    fontFamily: fonts.inter.regular,
+    color: grayDark.gray12,
+    fontSize: 16,
+  },
+})
+
 const AddPlanDetails: React.FC = () => {
   const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
   const { dispatch: screenDispatch } = usePlanScreen();
 
   const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
   const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
+  const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
   const ableToGoNext = planName !== "" && planDescription !== "";
 
 
@@ -391,43 +441,64 @@ const AddPlanDetails: React.FC = () => {
   return (
 
     <View style={{ flex: 1, width: "100%", height: "100%" }}>
-      <Text>Plan Details</Text>
+ 
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+      <View style={{ flex: 1, justifyContent: 'center', width:"100%"  }}>
+      <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Name</Text>
         <Input
-          label="Name"
+          // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
+          // label="Name"
           value={planName}
-          style={{ color: "white" }}
+          style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}
           onChangeText={setPlanName}
           placeholderTextColor={grayDark.gray9}
-          placeholder="my sick leg workout"
+          placeholder=" e.g. leg destroyer"
         />
-        <Text>Plan Description</Text>
+       <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Description</Text>
+
         <Input
-          label="Description"
+          // label="Description"
+          // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
           value={planDescription}
-          style={{ color: "white" }}
-          containerStyle={styleszz.inputContainerStyle}
+          style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}         
           multiline={true}
-          numberOfLines={4}
           placeholderTextColor={grayDark.gray9}
+          maxLength={200}
           onChangeText={setPlanDescription}
-          placeholder="This is a leg workout that will make you cry."
+          placeholder=" e.g. this is a leg workout that makes me cry"
         />
       </View>
-
-      <>
-      {planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises &&(< ExerciseList list={planState.init.selectedExercises} />)}
-      </>
+      <View style={{ flex: 1, flexGrow: 2,  width: "100%",   justifyContent: "center" }}>
         
+   
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Plan Image</Text>
-        <TouchableOpacity onPress={() => console.log('upload image')}>
-          <Text>Upload Image</Text>
-        </TouchableOpacity>
+        {planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises && (
+          <>
+            <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Exercise Details</Text>
+            < ExerciseList list={planState.init.selectedExercises} onInitChanged={(ready) => setIsExerciseReady(ready)}/>
+            </>
+        )}
       </View>
 
+      <View style={{ flex: 1, width: "100%",  }}>
+        
+        <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Plan Media</Text>
+
+        <View style={{ flex: 1, width: "100%", padding: 10,  
+          borderWidth: 1, 
+          borderColor: grayDark.gray10, 
+          borderStyle: 'dashed', 
+          borderRadius: 10,
+          justifyContent: "space-around",
+          alignItems: "center",
+          }}>
+
+ 
+
+          <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle} title="Upload" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
+
+        </View>
+        </View>
       <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
         <View style={{ width: 200 }}>
           <ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
@@ -439,6 +510,8 @@ const AddPlanDetails: React.FC = () => {
     </View>
   );
 };
+
+
 
 const Review: React.FC = () => {
   const { state: planState, dispatch } = usePlanBuilder();
@@ -472,7 +545,7 @@ const Review: React.FC = () => {
           <ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
         </View>
         <View style={{ width: 200 }}>
-          <ButtonBase title="Next" onPress={() => screenDispatch({ type: ActionType.NextStep })} />
+          <ButtonBase title="Submit" onPress={() => screenDispatch({ type: ActionType.NextStep })} />
         </View>
       </View>
       

@@ -22,14 +22,15 @@ export interface BaseDropdownItem {
 
 export interface DropdownProps<T extends BaseDropdownItem> {
     label: string;
-    data: T[];
+  data: T[];
+  initial: string[];
     onSelectionChange: (items: T[]) => void;
     icon?: string;
     styles?: any;
     search?: boolean;
   }
 
-export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, data, onSelectionChange, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
+export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, initial, data, onSelectionChange, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
   const [selected, setSelected] = useState<T[]>([]);
 
   const renderItem = (item: any) => {
@@ -54,6 +55,7 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, data, 
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
+        initialSelectedItems={initial}
         backgroundColor={'rgba(0,0,0,0.2)'}
         data={data}
         labelField="label"

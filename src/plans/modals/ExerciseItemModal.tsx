@@ -31,27 +31,6 @@ export const ExerciseItemModal: React.FC<ExerciseItemModalProps> = ({ exercise, 
     const { state: planState, dispatch: planDispatch } = usePlanBuilder();
 
 
-    // useEffect(() => {
-    //     console.log('Exercise Details', exercise);
-    //     console.log('plan state', planState)
-
-    //     if (planState?.routine && exercise?.id && planState.routine[exercise.id]) {
-
-           
-    //             const { sets, reps, weight } = planState.routine[exercise?.id];
-    //             // setCurrentSets(sets);
-    //             // setCurrentReps(reps);
-    //             // setCurrentWeight(weight);
-    //         console.log('Exercise Details', planState.routine[exercise?.id])
-    //     }
-    // }, [exercise, planState]);
-
-    
-    // const [currentWeight, setCurrentWeight] = useState<string | undefined>(planState?.routine[exercise?.id]?.weight);
-    // const [currentReps, setCurrentReps] = useState<string | undefined>(planState?.routine[exercise?.id]?.reps);
-    // const [currentSets, setCurrentSets] = useState<string | undefined>(planState?.routine[exercise?.id]?.sets);
-
-
 
     const onAddPress = () => {
 

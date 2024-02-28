@@ -12,7 +12,7 @@ export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label,
     
 
   const renderLabel = () => {
-    if (value || isFocus) {
+    if (value || isFocus || label) {
       return (
         <Text style={[styles.label, isFocus && { color: grayDark.gray12 , fontFamily: fonts.inter.regular}]}>
               {label ?? "Dropdown label"}
@@ -35,8 +35,9 @@ export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label,
               itemContainerStyle={{ backgroundColor: grayDark.gray5 }}
               itemTextStyle={{ color: grayDark.gray10, fontFamily: fonts.inter.regular }}   
               backgroundColor={'rgba(0,0,0,0.2)'}
-            showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               data={data}
+              label={label}
               search={search}
               maxHeight={300}
               minHeight={100}
@@ -53,16 +54,6 @@ export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label,
                   setIsFocus(false);
                     onSelectionChange(item);
               }}
-            //   renderLeftIcon={() => {
-            //       value ? (
-            //           <AntDesign
-            //               style={styles.icon}
-            //               color={isFocus ? grayDark.gray12 : grayDark.gray10}
-            //               name="folderopen"
-            //               size={20}
-            //           />
-            //       ) : null
-            //   }
               />
     </View>
   );
@@ -88,26 +79,23 @@ const ddstyles = StyleSheet.create({
   label: {
     position: 'absolute',
     backgroundColor: 'black',
-      left: 22,
-      fontFamily: fonts.inter.regular,
-        color: grayDark.gray10,
+    left: 22,
+    fontFamily: fonts.inter.regular,
+    color: grayDark.gray12,
     top: 8,
     zIndex: 999,
     paddingHorizontal: 8,
     fontSize: 12,
   },
   placeholderStyle: {
-      fontSize: 16,
-      fontFamily: fonts.inter.regular,
-      color: grayDark.gray10,
-
-
+    fontSize: 18,
+    fontFamily: fonts.inter.bold,
+    color: grayDark.gray12,
   },
     selectedTextStyle: {
-        fontFamily: fonts.inter.regular,  
-        // backgroundColor: grayDark.gray12,
-        color: grayDark.gray12,
-        fontSize: 16,
+      fontSize: 18,
+      fontFamily: fonts.inter.semi_bold,
+      color: grayDark.gray12,
   },
   iconStyle: {
     width: 20,
