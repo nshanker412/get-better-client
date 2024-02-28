@@ -3,13 +3,14 @@ import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelec
 import { ProgressBar } from '@components/primitives/progress/Progress';
 import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Input } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanBuilderProvider, PlanInitSelection, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
-
 import {
   CardioDropdownItem,
   CardioExerciseDetail,
@@ -24,7 +25,6 @@ import {
   planCategoryDropdownItems,
   workoutSubcategoryDropdownItems
 } from './plan.types';
-
 
 // Helper functions
 const getStepNumber = (step: Step) => {
@@ -96,16 +96,13 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
     }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 10, justifyContent: "center"}}>
+    <SafeAreaView style={{ flex: 1, width:"100%", height:"100%" }}>
+      <View style={{ flex: 1, padding: 10, justifyContent: "space-around"}}>
         <ProgressBar totalSteps={3} currentStep={getStepNumber(screenState.currentStep)} />
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(screenState.currentStep)}</Text>
       </View>
       
-      <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch", width: "100%", height: "100%" }}>
-        
+      <View style={{ flex: 10, padding: 10 }}>     
         
         {screenState.currentStep === Step.ChooseCategory && (
           <ChooseCategoryBody
@@ -118,14 +115,13 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
         {screenState.currentStep === Step.AddInfo && (
           <AddPlanDetails />
         )}
+        {screenState.currentStep === Step.Review && (
+          <Review />
+        )}
 
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
-       
-        {screenState.currentStep === Step.Submit && (<ButtonBase title="Submit" onPress={onSubmit} />)}
+      <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}/>
 
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}/>
     </SafeAreaView>
   );
 }
@@ -262,7 +258,7 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
         <>
             <Dropdown
                 key="cardioType"
-            label="Cardio Type"
+                label="Cardio Type"
                 data={generateCardioDropdownItems()}
                 onSelectionChange={onCardioTypeChange} // Assume this handler is defined
             />
@@ -281,36 +277,104 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
 }
 
 
-const AddPlanDetails: React.FC = () => {
 
-  const { state: planState, dispatch } = usePlanBuilder();
-  const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+
+const FillPlanDetails: React.FC<{ name: string, onAdd: () => void }> = ({ name, onAdd }) => {
+  const [planDeets, setPlanDeets] = useState<string>("");
   
+  const addCb = () => {
+
+    onAdd();
+  }
+  
+  return (
+    <View style={{ flex: 1 }}>  
+      
+      <Text>Fill Plan Details</Text>
+      <Text>{name}</Text>
+      <Picker selectedValue={planDeets} onValueChange={(itemValue, itemIndex) => setPlanDeets(itemValue)}>
+        <Picker.Item label="Strength" value="strength" />
+        <Picker.Item label="Endurance" value="endurance" />
+        <Picker.Item label="HIIT" value="hiit" />
+      </Picker>
+      <ButtonBase title="Add" onPress={onAdd} />
+    </View>
+      )
+}
+
+const styleszz = {
+  inputContainerStyle: {
+    width: "100%",
+    height: 100,
+    borderColor: 'gray',
+    borderWidth: 1,
+    backgroundColor: grayDark.gray4,
+    borderRadius: 8,
+    marginRight: 20,
+    marginLeft: 20,
+  },
+  ddContainerStyle: {
+    container: { backgroundColor: 'white', height: 150 },
+    itemContainer: { backgroundColor: grayDark.gray5 },
+    itemTextStyle: { color: "white", fontFamily: fonts.inter.regular },
+  },
+};
+
+
+const AddPlanDetails: React.FC = () => {
+  const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
+  const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+
   const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
   const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
 
+  const ableToGoNext = planName !== "" && planDescription !== "";
+
+
+  const onNext = () => {
+    dispatchPlanState({ type: "SET_PLAN_DETAILS", payload: { name: planName, description: planDescription } });
+    screenDispatch({ type: ActionType.NextStep });
+  };
+
   return (
-    <View style={{ flex: 1 }}>
+
+    <View style={{ flex: 1, width: "100%", height: "100%" }}>
       <Text>Plan Details</Text>
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' , padding: 20}}>
-        <Text>Plan Name</Text>
-        <TextInput
-          style={{ height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: grayDark.gray4, width: "100%", borderRadius: 8, marginRight: 20, marginLeft: 20}}
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+        <Input
+          label="Name"
           value={planName}
+          style={{ color: "white" }}
           onChangeText={setPlanName}
-          placeholder="Enter Plan Name"
+          placeholderTextColor={grayDark.gray9}
+          placeholder="my sick leg workout"
         />
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' ,padding: 20}}>
         <Text>Plan Description</Text>
-        <TextInput
-          style={{ width: "100%", height: 100, borderColor: 'gray', borderWidth: 1, backgroundColor: grayDark.gray4, borderRadius: 8, marginRight: 20, marginLeft: 20}}
+        <Input
+          label="Description"
           value={planDescription}
+          style={{ color: "white" }}
+          containerStyle={styleszz.inputContainerStyle}
+          multiline={true}
+          numberOfLines={4}
+          placeholderTextColor={grayDark.gray9}
           onChangeText={setPlanDescription}
-          placeholder="Enter Plan Description"
+          placeholder="This is a leg workout that will make you cry."
         />
       </View>
+
+      {/* {planState?.init.planCategory === PlanCategory.Workout &&
+        planState?.init?.selectedExercises?.map((item, index) => (
+          <DD
+            key={ index} // Adjust according to your data structure
+            placeholder="Select an exercise"
+            containerStyle={styleszz.ddContainerStyle}
+            label={item}
+            // Ensure this prop is used correctly according to the DD component's documentation
+          />
+        ))} */}
+
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Plan Image</Text>
         <TouchableOpacity onPress={() => console.log('upload image')}>
@@ -318,6 +382,57 @@ const AddPlanDetails: React.FC = () => {
         </TouchableOpacity>
       </View>
 
+      <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
+        <View style={{ width: 200 }}>
+          <ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
+        </View>
+        <View style={{ width: 200 }}>
+          <ButtonBase disabled={ !ableToGoNext} title="Next" onPress={onNext} />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const Review: React.FC = () => {
+  const { state: planState, dispatch } = usePlanBuilder();
+  const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+
+  const exercises = planState?.init?.selectedExercises?.map((item) => {
+    return {
+      "label": item,
+      "value": item,
+      "complete": false,
+      "key": item
+    };
+  })
+    
+  return (
+    <View style={{ flex: 1 }}>
+
+      {exercises && (<Dropdown
+        key="planName"
+        label="PlanDetails"
+        data={exercises}
+        onSelectionChange={(item) => console.log(item)}
+        placeholder={"Select an exercise"}
+      />)}
+      
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{color: "white"}}>Plan Name</Text>
+        <Text style={{color: "white"}}>{planState?.name}</Text>
+      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{color: "white"}}>Plan Description</Text>
+      <Text style={{color: "white"}}>{planState.description}</Text>
+      </View>
+      {planState?.media && (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Plan Image</Text>
+        <Text>Image</Text>
+
+      </View>
+      )}
 
       <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
         <View style={{ width: 200 }}>
@@ -327,6 +442,7 @@ const AddPlanDetails: React.FC = () => {
           <ButtonBase title="Next" onPress={() => screenDispatch({ type: ActionType.NextStep })} />
         </View>
       </View>
+      
     </View>
   );
 }

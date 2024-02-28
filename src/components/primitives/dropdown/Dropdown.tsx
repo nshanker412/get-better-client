@@ -6,7 +6,7 @@ import { Dropdown as DD } from 'react-native-element-dropdown';
 import { BaseDropdownItem, DropdownProps } from './Dropdown.types';
 
 
-export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionChange, styles = ddstyles, search = false }: DropdownProps<T>) => {
+export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label, data, onSelectionChange, styles = ddstyles, search = false }: DropdownProps<T>) => {
     const [value, setValue] = useState<T>();
     const [isFocus, setIsFocus] = useState(false);
     
@@ -43,7 +43,7 @@ export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionC
               labelField="label"
               valueField="value"
               searchField="search"
-              placeholder={!isFocus ? 'Dropdown 1' : '...'}
+              placeholder={!isFocus ? placeholder : '...'}
               searchPlaceholder="Search..."
               value={value}
               onFocus={() => setIsFocus(true)}
