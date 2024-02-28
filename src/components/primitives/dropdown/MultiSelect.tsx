@@ -77,24 +77,8 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, data, 
         )}
         confirmSelectItem
         confirmUnSelectItem
-        // onConfirmSelectItem={(item) => {
-        //   Alert.alert('Confirm', 'Message confirm', [
-        //     {
-        //       text: 'Cancel',
-        //       onPress: () => {},
-        //     },
-        //     {
-        //       text: 'Confirm',
-        //       onPress: () => {
-        //         setSelected(item);
-        //       },
-        //     },
-        //   ]);
-              // }}
-              renderLeftIcon={() => (<MaterialCommunityIcons name={icon} size={24} color="black" />) }   
-        // renderLeftIcon={() => (
-        //   <AntDesign style={styles.icon} name="rocket1" size={20} />
-        // )}
+        renderLeftIcon={() => (<MaterialCommunityIcons name={icon} size={24} color="black" />) }   
+
       />
     </View>
   );

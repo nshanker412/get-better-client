@@ -4,60 +4,25 @@ import { ProgressBar } from '@components/primitives/progress/Progress';
 import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { CategoryDropdownItem, ExerciseDropdownItem, ExerciseMainCategory, ExerciseType, PlanCategory, WorkoutSubcategoryDropdownItem, generateExerciseDropdownItems, planCategoryDropdownItems, workoutSubcategoryDropdownItems } from './plan.types';
-
-// Define the steps as an enum
-enum Step {
-  ChooseCategory = 'choose category',
-  AddInfo = 'add info',
-  Review = 'review',
-  Submit = 'submit',
-}
-
-// Define action types
-enum ActionType {
-  NextStep = 'NEXT_STEP',
-  PrevStep = 'PREV_STEP',
-  Submit = 'SUBMIT',
-  Reset = 'RESET',
-}
-
-// Define the state shape
-interface State {
-  currentStep: Step;
-}
-
-// Define the action shape
-type Action =
-  | { type: ActionType.NextStep }
-  | { type: ActionType.PrevStep }
-  | { type: ActionType.Submit }
-  | { type: ActionType.Reset };
-
-// Initial state
-const initialState: State = {
-  currentStep: Step.ChooseCategory,
-};
-
-// Reducer function
-function reducer(state: State, action: Action): State {
-  const steps = [Step.ChooseCategory, Step.AddInfo, Step.Review, Step.Submit];
-  const currentIndex = steps.indexOf(state.currentStep);
-
-  switch (action.type) {
-    case ActionType.NextStep:
-      return { ...state, currentStep: steps[(currentIndex + 1) % steps.length] };
-    case ActionType.PrevStep:
-      return { ...state, currentStep: steps[(currentIndex - 1 + steps.length) % steps.length] };
-    case ActionType.Reset:
-      return initialState;
-    default:
-      throw new Error('Unhandled action type');
-  }
-}
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { PlanBuilderProvider, PlanInitSelection, usePlanBuilder } from './PlanBuilderContext';
+import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
+import {
+  CardioDropdownItem,
+  CardioExerciseDetail,
+  CategoryDropdownItem,
+  ExerciseDropdownItem,
+  ExerciseMainCategory,
+  ExerciseType,
+  PlanCategory,
+  WorkoutSubcategoryDropdownItem,
+  generateCardioDropdownItems,
+  generateExerciseDropdownItems,
+  planCategoryDropdownItems,
+  workoutSubcategoryDropdownItems
+} from './plan.types';
 
 
 // Helper functions
@@ -88,27 +53,112 @@ const getStepTitle = (step: Step) => {
   }
 }
 
-
-
-const ButtonBase = ({disabled=false,  title, onPress }: { disabled?: boolean, title: string; onPress: () => void }) => {
+const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, title: string; onPress: () => void }) => {
+  console.log("disabled", disabled)
   return (
     <View style={{ padding: 10 }}>
+      <TouchableOpacity disabled={disabled}>
       <Pressable disabled={disabled}  style={{ padding: 15, backgroundColor: disabled ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={onPress} >
       <Text style={{ fontFamily: fonts.inter.black }}>{title}</Text>
-      </Pressable>
+        </Pressable>
+        </TouchableOpacity>
     </View>
   );
 }
 
 
-// Component
-export const CreatePlanScreen: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  // Component
+  const _CreatePlanScreen: React.FC = () => {
   const navigation = useNavigation();
+    const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+    
+
+    useEffect(() => {
+      console.log(screenState.currentStep);
+    }, [screenState.currentStep]);
+      
+
+
+  useEffect(() => {
+    return () => {
+      screenDispatch({ type: ActionType.Reset });
+    };
+  }, []);
+  
+  const onSubmit = () => {
+    screenDispatch({ type: ActionType.Reset });
+  }
+   
+   const onClosePress = () => {
+      screenDispatch({ type: ActionType.Reset });
+      navigation.goBack();
+    }
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding: 10, justifyContent: "center"}}>
+        <ProgressBar totalSteps={3} currentStep={getStepNumber(screenState.currentStep)} />
+      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(screenState.currentStep)}</Text>
+      </View>
+      
+      <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch", width: "100%", height: "100%" }}>
+        
+        
+        {screenState.currentStep === Step.ChooseCategory && (
+          <ChooseCategoryBody
+            onClosePress={onClosePress}
+            onNext={() => screenDispatch({ type: ActionType.NextStep })}
+            onPrev={() => screenDispatch({ type: ActionType.PrevStep })}
+          />
+        )}
+        
+        {screenState.currentStep === Step.AddInfo && (
+          <AddPlanDetails />
+        )}
+
+      </View>
+      <View style={{ flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
+       
+        {screenState.currentStep !== Step.ChooseCategory && (<ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />)}
+        {screenState.currentStep === Step.Submit && (<ButtonBase title="Submit" onPress={onSubmit} />)}
+
+      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}/>
+    </SafeAreaView>
+  );
+}
+
+
+interface ChooseCategoryBodyProps {
+  onNext: () => void;
+  onPrev: () => void;
+  onClosePress?: () => void;
+}
+
+const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => {
+
   const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>();
   const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>();
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
+  const [selectedCardioExercise, setSelectedCardioExercise] = useState<CardioExerciseDetail | undefined>(); 
+  const { dispatch } = usePlanBuilder();
+  const {  dispatch: screenDispatch } = usePlanScreen();
 
+  useEffect(() => {
+    return () => {
+      setSelectedCategory(undefined);
+      setSelectedSubcategory(undefined);
+      setSelectedExercises([]);
+    };
+  }, []);
+
+
+  const onCardioTypeChange = (item: CardioDropdownItem) => {
+    console.log('onCardioTypeChange', item);
+    setSelectedCardioExercise(item);
+  }
 
   const onCategorySelectionChange = (item: CategoryDropdownItem) => {
     console.log('onSelectionChange', item);
@@ -125,69 +175,124 @@ export const CreatePlanScreen: React.FC = () => {
     setSelectedExercises(items);
   }
 
+  const handleNextPress = () => {
+    console.log("handlingPress")
+    if (selectedCategory === PlanCategory.Workout) {
 
-  useEffect(() => {
-    return () => {
-      setSelectedCategory(undefined);
-      setSelectedSubcategory(undefined);
-      setSelectedExercises([]);
-      dispatch({ type: ActionType.Reset });
-    };
+      console.log('selectedCategory', selectedCategory);
+      const packet: PlanInitSelection = {
+        planCategory: selectedCategory,
+        subcategory: selectedSubcategory!,
+        selectedExercises: selectedExercises,
+        selectedCardioExercise: null,
+      };
+      dispatch(
+        {
+          type: 'SET_PLAN_BASE',
+          payload: packet
+        }
+      );
+    } else if (selectedCategory === PlanCategory.Cardio) {
+      console.log('cardio', selectedCategory);
+
+      const packet: PlanInitSelection = {
+        planCategory: selectedCategory,
+        subcategory: null,
+        selectedExercises: [],
+        selectedCardioExercise: selectedCardioExercise!,
+      };
+      dispatch(
+        {
+          type: 'SET_PLAN_BASE',
+          payload: packet
+        }
+      );
+    } else if (selectedCategory === PlanCategory.Nutrition) {
+      console.log('nutrition', selectedCategory);
+
+      const packet: PlanInitSelection = {
+        planCategory: selectedCategory,
+        subcategory: null,
+        selectedExercises: [],
+        selectedCardioExercise: null,
+      };
+      dispatch(
+        {
+          type: 'SET_PLAN_BASE',
+          payload: packet
+        }
+      );
+    }
+
+    console.log('starting dispatch', selectedCategory);
+
+    screenDispatch({ type: ActionType.NextStep });
   }
-    , []);
-  
-  const onSubmit = () => {
+
+
+  const handleClosePress = () => {
+    setSelectedCategory(undefined);
+    setSelectedSubcategory(undefined);
+    setSelectedExercises([]);
+    setSelectedCardioExercise(undefined);
     dispatch({ type: ActionType.Reset });
   }
 
+  const canGoNext = selectedCategory === PlanCategory.Workout && selectedSubcategory && selectedExercises.length > 0 || selectedCategory === PlanCategory.Cardio && selectedCardioExercise !== undefined || selectedCategory === PlanCategory.Nutrition;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 10, justifyContent: "center"}}>
-        <ProgressBar totalSteps={3} currentStep={getStepNumber(state.currentStep)} />
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(state.currentStep)}</Text>
-      </View>
-      
-      <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch",  width: "100%", height: "100%"}}>
-
-   
-          <Dropdown<CategoryDropdownItem> key="plan-category" label="Category" data={planCategoryDropdownItems} onSelectionChange={onCategorySelectionChange} />
-          {selectedCategory === PlanCategory.Workout && (
-            <>
-              <Dropdown
-                key="subcategory"
-                label="Workout Type"
-                data={workoutSubcategoryDropdownItems}
-                onSelectionChange={onSubcategoryChange}
+    <>
+        <Dropdown<CategoryDropdownItem>
+          key="plan-category"
+          label="Category"
+          data={planCategoryDropdownItems}
+          onSelectionChange={onCategorySelectionChange}
+         />
+        {selectedCategory === PlanCategory.Workout && (
+          <>
+            <Dropdown
+              key="subcategory"
+              label="Workout Type"
+              data={workoutSubcategoryDropdownItems}
+              onSelectionChange={onSubcategoryChange}
+            />
+            {selectedSubcategory && (
+              <MultiSelectComponent
+                icon="weight-lifter"
+                key="exerciseType"
+                label="Exercise"
+                data={generateExerciseDropdownItems(selectedSubcategory)}
+                onSelectionChange={onExercisesChange}
               />
-              {selectedSubcategory && (
-                <MultiSelectComponent
-                  icon="weight-lifter"
-                  key="exerciseType"
-                  label="Exercise"
-                  data={generateExerciseDropdownItems(selectedSubcategory)}
-                  onSelectionChange={onExercisesChange}
-                />
-              )}
+            )}
+          </>
+      )}
+      {selectedCategory === PlanCategory.Cardio && (
+        <>
+            <Dropdown
+                key="cardioType"
+                label="Cardio Type"
+                data={generateCardioDropdownItems()}
+                onSelectionChange={onCardioTypeChange} // Assume this handler is defined
+            />
             </>
-          )}
+      )}
+    
+      
 
-
-
-
+      <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+        <View style={{ width: 200 }}>
+        <View style={{ padding: 10 }}>
+      <Pressable disabled={!canGoNext}  style={{ padding: 15, backgroundColor: !canGoNext ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={handleNextPress} >
+      <TouchableOpacity disabled={!canGoNext}>
+      <Text style={{ fontFamily: fonts.inter.black }}>Next</Text>
+        </TouchableOpacity>
+        </Pressable>
+    </View>
+          </View>
       </View>
-      <View style={{ flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
-       
-        {state.currentStep !== Step.ChooseCategory && (<ButtonBase title="Back" onPress={() => dispatch({ type: ActionType.PrevStep })} />)}
-        {state.currentStep !== Step.Submit && <ButtonBase title="Next" disabled={selectedExercises.length <= 0}  onPress={() => dispatch({ type: ActionType.NextStep })} /> }
-        {state.currentStep === Step.Submit && (<ButtonBase title="Submit" onPress={onSubmit} />)}
 
-
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}/>
-    </SafeAreaView>
+      </>
   );
 }
 
@@ -195,18 +300,25 @@ export const CreatePlanScreen: React.FC = () => {
 
 
 
-// const ChooseCategoryBody: React.FC<{ onNext: () => void; onPrev: () => void}> = ({onNext, onPrev}) => {
+const AddPlanDetails: React.FC = () => {
+  return (
+    <View style={{flex: 1}}>
+      <Text>Add Plan Details</Text>
+    </View>
+  );
+}
 
-//   const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>();
-//   const [subcategories, setSubcategories] = useState<ExerciseMainCategory | undefined>();
 
-//   return (
-//     <View style={{ flex: 5, justifyContent: 'flex-start', alignItems: "stretch", borderColor: "red", borderWidth: 1, width: "100%", height: "100%" }}>
-//       <Dropdown<CategoryDropdownItem> key="plan-category" label="Category" data={planCategoryDropdownItems} onSelectionChange={onCategorySelectionChange} />
-//       {selectedCategory === PlanCategory.Workout && <Dropdown<WorkoutSubcategoryDropdownItem> key="subcategory" label="Workout type" data={exerciseDropdownItems} onSelectionChange={onSubcategoryChange} />}
-//       {selectedCategory === PlanCategory.Workout && <Dropdown<WorkoutSubcategoryDropdownItem> key="subcategory" label="Workout type" data={exerciseDropdownItems} onSelectionChange={onSubcategoryChange} />}
 
-//     </View>
 
-//   );
-// }
+
+export const CreatePlanScreen: React.FC = () => {
+  
+  return (
+    <PlanScreenProvider>
+      <PlanBuilderProvider>
+        <_CreatePlanScreen />
+      </PlanBuilderProvider>
+    </PlanScreenProvider>
+  );
+}

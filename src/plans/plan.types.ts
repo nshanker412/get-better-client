@@ -63,11 +63,6 @@ interface Post {
         Nutrition = 'Nutrition',
     }
 
-
-
-    
-
-
     interface WorkoutPlan {
         id: string;
         name: string;
@@ -108,7 +103,6 @@ interface Post {
         updatedAt: Date; // UTC timestamp
         icon: string; // URI/URL to icons
         media: [], // URI/URL to images
-
         social: {
             likes: Like[],
             comments: Comment[],
@@ -121,19 +115,12 @@ interface Post {
             }
         } | null;
         deletedAt: Date | null
-
     }
 
 
 /**
  * Plan Subcategories
  */
-
-
-
-
-
-
   interface Exercise {
       id: string;
       type: 'strength' | 'endurance';
@@ -184,6 +171,30 @@ interface Post {
 
 // map categories to dropdown items
 
+
+/**-------------------------------- MAIN CATEGORY ------------------------------------ */
+
+
+// Main category dropdown items
+export interface CategoryDropdownItem {
+    label: string;
+    value: string;
+    type: PlanCategory;
+    icon?: string; // Optional
+}
+
+export const planCategoryDropdownItems: CategoryDropdownItem[] = Object.entries(PlanCategory).map(([key, value]) => ({
+    label: key, // Using enum key as label
+    value: value, // Using enum value as value
+    type: value as PlanCategory, // Correctly assigning the enum value to type
+    // No need to explicitly assign an empty string to icon since it's optional
+}));
+
+
+
+
+/**-------------------------------- WORKOUT ------------------------------------ */
+
 export const SelectCategoryDropdown = [
 
     {
@@ -204,6 +215,9 @@ export const SelectCategoryDropdown = [
 ]
 
 
+
+
+
 export enum ExerciseMainCategory {
     Chest = "Chest",
     Back = "Back",
@@ -213,10 +227,6 @@ export enum ExerciseMainCategory {
     Push = "Push",
     Pull = "Pull",
 }
-
-// Assuming each category is simply a list of exercise names (strings)
-
-
 
 
 type ExerciseDetail = {
@@ -288,22 +298,6 @@ export const exercises: ExerciseCategories = {
 };
 
 
-// Main category dropdown items
-export interface CategoryDropdownItem {
-    label: string;
-    value: string;
-    type: PlanCategory;
-    icon?: string; // Optional
-}
-
-export const planCategoryDropdownItems: CategoryDropdownItem[] = Object.entries(PlanCategory).map(([key, value]) => ({
-    label: key, // Using enum key as label
-    value: value, // Using enum value as value
-    type: value as PlanCategory, // Correctly assigning the enum value to type
-    // No need to explicitly assign an empty string to icon since it's optional
-}));
-
-
 // Workout subcategory dropdown items
 export interface WorkoutSubcategoryDropdownItem {
     label: string;
@@ -316,7 +310,6 @@ export const workoutSubcategoryDropdownItems: WorkoutSubcategoryDropdownItem[] =
     label: key, // Using enum key as label
     value: value, // Using enum value as value
     type: value as ExerciseMainCategory, // Correctly assigning the enum value to type
-    // No need to explicitly assign an empty string to icon since it's optional
 }));
 
 
@@ -349,4 +342,39 @@ export function generateExerciseDropdownItems(category: ExerciseMainCategory): E
             type: exerciseType, // Assign the constructed ExerciseType object
         };
     });
+}
+
+
+/**-------------------------------- CARDIO ------------------------------------ */
+
+// Define Cardio exercises in a separate structure
+export type CardioExerciseDetail = {
+    name: string;
+    type: string; // This could represent a sub-type like "Endurance", "HIIT", etc.
+};
+
+const cardioExercises: CardioExerciseDetail[] = [
+    { name: "Running", type: "Endurance" },
+    { name: "Cycling", type: "Endurance" },
+    { name: "Jump Rope", type: "HIIT" },
+    { name: "Rowing", type: "Steady State" },
+    { name: "High Knees", type: "HIIT" },
+    { name: "Stair Climber", type: "Steady State" },
+];
+
+export interface CardioDropdownItem {
+    label: string;
+    value: string;
+    type: string; // Use the specific cardio type here
+    icon?: string; // Optional
+}
+
+// Function to generate dropdown items for Cardio exercises
+export function generateCardioDropdownItems(): CardioDropdownItem[] {
+    return cardioExercises.map((exercise) => ({
+        label: exercise.name,
+        value: exercise.name, // Assuming the name can serve as a unique value
+        type: exercise.type,
+        // The icon can be determined based on the exercise type or name if necessary
+    }));
 }

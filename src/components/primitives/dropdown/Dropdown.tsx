@@ -27,7 +27,7 @@ export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionC
       {renderLabel()}
           <DD
               containerStyle={{ backgroundColor: 'transparent'}}
-              style={[styles.dropdown, isFocus && { borderColor: grayDark.gray12 }]}
+              style={[styles.dropdown, isFocus && {  }]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -43,7 +43,6 @@ export const Dropdown = <T extends BaseDropdownItem>({ label, data, onSelectionC
               labelField="label"
               valueField="value"
               searchField="search"
-              
               placeholder={!isFocus ? 'Dropdown 1' : '...'}
               searchPlaceholder="Search..."
               value={value}
