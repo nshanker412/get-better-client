@@ -2,7 +2,6 @@
 import React, { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react';
 import { CardioExerciseDetail, ExerciseMainCategory, ExerciseType, PlanCategory } from './plan.types'; // Adjust import paths as needed
 
-
 export type MediaSource = {
   id: string;
   url: string;

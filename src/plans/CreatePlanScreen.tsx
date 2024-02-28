@@ -5,10 +5,11 @@ import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanBuilderProvider, PlanInitSelection, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
+
 import {
   CardioDropdownItem,
   CardioExerciseDetail,
@@ -45,7 +46,7 @@ const getStepTitle = (step: Step) => {
     case Step.ChooseCategory:
       return "Create your plan";
     case Step.AddInfo:
-      return "Add info";
+      return "Add Plan Details";
     case Step.Review:
       return "Review";
     case Step.Submit:
@@ -57,11 +58,11 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
   console.log("disabled", disabled)
   return (
     <View style={{ padding: 10 }}>
-      <TouchableOpacity disabled={disabled}>
       <Pressable disabled={disabled}  style={{ padding: 15, backgroundColor: disabled ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={onPress} >
+      <TouchableOpacity disabled={disabled}>
       <Text style={{ fontFamily: fonts.inter.black }}>{title}</Text>
-        </Pressable>
         </TouchableOpacity>
+        </Pressable>
     </View>
   );
 }
@@ -121,7 +122,6 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
       </View>
       <View style={{ flex: 1, flexDirection: 'row', width: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
        
-        {screenState.currentStep !== Step.ChooseCategory && (<ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />)}
         {screenState.currentStep === Step.Submit && (<ButtonBase title="Submit" onPress={onSubmit} />)}
 
       </View>
@@ -138,21 +138,12 @@ interface ChooseCategoryBodyProps {
 }
 
 const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => {
-
-  const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>();
-  const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>();
-  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
-  const [selectedCardioExercise, setSelectedCardioExercise] = useState<CardioExerciseDetail | undefined>(); 
-  const { dispatch } = usePlanBuilder();
+  const { state: planState, dispatch } = usePlanBuilder();
+  const [selectedCategory, setSelectedCategory] = useState< PlanCategory | undefined>(planState?.init?.planCategory);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<ExerciseMainCategory | undefined>(planState?.init?.subcategory);
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>(planState?.init?.selectedExercises || []);
+  const [selectedCardioExercise, setSelectedCardioExercise] = useState<CardioExerciseDetail | undefined>(planState?.init?.selectedCardioExercise); 
   const {  dispatch: screenDispatch } = usePlanScreen();
-
-  useEffect(() => {
-    return () => {
-      setSelectedCategory(undefined);
-      setSelectedSubcategory(undefined);
-      setSelectedExercises([]);
-    };
-  }, []);
 
 
   const onCardioTypeChange = (item: CardioDropdownItem) => {
@@ -271,24 +262,17 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
         <>
             <Dropdown
                 key="cardioType"
-                label="Cardio Type"
+            label="Cardio Type"
                 data={generateCardioDropdownItems()}
                 onSelectionChange={onCardioTypeChange} // Assume this handler is defined
             />
             </>
       )}
-    
-      
+  
 
       <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
         <View style={{ width: 200 }}>
-        <View style={{ padding: 10 }}>
-      <Pressable disabled={!canGoNext}  style={{ padding: 15, backgroundColor: !canGoNext ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={handleNextPress} >
-      <TouchableOpacity disabled={!canGoNext}>
-      <Text style={{ fontFamily: fonts.inter.black }}>Next</Text>
-        </TouchableOpacity>
-        </Pressable>
-    </View>
+          <ButtonBase disabled={!canGoNext}  title="Next"  onPress={handleNextPress} />
           </View>
       </View>
 
@@ -297,19 +281,55 @@ const ChooseCategoryBody: React.FC<ChooseCategoryBodyProps> = ({closePress}) => 
 }
 
 
-
-
-
 const AddPlanDetails: React.FC = () => {
+
+  const { state: planState, dispatch } = usePlanBuilder();
+  const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
+  
+  const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
+  const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
+
   return (
-    <View style={{flex: 1}}>
-      <Text>Add Plan Details</Text>
+    <View style={{ flex: 1 }}>
+      <Text>Plan Details</Text>
+
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' , padding: 20}}>
+        <Text>Plan Name</Text>
+        <TextInput
+          style={{ height: 40, borderColor: 'gray', borderWidth: 1, backgroundColor: grayDark.gray4, width: "100%", borderRadius: 8, marginRight: 20, marginLeft: 20}}
+          value={planName}
+          onChangeText={setPlanName}
+          placeholder="Enter Plan Name"
+        />
+      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' ,padding: 20}}>
+        <Text>Plan Description</Text>
+        <TextInput
+          style={{ width: "100%", height: 100, borderColor: 'gray', borderWidth: 1, backgroundColor: grayDark.gray4, borderRadius: 8, marginRight: 20, marginLeft: 20}}
+          value={planDescription}
+          onChangeText={setPlanDescription}
+          placeholder="Enter Plan Description"
+        />
+      </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Plan Image</Text>
+        <TouchableOpacity onPress={() => console.log('upload image')}>
+          <Text>Upload Image</Text>
+        </TouchableOpacity>
+      </View>
+
+
+      <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
+        <View style={{ width: 200 }}>
+          <ButtonBase title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
+        </View>
+        <View style={{ width: 200 }}>
+          <ButtonBase title="Next" onPress={() => screenDispatch({ type: ActionType.NextStep })} />
+        </View>
+      </View>
     </View>
   );
 }
-
-
-
 
 
 export const CreatePlanScreen: React.FC = () => {
