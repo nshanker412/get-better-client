@@ -146,8 +146,8 @@ export interface Exercise {
   
   interface CardioActivity {
     id: string;
-      name: string;
-      types: 'run' | 'walk';
+    name: string;
+    types: 'run' | 'walk';
     duration: number; // Duration in minutes
     intensity: 'low' | 'medium' | 'high';
   }
@@ -380,14 +380,16 @@ export interface ExerciseDropdownItem {
 }
 
 
-
 export const findExerciseByName = (category: ExerciseMainCategory, name: string): ExerciseDetail | undefined => {
     const categoryExercises = exercises[category];
     return categoryExercises.find(exercise => exercise.name === name);   
 }
 
 
-
+export const findExerciseById = (category: ExerciseMainCategory, id: string): ExerciseDetail | undefined => {
+    const categoryExercises = exercises[category];
+    return categoryExercises.find(exercise => exercise.id === id);   
+}
 
 export function generateExerciseDropdownItems(category: ExerciseMainCategory): ExerciseDropdownItem[] {
     const exerciseDetails = (exercises as ExerciseCategories)[category];

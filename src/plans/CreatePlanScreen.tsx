@@ -7,23 +7,27 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button, Input, ListItem } from 'react-native-elements';
+import { Button, Icon, Input, ListItem } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanBuilderProvider, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
+import { ExerciseItemModal } from './modals/ExerciseItemModal';
 import {
   CardioDropdownItem,
   CategoryDropdownItem,
   ExerciseDetail,
   ExerciseDropdownItem,
+  ExerciseMainCategory,
+  ExerciseRoutine,
   PlanCategory,
-  WorkoutSubcategoryDropdownItem, findExerciseByName, generateCardioDropdownItems,
+  WorkoutSubcategoryDropdownItem,
+  findExerciseById,
+  findExerciseByName, generateCardioDropdownItems,
   generateExerciseDropdownItems,
   planCategoryDropdownItems,
   workoutSubcategoryDropdownItems
 } from './plan.types';
 
-import { ExerciseItemModal } from './modals/ExerciseItemModal';
 
 // Helper functions
 const getStepNumber = (step: Step) => {
@@ -125,7 +129,6 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
     </SafeAreaView>
   );
 }
-
 
 interface ChooseCategoryBodyProps {
   onNext: () => void;
@@ -314,7 +317,7 @@ interface ExerciseListProps {
 
 const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
   const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
-  const { state: planState, dispatch } = usePlanBuilder();
+  const { state: planState } = usePlanBuilder();
 
   const closeModal = () => {
     setSelected(undefined);
@@ -358,6 +361,87 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
       }
       
     </>
+  );
+};
+
+interface ReviewExerciseListProps {
+  list: ExerciseRoutine[];
+  category: ExerciseMainCategory;
+  onInitChanged: (ready: boolean) => void;
+}
+
+const ReviewExerciseList: React.FC<ReviewExerciseListProps> = ({ list , category, onInitChanged}) => {
+  const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
+  const { state: planState } = usePlanBuilder();
+
+  const closeModal = () => {
+    setSelected(undefined);
+  }
+
+
+  useEffect(() => {
+    planState.routine.forEach((item) => {
+      if (item.init === false) {
+        onInitChanged(false);
+        return;
+      }
+    });
+  }, [planState.routine])
+
+
+
+  return (
+    <View style={{ flex: 1 , width: "100%", backgroundColor: grayDark.gray10}}> 
+    <> 
+      {
+        list?.map((item, index) => {
+  
+          const [expanded, setExpanded] = useState(false);
+          <ListItem.Accordion
+            key={index}
+            content={
+              <>
+                <Icon name="place" size={30} />
+                <ListItem.Content>
+                  <ListItem.Title>{ findExerciseById(category, item.id)!.name}</ListItem.Title>
+                </ListItem.Content>
+              </>
+            }
+            isExpanded={expanded}
+            onPress={() => {
+              setExpanded(!expanded);
+            }}
+          >
+          
+              {item.reps && item.sets && item.weight && (
+                <ListItem onPress={() => { }} bottomDivider>
+                  <ListItem.Content>
+                    <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Routine"}</ListItem.Title>
+                    <ListItem.Subtitle>{item.sets} Sets of {item.reps} reps of {item.weight} Lbs</ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              )}
+            
+              {item.notes && <ListItem onPress={() => { }} bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Notes"}</ListItem.Title>
+                  <Text style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{item.notes}</Text>
+                </ListItem.Content>
+
+                <ListItem.Chevron />
+              </ListItem>
+              }
+          
+        
+          </ListItem.Accordion>
+    
+  
+        })
+
+      }
+      </>
+    </View>
   );
 };
 
@@ -427,10 +511,13 @@ const AddPlanDetails: React.FC = () => {
   const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
   const { dispatch: screenDispatch } = usePlanScreen();
 
+
+
   const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
   const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
   const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
-  const ableToGoNext = planName !== "" && planDescription !== "";
+  // const ableToGoNext = planName !== "" && planDescription !== "";
+  const ableToGoNext  = true; 
 
 
   const onNext = () => {
@@ -495,7 +582,7 @@ const AddPlanDetails: React.FC = () => {
 
  
 
-          <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle} title="Upload" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
+          <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle} title="Browse" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
 
         </View>
         </View>
@@ -512,6 +599,34 @@ const AddPlanDetails: React.FC = () => {
 };
 
 
+const reviewStyles = StyleSheet.create({
+  planTitle: {
+    color: grayDark.gray12,
+    fontFamily: fonts.inter.semi_bold,
+    fontSize: 20,
+  },
+  planDescription: {
+    color: grayDark.gray12,
+    fontFamily: fonts.inter.regular,
+    fontSize: 16,
+  },
+  planImage: {
+    width: 100,
+    height: 100,
+  },
+  exerciseContainer: {
+    color: grayDark.gray12,
+    fontFamily: fonts.inter.semi_bold,
+    fontSize: 16,
+  },
+  exerciseItem: {
+    color: grayDark.gray12,
+    fontFamily: fonts.inter.regular,
+    fontSize: 14,
+  },
+
+})
+
 
 const Review: React.FC = () => {
   const { state: planState, dispatch } = usePlanBuilder();
@@ -524,21 +639,18 @@ const Review: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{color: "white"}}>Plan Name</Text>
-        <Text style={{color: "white"}}>{planState?.name}</Text>
+      <View style={{ flex: 1, justifyContent: 'flex-start',  width: "100%", padding: 20 }}>
+        <Text style={reviewStyles.planTitle}>{planState?.name}</Text>
+      <Text style={reviewStyles.planDescription}>{planState.description}</Text>
       </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{color: "white"}}>Plan Description</Text>
-      <Text style={{color: "white"}}>{planState.description}</Text>
-      </View>
-      {planState?.media && (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Plan Image</Text>
-        <Text>Image</Text>
 
+
+      <View style={{ flex: 1,  width: "100%", padding: 20 }}>
+        {planState.init.planCategory === PlanCategory.Workout && planState.init.planCategory && (
+            <ReviewExerciseList category={ planState.init.subcategory} list={planState.init.selectedExercises} onInitChanged={() => {}} />
+        )}
       </View>
-      )}
+
 
       <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
         <View style={{ width: 200 }}>
@@ -549,7 +661,8 @@ const Review: React.FC = () => {
         </View>
       </View>
       
-    </View>
+      </View>
+      
   );
 }
 
