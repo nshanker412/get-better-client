@@ -1,13 +1,16 @@
 
 
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { grayDark, greenDark } from '@context/theme/colors_neon';
+import { grayDark, greenDark, red } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { Button, Input, ListItem } from '@rneui/base';
+import { ResizeMode, Video } from 'expo-av';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { usePlanBuilder } from '../PlanBuilderContext';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MediaSource, usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
 import { ExerciseItemModal } from '../modals/ExerciseItemModal';
 import {
@@ -16,16 +19,16 @@ import {
     PlanCategory
 } from '../plan.types';
 
-
   
   export const AddPlanDetails: React.FC = () => {
     const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
     const { dispatch: screenDispatch } = usePlanScreen();
-  
-  
-  
-    const [planName, setPlanName] = useState<string>(planState?.init?.planName || '');
-    const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
+
+    const [planName, setPlanName] = useState<string>(planState?.name || '');
+      const [planDescription, setPlanDescription] = useState<string>(planState?.description || '');
+ 
+
+      
     const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
     // const ableToGoNext = planName !== "" && planDescription !== "";
     const ableToGoNext = true; 
@@ -82,22 +85,11 @@ import {
   
         <View style={{ flex: 1, width: "100%",  }}>
           
-          <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Plan Media</Text>
+          <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Media</Text>
   
-          <View style={{ flex: 1, width: "100%", padding: 10,  
-            borderWidth: 1, 
-            borderColor: grayDark.gray10, 
-            borderStyle: 'dashed', 
-            borderRadius: 10,
-            justifyContent: "space-around",
-            alignItems: "center",
-            }}>
+
+                <MediaPicker />
   
-   
-  
-                    <Button style={ buttonStyles.buttonBase} buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle} title="Browse" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
-  
-          </View>
           </View>
         <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
                 <Button style={ buttonStyles.buttonBase}  buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
@@ -208,4 +200,155 @@ const buttonStyles = StyleSheet.create({
       color: grayDark.gray12,
       fontSize: 16,
     },
-  })
+})
+
+
+
+export const MediaPicker: React.FC = () => {
+    const [selectedMedia, setSelectedMedia] = useState<MediaSource | null>(null);
+
+    const { state: planState, dispatch: dispatchPlan } = usePlanBuilder();
+
+    const onMediaChange = (media: MediaSource | null) => {
+        if (media) {
+          dispatchPlan({ type: 'SET_PLAN_MEDIA', payload: [{ id: "im", url: media.url, type: media.type }] });
+        } else {
+          dispatchPlan({ type: 'SET_PLAN_MEDIA', payload: null });
+        }
+      }
+
+
+
+
+    const pickMedia = async () => {
+      // Request permission to access media library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission required', 'Sorry, we need camera roll permissions to make this work!');
+        return;
+      }
+  
+      const result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true, // Note: Editing is only available for images
+        aspect: [4, 3],
+        quality: 1,
+        videoMaxDuration: 10, // Limit video duration to 10 seconds
+      });
+        
+        console.log("result", result);
+  
+        if (!result.canceled) {
+          
+            const media = result.assets[0];
+        if (media.type === 'video' && media.duration && media.duration > 10000) {
+          Alert.alert('Video too long', 'Please select a video that is less than 10 seconds long.');
+        } else {
+            onMediaChange({ id: media.assetId ?? "plan-media", url: media.uri, type: media.type ?? 'image' });
+        }
+      }
+    };
+
+    const onDeselectMedia = () => {
+        console.log("deselecting media");   
+        onMediaChange(null);
+        }
+  
+    return (
+        <View style={{
+            flex: 1,
+            width: "100%",
+            height: 200,
+            padding: 10,
+            borderWidth: 1,
+            borderColor: grayDark.gray10,
+            borderStyle: 'dashed',
+            borderRadius: 10,
+            justifyContent: "space-around",
+            alignItems: "center",
+            }}>
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+                {planState && planState?.media?.length && planState.media[0] ? (
+                    
+                    <MediaTile media={planState.media[0]} handleDelete={onDeselectMedia} />
+
+                ) : (
+                    <Button style={buttonStyles.buttonBase} buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle} title="Browse" onPress={pickMedia} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
+
+                )}
+            </View>
+        </View>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+      media: {
+        borderRadius: 10,
+      width: 100, // Adjusted for better visibility
+      height: 100, // Adjusted for better visibility
+    },
+  });
+
+
+// should take in the uri and type and display the media as 100x100 tile  with a red delete button on the top right
+
+    type MediaProps = {
+        media: MediaSource;
+        handleDelete: () => void;
+      };
+const MediaTile: React.FC<MediaProps> = ({ media, handleDelete}) => {
+
+
+  
+    return (
+        <View style={mediaTileStyles.container}>
+                
+ 
+       
+        {media.type === 'image' ? (
+          <Image source={{ uri: media.url }} style={styles.media} />
+        ) : (
+          <Video
+            source={{ uri: media.url }}
+            style={mediaTileStyles.media}
+            resizeMode={ResizeMode.COVER}
+            shouldPlay={false}
+            isLooping={false}
+            useNativeControls={false}
+          />
+            )}
+        <TouchableOpacity onPress={handleDelete} style={mediaTileStyles.deleteButton}>
+        <Ionicons name="close-circle" size={24} color={red.red5} />
+        </TouchableOpacity>
+
+      </View>
+    );
+  };
+  
+  const mediaTileStyles = StyleSheet.create({
+    container: {
+      width: 100,
+      height: 100,
+      position: 'relative',
+      marginBottom: 10, // Adjust or remove as needed
+    },
+    media: {
+      width: '100%',
+        height: '100%',
+    //     maxHeight: 80,
+    //   maxWidth: 80,
+      borderRadius: 10, // Optional: for rounded corners
+    },
+      deleteButton: {
+        // zIndex: 1,
+      position: 'absolute',
+      top: -10, // Adjust these values as needed
+      right: -10,
+      backgroundColor: 'transparent',
+    },
+  });

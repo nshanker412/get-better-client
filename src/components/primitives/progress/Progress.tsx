@@ -31,7 +31,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ totalSteps, currentSte
     let markers = [];
     for (let i = 1; i <= totalSteps; i++) {
       markers.push(
-        <View key={i} style={[styles.stepMarker, { left: `${(100 / totalSteps) * i - (100 / totalSteps)}%` }]}>
+        <View key={i} style={[styles.stepMarker, { left: `${(100 / totalSteps) * (i) - (100 / totalSteps)}%` }]}>
           <Text style={styles.stepText}>{i}</Text>
         </View>
       );

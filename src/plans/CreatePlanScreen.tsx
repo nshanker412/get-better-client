@@ -15,11 +15,12 @@ import { PreviewPlan } from './steps/PreviewPlan';
 const getStepNumber = (step: Step) => {
   switch (step) {
     case Step.ChooseCategory:
-      return 0;
-    case Step.AddInfo:
       return 1;
-    case Step.Review:
+    case Step.AddInfo:
       return 2;
+    case Step.Review:
+      return 3;
+
   }
 }
 
