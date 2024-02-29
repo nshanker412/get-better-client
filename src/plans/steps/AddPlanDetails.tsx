@@ -95,41 +95,20 @@ import {
   
    
   
-            <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle} title="Browse" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
+                    <Button style={ buttonStyles.buttonBase} buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle} title="Browse" onPress={() => {console.log("upoading") }} icon={<Ionicons name="document-attach-outline" size={24} color="black" />} />
   
           </View>
           </View>
         <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
-          <View style={{ width: 200 }}>
-            <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle}  title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
-          </View>
-          <View style={{ width: 200 }}>
-            <Button buttonStyle={detailsStyles.button} titleStyle={detailsStyles.buttonTitle}  disabled={ !ableToGoNext} title="Next" onPress={onNext} />
-          </View>
+                <Button style={ buttonStyles.buttonBase}  buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
+
+            <Button style={ buttonStyles.buttonBase}   buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  disabled={ !ableToGoNext} title="Next" onPress={onNext} />
+ 
         </View>
       </View>
     );
   };
 
-
-  const detailsStyles = StyleSheet.create({
-    button: {
-      backgroundColor: grayDark.gray11,
-      borderRadius: 10,
-      padding: 10,
-      color: grayDark.gray5,
-    },
-    buttonTitle: {
-      color: grayDark.gray5,
-      fontFamily: fonts.inter.semi_bold,
-      fontSize: 16,
-    },
-    label: {
-      fontFamily: fonts.inter.regular,
-      color: grayDark.gray12,
-      fontSize: 16,
-    },
-  })
 
 
 
@@ -206,3 +185,27 @@ interface ExerciseListProps {
       </>
     );
   };
+
+
+const buttonStyles = StyleSheet.create({
+    buttonBase: {
+        width: 100,
+        maxWidth: 150
+        },
+    button: {
+      backgroundColor: grayDark.gray12,
+      borderRadius: 10,
+      padding: 10,
+      color: grayDark.gray5,
+    },
+    buttonTitle: {
+      color: grayDark.gray5,
+      fontFamily: fonts.inter.semi_bold,
+      fontSize: 16,
+    },
+    label: {
+      fontFamily: fonts.inter.regular,
+      color: grayDark.gray12,
+      fontSize: 16,
+    },
+  })

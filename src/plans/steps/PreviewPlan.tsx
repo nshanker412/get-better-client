@@ -182,7 +182,7 @@ interface ReviewExerciseListProps {
 
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: grayDark.gray11,
+      backgroundColor: grayDark.gray12,
       borderRadius: 10,
       padding: 10,
       color: grayDark.gray5,
@@ -198,3 +198,4 @@ interface ReviewExerciseListProps {
       fontSize: 16,
     },
   })
+

@@ -2,7 +2,7 @@ import { Dropdown } from '@components/primitives/dropdown/Dropdown';
 import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelect';
 import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { Button } from '@rneui/base';
+import { Button } from '@rneui/themed';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { usePlanBuilder } from '../PlanBuilderContext';
@@ -21,21 +21,16 @@ import {
 } from '../plan.types';
 
 interface ChooseCategoryProps {
-    onNext: () => void;
-    onPrev: () => void;
-    onClosePress?: () => void;
+    // init: PlanInitSelection;
   }
   
-  export const ChooseCategory: React.FC<ChooseCategoryProps> = ({onClosePress}) => {
+   export const ChooseCategory: React.FC<ChooseCategoryProps> = () => {
     const { state: planState, dispatch } = usePlanBuilder();
   
     const {  dispatch: screenDispatch } = usePlanScreen();
   
   
-    const onCardioTypeChange = (item: CardioDropdownItem) => {
-      console.log('onCardioTypeChange', item);
-      // setSelectedCardioExercise(item);
-  
+    const onCardioTypeChange = (item: CardioDropdownItem) => {  
       dispatch(
         {
           type: 'SET_PLAN_BASE',
@@ -186,10 +181,8 @@ interface ChooseCategoryProps {
         )}
     
   
-        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
-          <View style={{ width: 200 }}>
-                    <Button disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />
-            </View>
+        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+            <Button style={styles.buttonBase} disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />
         </View>
   
         </>
@@ -198,14 +191,16 @@ interface ChooseCategoryProps {
   
 
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
+    buttonBase: {
+        width: 100,
+        maxWidth: 150
+        },
     button: {
-      backgroundColor: grayDark.gray11,
+      backgroundColor: grayDark.gray12,
       borderRadius: 10,
       padding: 10,
       color: grayDark.gray5,
-      // width: '50%',
-      // marginTop: 10,
     },
     buttonTitle: {
       color: grayDark.gray5,

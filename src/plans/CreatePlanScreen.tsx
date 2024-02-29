@@ -3,8 +3,7 @@ import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Pressable, SafeAreaView, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeAreaView, Text, View } from 'react-native';
 import { PlanBuilderProvider } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
 import { AddPlanDetails } from './steps/AddPlanDetails';
@@ -21,8 +20,6 @@ const getStepNumber = (step: Step) => {
       return 1;
     case Step.Review:
       return 2;
-    case Step.Submit:
-      return 3;
   }
 }
 
@@ -35,22 +32,8 @@ const getStepTitle = (step: Step) => {
       return "Add Plan Details";
     case Step.Review:
       return "Preview";
-    case Step.Submit:
-      return "Submit";
-  }
-}
 
-const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, title: string; onPress: () => void }) => {
-  console.log("disabled", disabled)
-  return (
-    <View style={{ padding: 10 }}>
-      <Pressable disabled={disabled}  style={{ padding: 15, backgroundColor: disabled ? grayDark.gray9 : "white" , borderRadius: 10, maxHeight: 50, alignItems: "center", justifyContent: "center"}} onPress={onPress} >
-      <TouchableOpacity disabled={disabled}>
-      <Text style={{ fontFamily: fonts.inter.black }}>{title}</Text>
-        </TouchableOpacity>
-        </Pressable>
-    </View>
-  );
+  }
 }
 
 
@@ -92,11 +75,7 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
       <View style={{ flex: 12, margin: 10 }}>     
         
         {screenState.currentStep === Step.ChooseCategory && (
-          <ChooseCategory
-            onClosePress={onClosePress}
-            onNext={() => screenDispatch({ type: ActionType.NextStep })}
-            onPrev={() => screenDispatch({ type: ActionType.PrevStep })}
-          />
+          <ChooseCategory/>
         )}
         
         {screenState.currentStep === Step.AddInfo && (
@@ -119,10 +98,10 @@ const ButtonBase = ({ disabled = false, title, onPress }: { disabled?: boolean, 
 export const CreatePlanScreen: React.FC = () => {
   
   return (
-    <PlanScreenProvider>
       <PlanBuilderProvider>
-        <_CreatePlanScreen />
+        <PlanScreenProvider>
+          <_CreatePlanScreen />
+        </PlanScreenProvider>
       </PlanBuilderProvider>
-    </PlanScreenProvider>
   );
 }
