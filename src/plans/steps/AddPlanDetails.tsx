@@ -26,9 +26,7 @@ import {
 
     const [planName, setPlanName] = useState<string>(planState?.name || '');
       const [planDescription, setPlanDescription] = useState<string>(planState?.description || '');
- 
 
-      
     const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
     // const ableToGoNext = planName !== "" && planDescription !== "";
     const ableToGoNext = true; 
@@ -51,7 +49,7 @@ import {
           <Input
             // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
             // label="Name"
-            value={planName}
+            value={planName ?? planState?.name }
             style={{ color: "white", borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular, backgroundColor: grayDark.gray4 }}
             onChangeText={setPlanName}
             placeholderTextColor={grayDark.gray9}
@@ -62,7 +60,7 @@ import {
           <Input
             // label="Description"
             // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
-            value={planDescription}
+            value={ planDescription ?? planState?.description}
             style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}         
             multiline={true}
             placeholderTextColor={grayDark.gray9}
