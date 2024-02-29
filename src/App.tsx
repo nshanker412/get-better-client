@@ -22,8 +22,7 @@ Sentry.init({
 const App = () => {
 	return (
 		<ThemeContextProvider>
-				<AuthProvider routingInstrumentation={routingInstrumentation} />
-
+			<AuthProvider routingInstrumentation={routingInstrumentation} />
 		</ThemeContextProvider>
 	);
 };
