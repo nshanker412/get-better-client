@@ -24,9 +24,6 @@ export type PlanMetadata = {
   extra?: any;
 };
 
-
-
-
 // Define the state shape
 export interface State {
   name: string | null;

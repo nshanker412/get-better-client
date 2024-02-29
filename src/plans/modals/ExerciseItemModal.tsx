@@ -3,20 +3,20 @@ import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { Button } from '@rneui/base';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
-import { usePlanBuilder } from '../PlanBuilderContext';
 import { ExerciseDetail, ExerciseRoutine, repOptions, setOptions, weightOptions } from '../plan.types';
 export interface ExerciseItemModalProps {
     exercise: ExerciseDetail | undefined;
     isOpen: boolean;
     onClose: () => void;
+onSetDataCB: (data: ExerciseRoutine) => void;
   }
 
 
   
-export const ExerciseItemModal: React.FC<ExerciseItemModalProps> = ({ exercise, isOpen, onClose }) => {
+export const ExerciseItemModal: React.FC<ExerciseItemModalProps> = ({ exercise, isOpen, onClose, onSetDataCB }) => {
 
     const [currentWeight, setCurrentWeight] = useState<number | undefined>(undefined);
     const [currentReps, setCurrentReps] = useState<number | undefined>(undefined);
@@ -28,7 +28,7 @@ export const ExerciseItemModal: React.FC<ExerciseItemModalProps> = ({ exercise, 
         return null;
     }
 
-    const { state: planState, dispatch: planDispatch } = usePlanBuilder();
+    // const { state: planState, dispatch: planDispatch } = usePlanBuilder();
 
 
 
@@ -42,22 +42,23 @@ export const ExerciseItemModal: React.FC<ExerciseItemModalProps> = ({ exercise, 
                 notes: currentNotes,
                 init: true
         }
+        onSetDataCB(newRoutine);
 
-        const newRoutineList: ExerciseRoutine[] = planState.routine?.map((item) => {
-            if (item.id === exercise.id) {
-                return newRoutine
-            }
-            return item;
-        });
+        // const newRoutineList: ExerciseRoutine[] = planState.routine?.map((item) => {
+        //     if (item.id === exercise.id) {
+        //         return newRoutine
+        //     }
+        //     return item;
+        // });
 
     
 
-        console.log('newRoutineList', newRoutineList);
-        planDispatch({
-            type: 'SET_PLAN_ROUTINE',
-            payload: newRoutineList
-        });
-        onClose();
+        // console.log('newRoutineList', newRoutineList);
+        // planDispatch({
+        //     type: 'SET_PLAN_ROUTINE',
+        //     payload: newRoutineList
+        // });
+        // onClose();
     }
   
     return (

@@ -1,13 +1,14 @@
 import { Dropdown } from '@components/primitives/dropdown/Dropdown';
 import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelect';
 import { ProgressBar } from '@components/primitives/progress/Progress';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { grayDark, greenDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5, FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Button, Divider, Input, ListItem } from '@rneui/base';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button, Icon, Input, ListItem } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanBuilderProvider, usePlanBuilder } from './PlanBuilderContext';
 import { ActionType, PlanScreenProvider, Step, usePlanScreen } from './PlanScreenContext';
@@ -21,7 +22,6 @@ import {
   ExerciseRoutine,
   PlanCategory,
   WorkoutSubcategoryDropdownItem,
-  findExerciseById,
   findExerciseByName, generateCardioDropdownItems,
   generateExerciseDropdownItems,
   planCategoryDropdownItems,
@@ -51,7 +51,7 @@ const getStepTitle = (step: Step) => {
     case Step.AddInfo:
       return "Add Plan Details";
     case Step.Review:
-      return "Review";
+      return "Preview";
     case Step.Submit:
       return "Submit";
   }
@@ -316,12 +316,12 @@ interface ExerciseListProps {
 }
 
 const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
-  const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
-  const { state: planState } = usePlanBuilder();
+  const [selected, setSelected] = useState<ExerciseDetail | null>(null);
+  const { state: planState, dispatch: dispatchPlan } = usePlanBuilder();
 
-  const closeModal = () => {
-    setSelected(undefined);
-  }
+  // const closeModal = () => {
+  //   setSelected(undefined);
+  // }
 
 
   useEffect(() => {
@@ -334,50 +334,75 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
   }, [planState.routine])
 
 
+  const setDataCB = (data: ExerciseRoutine) => {
+    const newRoutineList: ExerciseRoutine[] = planState.routine?.map((item) => {
+      if (item.id === data.id) {
+        return data
+      }
+      return item;
+    });
+
+    dispatchPlan({
+      type: 'SET_PLAN_ROUTINE',
+      payload: newRoutineList
+    });
+    closeModal();
+  }
+
+  const closeModal = () => setSelected(null);
+
+
   return (
     <>
-      {
-        list?.map((item, index) => (
-          <ListItem.Accordion
-          bottomDivider
-            key={item.id} 
-            style={{ borderRadius: 8}}
-            icon={{ name: 'check-circle', type: 'font-awesome-5', color: planState.routine[index].init ? greenDark.green11 : grayDark.gray8 }}
-            animation={true}
-            content={
-              <ListItem.Content style={{borderRadius: 8}}>
-                <ListItem.Title style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular  }}>{item?.name}</ListItem.Title>
-              </ListItem.Content>
-            }
-            isExpanded={false}
-            onPress={() =>   setSelected(list[index])}
-            containerStyle={{ backgroundColor: grayDark.gray5 , borderRadius: 2}} // Replace 'gray' with your actual color variable
+      {list?.map((item, index) => (
+        <React.Fragment key={item.id}>
+          <ListItem
+            bottomDivider
+            style={{ borderRadius: 8 }}
+            containerStyle={{ backgroundColor: grayDark.gray5, borderRadius: 2}} 
+            onPress={() => setSelected(item)}
           >
-            <ExerciseItemModal key={ `${item.id}-modal`} exercise={selected} isOpen={selected !== undefined} onClose={closeModal} />
-
-          </ListItem.Accordion>
-        ))
-
-      }
-      
+            <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <ListItem.Title style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, flex: 1 }}>
+              {item?.name}
+            </ListItem.Title>
+            <FontAwesome5
+              name="check-circle"
+              size={24}
+              color={planState.routine[index].init ? greenDark.green11 : grayDark.gray8}
+            />
+          </ListItem.Content>
+          </ListItem>
+          {selected?.id === item.id && (
+            <ExerciseItemModal
+              key={`${item.id}-modal`}
+              exercise={selected}
+              isOpen={selected !== undefined}
+              onClose={closeModal}
+              onSetDataCB={setDataCB}
+            />
+          )}
+        </React.Fragment>
+      ))}
     </>
   );
 };
 
 interface ReviewExerciseListProps {
-  list: ExerciseRoutine[];
+  routines: ExerciseRoutine[];
   category: ExerciseMainCategory;
+  list: ExerciseDetail[];
   onInitChanged: (ready: boolean) => void;
 }
 
-const ReviewExerciseList: React.FC<ReviewExerciseListProps> = ({ list , category, onInitChanged}) => {
+const ReviewExerciseList: React.FC<ReviewExerciseListProps> = ({ list , routines, category, onInitChanged}) => {
   const [selected, setSelected] = useState<ExerciseDetail | undefined>(undefined);
   const { state: planState } = usePlanBuilder();
+
 
   const closeModal = () => {
     setSelected(undefined);
   }
-
 
   useEffect(() => {
     planState.routine.forEach((item) => {
@@ -387,58 +412,77 @@ const ReviewExerciseList: React.FC<ReviewExerciseListProps> = ({ list , category
       }
     });
   }, [planState.routine])
+  const [expanded, setExpanded] = useState<string | null>(null);
 
+  const onAccordionPress = (id: string) => {
+    if (expanded === id) {
+      setExpanded(null);
+    } else {
+      setExpanded(id);
+    }
+  }
 
 
   return (
-    <View style={{ flex: 1 , width: "100%", backgroundColor: grayDark.gray10}}> 
+    <View style={{ flex: 1, width: "100%" }}> 
+      <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Exercises</Text>
     <> 
       {
-        list?.map((item, index) => {
-  
-          const [expanded, setExpanded] = useState(false);
-          <ListItem.Accordion
-            key={index}
-            content={
+          list?.map((item, index) => {
+          
+
+            console.log('item',index,  item);
+            return (
               <>
-                <Icon name="place" size={30} />
-                <ListItem.Content>
-                  <ListItem.Title>{ findExerciseById(category, item.id)!.name}</ListItem.Title>
-                </ListItem.Content>
+                              <Divider key={`review-div-${index}`}/>
+
+              <ListItem.Accordion
+                key={`review-li-${index}`}
+                content={
+                  <>
+                    
+                    <FontAwesome6 style={{paddingRight: 10}} name="dumbbell" size={24} color="black"  />
+                    <ListItem.Content>
+
+                      <ListItem.Title>{ item.name}</ListItem.Title>
+                    </ListItem.Content>
+                  </>
+                }
+                isExpanded={expanded === `${item.id}`}
+                onPress={
+                  () => onAccordionPress(`${item.id}`)
+                }
+                >
+                  <>
+              
+                  {item.reps && item.sets && item.weight && (
+                      <ListItem key={ `${item.id}-li1`} onPress={() => { }} bottomDivider>
+                      <ListItem.Content>
+                        <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Routine"}</ListItem.Title>
+                        <ListItem.Subtitle>{item.sets} Sets of {item.reps} reps of {item.weight} Lbs</ListItem.Subtitle>
+                      </ListItem.Content>
+                      <ListItem.Chevron />
+                    </ListItem>
+                  )}
+                
+                    {item.notes && (
+                      <ListItem key={ `${item.id}-li2`} onPress={() => { }} bottomDivider>
+                    <ListItem.Content>
+                      <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Notes"}</ListItem.Title>
+                      <Text style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{item.notes}</Text>
+                    </ListItem.Content>
+
+                    <ListItem.Chevron />
+                      </ListItem>
+                    )
+                  }
+                  </>
+                  </ListItem.Accordion>
+                  
+                
               </>
-            }
-            isExpanded={expanded}
-            onPress={() => {
-              setExpanded(!expanded);
-            }}
-          >
-          
-              {item.reps && item.sets && item.weight && (
-                <ListItem onPress={() => { }} bottomDivider>
-                  <ListItem.Content>
-                    <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Routine"}</ListItem.Title>
-                    <ListItem.Subtitle>{item.sets} Sets of {item.reps} reps of {item.weight} Lbs</ListItem.Subtitle>
-                  </ListItem.Content>
-                  <ListItem.Chevron />
-                </ListItem>
-              )}
-            
-              {item.notes && <ListItem onPress={() => { }} bottomDivider>
-                <ListItem.Content>
-                  <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{"Notes"}</ListItem.Title>
-                  <Text style={{ color: grayDark.gray10, fontFamily: fonts.inter.regular, fontSize: 18 }}>{item.notes}</Text>
-                </ListItem.Content>
-
-                <ListItem.Chevron />
-              </ListItem>
-              }
-          
-        
-          </ListItem.Accordion>
-    
-  
+                )
         })
-
       }
       </>
     </View>
@@ -517,7 +561,9 @@ const AddPlanDetails: React.FC = () => {
   const [planDescription, setPlanDescription] = useState<string>(planState?.init?.planDescription || '');
   const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
   // const ableToGoNext = planName !== "" && planDescription !== "";
-  const ableToGoNext  = true; 
+  const ableToGoNext = true; 
+  
+  const { username: myUsername } = useMyUserInfo();
 
 
   const onNext = () => {
@@ -536,10 +582,10 @@ const AddPlanDetails: React.FC = () => {
           // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
           // label="Name"
           value={planName}
-          style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}
+          style={{ color: "white", borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular, backgroundColor: grayDark.gray4 }}
           onChangeText={setPlanName}
           placeholderTextColor={grayDark.gray9}
-          placeholder=" e.g. leg destroyer"
+          placeholder={`e.g. ${myUsername}'s leg destroyer`}
         />
        <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Description</Text>
 
@@ -647,7 +693,7 @@ const Review: React.FC = () => {
 
       <View style={{ flex: 1,  width: "100%", padding: 20 }}>
         {planState.init.planCategory === PlanCategory.Workout && planState.init.planCategory && (
-            <ReviewExerciseList category={ planState.init.subcategory} list={planState.init.selectedExercises} onInitChanged={() => {}} />
+            <ReviewExerciseList category={ planState.init.subcategory} list={planState.init.selectedExercises} routines={planState.routine} onInitChanged={() => {}} />
         )}
       </View>
 
