@@ -43,7 +43,7 @@ interface ReviewExerciseListProps {
         setExpanded(id);
       }
     }
-  
+
   
     return (
       <View style={{ flex: 1, width: "100%" }}> 
@@ -76,7 +76,7 @@ interface ReviewExerciseListProps {
                   >
                     <>
                 
-                    {item.reps && item.sets && item.weight && (
+                    {item.reps!==undefined && item.sets !==undefined && item.weight!== undefined && (
                         <ListItem key={`${item.id}-li1`} onPress={() => { }} topDivider bottomDivider>
                         <ListItem.Content >
                           <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>{"Routine"}</ListItem.Title>
