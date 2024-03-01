@@ -16,10 +16,12 @@ import { ExerciseItemModal } from '../modals/ExerciseItemModal';
 import {
   ExerciseDetail,
   ExerciseRoutine,
-  PlanCategory
+  PlanCategory,
+  nutrition
 } from '../plan.types';
 
-  
+import { AntDesign } from '@expo/vector-icons';
+import { ScrollView } from 'react-native-gesture-handler';
   export const AddPlanDetails: React.FC = () => {
     const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
     const { dispatch: screenDispatch } = usePlanScreen();
@@ -76,6 +78,85 @@ import {
             <>
               <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Exercise Details</Text>
               < ExerciseList list={planState.init.selectedExercises} onInitChanged={(ready) => setIsExerciseReady(ready)}/>
+              </>
+          )}
+          
+          {planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.selectedNutritionFoodGroups && (
+            <>
+
+              <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Customize</Text>
+              <ScrollView>
+
+
+              {planState.init.selectedNutritionFoodGroups.map((item) => {
+                const foodGroupList = nutrition[item]
+                console.log("foodGroupList", foodGroupList);
+
+
+                const [selectedFoodGroup, setSelectedFoodGroup] = useState<string | null>(null);
+
+
+                const onPressGroup = (group: string) => {
+                  if (selectedFoodGroup === group) {
+                    setSelectedFoodGroup(null);
+                  } else {
+                    setSelectedFoodGroup(group);
+                  }
+                }
+                
+                //set of added foods 
+                 const [selectedFoods, setSelectedFoods] = useState<string[]>([]);
+
+              
+                return (
+                  <ListItem.Accordion
+                    key={`${item}-nutrition-food-group-accordion`}
+                    bottomDivider
+                    style={{ borderRadius: 8, backgroundColor: grayDark.gray5, borderColor: grayDark.gray5, overflow:  "hidden" }}
+                    containerStyle={{ borderRadius: 8 , backgroundColor: grayDark.gray12, borderColor: grayDark.gray5}}
+              
+                    isExpanded={item ==selectedFoodGroup}
+                    onPress={() => onPressGroup(item)}
+                    
+                    content={
+                      <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+                        <ListItem.Title
+                          style={{ color: grayDark.gray4, fontFamily: fonts.inter.bold, fontSize: 19, flex: 1, }}
+                        > 
+                          {item}
+                        </ListItem.Title>
+              
+                      </ListItem.Content>
+                    }
+                  >
+
+                    <>
+                      {foodGroupList?.map((foodGroup) => {
+                        return (
+                          <ListItem key={foodGroup.id}
+                            bottomDivider style={{ borderRadius: 8, borderColor: grayDark.gray5, backgroundColor: 'transparent' }}
+                            containerStyle={{ borderRadius: 2 , backgroundColor: grayDark.gray11 , width: "95%", alignSelf: "center"}}
+                          >
+                            
+                            <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+                              <ListItem.Title style={{ color: grayDark.gray7, fontFamily: fonts.inter.medium, fontSize: 15, flex: 1 }}>
+                                {foodGroup?.name}
+
+                              </ListItem.Title>
+                              <AntDesign name="pluscircleo" size={24} color="green" />
+                            </ListItem.Content>
+                          </ListItem>
+                        )
+                      })}
+                    </>
+                    </ListItem.Accordion>
+                )
+              
+              }
+                )}
+              </ScrollView>
+
+
               </>
           )}
         </View>

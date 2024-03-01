@@ -497,12 +497,12 @@ export const nutrition: NutritionCategories = {
             
     ],
     Vegetables: [
-        { id: "ve-001", name: "Broccoli", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
-        { id: "ve-002", name: "Carrots", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 20, fats: 0, calories: 100},
-        { id: "ve-003", name: "Mushroom", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
+        { id: "ve-001", name: "Broccoli", type: FoodGroupsMainCategory.Vegetables , protien: 1, carbs: 30, fats: 0, calories: 100},
+        { id: "ve-002", name: "Carrots", type: FoodGroupsMainCategory.Vegetables, protien: 1, carbs: 20, fats: 0, calories: 100},
+        { id: "ve-003", name: "Mushroom", type: FoodGroupsMainCategory.Vegetables , protien: 1, carbs: 30, fats: 0, calories: 100},
     ],
     Water: [
-        { id: "wa-001", name: "Water", type: FoodGroupsMainCategory.Fruits , protien: 0, carbs: 0, fats: 0, calories: 0},
+        { id: "wa-001", name: "Water", type: FoodGroupsMainCategory.Water , protien: 0, carbs: 0, fats: 0, calories: 0},
         ],
     Shakes: [
         { id: "sm-001", name: "Whey Protein Shake", type: FoodGroupsMainCategory.Shakes , protien: 30, carbs: 0, fats: 5, calories: 200},
@@ -531,7 +531,7 @@ export interface NutritionFoodGroupsDropdownItem {
     label: string;
     value: string;
     type: FoodGroupsMainCategory;
-    icon?: string; // Optional
+    icon?: string; 
 }
 
 export const nutritionFoodGroupsDropdownItems: NutritionFoodGroupsDropdownItem[] = Object.entries(FoodGroupsMainCategory).map(([key, value]) => ({
@@ -542,6 +542,17 @@ export const nutritionFoodGroupsDropdownItems: NutritionFoodGroupsDropdownItem[]
 
 
 
+// export function genFoodDropdownItems(category: FoodGroupsMainCategory): ExerciseDropdownItem[] {
+//     const exerciseDetails = ( as FoodGroupsMainCategory)[category];
+    
+//         return {
+//             label: detail.name, 
+//             value: detail.name, 
+//             excerise: detail,
+//             type: exerciseType,
+//         };
+//     });
+// }
 
 
 

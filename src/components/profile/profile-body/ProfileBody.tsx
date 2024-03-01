@@ -71,16 +71,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 						id: plan.id,
 						title: plan.planName,
 						planType: plan.data.planCategory,
-					}));
-				
-				
-				planList.forEach((plan) => {
-					console.log("+++++++++++++++++++++++++++++++++")
-					console.log(plan)
-				}
-				)
-				
-				
+					}));			
 					
 					if (isMyProfile) {
 						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];

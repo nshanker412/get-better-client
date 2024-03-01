@@ -168,17 +168,15 @@ interface ChooseCategoryProps {
      const onFoodGroupsChange = (items: string[]) => {
        if (planState.init?.subcategory && items.length > 0) {
 
-
          dispatch(
            {
              type: 'SET_PLAN_BASE',
              payload: {
                init: {
-                 ...planState.init,
-                 selectedExercises: null,
-                 selectedCardioExercise: null,
-                  selectedNutritionFoodGroups: items ,
-
+                  ...planState.init,
+                  selectedExercises: null,
+                  selectedCardioExercise: null,
+                  selectedNutritionFoodGroups: items,
                },
                routine: []
   
@@ -202,9 +200,13 @@ interface ChooseCategoryProps {
   
     const cardoSet = planState?.init?.planCategory === PlanCategory.Cardio && planState?.init?.selectedCardioExercise !== undefined;
     const workoutSet = planState?.init?.planCategory === PlanCategory.Lifting && planState?.init?.selectedExercises && planState?.init?.selectedExercises?.length > 0 && planState?.init?.subcategory !== undefined;
-    const nutritionSet = planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.subcategory !== undefined;
+     
+     const nutritionSet = planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.subcategory !== undefined 
+     const nutritionCustomSet = planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.subcategory !== undefined && planState?.init?.selectedNutritionFoodGroups && planState?.init?.selectedNutritionFoodGroups?.length > 0;
+
+     const nutritionFullSet = planState?.init?.subcategory === NutritionPlanMainCategory.Custom ? nutritionCustomSet : nutritionSet;
   
-    const canGoNext = cardoSet || workoutSet || nutritionSet;
+    const canGoNext = cardoSet || workoutSet || nutritionFullSet;
     return (
       <>
           <Dropdown<CategoryDropdownItem>
@@ -265,7 +267,23 @@ interface ChooseCategoryProps {
                 icon="food-apple"
                 placeholder = "Choose your food groups..."
 
-                key="exerciseType"
+                key="foodGroups"
+                label="Exercise"
+                initial={
+                  planState.init.selectedExercises 
+                  ? planState.init.selectedExercises.map(exercise => exercise.name) 
+                    : []
+                }
+                data={nutritionFoodGroupsDropdownItems}
+                onSelectionChange={onFoodGroupsChange}
+                />
+            )}
+            {planState.init.subcategory == NutritionPlanMainCategory.Custom && (
+              <MultiSelectComponent<NutritionFoodGroupsDropdownItem>
+                icon="food-apple"
+                placeholder = "Choose your food groups..."
+
+                key=""
                 label="Exercise"
                 initial={
                   planState.init.selectedExercises 
@@ -279,14 +297,14 @@ interface ChooseCategoryProps {
  
             </>
         )}
-    <View style={{ paddingBottom: 10, flex: 1, flexDirection: "row", justifyContent: 'flex-end', width:"100%", alignItems: 'flex-end' }}>
-        <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-            <Button type="outline" buttonStyle={{backgroundColor:redDark.red2, borderColor: redDark.red10, borderWidth: 2, borderRadius: 8} } style={styles.buttonBase}  titleStyle={{color: redDark.red11, fontFamily: fonts.inter.bold}} title="Exit"  onPress={handleBackPress} />
-        </View>
-        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-            <Button style={styles.buttonBase} disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />
-                </View>
+        <View style={{ paddingBottom: 10, flex: 1, flexDirection: "row", justifyContent: 'flex-end', width:"100%", alignItems: 'flex-end' }}>
+          <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+              <Button type="outline" buttonStyle={{backgroundColor:redDark.red2, borderColor: redDark.red10, borderWidth: 2, borderRadius: 8} } style={styles.buttonBase}  titleStyle={{color: redDark.red11, fontFamily: fonts.inter.bold}} title="Exit"  onPress={handleBackPress} />
             </View>
+            <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <Button style={styles.buttonBase} disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />
+          </View>
+        </View>
   
         </>
     );

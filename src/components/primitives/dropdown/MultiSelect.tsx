@@ -68,7 +68,6 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, 
         searchPlaceholder="Search..."
         onChange={(item) => {
             setSelected(item);
-            
         }}
         renderItem={renderItem}
         renderSelectedItem={(item, unSelect) => (

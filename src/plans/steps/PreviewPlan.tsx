@@ -141,7 +141,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                 <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.init.planCategory}</Card.FeaturedSubtitle>
                 {planState.media?.length && (
                     <>
-                                <Card.Divider style={{marginBottom: 2}} />
+                    <Card.Divider style={{marginBottom: 2}} />
                     <Card.Image style={{  backgroundColor: "transparent", width: "100%"}} >
                         <MediaTile media={planState.media[0]} />
                     </Card.Image>
