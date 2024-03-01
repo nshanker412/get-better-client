@@ -1,6 +1,6 @@
 // PlanContext.tsx
 import React, { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react';
-import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, PlanCategory } from './plan.types';
+import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, NutritionPlanMainCategory, PlanCategory } from './plan.types';
 
 export type MediaSource = {
   id: string;
@@ -10,9 +10,10 @@ export type MediaSource = {
 
 export type PlanInitSelection = {
   planCategory: PlanCategory | null;
-  subcategory: ExerciseMainCategory | null;
+  subcategory: ExerciseMainCategory | NutritionPlanMainCategory| null;
   selectedExercises: ExerciseDetail[] | null;
   selectedCardioExercise: CardioExerciseDetail | null;
+  selectedNutritionFoodGroups: FoodGroupsMainCategory[] | null;
 };
 
 export type PlanMetadata = {
@@ -25,7 +26,7 @@ export type PlanMetadata = {
 };
 
 // Define the state shape
-export interface State {
+export interface PlanBuilderState {
   name: string | null;
   init: PlanInitSelection;
   description: string | null;
@@ -45,12 +46,13 @@ type Action =
   | { type: 'RESET' };
 
 // Initial state
-const initialState: State = {
+const initialState: PlanBuilderState = {
   init: {
     planCategory: null,
     subcategory: null,
     selectedExercises: [],
     selectedCardioExercise: null,
+    selectedNutritionFoodGroups: null,
   },
   routine:  [],
   description: null,
@@ -64,7 +66,7 @@ const initialState: State = {
 };
 
 // Reducer function
-function planReducer(state: State, action: Action): State {
+function planReducer(state: PlanBuilderState, action: Action): PlanBuilderState {
   switch (action.type) {
     case 'SET_PLAN_BASE':
       return { ...state, init: action.payload.init, routine: action.payload.routine};
@@ -84,7 +86,7 @@ function planReducer(state: State, action: Action): State {
 }
 
 // Create context with undefined initial value
-const PlanContext = createContext<{ state: State; dispatch: Dispatch<Action> } | undefined>(undefined);
+const PlanContext = createContext<{ state: PlanBuilderState; dispatch: Dispatch<Action> } | undefined>(undefined);
 
 // Context provider component
 interface PlanProviderProps {

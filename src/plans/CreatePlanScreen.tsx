@@ -44,11 +44,6 @@ const getStepTitle = (step: Step) => {
     const { state: screenState, dispatch: screenDispatch } = usePlanScreen();
     
 
-    useEffect(() => {
-      console.log(screenState.currentStep);
-    }, [screenState.currentStep]);
-      
-
 
   useEffect(() => {
     return () => {
@@ -66,14 +61,13 @@ const getStepTitle = (step: Step) => {
     }
 
   return (
-    <SafeAreaView style={{ flex: 1, width:"100%", height:"100%" }}>
+    <SafeAreaView style={{ flex: 1, width:"100%", height:"100%", }}>
       <View style={{ flex: 1, padding: 10, justifyContent: "space-around"}}>
         <ProgressBar totalSteps={3} currentStep={getStepNumber(screenState.currentStep)} />
           <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(screenState.currentStep)}</Text>
       </View>
-      <View style={{flex: 1}} />
       
-      <View style={{ flex: 12, margin: 10 }}>     
+      <View style={{ flex: 14, margin: 10 }}>     
         
         {screenState.currentStep === Step.ChooseCategory && (
           <ChooseCategory/>

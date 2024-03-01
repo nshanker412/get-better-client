@@ -12,6 +12,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { PlanModel } from 'src/plans/models/plan';
 import { useProfileBodyStyles } from './ProfileBody.styles';
 import { ProfileBodyProps } from './ProfileBody.types';
 import { ConnectedPlanItem } from './plan-list/plan-item/ConnectedPlanItem';
@@ -22,7 +23,12 @@ interface PlanTileType {
 	planType: PlanType;
 	title: string;
 }
+
+
+
+ 
   
+
 const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 	const profileBodyStyles = useProfileBodyStyles();
 
@@ -50,10 +56,52 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const { theme } = useThemeContext();
 	const profileBodyStyles = useProfileBodyStyles();
 	const ProfileTab = createMaterialTopTabNavigator();
-	const [pla, setPla] = useState<PlanTileType[] | []> ([]);
+	const [pla, setPla] = useState<PlanTileType[] | []>([]);
+	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
 	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
 
 	const navig = useNavigation();
+
+	useEffect(() => {
+		const fetchV2 = async () => {
+			console.log(username)
+			try {
+				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
+					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanModel) => ({
+						id: plan.id,
+						title: plan.planName,
+						planType: plan.data.planCategory,
+					}));
+				
+				
+				planList.forEach((plan) => {
+					console.log("+++++++++++++++++++++++++++++++++")
+					console.log(plan)
+				}
+				)
+				
+				
+					
+					if (isMyProfile) {
+						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
+						const newArr = [...newPlan, ...planList];
+
+						setPlaV2(newArr);
+
+					} else {
+						setPlaV2(planList);
+					}
+			} catch (error) {
+				console.log("couldnt fetch v2 plans", error);
+			}
+		}
+		fetchV2();	
+	}, [username, isMyProfile]);
+
+
+
+
+
 	
 	useEffect(() => {
 		const foo = async () => {
@@ -93,7 +141,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		}
 	}
 
-	const PlanItem = ({ item }) => {
+	const PlanItem = ({ item  }) => {
 		console.log(item)
 		return (
 			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
@@ -116,7 +164,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 						<View style={[profileBodyStyles.scrollInnerContainer, {flex: 1, width: Dimensions.get("screen").width, height: 500, minHeight: 500}]}>
 								<FlashList 
 									estimatedItemSize={100}
-									data={pla}
+									data={plaV2}
 									numColumns={2}
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}

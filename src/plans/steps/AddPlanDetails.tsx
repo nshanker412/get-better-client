@@ -14,9 +14,9 @@ import { MediaSource, usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
 import { ExerciseItemModal } from '../modals/ExerciseItemModal';
 import {
-    ExerciseDetail,
-    ExerciseRoutine,
-    PlanCategory
+  ExerciseDetail,
+  ExerciseRoutine,
+  PlanCategory
 } from '../plan.types';
 
   
@@ -29,8 +29,7 @@ import {
 
     const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
     // const ableToGoNext = planName !== "" && planDescription !== "";
-    const ableToGoNext = true; 
-    
+      const ableToGoNext = planName !== ""; 
     const { username: myUsername } = useMyUserInfo();
   
   
@@ -44,7 +43,7 @@ import {
       <View style={{ flex: 1, width: "100%", height: "100%" }}>
    
   
-        <View style={{ flex: 1, justifyContent: 'center', width:"100%"  }}>
+        <View style={{ flex: 1, justifyContent: 'center', width:"100%" , paddingTop: 20, minWidth: "80%" }}>
         <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Name</Text>
           <Input
             // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
@@ -73,7 +72,7 @@ import {
           
      
   
-          {planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises && (
+          {planState?.init?.planCategory === PlanCategory.Lifting && planState?.init?.selectedExercises && (
             <>
               <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Exercise Details</Text>
               < ExerciseList list={planState.init.selectedExercises} onInitChanged={(ready) => setIsExerciseReady(ready)}/>
@@ -89,11 +88,13 @@ import {
                 <MediaPicker />
   
           </View>
-        <View style={{ flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', flexDirection: "row" }}>
-                <Button style={ buttonStyles.buttonBase}  buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
-
+        <View style={{ flex: 1, justifyContent: 'flex-end', width: "100%",  alignItems: 'flex-end', flexDirection: "row", paddingBottom: 10 }}>
+               <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                <Button style={buttonStyles.buttonBase} buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle} title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
+                </View>
+                <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
             <Button style={ buttonStyles.buttonBase}   buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  disabled={ !ableToGoNext} title="Next" onPress={onNext} />
- 
+                </View> 
         </View>
       </View>
     );
@@ -145,7 +146,7 @@ interface ExerciseListProps {
         {list?.map((item, index) => (
           <React.Fragment key={item.id}>
             <ListItem
-              bottomDivider
+                    bottomDivider
               style={{ borderRadius: 8 }}
               containerStyle={{ backgroundColor: grayDark.gray5, borderRadius: 2}} 
               onPress={() => setSelected(item)}
@@ -214,8 +215,6 @@ export const MediaPicker: React.FC = () => {
           dispatchPlan({ type: 'SET_PLAN_MEDIA', payload: null });
         }
       }
-
-
 
 
     const pickMedia = async () => {

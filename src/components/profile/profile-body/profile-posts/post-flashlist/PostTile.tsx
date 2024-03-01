@@ -1,7 +1,6 @@
 import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
-import * as Sentry from '@sentry/react-native';
 import { ResizeMode, Video } from 'expo-av';
 import { Image, ImageErrorEventData } from 'expo-image';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
@@ -292,13 +291,13 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
 
     const onVideoError = (error: string) => {   
         console.log('Video error: ', error)
-        Sentry.captureException(error)
+        // Sentry.captureException(error)
     }
 
 
     const onImageError = (error: ImageErrorEventData) => {   
         console.log('Video error: ', error)
-        Sentry.captureException(error)
+        // Sentry.captureException(error)
 
     }
 

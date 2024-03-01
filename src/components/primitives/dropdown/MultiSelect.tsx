@@ -21,7 +21,8 @@ export interface BaseDropdownItem {
 
 
 export interface DropdownProps<T extends BaseDropdownItem> {
-    label: string;
+  label: string;
+  placeholder: string;
   data: T[];
   initial: string[];
     onSelectionChange: (items: T[]) => void;
@@ -30,7 +31,7 @@ export interface DropdownProps<T extends BaseDropdownItem> {
     search?: boolean;
   }
 
-export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, initial, data, onSelectionChange, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
+export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, label, initial, data, onSelectionChange, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
   const [selected, setSelected] = useState<T[]>([]);
 
   const renderItem = (item: any) => {
@@ -61,7 +62,7 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ label, initia
         labelField="label"
         valueField="value"
         label="search"
-        placeholder={selected.length ? `(${selected.length}) Selected` : "Choose your exercises..."}
+        placeholder={selected.length ? `(${selected.length}) Selected` : placeholder}
         value={selected}
         search={search}
         searchPlaceholder="Search..."

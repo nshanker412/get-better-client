@@ -1,33 +1,45 @@
 import { Dropdown } from '@components/primitives/dropdown/Dropdown';
 import { MultiSelectComponent } from '@components/primitives/dropdown/MultiSelect';
-import { grayDark } from '@context/theme/colors_neon';
+import { grayDark, redDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
+import { useNavigation } from '@react-navigation/native';
 import { Button } from '@rneui/themed';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
 import {
-    CardioDropdownItem,
-    CategoryDropdownItem,
-    ExerciseDetail,
-    ExerciseDropdownItem,
-    PlanCategory,
-    WorkoutSubcategoryDropdownItem,
-    findExerciseByName, generateCardioDropdownItems,
-    generateExerciseDropdownItems,
-    planCategoryDropdownItems,
-    workoutSubcategoryDropdownItems
+  CardioDropdownItem,
+  CategoryDropdownItem,
+  ExerciseDetail,
+  ExerciseDropdownItem,
+  NutritionFoodGroupsDropdownItem,
+  NutritionPlanMainCategory,
+  NutritionSubcategoryDropdownItem,
+  PlanCategory,
+  WorkoutSubcategoryDropdownItem,
+  findExerciseByName, generateCardioDropdownItems,
+  generateExerciseDropdownItems,
+  nutritionFoodGroupsDropdownItems,
+  nutritionSubcategoryDropdownItems,
+  planCategoryDropdownItems,
+  workoutSubcategoryDropdownItems
 } from '../plan.types';
+
+
+// import { MaterialCommunityIcons } from '@expo/vector-icons';
+{/* <MaterialCommunityIcons name="food-apple" size={24} color="black" /> */}
+
 
 interface ChooseCategoryProps {
     // init: PlanInitSelection;
   }
   
    export const ChooseCategory: React.FC<ChooseCategoryProps> = () => {
-    const { state: planState, dispatch } = usePlanBuilder();
-  
-    const {  dispatch: screenDispatch } = usePlanScreen();
+    const { state: planState, dispatch: dispatch } = usePlanBuilder();
+       const { dispatch: screenDispatch } = usePlanScreen();
+       const navigation = useNavigation();
+       
   
   
     const onCardioTypeChange = (item: CardioDropdownItem) => {  
@@ -63,6 +75,7 @@ interface ChooseCategoryProps {
               subcategory: null,
               selectedExercises: [],
               selectedCardioExercise: null,
+              selectedNutritionFoodGroups: null,
             },
             routine: [],
           }
@@ -70,29 +83,53 @@ interface ChooseCategoryProps {
       );
     }
   
-    const onSubcategoryChange = (item: WorkoutSubcategoryDropdownItem) => {
-      console.log('onSubcategoryChange', item);
-      // setSelectedSubcategory(item.type);
-      dispatch(
-        {
-          type: 'SET_PLAN_BASE',
-          payload: {
-            init: {
-              planCategory: PlanCategory.Workout,
-              subcategory: item.type,
-              selectedExercises: [],
-              selectedCardioExercise: null,
-            },
-            routine: [],
-          }
-        }
-      );
-    }
+     const onSubcategoryChange = (item: WorkoutSubcategoryDropdownItem | NutritionSubcategoryDropdownItem) => {
+       console.log('onSubcategoryChange', item);
+
+       if (planState.init?.planCategory === PlanCategory.Lifting) {
+         dispatch(
+           {
+             type: 'SET_PLAN_BASE',
+             payload: {
+               init: {
+                 planCategory: PlanCategory.Lifting,
+                 subcategory: item.type,
+                 selectedExercises: [],
+                 selectedCardioExercise: null,
+                 selectedNutritionFoodGroups: null,
+               },
+               routine: [],
+             }
+           }
+         );
+       }
+       // otherwise nutrition
+     else if (planState.init?.planCategory === PlanCategory.Nutrition) {
+         dispatch(
+           {
+             type: 'SET_PLAN_BASE',
+             payload: {
+               init: {
+                 planCategory: PlanCategory.Nutrition,
+                 subcategory: item.type,
+                 selectedExercises: null,
+                 selectedCardioExercise: null,
+                 selectedNutritionFoodGroups: [],
+               },
+               routine: [],
+             }
+           }
+         );
+
+       }
+     }
   
     const onExercisesChange = (items: string[]) => {
       console.log('onSubcategoryChange', items);
-        if (planState.init?.subcategory && items.length > 0) {
-          const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(planState.init.subcategory!, ex)!);
+      if (planState.init?.subcategory && items.length > 0) {
+        const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(planState.init.subcategory!, ex)!);
+
+      
           console.log('exerciseList', exerciseList);
           // setSelectedExercises(exerciseList!);
   
@@ -115,6 +152,8 @@ interface ChooseCategoryProps {
                   ...planState.init,
                   selectedExercises: exerciseList,
                   selectedCardioExercise: null,
+                  selectedNutritionFoodGroups: null,
+
                 },
                 routine: routines
   
@@ -124,15 +163,46 @@ interface ChooseCategoryProps {
         }
       }
   
+     
+       
+     const onFoodGroupsChange = (items: string[]) => {
+       if (planState.init?.subcategory && items.length > 0) {
+
+
+         dispatch(
+           {
+             type: 'SET_PLAN_BASE',
+             payload: {
+               init: {
+                 ...planState.init,
+                 selectedExercises: null,
+                 selectedCardioExercise: null,
+                  selectedNutritionFoodGroups: items ,
+
+               },
+               routine: []
+  
+             }
+           }
+         );
+      
+     }
+      }
+  
   
     const handleNextPress = () => {
       screenDispatch({ type: ActionType.NextStep });
     }
-  
+       
+    const handleBackPress = () => {
+        screenDispatch({ type: ActionType.Reset });
+        dispatch({ type: ActionType.Reset });
+        navigation.goBack();
+      }
   
     const cardoSet = planState?.init?.planCategory === PlanCategory.Cardio && planState?.init?.selectedCardioExercise !== undefined;
-    const workoutSet = planState?.init?.planCategory === PlanCategory.Workout && planState?.init?.selectedExercises && planState?.init?.selectedExercises?.length > 0 && planState?.init?.subcategory !== undefined;
-    const nutritionSet = planState?.init?.planCategory === PlanCategory.Nutrition;
+    const workoutSet = planState?.init?.planCategory === PlanCategory.Lifting && planState?.init?.selectedExercises && planState?.init?.selectedExercises?.length > 0 && planState?.init?.subcategory !== undefined;
+    const nutritionSet = planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.subcategory !== undefined;
   
     const canGoNext = cardoSet || workoutSet || nutritionSet;
     return (
@@ -145,9 +215,10 @@ interface ChooseCategoryProps {
             data={planCategoryDropdownItems}
             onSelectionChange={onCategorySelectionChange}
            />
-          {planState.init.planCategory === PlanCategory.Workout && (
+          
+        {planState.init.planCategory === PlanCategory.Lifting && (
             <>
-              <Dropdown
+            <Dropdown
               key="subcategory"
               placeholder={planState.init.subcategory ?? "select type"}
                 label="Workout Type"
@@ -159,6 +230,7 @@ interface ChooseCategoryProps {
                 icon="weight-lifter"
                 key="exerciseType"
                 label="Exercise"
+                placeholder = "Choose your exercises..."
                 initial={
                   planState.init.selectedExercises 
                   ? planState.init.selectedExercises.map(exercise => exercise.name) 
@@ -179,11 +251,42 @@ interface ChooseCategoryProps {
               />
               </>
         )}
-    
-  
+         {planState.init.planCategory === PlanCategory.Nutrition && (
+            <>
+              <Dropdown<NutritionSubcategoryDropdownItem> 
+                key="subcategory"
+                placeholder={planState.init.subcategory ?? "select type"}
+                label="Plan"
+              data={nutritionSubcategoryDropdownItems} 
+                onSelectionChange={onSubcategoryChange}
+            />
+              {planState.init.subcategory == NutritionPlanMainCategory.Custom && (
+              <MultiSelectComponent<NutritionFoodGroupsDropdownItem>
+                icon="food-apple"
+                placeholder = "Choose your food groups..."
+
+                key="exerciseType"
+                label="Exercise"
+                initial={
+                  planState.init.selectedExercises 
+                  ? planState.init.selectedExercises.map(exercise => exercise.name) 
+                    : []
+                }
+                data={nutritionFoodGroupsDropdownItems}
+                onSelectionChange={onFoodGroupsChange}
+                />
+              )}
+ 
+            </>
+        )}
+    <View style={{ paddingBottom: 10, flex: 1, flexDirection: "row", justifyContent: 'flex-end', width:"100%", alignItems: 'flex-end' }}>
+        <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+            <Button type="outline" buttonStyle={{backgroundColor:redDark.red2, borderColor: redDark.red10, borderWidth: 2, borderRadius: 8} } style={styles.buttonBase}  titleStyle={{color: redDark.red11, fontFamily: fonts.inter.bold}} title="Exit"  onPress={handleBackPress} />
+        </View>
         <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
             <Button style={styles.buttonBase} disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />
-        </View>
+                </View>
+            </View>
   
         </>
     );

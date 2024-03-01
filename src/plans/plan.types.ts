@@ -37,19 +37,11 @@ interface Post {
 
 }
 
-// interface userConfig {
-//     userId: string;
-    
-// }
-
-
 /**
  * NOTES / SHIT TO DO 
  * - add metadata tags under Post type to easily see plans linked
  */
   
-
-
 /*----------------------------------------------------*/
 
   /**
@@ -58,7 +50,7 @@ interface Post {
 
 
     export enum PlanCategory {
-        Workout = 'Workout',
+        Lifting = 'Lifting',
         Cardio = 'Cardio',
         Nutrition = 'Nutrition',
     }
@@ -67,7 +59,7 @@ interface Post {
         id: string;
         name: string;
         exercises: Exercise[];
-        type: PlanCategory.Workout;
+        type: PlanCategory.Lifting;
       }
     
     interface CardioPlan {
@@ -207,7 +199,6 @@ export const planCategoryDropdownItems: CategoryDropdownItem[] = Object.entries(
 /**-------------------------------- WORKOUT ------------------------------------ */
 
 export const SelectCategoryDropdown = [
-
     {
         label: 'Workout',
         value: 'workout',
@@ -249,6 +240,7 @@ export type ExerciseDetail = {
 export interface ExerciseCategories {
     [category: string]: ExerciseDetail[];
 }
+
 export const exercises: ExerciseCategories = {
     Chest: [
       { id: "wl-c01", name: "Bench Press", type: "Strength" },
@@ -446,3 +438,116 @@ export function generateCardioDropdownItems(): CardioDropdownItem[] {
         // The icon can be determined based on the exercise type or name if necessary
     }));
 }
+
+/**-------------------------------- Nutrition ------------------------------------ */
+
+
+export enum NutritionPlanMainCategory {
+    SomeShitPlan = 'Some Shit Plan',
+    SomeCoolPlan    = 'Some Cool Plan',
+    Custom = 'Custom',
+}
+
+export enum FoodGroupsMainCategory {
+    Meats = 'Meats',
+    Fish = 'Fish',
+    Dairy = 'Dairy',
+    Shakes = 'Shakes',
+    Water = 'Water',
+    Fruits = 'Fruits', 
+    Vegetables = 'Vegetables'
+}
+
+export interface Foods {
+    id: string;
+    name: string;
+    type: FoodGroupsMainCategory;
+    protien: number | undefined
+    carbs: number | undefined;
+    fats: number | undefined;
+    calories: number;
+}
+
+export interface NutritionCategories {
+    [foods: string]: Foods[];
+}
+
+export const nutrition: NutritionCategories = {
+    Meats: [
+        { id: "me-001", name: "Steak", type: FoodGroupsMainCategory.Meats , protien: 42, carbs: 0, fats: 10, calories: 250},
+        { id: "me-002", name: "Chicken", type: FoodGroupsMainCategory.Meats , protien: 30, carbs: 0, fats: 5, calories: 200},
+        { id: "me-003", name: "Pork", type: FoodGroupsMainCategory.Meats , protien: 25, carbs: 0, fats: 15, calories: 250},
+      
+    ],
+    Fish: [
+        { id: "fi-001", name: "Salmon", type: FoodGroupsMainCategory.Fish , protien: 30, carbs: 0, fats: 10, calories: 250},
+        { id: "fi-002", name: "Shrimp", type: FoodGroupsMainCategory.Fish , protien: 25, carbs: 0, fats: 5, calories: 200},
+        { id: "fi-003", name: "Lobster", type: FoodGroupsMainCategory.Fish , protien: 20, carbs: 0, fats: 5, calories: 200},
+
+    ],
+    Dairy: [
+        { id: "da-001", name: "Eggs", type: FoodGroupsMainCategory.Dairy , protien: 20, carbs: 0, fats: 10, calories: 150},
+        { id: "da-002", name: "Yogurt", type: FoodGroupsMainCategory.Dairy , protien: 15, carbs: 20, fats: 5, calories: 200},
+ 
+    ],
+    Fruits: [
+        { id: "fr-001", name: "Bananas", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
+        { id: "fr-002", name: "Strawberries", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 20, fats: 0, calories: 100},
+        { id: "fr-003", name: "Watermelon", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
+            
+    ],
+    Vegetables: [
+        { id: "ve-001", name: "Broccoli", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
+        { id: "ve-002", name: "Carrots", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 20, fats: 0, calories: 100},
+        { id: "ve-003", name: "Mushroom", type: FoodGroupsMainCategory.Fruits , protien: 1, carbs: 30, fats: 0, calories: 100},
+    ],
+    Water: [
+        { id: "wa-001", name: "Water", type: FoodGroupsMainCategory.Fruits , protien: 0, carbs: 0, fats: 0, calories: 0},
+        ],
+    Shakes: [
+        { id: "sm-001", name: "Whey Protein Shake", type: FoodGroupsMainCategory.Shakes , protien: 30, carbs: 0, fats: 5, calories: 200},
+        { id: "sm-002", name: "Fruit Smoothie", type: FoodGroupsMainCategory.Shakes , protien: 10, carbs: 20, fats: 5, calories: 200},
+    ],
+};
+
+
+export interface NutritionSubcategoryDropdownItem {
+    label: string;
+    value: string;
+    type: NutritionPlanMainCategory;
+    icon?: string; // Optional
+}
+
+export const nutritionSubcategoryDropdownItems: NutritionSubcategoryDropdownItem[] = Object.entries(NutritionPlanMainCategory).map(([key, value]) => ({
+    label: key, // Using enum key as label
+    value: value, // Using enum value as value
+    type: value as NutritionPlanMainCategory, // Correctly assigning the enum value to type
+}));
+
+
+
+
+export interface NutritionFoodGroupsDropdownItem {
+    label: string;
+    value: string;
+    type: FoodGroupsMainCategory;
+    icon?: string; // Optional
+}
+
+export const nutritionFoodGroupsDropdownItems: NutritionFoodGroupsDropdownItem[] = Object.entries(FoodGroupsMainCategory).map(([key, value]) => ({
+    label: key, // Using enum key as label
+    value: value, // Using enum value as value
+    type: value as FoodGroupsMainCategory, // Correctly assigning the enum value to type
+}));
+
+
+
+
+
+
+
+/**
+ *  USDA API key -= mhHF6tA0tjaE4nUflTsa43zb9ayEt39lmdWsnEhy
+ * Endpoint : https://developer.nrel.gov/api/alt-fuel-stations/v1.json?limit=1&api_key=mhHF6tA0tjaE4nUflTsa43zb9ayEt39lmdWsnEhy
+*/
+
