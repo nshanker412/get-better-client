@@ -18,18 +18,14 @@ import {
   NutritionSubcategoryDropdownItem,
   PlanCategory,
   WorkoutSubcategoryDropdownItem,
-  findExerciseByName, generateCardioDropdownItems,
+  findExerciseByName,
+  generateCardioDropdownItems,
   generateExerciseDropdownItems,
   nutritionFoodGroupsDropdownItems,
   nutritionSubcategoryDropdownItems,
   planCategoryDropdownItems,
   workoutSubcategoryDropdownItems
 } from '../plan.types';
-
-
-// import { MaterialCommunityIcons } from '@expo/vector-icons';
-{/* <MaterialCommunityIcons name="food-apple" size={24} color="black" /> */}
-
 
 interface ChooseCategoryProps {
     // init: PlanInitSelection;
@@ -40,8 +36,6 @@ interface ChooseCategoryProps {
        const { dispatch: screenDispatch } = usePlanScreen();
        const navigation = useNavigation();
        
-  
-  
     const onCardioTypeChange = (item: CardioDropdownItem) => {  
       dispatch(
         {
@@ -51,6 +45,7 @@ interface ChooseCategoryProps {
               planCategory: PlanCategory.Cardio,
               subcategory: null,
               selectedExercises: [],
+              selectedNutritionFoodGroups: null,
               selectedCardioExercise: {
                 id: item.id,
                 name: item.label,
@@ -129,7 +124,6 @@ interface ChooseCategoryProps {
       if (planState.init?.subcategory && items.length > 0) {
         const exerciseList: ExerciseDetail[] = items.map((ex) => findExerciseByName(planState.init.subcategory!, ex)!);
 
-      
           console.log('exerciseList', exerciseList);
           // setSelectedExercises(exerciseList!);
   
@@ -251,7 +245,7 @@ interface ChooseCategoryProps {
                   data={generateCardioDropdownItems()}
                   onSelectionChange={onCardioTypeChange} // Assume this handler is defined
               />
-              </>
+          </>
         )}
          {planState.init.planCategory === PlanCategory.Nutrition && (
             <>
@@ -266,7 +260,6 @@ interface ChooseCategoryProps {
               <MultiSelectComponent<NutritionFoodGroupsDropdownItem>
                 icon="food-apple"
                 placeholder = "Choose your food groups..."
-
                 key="foodGroups"
                 label="Exercise"
                 initial={
@@ -278,22 +271,6 @@ interface ChooseCategoryProps {
                 onSelectionChange={onFoodGroupsChange}
                 />
             )}
-            {planState.init.subcategory == NutritionPlanMainCategory.Custom && (
-              <MultiSelectComponent<NutritionFoodGroupsDropdownItem>
-                icon="food-apple"
-                placeholder = "Choose your food groups..."
-
-                key=""
-                label="Exercise"
-                initial={
-                  planState.init.selectedExercises 
-                  ? planState.init.selectedExercises.map(exercise => exercise.name) 
-                    : []
-                }
-                data={nutritionFoodGroupsDropdownItems}
-                onSelectionChange={onFoodGroupsChange}
-                />
-              )}
  
             </>
         )}

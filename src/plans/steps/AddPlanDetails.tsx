@@ -107,7 +107,6 @@ import { ScrollView } from 'react-native-gesture-handler';
                 //set of added foods 
                  const [selectedFoods, setSelectedFoods] = useState<string[]>([]);
 
-              
                 return (
                   <ListItem.Accordion
                     key={`${item}-nutrition-food-group-accordion`}
@@ -164,10 +163,7 @@ import { ScrollView } from 'react-native-gesture-handler';
         <View style={{ flex: 1, width: "100%",  }}>
           
           <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Media</Text>
-  
-
                 <MediaPicker />
-  
           </View>
         <View style={{ flex: 1, justifyContent: 'flex-end', width: "100%",  alignItems: 'flex-end', flexDirection: "row", paddingBottom: 10 }}>
                <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
@@ -180,8 +176,6 @@ import { ScrollView } from 'react-native-gesture-handler';
       </View>
     );
   };
-
-
 
 
 interface ExerciseListProps {

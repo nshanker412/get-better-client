@@ -20,14 +20,10 @@ import { PlanType } from './plan-list/plan-item/PlanItem.types';
 import { ConnectedProfilePosts } from './profile-posts/ConnectedProfilePosts';
 
 interface PlanTileType {
+	id: string;
 	planType: PlanType;
 	title: string;
 }
-
-
-
- 
-  
 
 const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 	const profileBodyStyles = useProfileBodyStyles();
@@ -49,9 +45,6 @@ const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 	);
 };
 
-
-
-
 export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username }) => {
 	const { theme } = useThemeContext();
 	const profileBodyStyles = useProfileBodyStyles();
@@ -71,7 +64,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 						id: plan.id,
 						title: plan.planName,
 						planType: plan.data.planCategory,
-					}));			
+					}));		
 					
 					if (isMyProfile) {
 						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
@@ -90,10 +83,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	}, [username, isMyProfile]);
 
 
-
-
-
-	
 	useEffect(() => {
 		const foo = async () => {
 			console.log(username)
@@ -159,7 +148,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 									numColumns={2}
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}
-
 								/>
 						</View>
 					</View>
