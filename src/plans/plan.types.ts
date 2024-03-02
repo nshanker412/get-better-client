@@ -523,8 +523,6 @@ export const nutritionSubcategoryDropdownItems: NutritionSubcategoryDropdownItem
 }));
 
 
-
-
 export interface NutritionFoodGroupsDropdownItem {
     label: string;
     value: string;

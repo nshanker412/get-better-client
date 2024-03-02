@@ -1,7 +1,5 @@
-import { useThemeContext } from '@context/theme/useThemeContext';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { Drawer } from 'react-native-drawer-layout';
 import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
 import CreatePost from '../components/createPost/createPost';
 import { MyProfile } from '../components/profile/MyProfile';
@@ -12,24 +10,8 @@ import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 
 
-
-const SettingDrawer = () => {
-	return (
-		<Drawer
-			drawerPosition="right"
-			renderNavigationView={() => <SettingsButton />}
-		>
-			<MyProfile />
-		</Drawer>
-	);
-}
-
-
 export const MyProfileStack = () => {
 	const ProfileStackNav = createStackNavigator();
-	const { theme } = useThemeContext();
-
-
 
 	return (
 		<>
@@ -42,24 +24,20 @@ export const MyProfileStack = () => {
 				headerTitleStyle: false,
 
 				headerShadowVisible: false,
-
 				headerStyle: { backgroundColor: 'black',height: 80 },
 				headerBackTitleVisible: false,
 				cardStyle: { backgroundColor: 'black' },
 			}}>
 			<ProfileStackNav.Screen
 				options={{
-						headerShown: true,
-						headerLeftLabelVisible: false,
-						headerRightContainerStyle: {},
-						headerTitle: '',	
-						headerTintColor: 'white',
-						headerTransparent: true,
-						headerBackTitleVisible: true,
-						headerLeft: () => null,
-						
-					// headerRight: () => <Ionicons name="settings-sharp" size={24} color={grayDark.gray12} onPress={() => console.log("blah")} />
-
+					headerShown: true,
+					headerLeftLabelVisible: false,
+					headerRightContainerStyle: {},
+					headerTitle: '',	
+					headerTintColor: 'white',
+					headerTransparent: true,
+					headerBackTitleVisible: true,
+					headerLeft: () => null,
 				}}
 				name='myProfile'
 				component={MyProfile}

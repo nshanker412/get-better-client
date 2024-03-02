@@ -1,7 +1,7 @@
 import { grayDark, greenDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { Card, Divider, ListItem } from '@rneui/base';
 import axios from 'axios';
 import { ResizeMode, Video } from 'expo-av';
@@ -21,8 +21,7 @@ import {
 
 export const PreviewUserPlan: React.FC = ( ) => {
     const route = useRoute();
-    const planID = route.params?.planID;
-    const navigation = useNavigation();
+    const planID = route?.params?.planID;
     const [loading, setLoading] = useState<boolean>(false);
   const [planState, setPlan] = useState<PlanModel | null>(null);
   
@@ -30,7 +29,6 @@ export const PreviewUserPlan: React.FC = ( ) => {
 
           useEffect(() => {
             const getPlan = async (planID: string) => {
-                console.log("planID", planID)
                 setLoading(true);
                   try {
                     const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${planID}`);
@@ -52,7 +50,7 @@ export const PreviewUserPlan: React.FC = ( ) => {
           if (loading || !planState) {
                 return (
                     <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-                        <Text>Loading...</Text>
+                        <Text>{"Loading..."}</Text>
                     </View>
                 )
             }
@@ -67,28 +65,28 @@ export const PreviewUserPlan: React.FC = ( ) => {
                     <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1 ]} style={{ borderRadius: 8, width: '100%'}}>
                     <Card.Title style={styles.cardTitle }>{planState.planName}</Card.Title>
                     <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.data.planCategory}</Card.FeaturedSubtitle>
-                    {planState.media?.length && (
-                        <>
+                      
                           <Card.Divider style={{marginBottom: 2}} />
-                        <Card.Image style={{  backgroundColor: "transparent", width: "100%"}} >
-                        {planState.media.length && (
+                        
+                      {planState.media && planState.media.length > 0 && (
+                        <Card.Image style={{ backgroundColor: "transparent", width: "100%" }} >
+                        
                           <MediaTile 
                             media={{
-                              id: planState.media[0].mediaId,
-                              url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${planState.media[0].filename}`,
+                              id: planState.media[0]?.mediaId,
+                              url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${planState.media[0]?.filename}`,
                               type: 'image',
                             }}
                           />
-                          )}
+                    
                         </Card.Image>
-                        </>
-                    )}
+                              )}
                     <Card.Divider />
                     <ScrollView>
     
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", padding: 10}}>
                         <Text style={styles.cardDescription}>
-                            {planState.description}
+                            {`${planState?.description}`}
                         </Text>
                     </View>
     
