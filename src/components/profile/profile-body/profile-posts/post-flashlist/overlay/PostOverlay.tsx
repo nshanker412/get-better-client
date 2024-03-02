@@ -149,7 +149,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   }
 
   const onPressPlan = (planId: string) => {
-    navigation.navigate('profilePlan', {
+    navigation.navigate('profilePlanV2', {
       planID: planId, profileUsername: user 
     });
   };
@@ -162,11 +162,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       try {
         console.log('POST METADATA', postData);
         console.log('fetchLinkedPlans', postData?.linkedPlans);
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${user}`);
+        const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${user}`);
         const allPlans: PlanTileType[] = response.data?.plans?.map((plan: PlanTileType) => ({
-          id: `${plan?.timestamp}`,
-          title: plan?.title,
-          planType: plan?.planType,
+          id: plan.id,
+          title: plan?.planName,
+          planType: plan?.data.planCategory,
         }));
         console.log('allPlans', allPlans);
         

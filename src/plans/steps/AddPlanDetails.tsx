@@ -65,6 +65,7 @@ import { ScrollView } from 'react-native-gesture-handler';
             style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}         
             multiline={true}
             placeholderTextColor={grayDark.gray9}
+            numberOfLines={4}
             maxLength={200}
             onChangeText={setPlanDescription}
             placeholder=" e.g. this is a leg workout that makes me cry"

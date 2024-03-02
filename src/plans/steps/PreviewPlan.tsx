@@ -100,8 +100,6 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
           } finally {
                 setLoading(false);
           }
-          
-      
       }
 
     return (

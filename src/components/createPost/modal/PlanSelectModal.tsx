@@ -9,12 +9,12 @@ import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Keyboard,
-    SafeAreaView,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
+	Keyboard,
+	SafeAreaView,
+	StyleSheet,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View
 } from 'react-native';
 import { Modal } from '../../primitives/action-modal/ActionModal';
 import { useProfileBodyStyles } from '../../profile/profile-body/ProfileBody.styles';
@@ -61,7 +61,7 @@ const planModalStyles = StyleSheet.create({
 
 
 //   type PlanType = 'someType'; // Define your PlanType here
-  type PlanItemProps = { timestamp: string; planType: PlanType; title: string }; // Adjust according to your data structure
+  type PlanItemProps = { id: string; planType: PlanType; title: string }; // Adjust according to your data structure
   
   interface PlanModalProps {
 	isVisible: boolean;
@@ -80,9 +80,15 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 	useEffect(() => {
 	  const fetchPlans = async () => {
 		try {
-		  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${username}`);
-		  console.log('fetchPlans', response.data);
-		  setPlans(response.data.plans);
+		  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
+			console.log('fetchPlans', response.data);
+			const planList: PlanItemProps[] = response.data?.plans?.map((plan) => ({
+				id: plan?.id,
+				planType: plan?.data?.planCategory,
+				title: plan?.planName,
+			}));
+
+		  setPlans(planList);
 		} catch (error) {
 		  console.error('Failed to fetch plans', error);
 		}
@@ -94,14 +100,11 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 	 
 
 	  const onToggleSelection = (planID: string | undefined) => {
-		  if (chosenPlansRef.current.includes(`${planID}`)) {
+		  if (chosenPlansRef.current.includes(planID)) {
 			chosenPlansRef.current = chosenPlansRef.current.filter((plan) => plan !== `${planID}`);
-
 		  } else {
-			chosenPlansRef.current.push(`${planID}`!);
-
+			chosenPlansRef.current.push(planID!);
 		  }
-
 		  console.log("currentPlanlength", chosenPlansRef.current.length)
 
 		}	
@@ -115,7 +118,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 
 		  const onPlanPress = (planID: string) => {
 			  console.log('plan pressed', planID);
-			  if (chosenPlansRef.current?.includes(`${planID}`)) {
+			  if (chosenPlansRef.current?.includes(planID)) {
 				  setSty(planModalStyles.planItemDefault);
 
 
@@ -130,7 +133,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 		  
 		  return (
 			  <View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
-				  <TouchableOpacity onPress={() => onPlanPress(item.timestamp)}>
+				  <TouchableOpacity onPress={() => onPlanPress(item.id)}>
 					  <View style={sty}>
 						  <ConnectedPlanItem planType={item.planType} planTitle={item.title} />
 					  </View>
@@ -148,13 +151,10 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 			<Modal.Container
 			  containerStyle={{
 				backgroundColor: grayDark.gray4,
-				// gap: 20,
 				flexDirection: 'column',
 				alignContent: 'center',
-								  justifyContent: 'space-around',
-								  flex: 1,
-
-				
+				justifyContent: 'space-around',
+				flex: 1,
 			  }}
 			>
 			  <TouchableOpacity style={{ alignItems: "flex-start", justifyContent: "flex-start", width: 40, height: 40 }} onPress={() => onPlanModalClose(chosenPlansRef.current)}>
@@ -165,10 +165,9 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 			  <Modal.Header
 				title="Select plan(s) to link"
 				headerStyle={{
-				  container: {
-					alignSelf: 'center',
-						justifyContent: 'center',
-					// gap: 10
+				container: {
+				alignSelf: 'center',
+				justifyContent: 'center',
 				  },
 					text: {
 						fontFamily: fonts.inter.black,
@@ -184,7 +183,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 					  estimatedItemSize={100}
 					  data={plans}
 					  numColumns={2}
-					  keyExtractor={(item) => item.timestamp}
+					  keyExtractor={(item) => item?.id}
 					  renderItem={({ item }) => <PlanItem item={item} />}
 					/>
 				  </View>

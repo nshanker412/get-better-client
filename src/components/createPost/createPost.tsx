@@ -57,22 +57,17 @@ import { PlanSelectModal } from "./modal/PlanSelectModal";
 // 	  }
 
 const actions: IActionProps[] = [
-
 	{
-	
-	
-	  text: "Plan",
+		text: "Plan",
 		name: "bt_link_post",
 		color: "rgba(137, 133, 133, 0.9)",
 		icon: <FontAwesome5 name="link" size={24} color="white" />,
-
 	},
 	{
-	  text: "Location",
-
+		text: "Location",
 		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
 		name: "bt_room",
-	 	color: "rgba(137, 133, 133, 0.9)",
+		color: "rgba(137, 133, 133, 0.9)",
 	},
 
   ];
@@ -669,7 +664,6 @@ export default function CreatePost() {
 									placeholderTextColor={
 										theme.grayShades.gray500
 									}
-									// multiline={true}
 									value={caption}
 									onChangeText={setCaption}
 									onFocus={() => {
@@ -707,7 +701,6 @@ export default function CreatePost() {
 										color={"rgba(137, 133, 133, 0.9)"}
 										overlayColor={"transparent"}
 										showBackground={true}
-
 										actions={actions}
 									/>
 									</View>
