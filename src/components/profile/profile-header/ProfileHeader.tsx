@@ -80,9 +80,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 						}}>
 						<View
 							style={{
-								flex: 1,
-								width: '100%',
-								height: '100%',
+								// flex: 1,
+								position: 'absolute',
+								right: -15,
+								top: -15,
+							
 								alignItems: 'flex-end',
 								justifyContent: 'flex-start',
 								padding: 5,
@@ -98,7 +100,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 					</View>
 
 					<View
-						style={{ flex: 4, width: '100%', alignSelf: 'center' }}>
+						style={{ flex: 5, width: '100%', alignSelf: 'center' }}>
 						{isLoading ? (
 							<ShimmerPlaceholder
 								style={{
@@ -161,7 +163,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 								<View
 									style={[
 										profileHeaderStyles.motivatorOuterContainer,
-										{ flex: 1 },
+										{ flex: 1,  },
 									]}>
 									<TouchableOpacity
 										onPress={onViewFollowersPress}>
@@ -237,37 +239,16 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 	} else {
 		return (
 			<View style={profileHeaderStyles.headerOuterContainer}>
-				<View
-					style={{
-						flex: 1,
-						alignItems: 'flex-end',
-						justifyContent: 'flex-start',
-					}}>
-					<View
+						<View
 						style={{
 							flex: 1,
-							width: '100%',
-							height: '100%',
-							alignItems: 'flex-start',
-							justifyContent: 'flex-start',
+							alignItems: 'center',
+							justifyContent: 'center',
 						}}>
-						{/* <TouchableOpacity
-							onPress={() => {
-								Haptics.impactAsync(
-									Haptics.ImpactFeedbackStyle.Medium,
-								);
-								navigation.goBack();
-							}}>
-							<MaterialIcons
-								name='chevron-left'
-								size={40}
-								color={theme.textColorPrimary}
-							/>
-						</TouchableOpacity> */}
+				
 					</View>
-				</View>
-
-				<View style={{ flex: 2, width: '100%', alignSelf: 'center' }}>
+			
+				<View style={{ flex: 5, width: '100%', alignSelf: 'center' , justifyContent: "center"}}>
 					{isLoading ? (
 						<ShimmerPlaceholder
 							style={{
@@ -292,7 +273,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							<View
 								style={[
 								profileHeaderStyles.headerInnerContainer,
-								{ justifyContent: 'space-between' },
+								{ justifyContent: 'center', alignItems: 'center',},
 									]}
 							>
 										<LinearGradient
@@ -314,8 +295,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 								style={{
 									display: 'flex',
 									flexDirection: 'row',
-									alignItems: 'center',
-									justifyContent: 'space-between',
+										alignItems: 'center',
+										justifyContent: 'space-around',
+										// justifyContent: 'space-aroun',
+				
 								}}>
 						
 								<View style={{ flex: 1, width: '100%' }}>
@@ -335,7 +318,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 								<View
 									style={[
 										profileHeaderStyles.motivatorOuterContainer,
-										{ flex: 1 },
+										{ flex: 1 , },
 									]}>
 									<TouchableOpacity
 										onPress={onViewFollowersPress}>
@@ -399,14 +382,15 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 						style={[
 							profileHeaderStyles.nameBioContainer,
 							{
-								flex: 1,
+								flex:4 ,
 								alignItems: 'center',
 								justifyContent: 'center',
-								top: 5,
+								// top: 5,
 								flexDirection: 'row',
 							},
-						]}>
-						<View style={{ flex: 1 }}>
+							]}>
+							<View style={{flex: 1} }/>
+						<View style={{ flex: 2 }}>
 								<ActionButton
 								defaultPressed={false}
 								isPrimary={false}
@@ -416,24 +400,25 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 						</View>
 
 						<View style={{ flex: 1 }}>
-							<View style={[profileHeaderStyles.nameContainer]}>
+							{/* <View style={[profileHeaderStyles.nameContainer]}>
 								<Text style={profileHeaderStyles.name}>
 									{username}
 								</Text>
-							</View>
+							</View> */}
 						</View>
-						<View style={{ flex: 1 }}>
+						<View style={{ flex: 2 }}>
 								<ActionButton
-																		loading={loadingMotivate}
-
-								defaultPressed={amIFollowing}
-								isPrimary={true}
-								onPress={onMotivatePressCb}
-								title={
-									!amIFollowing ? 'Motivate' : 'Motivating'
-								}
+									loading={loadingMotivate}
+									defaultPressed={amIFollowing}
+									isPrimary={true}
+									onPress={onMotivatePressCb}
+									title={
+										!amIFollowing ? 'Motivate' : 'Motivating'
+									}
 							/>
-						</View>
+							</View>
+							<View style={{flex: 1} }/>
+
 					</View>
 				)}
 
@@ -445,6 +430,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							alignItems: 'flex-start',
 							justifyContent: 'center',
 							flexDirection: 'row',
+						
 						},
 					]}>
 					<View style={[profileHeaderStyles.bioContainer]}>

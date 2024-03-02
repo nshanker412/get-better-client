@@ -23,12 +23,14 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					headerTitleStyle: false,
 					headerShadowVisible: false,
 					headerTransparent: true,
-					headerStyle: { backgroundColor: 'black' },
+					headerStyle: { backgroundColor: 'black', height: 80 },
 					headerBackTitleVisible: false,
-					cardStyle: { backgroundColor: 'black' },
+					cardStyle: { backgroundColor: 'black'},
+
 				}}>
 				<HomeStackNav.Screen
-					options={{ headerShown: false }}
+
+					options={{ headerShown: false, headerStyle: { backgroundColor: 'black', height: 80 } }}
 					name='home'
 					component={FeedScreen}
 				/>
@@ -37,6 +39,7 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					component={CreatePost}
 				/>
 				<HomeStackNav.Screen
+					
 					name='profile'
 					component={Profile}
 				/>

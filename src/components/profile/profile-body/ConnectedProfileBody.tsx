@@ -2,7 +2,7 @@ import { fonts } from "@context/theme/fonts";
 // import { FlashList } from "@shopify/flash-list";
 import { grayDark } from "@context/theme/colors_neon";
 import React from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { FlatList } from "react-native-gesture-handler";
 import { ProfileBody } from './ProfileBody';
 import { ConnectedProfileBodyProps } from './ProfileBody.types';
@@ -72,8 +72,7 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 
 	return (
 	<>
-			<View style={{ flexShrink: 1, flex: 3, width: Dimensions.get("screen").width }}>
-			{/* <Text style={{ paddingLeft: 2, fontSize: 15, color: grayDark.gray12,  fontFamily: fonts.inter.black }}>This Month:</Text> */}
+			<View style={{ flexShrink: 3, flex: 3}}>
 			<FlatList 
 					data={data}
 					renderItem={renderItemS}		
@@ -81,7 +80,7 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 					showsHorizontalScrollIndicator={false}
 					/>
 					</View>
-			<View style={{flex: 17}}>
+			<View style={{flex: 21}}>
 			<ProfileBody isMyProfile={isMyProfile} username={username} />
 			</View>
 		</>

@@ -9,9 +9,10 @@ export const useProfileHeaderStyles = () => {
 		headerOuterContainer: {
 			// borderWidth: 1,
 			// borderColor: 'red',
-			display: 'flex',
-			flex: 1,
+			// display: 'flex',
+			// flex: 1,
 			width: '100%',
+			
 			height: '100%',
 			// padding: 10,
 		},
@@ -50,6 +51,7 @@ export const useProfileHeaderStyles = () => {
 		nameBioContainer: {
 			// borderWidth: 1,
 			// borderColor: theme.grayShades.gray600,
+			flex: 1, 
 			display: 'flex',
 			height: "100%",
 			// alignItems: 'center',

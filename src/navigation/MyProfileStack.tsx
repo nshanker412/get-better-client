@@ -1,8 +1,7 @@
-import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { Drawer } from 'react-native-drawer-layout';
 import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
 import CreatePost from '../components/createPost/createPost';
 import { MyProfile } from '../components/profile/MyProfile';
@@ -12,53 +11,72 @@ import { PreviewUserPlan } from '../plans/preview/PreviewUserPlan';
 import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 
-const SettingsButton = () => {
+
+
+const SettingDrawer = () => {
 	return (
-		
-		<Ionicons name="settings-sharp" size={24} color="white" />
+		<Drawer
+			drawerPosition="right"
+			renderNavigationView={() => <SettingsButton />}
+		>
+			<MyProfile />
+		</Drawer>
 	);
 }
 
 
 export const MyProfileStack = () => {
-	const HomeStackNav = createStackNavigator();
+	const ProfileStackNav = createStackNavigator();
 	const { theme } = useThemeContext();
 
+
+
 	return (
-		<HomeStackNav.Navigator
+		<>
+		<ProfileStackNav.Navigator
 			initialRouteName='myProfile'
 			screenOptions={{
 				headerShown: true,
 				headerTintColor: 'white',
 				headerTitle: '',
 				headerTitleStyle: false,
+
 				headerShadowVisible: false,
 
-				headerStyle: { backgroundColor: 'black' },
+				headerStyle: { backgroundColor: 'black',height: 80 },
 				headerBackTitleVisible: false,
 				cardStyle: { backgroundColor: 'black' },
 			}}>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				options={{
-					headerShown: true,
-					headerRight: () => <Ionicons name="settings-sharp" size={24} color={grayDark.gray12} />
+						headerShown: true,
+						headerLeftLabelVisible: false,
+						headerRightContainerStyle: {},
+						headerTitle: '',	
+						headerTintColor: 'white',
+						headerTransparent: true,
+						headerBackTitleVisible: true,
+						headerLeft: () => null,
+						
+					// headerRight: () => <Ionicons name="settings-sharp" size={24} color={grayDark.gray12} onPress={() => console.log("blah")} />
+
 				}}
 				name='myProfile'
 				component={MyProfile}
 			/>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				name='profileEdit'
 				component={ProfileEdit}
 			/>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				name='createPlan'
 				component={CreatePlanScreen}
 			/>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				name='createPost'
 				component={CreatePost}
 			/>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				options={{
 					headerShown: true,
 					title: '',
@@ -69,11 +87,11 @@ export const MyProfileStack = () => {
 				component={PreviewUserPlan}
 			/>
 
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				name='search'
 				component={Search}
 			/>
-			<HomeStackNav.Screen
+			<ProfileStackNav.Screen
 				name='followerFollowing'
 				options={{
 					headerShown: true,
@@ -82,6 +100,7 @@ export const MyProfileStack = () => {
 				 }}
 				component={FollowerFollowingTab}
 			/>
-		</HomeStackNav.Navigator>
+			</ProfileStackNav.Navigator>
+			</>
 	);
 };

@@ -33,13 +33,13 @@ const _OtherProfile: React.FC = () => {
 	return (
 		<SafeAreaView style={profileStyles.safeAreaViewContainer}>
 			<View style={profileStyles.profileContainer}>
-				<View style={{ flex: 4 }}>
+				<View style={{ flex: 3 }}>
 					<ConnectedProfileHeader
 						onOpenChallengeModal={onChallengePress}
 						isMyProfile={false}
 					/>
 				</View>
-				<View style={{ flex: 7 }}>
+				<View style={{ flex: 7}}>
 					<ConnectedProfileBody isMyProfile={false} username={profileUsername}  />
 				</View>
 			</View>
