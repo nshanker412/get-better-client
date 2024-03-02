@@ -16,20 +16,15 @@ export const useProfileHeaderStyles = () => {
 			// padding: 10,
 		},
 		headerInnerContainer: {
-			// marginTop: 20,
-			borderWidth: 1,
+			borderWidth: 0.5,
 			borderColor: theme.innerBorderColor,
-			// flex: 1,
 			alignSelf: 'center',
 			alignItems: 'center',
 			flexDirection: 'row',
 			width: '90%',
 			height: 90,
-
-			// overflow: 'visible',
 			borderRadius: 20,
-			// padding: 5,
-			backgroundColor: theme.innerContainer.backgroundColor,
+
 		},
 		centerColumnContainer: {
 			flex: 1,
@@ -62,10 +57,6 @@ export const useProfileHeaderStyles = () => {
 			flexDirection: 'column',
 			alignSelf: 'center',
 			alignItems: 'flex-start',
-			// borderColor: theme.grayShades.gray600,
-			// borderWidth: 1,
-			// padding: 10,
-			// gap: 6,
 		},
 		name: {
 			color: theme.text.header.color,

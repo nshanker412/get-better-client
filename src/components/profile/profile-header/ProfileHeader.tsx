@@ -1,3 +1,4 @@
+import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -126,7 +127,24 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 										alignItems: 'center',
 										justifyContent: 'space-between',
 									},
-								]}>
+									]}>
+									<LinearGradient
+										colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
+										style={{
+											borderRadius: 20,
+											width: '100%',
+											// flex: 1,
+											height: 90,
+											position: 'absolute',
+											borderWidth: 0.5,
+											borderColor: theme.innerBorderColor,
+											display: 'flex',
+											flexDirection: 'row',
+											alignItems: 'center',
+											justifyContent: 'space-between',
+										}}></LinearGradient>
+										
+								
 								<View style={{ flex: 1, width: '100%' }}>
 									<Text
 										style={
@@ -182,7 +200,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 											Motivating
 										</Text>
 									</TouchableOpacity>
-								</View>
+										</View>
 							</View>
 						)}
 					</View>
@@ -270,11 +288,27 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							LinearGradient={LinearGradient}
 						/>
 					) : (
-						<View
-							style={[
+						
+							<View
+								style={[
 								profileHeaderStyles.headerInnerContainer,
 								{ justifyContent: 'space-between' },
-							]}>
+									]}
+							>
+										<LinearGradient
+									colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
+									style={{
+										borderRadius: 20,
+										width: '100%',
+										height: '100%',
+										flex: 1,
+										alignItems: 'center',
+										justifyContent: 'center',
+										flexDirection: 'column',
+									}}
+
+													>
+
 							<View
 								style={{
 									display: 'flex',
@@ -282,6 +316,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 									alignItems: 'center',
 									justifyContent: 'space-between',
 								}}>
+						
 								<View style={{ flex: 1, width: '100%' }}>
 									<Text
 										style={
@@ -334,8 +369,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 										</Text>
 									</TouchableOpacity>
 								</View>
-							</View>
-						</View>
+									</View>
+							</LinearGradient>
+								</View>
+
 					)}
 				</View>
 

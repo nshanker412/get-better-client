@@ -9,6 +9,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -18,6 +19,13 @@ import { ProfileBodyProps } from './ProfileBody.types';
 import { ConnectedPlanItem } from './plan-list/plan-item/ConnectedPlanItem';
 import { PlanType } from './plan-list/plan-item/PlanItem.types';
 import { ConnectedProfilePosts } from './profile-posts/ConnectedProfilePosts';
+
+interface PlanTileType {
+	v: "v1" | "v2";
+	id: string;
+	planType: PlanType;
+	title: string;
+}
 
 interface PlanTileType {
 	id: string;
@@ -61,6 +69,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 			try {
 				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
 					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanModel) => ({
+						v: "v2",
 						id: plan.id,
 						title: plan.planName,
 						planType: plan.data.planCategory,
@@ -69,9 +78,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 					if (isMyProfile) {
 						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
 						const newArr = [...newPlan, ...planList];
-
 						setPlaV2(newArr);
-
 					} else {
 						setPlaV2(planList);
 					}
@@ -89,6 +96,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 			try {
 				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${username}`);
 					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanTileType) => ({
+						v: "v1",
 						id: `${plan?.timestamp}`,
 						title: plan?.title,
 						planType: plan?.planType,
@@ -111,12 +119,16 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		foo();	
 	}, [username, isMyProfile]);
 
-	const onPressTile =  (planID: string, planType: PlanType) => {
-		console.log(planID, planType);
-		if (planType === PlanType.NewPlan) {
-			navig.navigate('createPlan');
-		} else {
-			navig.navigate('profilePlan', { planID: planID, profileUsername: username });
+	const onPressTile = (planID: string, planType: PlanType, version: string) => {
+			if (planType === PlanType.NewPlan) {
+				navig.navigate('createPlan');
+
+			} else if (version === "v2") {
+				console.log("v2", planID, username)
+				navig.navigate('profilePlanV2', { planID: planID, profileUsername: username });
+			} else {
+				navig.navigate('profilePlan', { planID: planID, profileUsername: username });
+		
 		
 		}
 	}
@@ -124,12 +136,19 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const PlanItem = ({ item  }) => {
 		console.log(item)
 		return (
+
 			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
-			<TouchableOpacity	onPress={() => onPressTile(item?.id, item.planType)}>
-				<View style={{ flex: 1, width: 130, height: 130, borderColor: grayDark.gray9, borderWidth: 1, borderRadius: 5, padding: 10, backgroundColor: grayDark.gray5, alignItems: "center", justifyContent: "center" }}>
-				<ConnectedPlanItem planType={item?.planType } planTitle={item?.title} />
+
+				<TouchableOpacity onPress={() => onPressTile(item?.id, item.planType, item.v)}>
+
+					<LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1 ]} style={{ borderRadius: 8, width: '100%'}}>
+					<View style={{ flex: 1, width: 140, height: 140, borderColor: grayDark.gray9, borderWidth: 0.5, borderRadius: 8, padding: 10,  alignItems: "center", justifyContent: "center" }}>
+
+						<ConnectedPlanItem planType={item?.planType} planTitle={item?.title} />
 					</View>
+					</LinearGradient>
 					</TouchableOpacity>
+
 				</View>
 		)
 	}
@@ -144,7 +163,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 						<View style={[profileBodyStyles.scrollInnerContainer, {flex: 1, width: Dimensions.get("screen").width, height: 500, minHeight: 500}]}>
 								<FlashList 
 									estimatedItemSize={100}
-									data={plaV2}
+									data={plaV2 ?? pla}
 									numColumns={2}
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}

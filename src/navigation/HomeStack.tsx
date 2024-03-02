@@ -2,6 +2,7 @@ import FeedScreen from '@components/profile/profile-body/profile-posts/post-flas
 import { BottomTabEventProvider } from '@context/bottom-tab-nav/BottomTabEventProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { PreviewUserPlan } from 'src/plans/preview/PreviewUserPlan';
 import CreatePost from '../components/createPost/createPost';
 import { Notifications } from '../components/notifications/Notifications';
 import { Profile } from '../components/profile/Profile';
@@ -42,6 +43,11 @@ export const HomeStack: React.FC = ({ navigation }) => {
 				<HomeStackNav.Screen
 					name='profilePlan'
 					component={ProfilePlan}
+				/>
+				<HomeStackNav.Screen
+					options={{ headerShown: false}}
+					name='profilePlanV2'
+					component={PreviewUserPlan}
 				/>
 				<HomeStackNav.Screen
 					name='profileEdit'

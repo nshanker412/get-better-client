@@ -47,8 +47,6 @@ interface Post {
   /**
    * Plan 
    */
-
-
     export enum PlanCategory {
         Lifting = 'Lifting',
         Cardio = 'Cardio',

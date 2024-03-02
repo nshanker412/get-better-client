@@ -19,6 +19,8 @@ import {
   ExerciseRoutine,
   PlanCategory
 } from '../plan.types';
+
+
 const submitPlan = async (username: string | null, planState: PlanBuilderState): Promise<void> => {
     // Check if the plan is valid
     if (!username || !planState.name || !planState.init.planCategory) {
@@ -29,23 +31,6 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
     // Create plan id
     const unixTimestamp = Math.floor(Date.now() / 1000);
     const planId = `${username}-plan-${unixTimestamp}`;
-
-    // Prepare plan data
-    // const planData: PlanModel = {
-    //     id: planId,
-    //     username: username,
-    //     userId: null, // Update as needed
-    //     planName: planState.name,
-    //     planType: planState.init.planCategory,
-    //     description: planState.description || "",
-    //     createdAt: unixTimestamp,
-    //     updatedAt: null,
-    //     deletedAt: null,
-    //     icon: "", // Update this field as necessary
-    //     media: planState.media?.map(media => media.url) || [],
-    //     data: JSON.stringify(planState),
-    //     metadata: null, // Define and fill this based on your actual metadata structure
-    // };
 
      // Use FormData to construct the payload
     const formData = new FormData();
@@ -72,13 +57,6 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
 
     const metadata = {}; // Construct your metadata object here
     formData.append('metadata', JSON.stringify(metadata));
-  // remove plans from the data
-  
-
-  // formData.append('data', JSON.stringify(planState));
-  
-    // 
-
     
      if (planState.media && planState.media.length) {
         planState.media.forEach((media, index) => {
@@ -91,9 +69,6 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
             }
         });
      }
-  
- 
-
     // Perform the POST request
     try {
         const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/save`,
@@ -157,9 +132,9 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                 </View>
 
                 {planState.init.planCategory === PlanCategory.Lifting &&
-                planState.init.subcategory &&
-                planState.init.selectedExercises &&
-                planState.routine && (
+                  planState.init.subcategory &&
+                  planState.init.selectedExercises &&
+                  planState.routine && (
                 <View style={styles.exerciseList}>
                 <ReviewExerciseList 
                   category={planState.init.subcategory} 
@@ -330,7 +305,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                           containerStyle={{ backgroundColor: grayDark.gray10, borderRadius: 8}}
                     key={`review-li-${index}`}
                     style={{ backgroundColor: grayDark.gray5, borderRadius: 8 }}
-                  content={
+                    content={
                     <>
                       <FontAwesome6 style={{paddingRight: 10}} name="dumbbell" size={24} color="black"  />
                       <ListItem.Content>

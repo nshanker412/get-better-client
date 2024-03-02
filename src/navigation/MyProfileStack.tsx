@@ -6,6 +6,7 @@ import CreatePost from '../components/createPost/createPost';
 import { MyProfile } from '../components/profile/MyProfile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
 import { Search } from '../components/search/search';
+import { PreviewUserPlan } from '../plans/preview/PreviewUserPlan';
 import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 export const MyProfileStack = () => {
@@ -17,7 +18,7 @@ export const MyProfileStack = () => {
 			initialRouteName='myProfile'
 			screenOptions={{
 				headerShown: false,
-				headerTintColor: 'white',
+				// headerTintColor: 'white',
 				headerStyle: { backgroundColor: 'black' },
 				headerBackTitleStyle: {
 					color: theme.textColorPrimary,
@@ -47,6 +48,17 @@ export const MyProfileStack = () => {
 				name='createPost'
 				component={CreatePost}
 			/>
+			<HomeStackNav.Screen
+				options={{
+					headerShown: true,
+					title: '',
+					headerTintColor: 'white',
+					headerBackTitleVisible: false,
+			}}
+				name='profilePlanV2'
+				component={PreviewUserPlan}
+			/>
+
 			<HomeStackNav.Screen
 				name='search'
 				component={Search}

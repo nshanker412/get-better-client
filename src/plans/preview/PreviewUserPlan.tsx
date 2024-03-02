@@ -1,8 +1,7 @@
-
-    import { grayDark, greenDark } from '@context/theme/colors_neon';
+import { grayDark, greenDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Card, Divider, ListItem } from '@rneui/base';
 import axios from 'axios';
 import { ResizeMode, Video } from 'expo-av';
@@ -11,32 +10,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { MediaSource, usePlanBuilder } from '../PlanBuilderContext';
+import { MediaSource } from '../PlanBuilderContext';
 import { PlanModel } from "../models/plan";
 import {
-    ExerciseDetail,
-    ExerciseMainCategory,
-    ExerciseRoutine,
-    PlanCategory
+  ExerciseDetail,
+  ExerciseMainCategory,
+  ExerciseRoutine,
+  PlanCategory
 } from '../plan.types';
 
-
-    interface PreviewUserPlanProps {
-        planID: string;
-    }
-
-
-      export const PreviewUserPlan: React.FC<PreviewUserPlanProps> = ({planID}) => {
-          const navigation = useNavigation();
-          const [loading, setLoading] = useState<boolean>(false);
-          const [planState, setPlan] = useState<PlanModel | null>( null);
+export const PreviewUserPlan: React.FC = ( ) => {
+    const route = useRoute();
+    const planID = route.params?.planID;
+    const navigation = useNavigation();
+    const [loading, setLoading] = useState<boolean>(false);
+  const [planState, setPlan] = useState<PlanModel | null>(null);
+  
 
 
           useEffect(() => {
-              const getPlan = async (planID: string) => {
+            const getPlan = async (planID: string) => {
+                console.log("planID", planID)
                 setLoading(true);
                   try {
-                    const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/fetch/plan/${planID}`);
+                    const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${planID}`);
                       const plan = response.data.plan; 
                       console.log("plan", plan)
                       setPlan(plan);
@@ -52,12 +49,6 @@ import {
                 getPlan(planID)
           }, [planID]);
           
-
-          useEffect(() => {
-            planState && console.log("plan", planState)
-          }, [planState])
-          
-          
           if (loading || !planState) {
                 return (
                     <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
@@ -65,23 +56,30 @@ import {
                     </View>
                 )
             }
-
     
         return (
-            <View style={{flex: 1,  alignItems: "center", justifyContent: "center", width: "100%", padding: 10}}>
-                <View style={{ flex:  4}}>
-                <Card
+            <View style={{flex: 1,  alignItems: "center", justifyContent: "center", width: "100%", padding: 10, height: "100%"}}>
+            <View style={{flex: 8, width: "100%", justifyContent: "center", alignItems: "center"}}>   
+            <Card
                     containerStyle={styles.cardContainer}
                     wrapperStyle={styles.cardWrapper}
                     >
                     <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1 ]} style={{ borderRadius: 8, width: '100%'}}>
-                    <Card.Title style={styles.cardTitle }>{planState.name}</Card.Title>
-                    <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.init.planCategory}</Card.FeaturedSubtitle>
+                    <Card.Title style={styles.cardTitle }>{planState.planName}</Card.Title>
+                    <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.data.planCategory}</Card.FeaturedSubtitle>
                     {planState.media?.length && (
                         <>
-                            <Card.Divider style={{marginBottom: 2}} />
+                          <Card.Divider style={{marginBottom: 2}} />
                         <Card.Image style={{  backgroundColor: "transparent", width: "100%"}} >
-                            <MediaTile media={planState.media[0]} />
+                        {planState.media.length && (
+                          <MediaTile 
+                            media={{
+                              id: planState.media[0].mediaId,
+                              url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${planState.media[0].filename}`,
+                              type: 'image',
+                            }}
+                          />
+                          )}
                         </Card.Image>
                         </>
                     )}
@@ -89,8 +87,8 @@ import {
                     <ScrollView>
     
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", padding: 10}}>
-                    <Text style={styles.cardDescription}>
-                        {planState.description}
+                        <Text style={styles.cardDescription}>
+                            {planState.description}
                         </Text>
                     </View>
     
@@ -108,8 +106,9 @@ import {
                         )}
                         </ScrollView>
                         </LinearGradient>
-                    </Card>
-                </View>
+              </Card>
+              </View>
+            <View style={{flex: 1, width: "100%", justifyContent: "flex-end", alignItems: "center"}}/>
 
               </View>
           );
@@ -165,11 +164,11 @@ import {
           fontSize: 16,
         },
           cardContainer: {
-              display: "flex",
-              alignSelf: "center",
+            display: "flex",
+            alignSelf: "center",
             margin: 0,
             padding: 0,
-              borderWidth: 0.5,
+            borderWidth: 0.5,
             minWidth: "80%",
             width: "100%",
             borderColor: 'rgba(137, 133, 133, 0.3)',
@@ -181,17 +180,19 @@ import {
             borderRadius: 8,
         },
         cardTitle: {
-            fontSize: 20,
+          marginTop: 10,
+          fontSize: 20,
+            textAlign: "center",
             color: grayDark.gray12, // White text for dark mode
             fontFamily: fonts.inter.black, // Assuming you have this weight; adjust as needed
             marginBottom: 2,
         },
          cardFeaturedSubtitle: {
             textAlign: "center",
-            fontSize: 16,
+            fontSize: 18,
             color: grayDark.gray10, // Lighter text for subtitles
             fontFamily: fonts.inter.extra_light, // Assuming you have this weight; adjust as needed
-            marginBottom: 2,
+            marginBottom: 5,
         },
           cardDescription: {
             paddingLeft: 10,
@@ -212,15 +213,14 @@ import {
       }
       
       const ReviewExerciseList: React.FC<ReviewExerciseListProps> = ({ list , routines, category, onInitChanged}) => {
-        const { state: planState } = usePlanBuilder();
       
         useEffect(() => {
-          const allInitialized = planState.routine.every(item => item.init === true);
+          const allInitialized = routines.every(item => item.init === true);
         
           if (!allInitialized) {
             onInitChanged(false);
           }
-        }, [planState.routine]);
+        }, [routines]);
       
         const [expanded, setExpanded] = useState<string | null>(null);
       
@@ -242,8 +242,7 @@ import {
                 routines?.map((item, index) => {
                   return (
                     <React.Fragment key={`routine-fragment-${index}`}>
-    
-                          <View style={{width: "100%", padding: 2, alignItems: "center", justifyContent: "flex-start",}}/>
+                        <View style={{width: "100%", padding: 2, alignItems: "center", justifyContent: "flex-start",}}/>
                           <ListItem.Accordion
                               containerStyle={{ backgroundColor: grayDark.gray10, borderRadius: 8}}
                         key={`review-li-${index}`}
@@ -261,8 +260,8 @@ import {
                         () => onAccordionPress(`${item.id}`)
                       }
                       >
-                              <>
-                                  <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
+                      <>
+                      <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
                     
                         {item.reps!==undefined && item.sets !==undefined && item.weight!== undefined && (
                             <ListItem key={`${item.id}-li1`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
@@ -328,26 +327,23 @@ import {
       })
       
     
-    interface MediaTileProps {
+  interface MediaTileProps {
         media: MediaSource;
-        }
+      }
     
     
     const MediaTile: React.FC<MediaTileProps> = ({ media }) => {
         
       const [isFullscreen, setIsFullscreen] = useState(false);
-    
-        const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
-        
-    
-        console.log("in media tile", media)
+      const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
+      console.log("in media tile", media)
     
       return (
         <View style={stylesD.container}>
               <TouchableOpacity style={{flex: 1}} onPress={toggleFullscreen}>
             {media.type === 'image' ? (
                       <Image
-                          source={{ uri: media.url }}
+                source={media.url}
                           style={stylesD.media}
                           blurRadius={0}
                           contentFit={"cover"}
@@ -367,9 +363,15 @@ import {
           </TouchableOpacity>
     
           <Modal visible={isFullscreen} transparent={false} animationType="slide">
-            <TouchableOpacity style={stylesD.fullscreenContainer} onPress={toggleFullscreen}>
+            <TouchableOpacity
+              style={stylesD.fullscreenContainer}
+              onPress={toggleFullscreen}
+            >
               {media.type === 'image' ? (
-                <Image source={{ uri: media.url }} style={stylesD.fullscreenMedia} />
+                <Image
+                  source={ media.url }
+                  style={stylesD.fullscreenMedia}
+                />
               ) : (
                 <Video
                   source={{ uri: media.url }}
