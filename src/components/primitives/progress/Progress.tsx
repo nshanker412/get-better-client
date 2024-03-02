@@ -49,7 +49,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ totalSteps, currentSte
 
 const styles = StyleSheet.create({
   container: {
-    height: 5,
+    height: 2,
     backgroundColor: '#f2f2f2',
     borderRadius: 10,
     position: 'relative',

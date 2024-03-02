@@ -36,8 +36,6 @@ const getStepTitle = (step: Step) => {
 
   }
 }
-
-
   // Component
   const _CreatePlanScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -61,8 +59,9 @@ const getStepTitle = (step: Step) => {
     }
 
   return (
-    <SafeAreaView style={{ flex: 1, width:"100%", height:"100%", }}>
-      <View style={{ flex: 1, padding: 10, justifyContent: "space-around"}}>
+    <SafeAreaView style={{ flex: 1, width: "100%", height: "100%", }}>
+      <View style={{  padding: 10, justifyContent: "space-around"}}/>
+      <View style={{ flex: 1, padding: 15, justifyContent: "space-around", gap: 10}}>
         <ProgressBar totalSteps={3} currentStep={getStepNumber(screenState.currentStep)} />
           <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.black, fontSize: 20 }}>{getStepTitle(screenState.currentStep)}</Text>
       </View>
