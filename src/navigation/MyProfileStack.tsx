@@ -1,4 +1,6 @@
+import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
@@ -9,6 +11,15 @@ import { Search } from '../components/search/search';
 import { PreviewUserPlan } from '../plans/preview/PreviewUserPlan';
 import { FollowerFollowingTab } from './FollowerFollowingTab';
 
+
+const SettingsButton = () => {
+	return (
+		
+		<Ionicons name="settings-sharp" size={24} color="white" />
+	);
+}
+
+
 export const MyProfileStack = () => {
 	const HomeStackNav = createStackNavigator();
 	const { theme } = useThemeContext();
@@ -17,22 +28,21 @@ export const MyProfileStack = () => {
 		<HomeStackNav.Navigator
 			initialRouteName='myProfile'
 			screenOptions={{
-				headerShown: false,
-				// headerTintColor: 'white',
+				headerShown: true,
+				headerTintColor: 'white',
+				headerTitle: '',
+				headerTitleStyle: false,
+				headerShadowVisible: false,
+
 				headerStyle: { backgroundColor: 'black' },
-				headerBackTitleStyle: {
-					color: theme.textColorPrimary,
-					fontFamily: theme.fontFamily,
-				},
-				headerBackTitleVisible: true,
-				headerBackTitle: 'back',
-				headerTitleStyle: {
-					color: theme.textColorPrimary,
-					fontFamily: theme.fontFamily,
-				},
+				headerBackTitleVisible: false,
 				cardStyle: { backgroundColor: 'black' },
 			}}>
 			<HomeStackNav.Screen
+				options={{
+					headerShown: true,
+					headerRight: () => <Ionicons name="settings-sharp" size={24} color={grayDark.gray12} />
+				}}
 				name='myProfile'
 				component={MyProfile}
 			/>
@@ -65,8 +75,10 @@ export const MyProfileStack = () => {
 			/>
 			<HomeStackNav.Screen
 				name='followerFollowing'
-				options={{ headerShown: true, title: 'back', 
-				headerTintColor: 'white',
+				options={{
+					headerShown: true,
+					headerBackTitleVisible: false, 
+					headerTintColor: 'white',
 				 }}
 				component={FollowerFollowingTab}
 			/>

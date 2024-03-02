@@ -136,20 +136,15 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const PlanItem = ({ item  }) => {
 		console.log(item)
 		return (
-
 			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
-
 				<TouchableOpacity onPress={() => onPressTile(item?.id, item.planType, item.v)}>
-
 					<LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1 ]} style={{ borderRadius: 8, width: '100%'}}>
-					<View style={{ flex: 1, width: 140, height: 140, borderColor: grayDark.gray9, borderWidth: 0.5, borderRadius: 8, padding: 10,  alignItems: "center", justifyContent: "center" }}>
-
-						<ConnectedPlanItem planType={item?.planType} planTitle={item?.title} />
-					</View>
+						<View style={{ flex: 1, width: 140, height: 140, borderColor: grayDark.gray9, borderWidth: 0.5, borderRadius: 8, padding: 10,  alignItems: "center", justifyContent: "center" }}>
+							<ConnectedPlanItem planType={item?.planType} planTitle={item?.title} />
+						</View>
 					</LinearGradient>
-					</TouchableOpacity>
-
-				</View>
+				</TouchableOpacity>
+			</View>
 		)
 	}
 

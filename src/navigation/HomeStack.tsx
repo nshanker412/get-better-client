@@ -17,10 +17,18 @@ export const HomeStack: React.FC = ({ navigation }) => {
 		<BottomTabEventProvider tabnav={navigation}>
 			<HomeStackNav.Navigator
 				screenOptions={{
-					headerShown: false,
+					headerShown: true,
+					headerTintColor: 'white',
+					headerTitle: '',
+					headerTitleStyle: false,
+					headerShadowVisible: false,
+					headerTransparent: true,
+					headerStyle: { backgroundColor: 'black' },
+					headerBackTitleVisible: false,
 					cardStyle: { backgroundColor: 'black' },
 				}}>
 				<HomeStackNav.Screen
+					options={{ headerShown: false }}
 					name='home'
 					component={FeedScreen}
 				/>
@@ -33,6 +41,7 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					component={Profile}
 				/>
 				<HomeStackNav.Screen
+					options={{ headerShown: false }}
 					name='notifications'
 					component={Notifications}
 				/>
@@ -45,7 +54,6 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					component={ProfilePlan}
 				/>
 				<HomeStackNav.Screen
-					options={{ headerShown: false}}
 					name='profilePlanV2'
 					component={PreviewUserPlan}
 				/>

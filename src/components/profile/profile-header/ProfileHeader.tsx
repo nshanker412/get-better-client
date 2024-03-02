@@ -2,7 +2,6 @@ import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -210,6 +209,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							profileHeaderStyles.nameBioContainer,
 							{
 								flex: 4,
+								flexShrink:2,
 								alignItems: 'center',
 								justifyContent: 'center',
 							},
@@ -251,7 +251,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							alignItems: 'flex-start',
 							justifyContent: 'flex-start',
 						}}>
-						<TouchableOpacity
+						{/* <TouchableOpacity
 							onPress={() => {
 								Haptics.impactAsync(
 									Haptics.ImpactFeedbackStyle.Medium,
@@ -263,7 +263,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 								size={40}
 								color={theme.textColorPrimary}
 							/>
-						</TouchableOpacity>
+						</TouchableOpacity> */}
 					</View>
 				</View>
 
@@ -296,18 +296,19 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 									]}
 							>
 										<LinearGradient
-									colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
-									style={{
-										borderRadius: 20,
-										width: '100%',
-										height: '100%',
-										flex: 1,
-										alignItems: 'center',
-										justifyContent: 'center',
-										flexDirection: 'column',
-									}}
-
-													>
+										colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
+										style={{
+											borderRadius: 20,
+											width: '100%',
+											height: 90,
+											position: 'absolute',
+											borderWidth: 0.5,
+											borderColor: theme.innerBorderColor,
+											display: 'flex',
+											flexDirection: 'row',
+											alignItems: 'center',
+											justifyContent: 'space-between',
+										}}></LinearGradient>
 
 							<View
 								style={{
@@ -370,7 +371,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 									</TouchableOpacity>
 								</View>
 									</View>
-							</LinearGradient>
 								</View>
 
 					)}
