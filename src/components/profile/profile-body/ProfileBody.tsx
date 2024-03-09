@@ -60,6 +60,8 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const [pla, setPla] = useState<PlanTileType[] | []>([]);
 	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
 	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
+	const [refreshing, setRefreshing] = useState<boolean>(false);
+
 
 	const navig = useNavigation();
 
@@ -133,6 +135,53 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		}
 	}
 
+
+
+
+	const refreshV2 = async () => {
+			try {
+				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
+					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanModel) => ({
+						v: "v2",
+						id: plan.id,
+						title: plan.planName,
+						planType: plan.data.planCategory,
+					}));		
+					
+					if (isMyProfile) {
+						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
+
+						// compare the lists and only set state if there are new plans
+						if (planList.length === plaV2.length) {
+							let isSame = true;
+							for (let i = 0; i < planList.length; i++) {
+								if (planList[i].id !== plaV2[i].id) {
+									isSame = false;
+									break;
+								}
+							}
+							if (isSame) {
+								return;
+							}
+						}
+						const newArr = [...newPlan, ...planList];
+						setPlaV2(newArr);
+					} else {
+						setPlaV2(planList);
+					}
+			} catch (error) {
+				console.log("couldnt fetch v2 plans", error);
+			} finally {
+				if (refreshing) {
+					setRefreshing(false);
+				}
+			}
+		}
+		
+
+
+
+
 	const PlanItem = ({ item  }) => {
 		console.log(item)
 		return (
@@ -162,6 +211,9 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 									numColumns={2}
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}
+									refreshing={refreshing}
+									onRefresh={refreshV2}
+									contentContainerStyle={{ paddingBottom: 150 }} // Adds bottom padding
 								/>
 						</View>
 					</View>
