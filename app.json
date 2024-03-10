@@ -48,9 +48,20 @@
 			[
 				"@sentry/react-native/expo",
 				{
-				  "url": "https://sentry.io/",
-				  "organization": "benson-e4",
-				  "project": "get-better"
+					"url": "https://sentry.io/",
+					"organization": "benson-e4",
+					"project": "get-better",
+					"publishRelease": true,
+					"release": "get-better@1.0.9",
+					"setCommits": true,
+					"androidProperties": {
+					  "bundleId": "com.bensone146.getbetter"
+					},
+					"iosProperties": {
+					  "bundleId": "com.bensone146.getbetter"
+					},
+					"authToken": "853418dc677c56f2c9d0f04e07e394898cb6ab65bf67eb7150f95bedd2467e42"
+				  
 				}
 			  ]
 		]
