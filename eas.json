@@ -31,8 +31,6 @@
 				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
 				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936",
 				"SENTRY_AUTH_TOKEN": "853418dc677c56f2c9d0f04e07e394898cb6ab65bf67eb7150f95bedd2467e42"
-
-
 			}
 		},
 		"staging": {

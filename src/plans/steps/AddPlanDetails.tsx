@@ -9,7 +9,7 @@ import { ResizeMode, Video } from 'expo-av';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MediaSource, usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
 import { ExerciseItemModal } from '../modals/ExerciseItemModal';
@@ -40,6 +40,16 @@ import { ScrollView } from 'react-native-gesture-handler';
       screenDispatch({ type: ActionType.NextStep });
     };
   
+
+
+    // export type KeyboardTypeIOS =
+    // | 'ascii-capable'
+    // | 'numbers-and-punctuation'
+    // | 'name-phone-pad'
+    // | 'twitter'
+    // | 'web-search';
+
+
     return (
   
       <View style={{ flex: 1, width: "100%", height: "100%" }}>
@@ -55,6 +65,8 @@ import { ScrollView } from 'react-native-gesture-handler';
             onChangeText={setPlanName}
             placeholderTextColor={grayDark.gray9}
             placeholder={`e.g. ${myUsername}'s leg destroyer`}
+                        keyboardAppearance='dark'
+
           />
          <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Description</Text>
   
@@ -64,6 +76,11 @@ import { ScrollView } from 'react-native-gesture-handler';
             value={ planDescription ?? planState?.description}
             style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}         
             multiline={true}
+            keyboardAppearance='dark'
+            keyboardType="default"
+            returnKeyType="done"
+            blurOnSubmit={true}
+            onSubmitEditing={()=>{Keyboard.dismiss()}}
             placeholderTextColor={grayDark.gray9}
             numberOfLines={4}
             maxLength={200}
