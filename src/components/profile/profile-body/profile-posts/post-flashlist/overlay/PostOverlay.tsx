@@ -22,51 +22,6 @@ import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
 
 
-// export interface IFloatingActionProps {
-//   color?: string;
-//   icon?: JSX.Element;
-//   name: string;
-//   text?: string;
-//   textBackground?: string;
-//   textColor?: string;
-//   textElevation?: number;
-//   margin?: number;
-//   component?: () => void;
-//   render?: () => void;
-//   animated?: boolean;
-//   shadow?: shadowType;
-//   tintColor?: string
-// }
-
-// export interface IFloatingActionProps {
-//   tintColor?: string;
-//   actions?: IActionProps[];
-//   color?: string;
-//   distanceToEdge?: number | { vertical: number; horizontal: number };
-//   visible?: boolean;
-//   overlayColor?: string;
-//   position?: positionType;
-//   overrideWithAction?: boolean;
-//   floatingIcon?: JSX.Element;
-//   showBackground?: boolean;
-//   openOnMount?: boolean;
-//   actionsPaddingTopBottom?: number;
-//   iconWidth?: number;
-//   iconHeight?: number;
-//   buttonSize?: number;
-//   listenKeyboard?: boolean;
-//   dismissKeyboardOnPress?: boolean;
-//   shadow?: shadowType;
-//   onPressItem?: (name?: string) => void;
-//   onPressMain?: () => void;
-//   onPressBackdrop?: () => void;
-//   onClose?: () => void;
-//   onOpen?: () => void;
-//   onStateChange?: () => void;
-//   animated?: boolean;
-// }
-
-
 interface PostOverlayProps {
   user: string;
   postData: PostMetadata;
@@ -84,36 +39,22 @@ interface PlanTileType {
 }
 
 
-
-
 // fn to generate list of icons for floating action button
-const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
-  if (!linkedPlans || linkedPlans?.length == 0 || !allPlans || allPlans.length === 0) {
+const genPlanIconList = (linkedPlans: PlanTileType[]) => {
+  if (!linkedPlans || linkedPlans?.length <= 0) {
     return [];
   }
-  console.log('linkedPlans', linkedPlans, linkedPlans?.length);
 
-  // filter out the plans that dontn have matching id
-
-  let included = []
-
-  for (let i = 0; i < allPlans.length; i++) {
-    if (linkedPlans.includes(allPlans[i].id)) {
-      included.push(allPlans[i]);
-    }
-  }
-
-  //1 - filter out plans that are not linked
-
-  const planIconList: IFloatingActionProps[] = included.map((plan, index) => {
+  const planIconList: IFloatingActionProps[] = linkedPlans?.map((plan, index) => {
     return {
+      key: index,
       id: index, 
       text: plan.title,
       icon: <PlanItem planType={plan.planType} size={30}  />,
-      name: plan.id,
+      name: `${plan.id}`,
       textStyle: { fontFamily: fonts.inter.light },
-      color: "rgba(0, 0, 0, 0.9)",
-      textBackground: "rgba(0, 0, 0, 0.5)",
+      color: "black",
+      textBackground: "black",
       textColor: "white",
       textStyles: { fontFamily: fonts.inter.medium, backgroundColor: "transparent" },
       opacity: 0.5,
@@ -131,8 +72,8 @@ const genPlanIconList = (allPlans: any[], linkedPlans: string[]|undefined) => {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
-  console.log("currentpostdata", postData)
+export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
+  // console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
@@ -150,43 +91,76 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
 
   const onPressPlan = (planId: string) => {
     navigation.navigate('profilePlanV2', {
-      planID: planId, profileUsername: user 
+      planID: planId,
+      profileUsername: user
     });
   };
 
   useEffect(() => {
     const fetchLinkedPlans = async () => {
-      if (!postData?.linkedPlans) {
+      if (!postData?.linkedPlans || postData?.linkedPlans?.length <= 0) {
         return;
       }
       try {
-        console.log('POST METADATA', postData);
-        console.log('fetchLinkedPlans', postData?.linkedPlans);
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${user}`);
-        const allPlans: PlanTileType[] = response.data?.plans?.map((plan: PlanTileType) => ({
-          id: plan.id,
-          title: plan?.planName,
-          planType: plan?.data.planCategory,
-        }));
-        console.log('allPlans', allPlans);
+        console.log('pre linkedPlans', postData?.linkedPlans);
+
+        // filter out plans that dont have a character at the first position
+        const linkedPlans: string[] =
+          postData?.linkedPlans?.filter((plan) => plan.charAt(0) !== ' ');
         
-        if (allPlans.length > 0) {
-          const newActions = genPlanIconList(allPlans, postData?.linkedPlans);
+        console.log('post linkedPlans', linkedPlans);        
 
+        const fetchPromises = linkedPlans.map(async (plan, index) => {
+          try {
 
+            const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${plan}`);
+            console.log('resp', resp);
+            const data: PlanTileType = {
+              id: resp?.data?.plan?.id,
+              planType: resp?.data?.plan?.data?.planCategory,
+              title: resp?.data?.plan?.planName,
+            };
+            console.log('data', data)
+            return data; 
+        
+            
+          } catch (error) {
+            console.log('Error fetching linked plan', error);
+            return null;
+          }
+
+        });
+  
+        const linkedPlanData = await Promise.all(fetchPromises);
+  
+        // const linkedPlanData: PlanTileType[] = responses.map((response, index) => ({
+        //   id: response?.data?.plan?.id,
+        //   planType: response?.data?.plan?.data?.planCategory,
+        //   title: response?.data?.plan?.planName,
+        // }));
+  
+        console.log('linkedPlanData', linkedPlanData);
+  
+        if (linkedPlanData!== null  && linkedPlanData?.length > 0) {
+          const newActions = genPlanIconList(linkedPlanData);
           setLinkedActionFab(newActions);
+        } else {
+          console.log('No linked plans');
+          setLinkedActionFab([]);
         }
       } catch (error) {
-        console.error('Error fetching linked plans', error);
+        console.log('Error fetching linked plans', error);
       }
     };
-
+  
     fetchLinkedPlans();
-  }, [user, postData?.timestamp,  postData?.linkedPlans, postData]);
+  }, [user, postData?.timestamp, postData?.linkedPlans, postData]);
+  
+  
 
   const styles = usePostOverlayStyles(isEmbeddedFeed);
   
-    const doubleTapRef = useRef(null);
+  const doubleTapRef = useRef(null);
   const { onPostChange, openDrawer } = useCommentDrawer();
   
   const handleOpenCommentDrawer = useCallback(() => {
@@ -203,23 +177,23 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
       });
       setPostLiked(user, `${postData.timestamp}`, myUsername, currentLikeStateInst.state);
     }, 500),
-    [] 
+    []
   );
 
-	const onDoubleTapEvent = async (event): Promise<void>  => {
-		if (event.nativeEvent.state === State.ACTIVE) {
-			// Double tap was detected
+  const onDoubleTapEvent = async (event): Promise<void> => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      // Double tap was detected
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       console.log('onDoubleTapEvent')
 
-			// image wasn't already liked
-			if (!currentLikeState.state) {
+      // image wasn't already liked
+      if (!currentLikeState.state) {
         handleUpdateLike(currentLikeState);
-			}
-		}
-	};
+      }
+    }
+  };
 
-  const onSingleTapEvent =  (event)  => {
+  const onSingleTapEvent = (event) => {
     if (event.nativeEvent.state === State.ACTIVE) {
       // handlePostPress();
 
@@ -233,31 +207,31 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
   
   return (
     <TapGestureHandler
-    onHandlerStateChange={onDoubleTapEvent}
-    numberOfTaps={2}
-    ref={doubleTapRef}>
-    <TapGestureHandler
-      onHandlerStateChange={
-        onSingleTapEvent
-      }
-      numberOfTaps={1}
-       waitFor={doubleTapRef}
+      onHandlerStateChange={onDoubleTapEvent}
+      numberOfTaps={2}
+      ref={doubleTapRef}>
+      <TapGestureHandler
+        onHandlerStateChange={
+          onSingleTapEvent
+        }
+        numberOfTaps={1}
+        waitFor={doubleTapRef}
       >
-      <View
-					style={{
+        <View
+          style={{
             height: isEmbeddedFeed ? 200 : Dimensions.get('window').height,
             width: Dimensions.get('window').width,
             zIndex: 1,
             position: 'absolute',
-					}}>
-					<View style={styles.postHeader}>
+          }}>
+          <View style={styles.postHeader}>
             {!isEmbeddedFeed && (<ConnectedProfileAvatar
               key={postData.user}
               username={postData.user}
               fetchSize={300}
               size={40}
             />)}
-						<View style={styles.postHeaderInfoContainer}>
+            <View style={styles.postHeaderInfoContainer}>
               {!isEmbeddedFeed && (<Link
                 to={{
                   screen: 'profile',
@@ -269,11 +243,11 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
                 </Text>
               </Link>
               )}
-							<Text style={styles.timestamp}>
-								{timeAgo(postData.timestamp)}
-							</Text>
+              <Text style={styles.timestamp}>
+                {timeAgo(postData.timestamp)}
+              </Text>
 
-						</View>
+            </View>
           </View>
           <BlurView
             intensity={50}
@@ -281,41 +255,41 @@ export const PostOverlay: React.FC<PostOverlayProps> = React.memo(({ user, postD
             style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
             tint='dark'
           />
-       <View style={{flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10: 100, paddingLeft: isEmbeddedFeed ? 5: 10, paddingRight: 10, gap: 5}}>   
-       {eval(postData?.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={isEmbeddedFeed} />)}
-              <View style={{position: "absolute", bottom: 80, right: 0, width: Dimensions.get("window").width}}>
+          <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10 : 100, paddingLeft: isEmbeddedFeed ? 5 : 10, paddingRight: 10, gap: 5 }}>
+            {eval(postData?.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={!!isEmbeddedFeed} />)}
+            <View style={{ position: "absolute", bottom: 80, right: 0, width: Dimensions.get("window").width }}>
               {linkedActionFab?.length > 0 && <FloatingAction
                 actions={linkedActionFab}
                 showBackground={true}
-                color={"rgba(0, 0, 0, 0.5)"}
-                style={{padding: 10,  backgroundColor: "transparent"}}
+                color={"black"}
+                
+                style={{ padding: 10, backgroundColor: "transparent" }}
                 onPressItem={onPressAction}
                 floatingIcon={
                   <Entypo name="dots-three-vertical" size={30} color="white" />
                 }
               />}
-              </View>
-          <StarIconView 
-            likes={currentLikeState.counter}
-            isLiked={currentLikeState.state}
+            </View>
+            <StarIconView
+              likes={currentLikeState.counter}
+              isLiked={currentLikeState.state}
               onLikePress={() => handleUpdateLike(currentLikeState)}
-              isEmbeddedFeed={isEmbeddedFeed} 
-          />
-          <CommentIcon
-            commentCount={postData?.comments?.length ?? 0}
-            openCommentDrawer={handleOpenCommentDrawer} 
-            isEmbeddedFeed={isEmbeddedFeed} 
+              isEmbeddedFeed={!!isEmbeddedFeed}
+            />
+            <CommentIcon
+              commentCount={postData?.comments?.length ?? 0}
+              openCommentDrawer={handleOpenCommentDrawer}
+              isEmbeddedFeed={!!isEmbeddedFeed}
             />
           </View>
-          <View style={{ position: 'absolute', right: 0, bottom: 100}}>
-            </View>
+          <View style={{ position: 'absolute', right: 0, bottom: 100 }}>
+          </View>
         </View>
       </TapGestureHandler>
     </TapGestureHandler>
   );
-});
+};
   
-PostOverlay.displayName = 'PostOverlay';
 
 
 const usePostOverlayStyles = (isEmbeddedFeed: boolean) => {
@@ -401,6 +375,7 @@ const styles = useMemo(() => StyleSheet.create({
     // fontFamily: theme.text.body.medium.fontFamily,
     fontFamily: fonts.inter.medium,
     fontSize: 11,
+    backgroundColor: 'transparent',
     // color: 	'#9A9A9A',
     textShadowColor: 'rgba(0, 0, 0, 0.55)',
     textShadowOffset: { width: -2, height: 2 },
@@ -421,6 +396,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       shadowOffset: { width: -3, height: 3 },
       shadowOpacity: 0.65,
       shadowRadius: 3,
+      backgroundColor: 'transparent',
     },
     actionButtonText: {
       textShadowColor: 'rgba(0, 0, 0, 0.55)',
@@ -431,6 +407,8 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       textAlign: 'center',
       marginTop: isEmbeddedFeed ? 2:4,
       fontSize: isEmbeddedFeed ? 12 : 16,
+      backgroundColor: 'transparent',
+
 },
   });
 
@@ -464,6 +442,7 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       shadowOffset: { width: -3, height: 3 },
       shadowOpacity: 0.65,
       shadowRadius: 3,
+      backgroundColor: 'transparent',
     },
     actionButtonText: {
       textShadowColor: 'rgba(0, 0, 0, 0.55)',
@@ -474,7 +453,7 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       textAlign: 'center',
       marginTop: isEmbeddedFeed ? 2:4,
       fontSize: isEmbeddedFeed ? 12 : 16,
-
+      backgroundColor: 'transparent',
 },
   });
 
@@ -490,8 +469,7 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
         height={size}
         xml={isLiked ? StarIconFilled : StarIcon}
         />
-    
-
+  
       <Text style={styles.actionButtonText}>
         {likes}
         </Text>
@@ -511,3 +489,7 @@ const size = isEmbeddedFeed ? 20 : 45;
 }
 
 
+
+
+// export const PostOverlay = React.memo(_PostOverlay);
+PostOverlay.displayName = 'PostOverlay';

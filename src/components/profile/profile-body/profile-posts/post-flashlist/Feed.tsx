@@ -28,7 +28,7 @@ import { getFeed } from './service/getFeed'
 export default function FeedScreen() {
     const [posts, setPosts] = useState<Post[] | []>([])
     const [refreshing, setRefreshing] = useState(false)
-    const mediaRefs = useRef([]);
+    const mediaRefs = useRef({} as { [key: string]: typeof PostTile });
     const { username: myUsername } = useMyUserInfo()
     const feedRef = useRef(null)
     const currentPostFilenameRef = useRef<string>('')
@@ -51,18 +51,34 @@ export default function FeedScreen() {
      * the FlatList, when this happens we should start playing 
      * the post that is viewable and stop all the others
      */
-    const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
+    const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
+        console.log("++++++++===========================")
+        console.log('viewableItems', viewableItems)
+        console.log('changed', changed)
+        console.log("++++++++===========================")
+
+    
         changed.forEach(({ item, isViewable }) => {
-            if (isViewable) {
-                console.log('currentPostFilenameRef', currentPostFilenameRef.current)
+            if (!isViewable) {
 
-                currentPostFilenameRef.current = item.filename
-                //shits delayed 1 post, autoplay posts and mute posts that are "currently visible"
-
-                mediaRefs?.current[item?.filename]?.stop();
+         
+                // console.log('isNotViewable', item.filename)
+                if (item.filename == currentPostFilenameRef.current) {
+                    console.log('pausing', item.filename)
+                    mediaRefs.current[item.filename].pause()
+                } else {
+                        mediaRefs.current[item.filename].stop()
+                }
             }
         });
-    }, [onPostChange]);
+        viewableItems.forEach(({ item,  }) => {
+            if (item.filename !== currentPostFilenameRef.current) {
+                console.log('currentPostFilenameRef', currentPostFilenameRef.current)
+                currentPostFilenameRef.current = item.filename
+
+            }
+        });
+    }, [onPostChange, posts]);
 
     const onViewableItemsChangedRef = useRef(onViewableItemsChanged);
     const feedItemHeight = Dimensions.get('window').height;
@@ -71,7 +87,16 @@ export default function FeedScreen() {
     const renderItem: ListRenderItem<Post> = ({ item }) => {
         return (
             <View style={{ height: feedItemHeight, backgroundColor: 'black' }}>
-                <PostTile  post={item} myUsername={myUsername ?? ''} ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)}
+                <PostTile
+                    post={item}
+                    myUsername={myUsername ?? ''}
+                    ref={PostTileRef => {
+                        if (PostTileRef) {
+                            mediaRefs.current[item.filename] = PostTileRef;
+                        } else {
+                            delete mediaRefs.current[item.filename];
+                        }
+                    }}
                 />
             </View>
         );
@@ -102,16 +127,17 @@ export default function FeedScreen() {
                 data={posts}
                 estimatedItemSize={feedItemHeight}
                 showsVerticalScrollIndicator={false}
-                removeClippedSubviews={true}
+                // removeClippedSubviews={true}
                 viewabilityConfig={{
                         waitForInteraction: false,
-                        viewAreaCoveragePercentThreshold:90
+                        viewAreaCoveragePercentThreshold:80
                   }}
                 renderItem={renderItem}
                 pagingEnabled
-                scrollEventThrottle={100}
+                scrollEventThrottle={15}
                 snapToAlignment='start'
-                keyExtractor={item => item.filename}
+                    keyExtractor={item => item.filename}
+                
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {

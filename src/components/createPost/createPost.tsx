@@ -60,14 +60,18 @@ const actions: IActionProps[] = [
 	{
 		text: "Plan",
 		name: "bt_link_post",
-		color: "rgba(137, 133, 133, 0.9)",
+		// color: "rgba(137, 133, 133, 0.9)",
 		icon: <FontAwesome5 name="link" size={24} color="white" />,
+		color: "gray"
+
 	},
 	{
 		text: "Location",
 		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
 		name: "bt_room",
-		color: "rgba(137, 133, 133, 0.9)",
+		// color: "rgba(137, 133, 133, 0.9)",
+		color: "gray"
+		
 	},
 
   ];
@@ -119,7 +123,6 @@ export default function CreatePost() {
 		if (name === "bt_link_post") {
 			setIsVisible(true);
 		}
-		console.log(`selected button: ${name}`);
 	}
 
 	const onPlanModalClose = (plans: string[] | []) => {

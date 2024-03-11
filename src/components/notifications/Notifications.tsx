@@ -62,6 +62,8 @@ export const Notifications = () => {
     };
 
     const renderItem = ({ item, index }) => {
+
+        console.log("notification packet=>>>> ", item);
         const itemUsername = item.content.split(' ')[0];
         const itemContent = item.content.split(' ').slice(1).join(' ');
 

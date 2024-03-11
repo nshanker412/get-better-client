@@ -40,17 +40,17 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                     text2: 'This post may have been deleted',
                     topOffset: 100,
                 });
-                navigation.setParams({ linkPostID: undefined });
+                // navigation.setParams({ linkPostID: undefined });
 
             } else {
                 setPreviewPostId(idx);
             }
             }
-        }, [ posts,  route]);
+        }, [ posts,  route?.params]);
 
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
-         navigation.setParams({ linkPostID: undefined });
+        //  navigation.setParams({ linkPostID: undefined });
         if (wasPostDeleted) {
              fetchUserPosts();
         }

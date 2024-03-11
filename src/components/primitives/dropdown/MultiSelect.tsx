@@ -106,7 +106,6 @@ const stylesd = StyleSheet.create({
 
     elevation: 2,
     },
- 
   icon: {
     marginRight: 5,
   },

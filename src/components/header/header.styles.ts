@@ -13,6 +13,7 @@ export const useHeaderStyles = () => {
 			shadowOffset: { width: -4, height: 4 },
 			shadowOpacity: 0.2,
 			shadowRadius: 4,
+			backgroundColor: 'transparent',
 			position: 'absolute',
 			display: 'flex',
 			flexDirection: 'row',

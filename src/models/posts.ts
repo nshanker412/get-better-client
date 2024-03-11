@@ -9,11 +9,11 @@ export interface Comment {
 	caption: string;
 	challenge: string | boolean; 
 	comments: Comment[];
-	likes: string[];
+	  likes: string[];
 	timestamp: number;
 	type: 'image' | 'video'; 
 	  user: string;
-	  linkedPlans?: string[];
+	linkedPlans?: string[];
   }
   
   export interface Post {

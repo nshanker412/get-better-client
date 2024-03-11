@@ -90,7 +90,6 @@ import { ScrollView } from 'react-native-gesture-handler';
         </View>
         <View style={{ flex: 1, flexGrow: 2,  width: "100%",   justifyContent: "center" }}>
           
-     
   
           {planState?.init?.planCategory === PlanCategory.Lifting && planState?.init?.selectedExercises && (
             <>

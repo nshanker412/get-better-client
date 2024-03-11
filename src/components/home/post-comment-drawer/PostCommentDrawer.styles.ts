@@ -259,7 +259,9 @@ export const usePostCommentDrawerStyles = () => {
 		},
 		input: {
 			color: theme.textColorPrimary,
-			backgroundColor: theme.input.backgroundColor,
+			// backgroundColor: theme.input.backgroundColor,
+			backgroundColor: 'transparent',
+
 			shadowColor: "#000",
 			shadowOffset: {
 				width: 0,
