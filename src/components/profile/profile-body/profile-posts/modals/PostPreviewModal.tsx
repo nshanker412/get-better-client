@@ -69,22 +69,27 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     }
   };
 
+
     /**
      * Called any time a new post is shown when a user scrolls
      * the FlatList, when this happens we should start playing 
      * the post that is viewable and stop all the others
      */
-    const onViewableItemsChanged = useCallback(({ changed }: { changed: ViewToken[] }) => {
+    const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
       changed.forEach(({ item, isViewable }) => {
         if (!isFullscreenPreview) {
           mediaRefs.current[item?.filename]?.mute();
+        } else {
+          mediaRefs.current[item?.filename]?.unMute();
         }
           if (isViewable) {
             currentPostFilenameRef.current = `${item?.metadata?.timestamp}`;
             
     
             if (mediaRefs?.current[item?.filename]) {
-              mediaRefs.current[item?.filename]?.play();
+              if (isFullscreenPreview) {
+                mediaRefs.current[item?.filename]?.play();
+              }
             } 
           }
           else
@@ -121,10 +126,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               backgroundColor: 'black'
             }}>
             <PostTile
-                isFullscreenPreview={isFullscreenPreview}
                 handlePostPress={() => handlePostPress(index)}
                 isEmbeddedFeed={!isFullscreenPreview}
-                post={item} myUsername={myUsername ?? ''}
+                post={item}
+                myUsername={myUsername ?? ''}
                 ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
             </View>
         );

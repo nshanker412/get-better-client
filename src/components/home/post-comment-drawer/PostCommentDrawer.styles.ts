@@ -18,7 +18,7 @@ export const usePostCommentDrawerStyles = () => {
 			borderBottomColor: theme.innerBorderColor,
 		},
 		headerContainer: {
-			backgroundColor: theme.containerBackgroundColor,
+			backgroundColor: theme.innerContainer.backgroundColor,
 			width: '100%',
 			height: 50,
 			justifyContent: 'flex-start',

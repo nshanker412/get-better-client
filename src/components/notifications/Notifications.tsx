@@ -3,7 +3,7 @@ import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { EvilIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useState } from 'react';
 import { Linking, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -41,12 +41,17 @@ enum NotificationType {
 
 export const Notifications = () => {
     const { theme } = useThemeContext();
-    const navigation = useNavigation();
+    const {goBack, navigate, dispatch} = useNavigation();
     const notificationStyles = useNotificationsStyles();
     const { unreadNum, notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
     const [refreshing, setRefreshing] = useState(false);
     const { username: myUsername } = useMyUserInfo();
 
+
+    useEffect(() => {
+        console.log('notifications', notifications);
+
+    }, [notifications]);
 
     useEffect(() => {
 
@@ -122,12 +127,23 @@ export const Notifications = () => {
             notifStyle = notificationStyles.notificationContainer;
         }
 
+        const onNav = () => {
+            if (itemLink) {
+                
+                dispatch(
+                    CommonActions.navigate({
+                        name: itemLink.screen,
+                        params: itemLink.params,
+                    })
+                );
+            }
+        }
 
         switch (type) {
             case NotificationType.LIKE:
                 return (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
@@ -147,7 +163,7 @@ export const Notifications = () => {
             case NotificationType.COMMENT:
                 return (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
@@ -168,7 +184,7 @@ export const Notifications = () => {
             case NotificationType.MOTIVATE:
                 return (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
@@ -188,7 +204,7 @@ export const Notifications = () => {
                   case NotificationType.CHALLENGE:
                 return (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        onPress={onNav}
                         style={[notifStyle, {flexShrink: 1, maxHeight: 200, height: "auto", justifyContent: "flex-start", alignItems: "flex-start"} ] }>
                         <ConnectedProfileAvatar
                             key={itemUsername}
@@ -212,9 +228,8 @@ export const Notifications = () => {
                                 <Pressable
                                     style={{ padding: 10, borderRadius: 10, backgroundColor: 'black', borderColor: theme.textColorPrimary, borderWidth: 1, width: "auto" }}
                                    
-                                    onPress={() => 
-                                        navigation.navigate(itemLink.screen, itemLink.params)
-                                    }>
+                                    onPress={onNav}
+                                >
 
                                     <Text style={{ color: theme.textColorPrimary, fontSize: 16, fontFamily: fonts.inter.black }}>Complete</Text>
                                 </Pressable>
@@ -228,7 +243,7 @@ export const Notifications = () => {
             default:
                 return (
                     <TouchableOpacity
-                        onPress={() => navigation.navigate(itemLink.screen, itemLink.params)}
+                        onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
@@ -256,7 +271,7 @@ export const Notifications = () => {
             <TouchableOpacity
                     // style={notificationStyles.backArrowContainer}
                 style={{ height: 60, width: 50, justifyContent: 'center', alignItems: 'center'}}
-                onPress={() => navigation.goBack()}>
+                onPress={() => goBack()}>
                 <EvilIcons name="chevron-left" size={50} color={theme.textColorPrimary} />
             </TouchableOpacity>
             <View

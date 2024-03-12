@@ -1,8 +1,8 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
-import { AVPlaybackStatusError, AVPlaybackStatusSuccess, ResizeMode, Video } from 'expo-av';
+import { ResizeMode, Video } from 'expo-av';
 import { Image, ImageErrorEventData } from 'expo-image';
-import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
     Easing,
@@ -291,31 +291,31 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         // Sentry.captureException(error)
     }
 
-    const onPlaybackStatusUpdate = useCallback((playbackStatus: AVPlaybackStatusError | AVPlaybackStatusSuccess) => {
-        if (!playbackStatus.isLoaded) {
-            // When the video is not loaded
-            console.log('Video not loaded', post.filename);
-        } else {
-            // When the video is loaded, log the current state
-            if (playbackStatus.isPlaying) {
-                console.log('Video is playing', post.filename);
-            } else {
-                console.log('Video is paused', post.filename);
-            }
+    // const onPlaybackStatusUpdate = useCallback((playbackStatus: AVPlaybackStatusError | AVPlaybackStatusSuccess) => {
+    //     if (!playbackStatus.isLoaded) {
+    //         // When the video is not loaded
+    //         console.log('Video not loaded', post.filename);
+    //     } else {
+    //         // When the video is loaded, log the current state
+    //         if (playbackStatus.isPlaying) {
+    //             console.log('Video is playing', post.filename);
+    //         } else {
+    //             console.log('Video is paused', post.filename);
+    //         }
 
-            // Add more conditions based on your requirements
-            if (playbackStatus.isBuffering) {
-                console.log('Video is buffering', post.filename);
-            }
+    //         // Add more conditions based on your requirements
+    //         if (playbackStatus.isBuffering) {
+    //             console.log('Video is buffering', post.filename);
+    //         }
 
-            // Playback has finished
-            if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
-                console.log('Video playback finished', post.filename);
-            }
-        }
-    }, [post?.filename  ]);
+    //         // Playback has finished
+    //         if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
+    //             console.log('Video playback finished', post.filename);
+    //         }
+    //     }
+    // }, [post?.filename  ]);
 
-    localRef.current?.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    // localRef.current?.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
 
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;

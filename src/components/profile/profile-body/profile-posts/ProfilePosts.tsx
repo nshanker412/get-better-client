@@ -10,6 +10,10 @@ import { PreviewFeedScreen } from './modals/PostPreviewModal';
 // else return -1 
 const findIdxByID = (postId: string, posts: Post[]) => {
     const postIDint = parseInt(postId);
+    console.log('postIDint', postIDint)
+
+    console.log('posts', posts)
+
     const index = posts.findIndex((post) => (post.metadata.timestamp as number) === postIDint);
     return index;
 }
@@ -22,13 +26,23 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     const route = useRoute();
     const navigation = useNavigation();
     const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
-    
+    const [linkPostID, setLinkPostID] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+
+        setLinkPostID(route?.params?.linkPostID);
+
+        console.log("ROUTE IN PROFILE POSTS", route);
+    }, [route]);
+
+
     // check if linked from notification
     useEffect(() => {
         if (!posts.length) return;
 
-        console.log('inprofile', route?.params);
-        const linkPostID = route?.params?.linkPostID;
+
+        console.log('inprofile', linkPostID);
+
         if (linkPostID !== undefined) {
             console.log('it exists' , linkPostID);
             const idx = findIdxByID(linkPostID, posts);
@@ -46,7 +60,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
                 setPreviewPostId(idx);
             }
             }
-        }, [ posts,  route?.params]);
+        }, [ posts,  isMyProfile, linkPostID]);
 
 
     const onClosePreviewPress = (wasPostDeleted: boolean) => {
@@ -54,6 +68,7 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         if (wasPostDeleted) {
              fetchUserPosts();
         }
+
         setPreviewPostId(undefined);
     };
 
@@ -61,12 +76,16 @@ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
         await fetchUserPosts();
     }
 
+    useEffect(() => {
+        console.log('linkid preview changes', previewPostId);
+    }, [previewPostId]);
+
     return (
             <PreviewFeedScreen
                 posts={posts}
-                isFullscreen={previewPostId === undefined}
+                isFullscreen={previewPostId !== undefined}
                 onClosePress={onClosePreviewPress}
-                currentPost={previewPostId } //TODO FIX YOU FUCK
+                currentPost={previewPostId } 
                 onFetchPosts={onFetchUserPosts}
                 isMyFeed={isMyProfile}
             />

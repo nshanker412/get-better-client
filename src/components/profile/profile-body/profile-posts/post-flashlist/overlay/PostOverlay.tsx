@@ -99,58 +99,57 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
 
   useEffect(() => {
     const fetchLinkedPlans = async () => {
-      if (!postData?.linkedPlans || postData?.linkedPlans?.length <= 0) {
-        return;
-      }
-      try {
+      if (postData.linkedPlans) {
+      
+        try {
 
-        // filter out plans that dont have a character at the first position
+          // filter out plans that dont have a character at the first position
         
 
-        const fetchPromises = postData?.linkedPlans?.map(async (plan, index) => {
-          try {
+          const fetchPromises = postData?.linkedPlans?.map(async (plan, index) => {
+            try {
 
-            const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${plan}`);
-            const data: PlanTileType = {
-              id: resp.data.plan.id,
-              planType: resp.data.plan.data.planCategory,
-              title: resp.data.plan.planName,
-            };
-            console.log('data', data)
-            return data; 
+              const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${plan}`);
+              const data: PlanTileType = {
+                id: resp.data.plan.id,
+                planType: resp.data.plan.data.planCategory,
+                title: resp.data.plan.planName,
+              };
+              console.log('data', data)
+              return data;
         
             
-          } catch (error) {
-            console.log('Error fetching linked plan', error);
+            } catch (error) {
+              console.log('Error fetching linked plan', error);
+            }
 
+          });
+  
+          const linkedPlanData = await Promise.all(fetchPromises);
+  
+          // const linkedPlanData: PlanTileType[] = responses.map((response, index) => ({
+          //   id: response?.data?.plan?.id,
+          //   planType: response?.data?.plan?.data?.planCategory,
+          //   title: response?.data?.plan?.planName,
+          // }));
+  
+          console.log('linkedPlanData', linkedPlanData);
+  
+          if (linkedPlanData !== null && linkedPlanData?.length > 0) {
+            const newActions = genPlanIconList(linkedPlanData);
+            setLinkedActionFab(newActions);
+          } else {
+            console.log('No linked plans');
+            setLinkedActionFab([]);
           }
-
-        });
-  
-        const linkedPlanData = await Promise.all(fetchPromises);
-  
-        // const linkedPlanData: PlanTileType[] = responses.map((response, index) => ({
-        //   id: response?.data?.plan?.id,
-        //   planType: response?.data?.plan?.data?.planCategory,
-        //   title: response?.data?.plan?.planName,
-        // }));
-  
-        console.log('linkedPlanData', linkedPlanData);
-  
-        if (linkedPlanData!== null  && linkedPlanData?.length > 0) {
-          const newActions = genPlanIconList(linkedPlanData);
-          setLinkedActionFab(newActions);
-        } else {
-          console.log('No linked plans');
-          setLinkedActionFab([]);
+        } catch (error) {
+          // console.log('Error fetching linked plans', error);
         }
-      } catch (error) {
-        console.log('Error fetching linked plans', error);
       }
-    };
+    }
   
     fetchLinkedPlans();
-  }, [user, postData?.timestamp, postData?.linkedPlans, postData]);
+  }, [user, postData?.timestamp, postData?.linkedPlans]);
   
   
 
@@ -221,7 +220,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
             position: 'absolute',
           }}>
           <View style={styles.postHeader}>
-            {!isEmbeddedFeed && (<ConnectedProfileAvatar
+            {!isEmbeddedFeed && (
+              <ConnectedProfileAvatar
               key={postData.user}
               username={postData.user}
               fetchSize={300}

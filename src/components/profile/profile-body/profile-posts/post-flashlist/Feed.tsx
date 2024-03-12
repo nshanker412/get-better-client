@@ -80,7 +80,6 @@ export default function FeedScreen() {
         // Play newly viewable items
         viewableItems.forEach(({ item }) => {
             if (item.metadata.type === 'video') {
-
                 postTileRefs.current[item.filename]?.current?.play();
             }
         });
@@ -89,6 +88,7 @@ export default function FeedScreen() {
     const renderItem = useCallback(({ item }) => (
         <View style={{ height: Dimensions.get('window').height, backgroundColor: 'black' }}>
             <PostTile
+                isEmbeddedFeed={false}
                 post={item}
                 myUsername={myUsername ?? ''}
                 ref={postTileRefs.current[item.filename]}
