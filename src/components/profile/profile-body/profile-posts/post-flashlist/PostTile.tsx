@@ -1,4 +1,3 @@
-import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
 import { AVPlaybackStatusError, AVPlaybackStatusSuccess, ResizeMode, Video } from 'expo-av';
@@ -12,6 +11,7 @@ import Animated, {
     withSequence,
     withTiming
 } from 'react-native-reanimated';
+import { LoadingSpinner } from '../../../../loading-spinner/LoadingSpinner';
 import { PostOverlay } from './overlay/PostOverlay';
 
 
@@ -148,10 +148,10 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             return;
         }
         // if video is already playing return
-        const status = await localRef.current?.getStatusAsync();
-        if (status?.isPlaying) {
-            return;
-        }
+        // const status = await localRef.current?.getStatusAsync();
+        // if (status?.isPlaying) {
+        //     return;
+        // }
         try {
             playAniRef.current?.fadeIn(); // Trigger fade-out when the video is played
             await localRef.current?.playAsync();
@@ -175,10 +175,10 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         }
 
         // if video is already stopped return
-        const status = await localRef.current?.getStatusAsync();
-        if (!status?.isPlaying) {
-            return;
-        }
+        // const status = await localRef.current?.getStatusAsync();
+        // if (!status?.isPlaying) {
+        //     return;
+        // }
         try {
             await localRef.current?.stopAsync();
         } catch (e) {
@@ -260,6 +260,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         }
     }
 
+
     const pause = async () => {
         console.log('we in pause boid')
         if (localRef.current == null) {
@@ -268,10 +269,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         if (post.metadata.type === 'image') {
             return;
         }
-        const status = await localRef.current?.getStatusAsync();
-        if (status?.isPlaying) {
-            return;
-        }
+  
         try {
             playAniRef.current?.fadeOut(); // Trigger fade-out when the video is played
 
@@ -296,26 +294,29 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     const onPlaybackStatusUpdate = useCallback((playbackStatus: AVPlaybackStatusError | AVPlaybackStatusSuccess) => {
         if (!playbackStatus.isLoaded) {
             // When the video is not loaded
-            console.log('Video not loaded');
+            console.log('Video not loaded', post.filename);
         } else {
             // When the video is loaded, log the current state
             if (playbackStatus.isPlaying) {
-                console.log('Video is playing');
+                console.log('Video is playing', post.filename);
             } else {
-                console.log('Video is paused');
+                console.log('Video is paused', post.filename);
             }
 
             // Add more conditions based on your requirements
             if (playbackStatus.isBuffering) {
-                console.log('Video is buffering');
+                console.log('Video is buffering', post.filename);
             }
 
             // Playback has finished
             if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
-                console.log('Video playback finished');
+                console.log('Video playback finished', post.filename);
             }
         }
-    }, []);
+    }, [post?.filename  ]);
+
+    localRef.current?.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
     const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
@@ -333,20 +334,18 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
                 isEmbeddedFeed={isEmbeddedFeed}
                  />
             {post.metadata.type === 'video' && (
-        <View style={styles.videoContainer}>
-                    <Video
-                    id={`${post.filename}-video-tile`}
+            <View style={styles.videoContainer}>
+                <Video
                     ref={localRef}
                     style={{ flex: 1 }}
                     resizeMode={ResizeMode.COVER}
                     onError={onVideoError}
-                        // shouldPlay={loaded && !paused}
-                        // shouldPlay={true}
-                    isLooping={true}
+                        isLooping={true}
                     volume={1.0}
+                    rate={1.0}
                     PosterComponent={() => <LoadingSpinner />}
-                    posterStyle={{ width: '100%', height: '100%', backgroundColor: 'transparent', backfaceVisibility: 'visible'}}
-                    onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+                    posterStyle={styles.videoPoster}
+                    // onPlaybackStatusUpdate={onPlaybackStatusUpdate}
                     usePoster={true}
                     source={{
                         uri: videoUri
@@ -361,7 +360,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
             {post.metadata.type === 'image' && (
                 <Image
                     recyclingKey={post.filename}
-                    style={{ flex: 1 }}
+                    style={styles.imageStyle}
                     onError={onImageError}
                     source={{
                         uri: imageUri
@@ -380,18 +379,27 @@ PostTile.displayName = 'PostTile'
   
 const styles = StyleSheet.create({
     videoContainer: {
-        flex: 1, backfaceVisibility: 'visible'}
-    ,
-
+        flex: 1,
+        backfaceVisibility: 'visible',
+    },
+    imageStyle: {
+        flex: 1,
+    },
+    videoPoster: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'transparent',
+        backfaceVisibility: 'visible',
+    },
     overlay: {
-          position: 'absolute',
+        position: 'absolute',
         zIndex: 10,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     overlayText: {
       color: 'white',

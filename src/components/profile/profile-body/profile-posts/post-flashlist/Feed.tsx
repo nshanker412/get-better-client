@@ -32,6 +32,8 @@ export default function FeedScreen() {
     const postTileRefs = useRef<{ [key: string]: React.RefObject<PostTileRef> }>({});
     const visibleItemKeys = useRef(new Set<string>());
 
+    const postSize = Dimensions.get('window').height - 100;
+
     useScrollToTop(feedRef);
 
     useEffect(() => {
@@ -59,14 +61,16 @@ export default function FeedScreen() {
         postTileRefs.current = newRefs;
     }, [posts]);
 
-    const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
+    const onViewableItemsChanged = ({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
         const newViewableSet = new Set(viewableItems.map(({ item }) => item.filename));
+
+        console.log('viewable items:', newViewableSet);
     
         // Pause any previously viewable items that are no longer viewable
         visibleItemKeys.current.forEach((key) => {
             if (!newViewableSet.has(key)) {
                 console.log('pausing', key)
-                postTileRefs.current[key]?.current?.pause();
+                postTileRefs.current[key]?.current?.stop();
             }
         });
     
@@ -80,7 +84,7 @@ export default function FeedScreen() {
                 postTileRefs.current[item.filename]?.current?.play();
             }
         });
-    }, []);
+    };
 
     const renderItem = useCallback(({ item }) => (
         <View style={{ height: Dimensions.get('window').height, backgroundColor: 'black' }}>
@@ -113,12 +117,12 @@ export default function FeedScreen() {
                 id='home-feed-flash-list'
                 ref={feedRef}
                 data={posts}
-                estimatedItemSize={Dimensions.get('window').height}
+                estimatedItemSize={postSize}
                 showsVerticalScrollIndicator={false}
-                // viewabilityConfig={{
-                //         waitForInteraction: false,
-                //         viewAreaCoveragePercentThreshold:80
-                //   }}
+                viewabilityConfig={{
+                        waitForInteraction: false,
+                        viewAreaCoveragePercentThreshold:80
+                  }}
                 renderItem={renderItem}
                 pagingEnabled
                 scrollEventThrottle={15}
