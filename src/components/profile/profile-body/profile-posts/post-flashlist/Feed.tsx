@@ -16,6 +16,8 @@ import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer
 import { PostTileRef } from './PostTile'
 import { getFeed } from './service/getFeed'
 
+import { useIsFocused } from '@react-navigation/native'
+
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -31,8 +33,23 @@ export default function FeedScreen() {
     const feedRef = useRef<FlashList<Post>>(null);
     const postTileRefs = useRef<{ [key: string]: React.RefObject<PostTileRef> }>({});
     const visibleItemKeys = useRef(new Set<string>());
-
+    const isFocused = useIsFocused();
     const postSize = Dimensions.get('window').height - 100;
+
+
+    // if not focused, stop all videos
+    useEffect(() => {
+        if (!isFocused) {
+            Object.values(postTileRefs.current).forEach(ref => {
+                ref.current?.mute();
+            });
+        } else {
+            Object.values(postTileRefs.current).forEach(ref => {
+                ref.current?.unMute();
+            });
+        }
+
+    }, [isFocused]);
 
     useScrollToTop(feedRef);
 
