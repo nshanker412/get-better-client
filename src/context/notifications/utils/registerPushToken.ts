@@ -44,7 +44,7 @@ export const registerPushToken = async (username: string): Promise<string | unde
 		})
 		.catch((error) => {
 			console.log('saveNotificationTokenError', error.message);
-			// throw new Error('Failed to save notification token');
+			// console.log('Failed to save notification token');
 		});
 
 

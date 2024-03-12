@@ -46,7 +46,7 @@ function reducer(state: State, action: Action): State {
     case ActionType.Reset:
       return initialState;
     default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+      console.log(`Unhandled action type: ${action.type}`);
   }
 }
 
@@ -69,6 +69,6 @@ export const PlanScreenProvider: React.FC<PlanProviderProps> = ({ children }) =>
 
 export function usePlanScreen() {
   const context = useContext(PlanScreenContext);
-  if (!context) throw new Error('usePlanScreen must be used within a PlanScreenProvider');
+  if (!context) console.log('usePlanScreen must be used within a PlanScreenProvider');
   return context;
 }

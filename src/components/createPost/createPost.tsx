@@ -198,7 +198,7 @@ export default function CreatePost() {
 				return;
 		}
 		else {
-				throw new Error('No image or video selected');
+				console.log('No image or video selected');
 			}
 		
 	}
@@ -370,7 +370,7 @@ export default function CreatePost() {
 				// 	})
 				// 	.catch((error) => {
 				// 		console.log('fetchFriendsNotificationsError', error);
-				// 		throw new Error(error);
+				// 		console.log(error);
 				// 	});
 
 				if (challengeUsername) {
@@ -393,7 +393,7 @@ export default function CreatePost() {
 			})
 			.catch((error) => {
 				console.log('sendPostError', error);
-				throw new Error(error);
+				console.log(error);
 			})
 			.finally(() => {
 				setPhoto(null);

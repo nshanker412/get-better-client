@@ -81,7 +81,7 @@ function planReducer(state: PlanBuilderState, action: Action): PlanBuilderState 
     case 'RESET':
       return initialState;
     default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+      console.log(`Unhandled action type: ${action.type}`);
   }
 }
 
@@ -103,7 +103,7 @@ export const PlanBuilderProvider: React.FC<PlanProviderProps> = ({ children }) =
 export function usePlanBuilder() {
   const context = useContext(PlanContext);
   if (context === undefined) {
-    throw new Error('usePlan must be used within a PlanProvider');
+    console.log('usePlan must be used within a PlanProvider');
   }
   return context;
 }

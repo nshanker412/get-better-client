@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		} catch (err) {
 			console.log('firebase error handle', err, err.code);
 			const error = firebaseErrorToMessage(err?.code);
-			throw new Error(error);
+			console.log(error);
 		}
 	};
 
@@ -101,7 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		} catch (err) {
 			console.log('firebase  handle', err);
 			const error = firebaseErrorToMessage(err?.code);
-			throw new Error(error);
+			console.log(error);
 		}
 	};
 
@@ -120,7 +120,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		} catch (err) {
 			console.log('firebase error handle', err);
 			const error = firebaseErrorToMessage(err?.code);
-			throw new Error(error);
+			console.log(error);
 		}
 	};
 
@@ -131,7 +131,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		} catch (err) {
 			console.log('firebase error handle', err);
 			const error = firebaseErrorToMessage(err?.code);
-			throw new Error(error);
+			console.log(error);
 		}
 	};
 

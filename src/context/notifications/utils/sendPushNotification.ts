@@ -19,7 +19,7 @@ export const  sendPushNotification = async (pushPacket: PushNotificationPacket) 
     });
     } catch (error) {   
         console.log('sendPushNotificationError', error);
-        throw new Error('Failed to send push notification');
+        console.log('Failed to send push notification');
     }
 
   }

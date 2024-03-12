@@ -1,9 +1,9 @@
 import { LoadingSpinner } from '@components/loading-spinner/LoadingSpinner';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Post } from '@models/posts';
-import { ResizeMode, Video } from 'expo-av';
+import { AVPlaybackStatusError, AVPlaybackStatusSuccess, ResizeMode, Video } from 'expo-av';
 import { Image, ImageErrorEventData } from 'expo-image';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
     Easing,
@@ -75,7 +75,6 @@ PlayAnimated.displayName = 'PlayAnimated';
 
 
 
-
   
   const stylesl = StyleSheet.create({
     overlay: {
@@ -100,17 +99,17 @@ interface PostTileProps {
     post: Post;
     myUsername: string;
     isEmbeddedFeed?: boolean;
-    isFullscreenPreview?: boolean;
     handlePostPress?: () => void;
 }
-interface PostTileRef {
-    play: () => void;
-    pause: () => void;
-    stop: () => void;
-    unload: () => void;
-    mute: () => void;
-    unMute: () => void;
+export interface PostTileRef {
+    play: () => Promise<void>;
+    pause: () => Promise<void>;
+    stop: () => Promise<void>;
+    unload: () => Promise<void>;
+    mute: () => Promise<void>;
+    unMute: () => Promise<void>;
   }
+  
 
 /**
  * This component is responsible for displaying a post and play the 
@@ -119,10 +118,10 @@ interface PostTileRef {
  * The ref is forwarded to this component so that the parent component
  * can manage the play status of the video.
  */
-export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, isFullscreenPreview, myUsername, isEmbeddedFeed }, ref) => {
+export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPress, post, myUsername, isEmbeddedFeed }, ref) => {
     const pauseAniRef = useRef(null);
     const playAniRef = useRef(null);
-    const localRef = useRef(null);
+    const localRef = useRef<Video>(null);
 
     useImperativeHandle(ref, () => ({
         play,
@@ -133,9 +132,6 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         unMute
     }))
 
-    useEffect(() => {
-        return () => unload();
-    }, [])
 
     /**
      * Plays the video in the component if the ref
@@ -285,10 +281,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
         }
     }
 
-    const onToggleVideoState = () => {
-        togglePausePlay();
-    }
-
+ 
     const onVideoError = (error: string) => {   
         console.log('Video error: ', error)
         // Sentry.captureException(error)
@@ -298,36 +291,62 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     const onImageError = (error: ImageErrorEventData) => {   
         console.log('Video error: ', error)
         // Sentry.captureException(error)
-
     }
+
+    const onPlaybackStatusUpdate = useCallback((playbackStatus: AVPlaybackStatusError | AVPlaybackStatusSuccess) => {
+        if (!playbackStatus.isLoaded) {
+            // When the video is not loaded
+            console.log('Video not loaded');
+        } else {
+            // When the video is loaded, log the current state
+            if (playbackStatus.isPlaying) {
+                console.log('Video is playing');
+            } else {
+                console.log('Video is paused');
+            }
+
+            // Add more conditions based on your requirements
+            if (playbackStatus.isBuffering) {
+                console.log('Video is buffering');
+            }
+
+            // Playback has finished
+            if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
+                console.log('Video playback finished');
+            }
+        }
+    }, []);
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
     const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
 
 
     return (
-        <>
+        <View style={{ flex: 1, backfaceVisibility: 'visible'}}>
             <PostOverlay
                 user={post.metadata.user}
                 postData={post.metadata}
+                filename={post.filename}
                 myUsername={myUsername}
-                onToggleVideoState={onToggleVideoState}
+                onToggleVideoState={togglePausePlay}
                 handlePostPress={handlePostPress}
                 isEmbeddedFeed={isEmbeddedFeed}
                  />
             {post.metadata.type === 'video' && (
-        <View style={{ flex: 1, backfaceVisibility: 'visible'}}>
-                <Video
+        <View style={styles.videoContainer}>
+                    <Video
+                    id={`${post.filename}-video-tile`}
                     ref={localRef}
                     style={{ flex: 1 }}
                     resizeMode={ResizeMode.COVER}
-                        onError={onVideoError}
+                    onError={onVideoError}
                         // shouldPlay={loaded && !paused}
+                        // shouldPlay={true}
                     isLooping={true}
                     volume={1.0}
                     PosterComponent={() => <LoadingSpinner />}
                     posterStyle={{ width: '100%', height: '100%', backgroundColor: 'transparent', backfaceVisibility: 'visible'}}
-                    // onPlaybackStatusUpdate={onPlaybackStatusUpdateRef.current}
+                    onPlaybackStatusUpdate={onPlaybackStatusUpdate}
                     usePoster={true}
                     source={{
                         uri: videoUri
@@ -339,21 +358,43 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
           
             </View>
             )}
-            {post.metadata.type ==='image' && (<Image
-                ref={localRef}
-                recyclingKey={post.filename}
-                style={{ flex: 1 }}
-                onError={onImageError}
-                source={{
-                    uri: imageUri
-                }}
-                // allowDownscaling={false}
+            {post.metadata.type === 'image' && (
+                <Image
+                    recyclingKey={post.filename}
+                    style={{ flex: 1 }}
+                    onError={onImageError}
+                    source={{
+                        uri: imageUri
+                    }}
+                    allowDownscaling={false}
             />
             )}
         
-        </>
+        </View>
     )
 })
 
 // display name
 PostTile.displayName = 'PostTile'
+
+  
+const styles = StyleSheet.create({
+    videoContainer: {
+        flex: 1, backfaceVisibility: 'visible'}
+    ,
+
+    overlay: {
+          position: 'absolute',
+        zIndex: 10,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    overlayText: {
+      color: 'white',
+      fontSize: 24,
+    },
+  });

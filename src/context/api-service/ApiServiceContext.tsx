@@ -26,7 +26,7 @@ export const useApiService = (): ApiService => {
 	const context = useContext(ApiServiceContext);
 
 	if (!context) {
-		throw new Error(
+		console.log(
 			'useApiService must be used within an ApiContextProvider',
 		);
 	}

@@ -3,17 +3,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import React, {
-	useCallback,
-	useEffect,
-	useRef,
-	useState
+    useCallback,
+    useEffect,
+    useRef,
+    useState
 } from 'react';
 import {
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Modalize } from 'react-native-modalize';
 import Toast from 'react-native-toast-message';
@@ -98,7 +98,7 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 		// 		await addComment(currentComment);
 		// 	} catch (error) {
 		// 		console.error('Comment post failed:', error);
-		// 		throw new Error(error);
+		// 		console.log(error);
 		// 	} finally {
 		// 		setWritingComment(false);
 		// 		setCurrentComment('');

@@ -4,7 +4,7 @@ import { MyUserInfoContext } from './MyUserInfoProvider';
 export const useMyUserInfo = () => {
 	const context = useContext(MyUserInfoContext);
 	if (!context) {
-		throw new Error(
+		console.log(
 			'useMyUserInfo must be used within a MyUserInfoProvider',
 		);
 	}

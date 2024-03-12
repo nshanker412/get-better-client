@@ -24,10 +24,11 @@ import { setPostLiked } from "../service/post";
 
 interface PostOverlayProps {
   user: string;
+  filename: string;
   postData: PostMetadata;
   myUsername: string;
   onToggleVideoState: () => void;
-  handlePostPress: () => void;
+  handlePostPress: (() => void) | undefined,
   isEmbeddedFeed?: boolean;
 }
 
@@ -72,7 +73,7 @@ const genPlanIconList = (linkedPlans: PlanTileType[]) => {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
+const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   // console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
@@ -102,23 +103,18 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
         return;
       }
       try {
-        console.log('pre linkedPlans', postData?.linkedPlans);
 
         // filter out plans that dont have a character at the first position
-        const linkedPlans: string[] =
-          postData?.linkedPlans?.filter((plan) => plan.charAt(0) !== ' ');
         
-        console.log('post linkedPlans', linkedPlans);        
 
-        const fetchPromises = linkedPlans.map(async (plan, index) => {
+        const fetchPromises = postData?.linkedPlans?.map(async (plan, index) => {
           try {
 
             const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${plan}`);
-            console.log('resp', resp);
             const data: PlanTileType = {
-              id: resp?.data?.plan?.id,
-              planType: resp?.data?.plan?.data?.planCategory,
-              title: resp?.data?.plan?.planName,
+              id: resp.data.plan.id,
+              planType: resp.data.plan.data.planCategory,
+              title: resp.data.plan.planName,
             };
             console.log('data', data)
             return data; 
@@ -126,7 +122,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
             
           } catch (error) {
             console.log('Error fetching linked plan', error);
-            return null;
+
           }
 
         });
@@ -197,7 +193,7 @@ export const PostOverlay: React.FC<PostOverlayProps> = ({ user, postData, myUser
     if (event.nativeEvent.state === State.ACTIVE) {
       // handlePostPress();
 
-      if (isEmbeddedFeed) {
+      if (isEmbeddedFeed && handlePostPress) {
         handlePostPress();
       } else {
         onToggleVideoState();
@@ -491,5 +487,5 @@ const size = isEmbeddedFeed ? 20 : 45;
 
 
 
-// export const PostOverlay = React.memo(_PostOverlay);
+export const PostOverlay = React.memo(_PostOverlay);
 PostOverlay.displayName = 'PostOverlay';

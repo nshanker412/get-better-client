@@ -4,14 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import axios, { AxiosError } from 'axios';
 import React, { useCallback, useRef, useState } from 'react';
 import {
-	Keyboard,
-	KeyboardAvoidingView,
-	SafeAreaView,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	TouchableWithoutFeedback,
-	View,
+    Keyboard,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
@@ -76,7 +76,7 @@ export const Register: React.FC = () => {
 				// that falls out of the range of 2xx
 				// console.error('Error Data:', axiosError.response.data);
 				// console.error('Status:', axiosError.response.status);
-				throw new Error(
+				console.log(
 					axiosError.response.data.message ||
 						'An error occurred during the registration process.',
 				);
@@ -87,13 +87,13 @@ export const Register: React.FC = () => {
 				console.log(
 					'No response received during the registration process.',
 				);
-				throw new Error(
+				console.log(
 					'No response received during the registration process.',
 				);
 			} else {
 				// Something happened in setting up the request
 				// console.error('Error message:', axiosError.message);
-				throw new Error(
+				console.log(
 					'An error occurred setting up the registration request.',
 				);
 			}
@@ -106,9 +106,9 @@ export const Register: React.FC = () => {
 		} catch (error) {
 			console.log('error', error);
 			if (error?.message) {
-				throw new Error(error.message);
+				console.log(error.message);
 			} else {
-				throw new Error('Firebase Error');
+				console.log('Firebase Error');
 			}
 		}
 	};
@@ -124,21 +124,21 @@ export const Register: React.FC = () => {
 		password: string,
 	) => {
 		if (!email || !password || !name || !username) {
-			throw new Error('Please fill out all fields!');
+			console.log('Please fill out all fields!');
 		}
 		if (!isValidEmail(email)) {
-			throw new Error('Please enter a valid email');
+			console.log('Please enter a valid email');
 		}
 
 		if (password.length < 6) {
-			throw new Error('Password must be at least 6 characters');
+			console.log('Password must be at least 6 characters');
 		}
 
 		if (username.length < 5) {
-			throw new Error('Password must be at least 6 characters');
+			console.log('Password must be at least 6 characters');
 		}
 		if (username.length > 20) {
-			throw new Error('Username must be less than 20 characters');
+			console.log('Username must be less than 20 characters');
 		}
 	};
 

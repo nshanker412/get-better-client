@@ -27,7 +27,7 @@ export const removePushToken = async (myUsername: string) => {
             })
             .catch((error) => {
                 console.log('removeNotificationTokenError', error);
-                throw new Error('Failed to remove notification token');
+                console.log('Failed to remove notification token');
             });
     } catch (e) {
         console.error('Error getting notification token', e);

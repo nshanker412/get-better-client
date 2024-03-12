@@ -15,7 +15,7 @@ export const fetchNotifications = async (
     return response.data;
   } catch (error) {
     console.log('fetchNotificationsError', error);
-    throw new Error('Failed to fetch notifications');
+    console.log('Failed to fetch notifications');
   }
 	
 };

@@ -23,7 +23,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 
 
 	const onErrorCallback = (event: ImageErrorEventData) => {
-		throw new Error(event.error);
+		console.log(event.error);
 	
 	};
 

@@ -12,7 +12,7 @@ export const setNotificationsSeen = async (myUsername: string) => {
         await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/unread/set/${myUsername}`, { timestamp: readTimeNow });
 
     } catch (error) {
-        throw new Error(error.message);
+        console.log(error.message);
         
     }
 }

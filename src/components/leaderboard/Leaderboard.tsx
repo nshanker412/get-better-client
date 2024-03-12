@@ -11,10 +11,10 @@ import { Header } from '../header/Header';
 import { useLeaderboardStyles } from './Leaderboard.styles';
 import { LeaderboardProfileCell } from './LeaderboardProfileCell';
 import {
-	LeaderboardChallengesApiModel, LeaderboardConsistencyApiModel, LeaderboardProfile, LeaderboardProfileChallenges, LeaderboardProfileConsistency
+    LeaderboardChallengesApiModel, LeaderboardConsistencyApiModel, LeaderboardProfile, LeaderboardProfileChallenges, LeaderboardProfileConsistency
 } from './models/LeaderboardProfile';
 import {
-	LeaderboardProfileType
+    LeaderboardProfileType
 } from './models/LeaderboardProfile.type';
 import { ShimmerTile } from './skeleton/ShimmerTile';
 import { mapChallengesApiResponse } from './utils/mapChallengesApiResponse';
@@ -58,7 +58,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 		} catch (error) {
 			console.log('error', error);	
 
-			throw new Error('Failed to fetch leaderboard consistency');
+			console.log('Failed to fetch leaderboard consistency');
 		} 
 	}
 
@@ -79,7 +79,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 			console.log('error', error);	
 			setProfiles([]);
 
-			throw new Error('Failed to fetch leaderboard challenges');
+			console.log('Failed to fetch leaderboard challenges');
 		} finally
 		{
 			setRefreshing(false);
@@ -99,7 +99,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 			setProfiles(data);
 		} catch (error) {
 			setProfiles([]);
-			throw new Error(`Failed to fetch leaderboard metric: ${leaderboardMetric}`);
+			console.log(`Failed to fetch leaderboard metric: ${leaderboardMetric}`);
 			
 		
 		} finally {

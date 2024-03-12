@@ -21,7 +21,8 @@ import {
 
 export const PreviewUserPlan: React.FC = ( ) => {
     const route = useRoute();
-    const planID = route?.params?.planID;
+  const planID = route?.params?.planID;
+  console.log("planID", planID) 
     const [loading, setLoading] = useState<boolean>(false);
   const [planState, setPlan] = useState<PlanModel | null>(null);
   
@@ -74,7 +75,7 @@ export const PreviewUserPlan: React.FC = ( ) => {
                           <MediaTile 
                             media={{
                               id: planState.media[0]?.mediaId,
-                              url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${planState.media[0]?.filename}`,
+                              url: planState.media[0]?.filename,
                               type: 'image',
                             }}
                           />
@@ -334,14 +335,16 @@ export const PreviewUserPlan: React.FC = ( ) => {
         
       const [isFullscreen, setIsFullscreen] = useState(false);
       const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
-      console.log("in media tile", media)
+
+      const mediaUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${media.url}`
+      console.log("in media tile", mediaUri)
     
       return (
         <View style={stylesD.container}>
               <TouchableOpacity style={{flex: 1}} onPress={toggleFullscreen}>
             {media.type === 'image' ? (
                       <Image
-                source={media.url}
+                          source={{uri: mediaUri}}
                           style={stylesD.media}
                           blurRadius={0}
                           contentFit={"cover"}

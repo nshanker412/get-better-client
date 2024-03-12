@@ -57,7 +57,7 @@ export const CommentDrawerProvider= ({ children }) => {
 
         } catch (error) {
             console.error('Comment fetch failed:', error);
-            throw new Error(error);
+            console.log(error);
         } finally {
             setLoading(false);
 
@@ -105,7 +105,7 @@ export const CommentDrawerProvider= ({ children }) => {
 
         } catch (error) {
             console.error('Adding comment failed:', error);
-            throw new Error(error);
+            console.log(error);
         }
     }
 
@@ -145,7 +145,7 @@ export const CommentDrawerProvider= ({ children }) => {
 export const useCommentDrawer = () => {
   const context = useContext(CommentDrawerContext);
   if (context === undefined) {
-    throw new Error('useCommentDrawer must be used within a CommentDrawerProvider');
+    console.log('useCommentDrawer must be used within a CommentDrawerProvider');
   }
   return context;
 };

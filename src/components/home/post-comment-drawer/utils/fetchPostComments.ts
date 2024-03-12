@@ -10,7 +10,7 @@ import axios from 'axios';
 export const fetchPostComments = async (origionalPoster: string, postId: string): Promise<Comment[] | void> => {
     
     if (!postId) {
-        throw new Error('Error fetching comments: Invalid parameters');
+        console.log('Error fetching comments: Invalid parameters');
     }
     
     try {
@@ -25,6 +25,6 @@ export const fetchPostComments = async (origionalPoster: string, postId: string)
     }
     catch (error) {
         console.log('fetchPostCommentsError', error);
-        throw new Error('Failed to fetch comments');
+        console.log('Failed to fetch comments');
     }       
 }

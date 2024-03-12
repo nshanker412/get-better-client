@@ -271,7 +271,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
     const { state: planState } = usePlanBuilder();
   
     useEffect(() => {
-      const allInitialized = planState.routine.every(item => item.init === true);
+      const allInitialized = planState?.routine?.every(item => item.init === true);
     
       if (!allInitialized) {
         onInitChanged(false);
@@ -392,14 +392,14 @@ const MediaTile: React.FC<MediaTileProps> = ({ media }) => {
     
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-    const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
+  const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
     
 
     console.log("in media tile", media)
 
   return (
     <View style={stylesD.container}>
-          <TouchableOpacity style={{flex: 1}} onPress={toggleFullscreen}>
+      <TouchableOpacity style={{flex: 1}} onPress={toggleFullscreen}>
         {media.type === 'image' ? (
                   <Image
                       source={{ uri: media.url }}

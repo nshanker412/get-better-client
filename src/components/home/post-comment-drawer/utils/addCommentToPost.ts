@@ -7,7 +7,7 @@ import axios from 'axios';
 export const addCommentToPost = async (originalPoster: string, postId: string, myUsername: string, comment: string): Promise<void> => {
 
     if (!originalPoster || !postId || !myUsername || !comment) {
-        throw new Error('Error adding comment: Invalid parameters');
+        console.log('Error adding comment: Invalid parameters');
     }
 
     try {
@@ -25,7 +25,7 @@ export const addCommentToPost = async (originalPoster: string, postId: string, m
     }
     catch (error) {
         console.log('addCommentToPostError', error);
-        throw new Error('Failed to add comment to post');
+        console.log('Failed to add comment to post');
     }
 
 };

@@ -16,11 +16,11 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
 
 
         // Remove duplicates
-        const uniqueFeed: Post[] = Array.from(new Map(feed.map(post => [post.filename, post])).values());
+        // const uniqueFeed: Post[] = Array.from(new Map(feed.map(post => [post.filename, post])).values());
 
-        console.log('unique feed:', uniqueFeed);
+        // console.log('unique feed:', uniqueFeed);
 
-        return uniqueFeed;
+        return feed;
 
     } catch (error) {
         console.error('Error fetching feed:', error);
@@ -31,12 +31,10 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
 const fetchFriendsPosts = async (myUsername: string): Promise<Post[] | []> => {
     try {
         const response = await axios.get<PostsApiResponse>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`);
-        console.log('fetchFriendsPostsResponse', response.data.posts)
 
 
         return response.data.posts;
     } catch (error) {
-        console.log('fetchFriendsPostsError', error);
         return [];
     }
 
@@ -50,7 +48,6 @@ const fetchFriendsPosts = async (myUsername: string): Promise<Post[] | []> => {
 const fetchPublicPosts = async (myUsername: string): Promise<Post[] | []> => {
         try {
             const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/public/${myUsername}`);
-            console.log('fetchotherpubbers', response.data.posts)
 
             return response.data.posts;
         }

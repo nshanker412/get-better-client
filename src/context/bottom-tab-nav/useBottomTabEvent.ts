@@ -7,7 +7,7 @@ import { BottomTabNavContext } from './BottomTabContext';
 export const useBottomTabEvent = () => {
 	const context = useContext(BottomTabNavContext);
 	if (!context) {
-		throw new Error(
+		console.log(
 			'useBottomTabEvent must be used within a BottomTabEventProvider',
 		);
 	}

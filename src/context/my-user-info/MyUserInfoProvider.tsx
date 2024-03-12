@@ -7,17 +7,17 @@ import Toast from 'react-native-toast-message';
 import { ApiLoadingState, UserData } from '../../types/types';
 
 import {
-	MyUserInfoAction,
-	MyUserInfoContextProps,
-	MyUserInfoProviderProps,
-	MyUserInfoState,
-	RESET_USER_INFO,
-	SET_LOAD_USER_INFO_STATE,
-	SET_LOAD_USER_PLANS_STATE,
-	SET_SHOWN_INTRO_PAGE,
-	SET_USER_INFO,
-	SET_USER_PLANS,
-	initialMyUserInfoState,
+    MyUserInfoAction,
+    MyUserInfoContextProps,
+    MyUserInfoProviderProps,
+    MyUserInfoState,
+    RESET_USER_INFO,
+    SET_LOAD_USER_INFO_STATE,
+    SET_LOAD_USER_PLANS_STATE,
+    SET_SHOWN_INTRO_PAGE,
+    SET_USER_INFO,
+    SET_USER_PLANS,
+    initialMyUserInfoState,
 } from './MyUserInfo.types';
 
 // Reducer function
@@ -88,7 +88,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			} else {
 
 				console.log('MyUserInfoProvider no user token', userToken);
-				throw new Error('No user token found');
+				console.log('No user token found');
 			}
 		}
 		fetchUserInfo(userToken);
@@ -108,7 +108,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 		try {
 			if (!email) {
-				throw new Error('No email provided');
+				console.log('No email provided');
 			}
 
 			const usernameResponse = await axios.get<{ username: string }>(
@@ -306,7 +306,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		// 		console.log('it exsists', response.data);
 		// 	})
 		// 	.catch((error) => {
-		// 		throw new Error('trying to delete a post that does not exist');
+		// 		console.log('trying to delete a post that does not exist');
 		// 	});
 
 		//2. delete the post
@@ -326,7 +326,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				});
 			})
 			.catch((error) => {
-				throw new Error('Error deleting post');
+				console.log('Error deleting post');
 			})
 			.finally(() => {
 				console.log('done deleting now refreshing user info');

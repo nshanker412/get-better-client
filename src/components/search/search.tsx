@@ -94,7 +94,7 @@ export const Search: React.FC = () => {
 			setProfiles(response.data.profiles);
 		} catch (error) {
 			console.log('searchError', error);
-			throw new Error('Error fetching profiles');
+			console.log('Error fetching profiles');
 		} finally {
 			setLoading(false);
 			setRefreshing(false);

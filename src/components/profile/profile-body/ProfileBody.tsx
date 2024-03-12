@@ -57,7 +57,6 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	const { theme } = useThemeContext();
 	const profileBodyStyles = useProfileBodyStyles();
 	const ProfileTab = createMaterialTopTabNavigator();
-	const [pla, setPla] = useState<PlanTileType[] | []>([]);
 	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
 	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
 	const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -92,34 +91,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 	}, [username, isMyProfile]);
 
 
-	useEffect(() => {
-		const foo = async () => {
-			console.log(username)
-			try {
-				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${username}`);
-					const  planList: PlanTileType[] = response.data?.plans?.map((plan: PlanTileType) => ({
-						v: "v1",
-						id: `${plan?.timestamp}`,
-						title: plan?.title,
-						planType: plan?.planType,
-					}));
-				
-					
-					if (isMyProfile) {
-						const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
-						const newArr = [...newPlan, ...planList];
 
-						setPla(newArr);
-
-					} else {
-						setPla(planList);
-					}
-			} catch (error) {
-				console.log("couldnt fetch plans", error);
-			}
-		}
-		foo();	
-	}, [username, isMyProfile]);
 
 	const onPressTile = (planID: string, planType: PlanType, version: string) => {
 			if (planType === PlanType.NewPlan) {
@@ -207,7 +179,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 						<View style={[profileBodyStyles.scrollInnerContainer, {flex: 1, width: Dimensions.get("screen").width, height: 500, minHeight: 500}]}>
 								<FlashList 
 									estimatedItemSize={100}
-									data={plaV2 ?? pla}
+									data={plaV2}
 									numColumns={2}
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}

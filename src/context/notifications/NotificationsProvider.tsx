@@ -123,7 +123,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             }
         } catch (e) {
             console.log('Error getting notification permissions', e);
-            throw new Error('Init NotifProvider: (1) Failed to get notification permissions');
+            console.log('Init NotifProvider: (1) Failed to get notification permissions');
         }
 
         // 2. (EXPO) Register for push notifications and get my push tokens
@@ -133,7 +133,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             console.log('myToken', token);
         } catch (e) {
             console.log('Error getting notification token', e);
-            throw new Error('Init NotifProvider: (2) Failed to register my push tokens');
+            console.log('Init NotifProvider: (2) Failed to register my push tokens');
         }
 
         // 3. (EXPO) Schedule daily notification
@@ -141,7 +141,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             await scheduleDailyNotification();
         } catch (e) {
             console.log('Error scheduling daily notification', e);
-            throw new Error('Init NotifProvider: (3) Failed to schedule daily notification');
+            console.log('Init NotifProvider: (3) Failed to schedule daily notification');
         }
 
         // 4. (GB) Fetch notifications
@@ -153,7 +153,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             
         } catch (e) {
             console.log('Error fetching unread notifications', e);
-            throw new Error('Init NotifProvider: (4) Failed to fetch unread notifications from GB service');
+            console.log('Init NotifProvider: (4) Failed to fetch unread notifications from GB service');
         }
 
         setInitialized(true);
@@ -170,7 +170,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                 await refreshNotifications();
             } catch (e) {
                 console.log('Error setting notifications seen', e);
-                throw new Error('Failed to set notifications seen');
+                console.log('Failed to set notifications seen');
             }
         }   
     }
@@ -187,7 +187,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                 }
             } catch (e) {
                 console.log('Error fetching unread notifications', e);
-                throw new Error('Failed to fetch unread notifications from GB service');
+                console.log('Failed to fetch unread notifications from GB service');
             }
         }
     }
@@ -202,7 +202,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                 await _removePushToken(myUsername);
             } catch (e) {
                 console.log('Error removing push token', e);
-                throw new Error('Failed to remove push token');
+                console.log('Failed to remove push token');
             }
         }
     }
@@ -241,7 +241,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
         } catch (e) {
             console.log('Error getting recipient token', e);
-            throw new Error('Failed to get recipient token');
+            console.log('Failed to get recipient token');
         } finally {
             console.log('recipientTokens', recipientTokens);
         }
@@ -261,7 +261,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             
             } catch (e) {
                 console.log('Error sending out push notification', e);
-                // throw new Error('Failed to send out push notification');
+                // console.log('Failed to send out push notification');
             }
         })
     }
