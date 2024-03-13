@@ -1,7 +1,10 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
 import { Comment } from '@models/posts';
 import axios from 'axios';
 import React, { createContext, useContext, useMemo, useState } from 'react';
+
 
 // Define the context shape
 interface CommentDrawerContextType {
@@ -34,6 +37,8 @@ export const CommentDrawerProvider= ({ children }) => {
     const [currentPostID, setCurrentPostId] = useState<string | null>(null);    
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const {sendOutPushNotification} = useNotifications();
 
     const {username: myUsername} = useMyUserInfo();
 
@@ -101,6 +106,14 @@ export const CommentDrawerProvider= ({ children }) => {
             );
             console.log('response', response.data.comments);
             setComments(response.data.comments);
+      
+            const pushNotifInfo: PushNotificationInfoPacket = {
+                title:  `${myUsername} commented on your post.`,
+                body: `"${comment}"`,
+                data: { path: 'profile', params: { profileUsername: poster, postId: id } },
+              };
+        
+              sendOutPushNotification(poster, pushNotifInfo);
             
 
         } catch (error) {
