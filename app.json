@@ -36,7 +36,9 @@
 			[
 				"expo-camera",
 				{
-					"cameraPermission": "Allow GetBetter to access your camera."
+					"cameraPermission": "Allow GetBetter to access your camera.",
+					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
+
 				}
 			],
 			[

@@ -31,13 +31,15 @@ export const useCreatePostStyles = () => {
 			},
 			shadowOpacity: 0.34,
 			flex: 1,
+			width: '100%',
+		height: '100%',
 		},
 
 		cameraContainer: {
 			position: 'relative',
 			width: '100%',
 			height: '100%',
-			borderRadius: 15,
+			// borderRadius: 15,
 			overflow: 'hidden',
 		},
 

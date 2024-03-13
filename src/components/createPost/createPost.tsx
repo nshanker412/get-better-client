@@ -3,13 +3,13 @@ import { useThemeContext } from '@context/theme/useThemeContext';
 import { AntDesign, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import { Video } from 'expo-av';
+import { ResizeMode, Video } from 'expo-av';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	Dimensions,
 	Keyboard,
@@ -26,35 +26,6 @@ import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useCreatePostStyles } from './createPost.styles';
 import { PlanSelectModal } from "./modal/PlanSelectModal";
-
-
-// color: PropTypes.string,
-// icon: PropTypes.any,
-// name: PropTypes.string.isRequired,
-// buttonSize: PropTypes.number,
-// text: PropTypes.string,
-// textBackground: PropTypes.string,
-// textColor: PropTypes.string,
-// component: PropTypes.func,
-// animated: PropTypes.bool,
-// 	tintColor: PropTypes.string
-
-
-// 	export interface IActionProps {
-// 		color?: string;
-// 		icon?: JSX.Element;
-// 		name: string;
-// 		text?: string;
-// 		textBackground?: string;
-// 		textColor?: string;
-// 		textElevation?: number;
-// 		margin?: number;
-// 		component?: () => void;
-// 		render?: () => void;
-// 		animated?: boolean;
-// 		shadow?: shadowType;
-// 		tintColor?: string
-// 	  }
 
 const actions: IActionProps[] = [
 	{
@@ -89,9 +60,8 @@ export default function CreatePost() {
 
 	const [permission, requestPermission] = Camera.useCameraPermissions();
 
+	const cameraRef = useRef<Camera>(null);
 
-	// const [hasPermission, setHasPermission] = useState(null);
-	const [cameraRef, setCameraRef] = useState(null);
 	const [photo, setPhoto] = useState(null);
 	const [caption, setCaption] = useState(
 		challenge
@@ -109,15 +79,13 @@ export default function CreatePost() {
 	const [timerId, setTimerId] = useState(null); // To store the timer ID
 	const [linkedPlans, setLinkedPlans] = useState<string[] | []>([]);
 
+	const [mediaSrc, setMediaScr] = useState < "upload" | "taken" | undefined>(undefined);
+
+
 	const navigate = useNavigation();
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
 	const createPostStyles = useCreatePostStyles();
 
-	const picStyle = {
-		...createPostStyles.photoStyle,
-		width: '100%',
-		height: '100%',
-	};
 
 	const onFloatingActionPress = (name) => {
 		if (name === "bt_link_post") {
@@ -133,10 +101,15 @@ export default function CreatePost() {
 
 
 	const [isVisible, setIsVisible] = useState(false);
-	const [photoContentFit, setPhotoContentFit] = useState('contain');
+	const [photoContentFit, setPhotoContentFit] = useState<"contain" | "cover">('contain');
 
 	const toggleContentFit = () => {
-		setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
+		if (mediaSrc === "upload") {
+			setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
+		} else {
+			setPhotoContentFit('cover');
+		
+		}
 	};
 
 	useEffect(() => {
@@ -187,12 +160,14 @@ export default function CreatePost() {
 
 		if (result?.assets[0]?.type === "image") {
 
-				setVideo(null);
-				setPhoto(result.assets[0].uri);
-				return;
+			setVideo(null);
+			setMediaScr("upload");
+			setPhoto(result.assets[0].uri);
+			return;
 				
-			} else if (result?.assets[0]?.type === "video") {
-
+		}
+		else if (result?.assets[0]?.type === "video") {
+				setMediaScr("upload");
 				setVideo(result.assets[0]?.uri);
 				setPhoto(null);
 				return;
@@ -207,42 +182,45 @@ export default function CreatePost() {
 	const takePhoto = async () => {
 		if (cameraRef) {
 
+			try {
 
-			const photo = await cameraRef.takePictureAsync({
-				quality: 1,
-			});
+				const photo = await cameraRef?.current?.takePictureAsync({
+					quality: 1,
+				});
 
-			// // Calculate the aspect ratio of the camera image
-			// const aspectRatio = photo.width / photo.height;
+				setMediaScr("taken");
 
-			// // Calculate the width based on the height of the screen
-			// const targetWidth = window.height * aspectRatio;
+				if (isCameraFront) {
+					const flippedImage = await ImageManipulator.manipulateAsync(
+						photo.uri,
+						[
+							{ flip: ImageManipulator.FlipType.Horizontal },
+							// { crop: { originX: (targetWidth - window.width) / 2, originY: 0, width: window.width, height: window.height } } // Crop to fit the screen width
+							// { resize: { height: window.height } }
+						],
+						{ format: ImageManipulator.SaveFormat.JPEG },
+					);
 
-			if (isCameraFront) {
-				const flippedImage = await ImageManipulator.manipulateAsync(
-					photo.uri,
-					[
-						{ flip: ImageManipulator.FlipType.Horizontal },
-						// { crop: { originX: (targetWidth - window.width) / 2, originY: 0, width: window.width, height: window.height } } // Crop to fit the screen width
-						// { resize: { height: window.height } }
-					],
-					{ format: ImageManipulator.SaveFormat.JPEG },
-				);
+					setMediaScr("taken");
+					setPhoto(flippedImage.uri);
+				} else {
+					setPhoto(photo.uri);
+				}
 
-				setPhoto(flippedImage.uri);
-			} else {
-				setPhoto(photo.uri);
+			} catch (error) {
+				console.log('Error taking photo:', error);
+
 			}
 		}
-	};
+	}
 
 
 
 	const handleVideoRecording = async () => {
-		if (cameraRef) {
+		if (cameraRef && cameraRef.current) {
 			if (isRecording) {
 				console.log('recording stopped');
-				cameraRef.stopRecording();
+				cameraRef.current.stopRecording();
 				clearInterval(timerId);
 				setTimer(10);
 			} else {
@@ -253,7 +231,7 @@ export default function CreatePost() {
 				const id = setInterval(() => {
 					setTimer((prevTimer) => {
 						if (prevTimer === 1) {
-							cameraRef.stopRecording();
+							cameraRef.current.stopRecording();
 							setIsRecording(false);
 							setTimer(10);
 							clearInterval(id);
@@ -265,10 +243,10 @@ export default function CreatePost() {
 				setTimerId(id);
 
 				try {
-					const recordingPromise = await cameraRef.recordAsync();
+					const recordingPromise = await cameraRef.current.recordAsync({quality: Camera.Constants.VideoQuality['1080p']});
 
 					// Wait for recording to finish
-					const videoData = await recordingPromise;
+					const videoData = recordingPromise;
 					clearTimeout(timer);
 
 					if (videoData && videoData.uri) {
@@ -326,52 +304,7 @@ export default function CreatePost() {
 				console.log('sendPost', response.data);
 				onSendSuccessToast();
 				setLoading(false);
-				// fetch friends notifications
-				// axios
-				// 	.get(
-				// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/friends/fetch/${myUsername}`,
-				// 	)
-				// 	.then((response) => {
-				// 		console.log('fetchFriendsNotifications', response.data);
-				// 		// create notification objects
-				// 		const notifications = response.data['tokens'].map(
-				// 			(token) => ({
-				// 				to: token,
-				// 				sound: 'default',
-				// 				title: `${myUsername} just got better today.`,
-				// 				body: `will you?`,
-				// 				data: { path: { screen: 'home' } },
-				// 			}),
-				// 		);
-
-				// 		console.log('notifications', notifications);
-
-				// 		// send notifications
-				// 		axios
-				// 			.post(
-				// 				'https://exp.host/--/api/v2/push/send',
-				// 				notifications,
-				// 				{
-				// 					headers: {
-				// 						Accept: 'application/json',
-				// 						'Content-Type': 'application/json',
-				// 					},
-				// 				},
-				// 			)
-				// 			.then((response) => {
-				// 				console.log(response.data);
-				// 			})
-				// 			.catch((error) => {
-				// 				console.error(
-				// 					'sendExpoNotificationsError',
-				// 					error,
-				// 				);
-				// 			});
-				// 	})
-				// 	.catch((error) => {
-				// 		console.log('fetchFriendsNotificationsError', error);
-				// 		console.log(error);
-				// 	});
+		
 
 				if (challengeUsername) {
 					axios
@@ -468,7 +401,7 @@ export default function CreatePost() {
 					<View style={createPostStyles.createPostContainer}>
 						<View style={createPostStyles.cameraContainer}>
 							<Camera
-								ratio='16:9'
+								// ratio='16:9'
 								style={createPostStyles.camera}
 								type={
 									isCameraFront
@@ -480,7 +413,7 @@ export default function CreatePost() {
 										?FlashMode.on
 										: FlashMode.off
 								}
-								ref={(ref) => setCameraRef(ref)}
+								ref={cameraRef}
 							/>
 						</View>
 						<View style={createPostStyles.takePhotoContainer}>
@@ -632,13 +565,14 @@ export default function CreatePost() {
 									}}
 									accessible={false}>
 									<Image
-										style={picStyle}
-										transition={300}
-										contentFit={photoContentFit}
+										style={createPostStyles.photoStyle}
+										transition={100}
+										contentFit={mediaSrc == "taken" ? "cover" : photoContentFit}
 										contentPosition={'center'}
 										allowDownscaling={false}
-										borderRadius={10}
-										source={{ uri: photo }}></Image>
+										// borderRadius={10}
+										source={{ uri: photo }}
+										/>
 								</TouchableWithoutFeedback>
 							)}
 							{video && (
@@ -649,11 +583,10 @@ export default function CreatePost() {
 											width: Dimensions.get('window')
 												.width,
 											height: '100%',
-											resizeMode: 'cover',
 										}}
-										shouldPlay
-										isLooping
-										resizeMode='cover'
+											shouldPlay={true}
+											isLooping={true}
+											resizeMode={ResizeMode.COVER}
 									/>
 								</View>
 								)}
@@ -675,7 +608,8 @@ export default function CreatePost() {
 									onBlur={() => {
 										setIsFocused(false);
 									}}
-									returnKeyType='done'
+										returnKeyType='done'
+										keyboardAppearance='dark'
 									onSubmitEditing={Keyboard.dismiss}
 								/>
 								{isFocused ? (
