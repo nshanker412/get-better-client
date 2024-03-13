@@ -5,6 +5,8 @@ import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProf
 import { PlanItem } from '@components/profile/profile-body/plan-list/plan-item/PlanItem';
 import { PlanType } from '@components/profile/profile-body/plan-list/plan-item/PlanItem.types';
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
+import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
 import { Entypo } from '@expo/vector-icons';
 import { PostMetadata } from "@models/posts";
@@ -74,15 +76,15 @@ const genPlanIconList = (linkedPlans: PlanTileType[]) => {
  * @param {Object} post object
  */
 const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
+  const { sendOutPushNotification } = useNotifications(); 
+
   // console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
   });
 
-
   const [linkedActionFab, setLinkedActionFab] = useState([]);
-
   const navigation = useNavigation();
 
   const onPressAction = (name: string) => {
@@ -166,11 +168,28 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
 
   const handleUpdateLike = useCallback(
     throttle((currentLikeStateInst) => {
-      setCurrentLikeState({
-        state: !currentLikeStateInst.state,
-        counter: currentLikeStateInst.counter + (currentLikeStateInst.state ? -1 : 1),
-      });
-      setPostLiked(user, `${postData.timestamp}`, myUsername, currentLikeStateInst.state);
+      try {
+        const postID = `${postData.user}_${postData.timestamp}`;
+        const newLikeState = !currentLikeStateInst.state;
+        setCurrentLikeState({
+          state: newLikeState,
+          counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),
+        });
+        setPostLiked(user, `${postData.timestamp}`, myUsername, newLikeState);
+        if (newLikeState) {
+
+          const pushNotifInfo: PushNotificationInfoPacket = {
+            title: `${myUsername} liked your post.`,
+            body: `check it out!`,
+            data: { path: 'profile', params: { profileUsername: postData.user, postId: postID } },
+          };
+    
+          sendOutPushNotification(postData?.user, pushNotifInfo);
+        }
+      } catch (error) {
+          console.log('setPostLikedError', error);
+        }
+  
     }, 500),
     []
   );
