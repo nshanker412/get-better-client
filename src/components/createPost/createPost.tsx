@@ -44,7 +44,6 @@ const actions: IActionProps[] = [
 		color: "gray"
 		
 	},
-
   ];
 
 

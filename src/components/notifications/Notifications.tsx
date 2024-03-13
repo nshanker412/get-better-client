@@ -39,7 +39,7 @@ enum NotificationType {
     CHALLENGE = 'challenge',
 }
 
-export const Notifications = () => {
+export const Notifications = ({route}) => {
     const { theme } = useThemeContext();
     const {goBack, navigate, dispatch} = useNavigation();
     const notificationStyles = useNotificationsStyles();
@@ -49,9 +49,14 @@ export const Notifications = () => {
 
 
     useEffect(() => {
-        console.log('notifications', notifications);
 
-    }, [notifications]);
+        // if routed from deep link, refresh
+
+        if (route?.params?.refreshNotifs) {
+            refreshNotifications(myUsername);
+        }
+    }, [route?.params?.refreshNotifs]);
+
 
     useEffect(() => {
 
@@ -113,7 +118,7 @@ export const Notifications = () => {
                 screen: 'post',
                 params: {
                     challengeUsername: itemUsername,
-                    challengeID: item.challengeID,
+                    challengeID: `${item.timestamp}`,
                     challenge: item.challenge,
                 },
             };

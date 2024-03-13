@@ -5,7 +5,7 @@ import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProf
 import { PlanItem } from '@components/profile/profile-body/plan-list/plan-item/PlanItem';
 import { PlanType } from '@components/profile/profile-body/plan-list/plan-item/PlanItem.types';
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
-import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
 import { Entypo } from '@expo/vector-icons';
@@ -182,7 +182,9 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
             title: `${myUsername} liked your post.`,
             body: `check it out!`,
             data: {
-              path: 'profile', params: {
+              type: NotificationType.LIKED_POST,
+              path: 'profile',
+              params: {
                 profileUsername: postData.user,
                 postID: postID
               }

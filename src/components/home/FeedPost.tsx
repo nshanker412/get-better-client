@@ -8,7 +8,7 @@ import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
 import { BLUR_HASH } from '@constants/constants';
-import { PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { PostMetadata } from '@models/posts';
 import { Link } from '@react-navigation/native';
@@ -32,7 +32,6 @@ import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar
 import { useFeedPostStyles } from './FeedPost.styles';
 import { usePostLifecycle } from './hooks/usePostLifecycle';
 import { ConnectedPostCommentDrawer } from './post-comment-drawer/ConnectedPostCommentDrawer';
-
 
 export interface FeedPostProps {
 	index: number;
@@ -119,7 +118,15 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 			const pushNotifInfo: PushNotificationInfoPacket = {
 				title: `${myUsername} liked your post.`,
 				body: `check it out!`,
-				data: { path: 'profile', params: { profileUsername: postData.user, postID: postID } },
+				data: {
+					type: NotificationType.LIKED_POST,
+					path: 'profile',
+					params:
+					{
+						profileUsername: postData.user,
+						postID: postID
+					}
+				},
 			};
         
 			sendOutPushNotification(postData.user, pushNotifInfo);

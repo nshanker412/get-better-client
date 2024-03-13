@@ -2,7 +2,7 @@ import { NotificationsResponseV2 } from '@models/notifications';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ExpoNotifications from 'expo-notifications';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { NotificationContext, NotificationTokenApiResponse, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
+import { NotificationContext, NotificationTokenApiResponse, NotificationType, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
 import { NotificationsContext } from './NotificationsContext';
 import { fetchNotifications } from './utils/fetchNotifications';
 import { fetchTokens } from './utils/fetchTokens';
@@ -41,6 +41,77 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const route = useRoute();
 
 
+    const genNavPacket = (type: NotificationType, path: string, params: { [key: string]: string }) => {
+        
+        switch (type) {
+            case NotificationType.LIKED_POST:
+                return {
+                    screen: "hometab",
+                    params: {
+                        screen: "post",
+                        params: {
+                            linkPostID: params.postID,
+                            profileUsername: params.profileUsername,
+                        }
+                    }
+                }
+            case NotificationType.COMMENTED_ON_POST:
+                return {
+                    screen: "hometab",
+                    params: {
+                        screen: "post",
+                        params: {
+                            linkPostID: params.postID,
+                            profileUsername: params.profileUsername,
+                        }
+                    }
+                }
+            case NotificationType.FOLLOWED:
+                return {
+                    screen: "hometab",
+                    params: {
+                        screen: "profile",
+                        params: {
+                            profileUsername: params.profileUsername,
+                        }
+                    }
+                }
+            case NotificationType.DAILY_REMINDER:
+                return {
+                    screen: "post",
+                    params: {
+                        screen: "profile",
+                        params: {
+                            profileUsername: params.profileUsername,
+                        }
+                    }
+                }
+            case NotificationType.CHALLENGED:
+                return {
+                    screen: "hometab",
+                    params: {
+                        screen: "notifications",
+                        params: {
+                            profileUsername: params.profileUsername,
+                            refreshNotifs: true,
+                        }
+                    }
+                }
+            default:
+                return {
+                    screen: "hometab",
+                    params: {
+                        screen: "post",
+                        params: {
+                            linkPostID: params?.postID,
+                            profileUsername: params?.profileUsername,
+                        }
+                    }
+                }
+        }
+    }
+
+
 
 
     /**
@@ -50,6 +121,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const onNotificationResponseReceived = (event: ExpoNotifications.NotificationResponse) => {
         const path = event.notification.request.content.data.path;
         const params = event.notification.request.content.data.params;
+        const notificationType = event.notification.request.content.data.type;
         console.log('Inbound Notification response', event);
 
         console.log('current route' , route);
@@ -63,7 +135,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                 params: {
                     linkPostID: params?.postID,
                     profileUsername: params?.profileUsername,
-                    
+
                     }
                 }
             

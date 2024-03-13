@@ -23,7 +23,7 @@ export enum NotificationType {
     FOLLOWED = "FOLLOWED",
     MENTIONED = "MENTIONED",
     CHALLENGE_COMPLETED = "CHALLENGE_COMPLETED",
-    CHALLENGE_CREATE = "CHALLENGE_CREATED",
+    CHALLENGED = "CHALLENGED",
     DAILY_REMINDER = "DAILY_REMINDER",
 }
 
@@ -56,7 +56,9 @@ export interface PushNotificationInfoPacket {
     title: string;
     body: string;
     data: {
-        path: string, params?: { [key: string]: string };
+        type: NotificationType,
+        path: string,
+        params?: { [key: string]: string };
     }
 }
 

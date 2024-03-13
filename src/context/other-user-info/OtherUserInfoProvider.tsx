@@ -1,5 +1,7 @@
 import { ApiLoadingState, UserData } from '../../types';
 
+import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
+import { useNotifications } from '@context/notifications/useNotifications';
 import axios from 'axios';
 import React, {
 	createContext,
@@ -22,7 +24,6 @@ import {
 	SET_USER_PLANS,
 	initialOtherUserInfoState,
 } from './OtherUserInfo.types';
-
 const otherUserInfoReducer = (
 	state: OtherUserInfoState,
 	action: OtherUserInfoAction,
@@ -83,6 +84,8 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 	otherProfileUsername,
 	children,
 }) => {
+
+	const {sendOutPushNotification} = useNotifications();
 	const [state, dispatch] = useReducer(otherUserInfoReducer, {
 		...initialOtherUserInfoState,
 		username: otherProfileUsername,
@@ -206,40 +209,22 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 
 		if (!previouslyFollowing) {
-			let notificationTokens = [];
 
 			try {
-				notificationTokens = (
-					await axios.get(
-						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${state.username}`,
-					)
-				).data.tokens;
+				const notifPacket: PushNotificationInfoPacket = {
+					title: `${myUsername} started motivating you.`,
+					body: 'Check out their profile!',
+					data: {
+						type: NotificationType.FOLLOWED,
+						path: 'notifications',
+						params: {
+							profileUsername: state.username,
+						},
+					},
+				};
 
-				notificationTokens.forEach(async (token) => {
-					try {
-						await fetch('https://exp.host/--/api/v2/push/send', {
-							method: 'POST',
-							headers: {
-								Accept: 'application/json',
-								'Content-Type': 'application/json',
-							},
-							body: JSON.stringify({
-								to: token,
-								sound: 'default',
-								title: `${myUsername} started motivating you.`,
-								body: 'Check out their profile!',
-								data: {
-									screen: 'notifications',
-									params: {
-										profileUsername: state.username,
-									},
-								},
-							}),
-						});
-					} catch (error) {
-						console.error('setFollowStatusError', error);
-					}
-				});
+				sendOutPushNotification(state.username, notifPacket);
+		
 			} catch (error) {
 				console.error('setFollowStatusError', error);
 			}
@@ -316,42 +301,60 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 
 		console.log("sending notificaiton to the user's devices");
+		
+		// 3. Send notification to user
 
-		let notificationTokens = [];
 		try {
-			notificationTokens = (
-				await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${state.username}`,
-				)
-			).data.tokens;
 
-			notificationTokens.forEach(async (token) => {
-				try {
-					await fetch('https://exp.host/--/api/v2/push/send', {
-						method: 'POST',
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							to: token,
-							sound: 'default',
-							title: `${myUsername} challenged you!`,
-							body: 'You have 1 week. Tap here to see the challenge!',
-							data: {
-								path: {
-									screen: 'notifications',
-									params: {
-										profileUsername: state.username,
-									},
-								},
-							},
-						}),
-					});
-				} catch (error) {
-					console.error('setFollowStatusError', error);
-				}
-			});
+		const notifPacket: PushNotificationInfoPacket = {
+			title: `${myUsername} challenged you!`,
+			body: 'You have 1 week. Tap here to see the challenge!',
+			data: {
+				type: NotificationType.CHALLENGED,
+				path: 'notifications',
+				params: {
+					profileUsername: state.username,
+					challenge: challengeText,
+				},
+			},
+		};
+
+			sendOutPushNotification(state.username, notifPacket);
+			
+
+			// notificationTokens = (
+			// 	await axios.get(
+			// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${state.username}`,
+			// 	)
+			// ).data.tokens;
+
+			// notificationTokens.forEach(async (token) => {
+			// 	try {
+			// 		await fetch('https://exp.host/--/api/v2/push/send', {
+			// 			method: 'POST',
+			// 			headers: {
+			// 				Accept: 'application/json',
+			// 				'Content-Type': 'application/json',
+			// 			},
+			// 			body: JSON.stringify({
+			// 				to: token,
+			// 				sound: 'default',
+			// 				title: `${myUsername} challenged you!`,
+			// 				body: 'You have 1 week. Tap here to see the challenge!',
+			// 				data: {
+			// 					path: {
+			// 						screen: 'notifications',
+			// 						params: {
+			// 							profileUsername: state.username,
+			// 						},
+			// 					},
+			// 				},
+			// 			}),
+			// 		});
+			// 	} catch (error) {
+			// 		console.error('setFollowStatusError', error);
+			// 	}
+			// });
 			return Promise.resolve();
 		} catch (error) {
 			console.error('setFollowStatusError', error);

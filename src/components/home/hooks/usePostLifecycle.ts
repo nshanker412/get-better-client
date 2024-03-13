@@ -1,4 +1,4 @@
-import { PushNotificationInfoPacket } from "@context/notifications/Notifications.types";
+import { NotificationType, PushNotificationInfoPacket } from "@context/notifications/Notifications.types";
 import { useNotifications } from "@context/notifications/useNotifications";
 import { PostMetadata } from "@models/posts";
 import axios from "axios";
@@ -162,7 +162,15 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
             const pushNotifInfo: PushNotificationInfoPacket = {
                 title: `${myUsername} liked your post.`,
                 body: `check it out!`,
-                data: { path: 'profile', params: { profileUsername: posterName, postID: postID } },
+                data: {
+                    type: NotificationType.LIKED_POST,
+                    path: 'profile',
+                    params:
+                    {
+                        profileUsername: posterName,
+                        postID: postID
+                    }
+                },
             };
         
             sendOutPushNotification(posterName, pushNotifInfo);
