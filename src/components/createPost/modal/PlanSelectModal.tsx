@@ -81,7 +81,6 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 	  const fetchPlans = async () => {
 		try {
 		  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
-			console.log('fetchPlans', response.data);
 			const planList: PlanItemProps[] = response.data?.plans?.map((plan) => ({
 				id: plan?.id,
 				planType: plan?.data?.planCategory,
@@ -94,7 +93,7 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 		}
 	  };
 	  fetchPlans();
-	}, [username]);
+	}, []);
 	  
 	  
 	 

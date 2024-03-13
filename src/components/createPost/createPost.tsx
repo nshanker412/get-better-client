@@ -133,49 +133,58 @@ export default function CreatePost() {
 	};
 
 	// pick an image from camera roll
-	const pickImage = async () => {
+	const pickMedia = async () => {
 
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
-			allowsEditing: false,
-			quality: 1,
-			videoMaxDuration: 10,
-			allowsMultipleSelection: false,
-		});
+		console.log("before picker")
+		if (isPhoto) {
 
-		// console.log('result', result);
-		if (result == null) {
-			console.log('picked image is null');
-			return;
-		}
+			const imageResult = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: false,
+				quality: 1,
+			});
 
-		if (result.canceled) {
-			return
-		}
-		
-		// if (result.assets && result?.assets[0].uri) {
-		// 	console.log('picked image is null');	
-		// 	return
-		// }
+			console.log("image after picker: ", imageResult)
 
-		if (result?.assets[0]?.type === "image") {
+			// console.log('result', result);
+			if (imageResult == null || imageResult.assets == null || imageResult.assets[0] == null || imageResult.canceled) {
+				console.log('picked camera roll media is null');
+				return;
+			}
+
 
 			setVideo(null);
 			setMediaScr("upload");
-			setPhoto(result.assets[0].uri);
+			setPhoto(imageResult?.assets[0]?.uri);
 			return;
 				
-		}
-		else if (result?.assets[0]?.type === "video") {
-				setMediaScr("upload");
-				setVideo(result.assets[0]?.uri);
-				setPhoto(null);
+		} else {
+
+			const videoResult = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+                allowsEditing: true,
+                quality: 1,
+                videoMaxDuration: 10
+			});
+			setMediaScr("video result: ", videoResult);
+
+
+			if (videoResult == null || videoResult.assets == null || videoResult.assets[0] == null || videoResult.canceled) {
+				console.log('picked camera roll media is null');
 				return;
-		}
-		else {
-				console.log('No image or video selected');
 			}
-		
+			console.log(videoResult?.assets[0]?.duration)
+
+			
+
+			
+				setPhoto(null);
+				setMediaScr("upload");
+				setVideo(videoResult?.assets[0]?.uri);
+				return;
+	
+		}
+
 	}
 
 
@@ -290,7 +299,7 @@ export default function CreatePost() {
 			});
 		}
 
-		axios
+		await axios
 			.post(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/post/save`,
 				formData,
@@ -338,6 +347,13 @@ export default function CreatePost() {
 
 			});
 	};
+
+	const onPressCloseMediaSelection = () => {
+		setCaption('');
+		setPhoto(null);
+		setVideo(null);
+		setMediaScr(undefined);
+	}
 
 
 	useEffect(() => {
@@ -389,7 +405,7 @@ export default function CreatePost() {
 					<TouchableOpacity
 						activeOpacity={0.7}
 						style={createPostStyles.cameraRollContainer}
-						onPress={pickImage}>
+						onPress={pickMedia}>
 						<FontAwesome
 							style={createPostStyles.cameraRollIcon}
 							name='picture-o'
@@ -533,20 +549,10 @@ export default function CreatePost() {
 			) : (
 				<>
 					<Header  />
-					<TouchableHighlight
-						style={createPostStyles.retakeIconContainer}
-						onPress={
-							loading
-								? null
-								: () => {
-										Haptics.impactAsync(
-											Haptics.ImpactFeedbackStyle.Medium,
-										);
-										setCaption('');
-										setPhoto(null);
-										setVideo(null);
-								  }
-						}>
+						<TouchableHighlight
+							style={createPostStyles.retakeIconContainer}
+							onPress={onPressCloseMediaSelection}
+						>
 						<AntDesign
 							style={createPostStyles.retakeIcon}
 							name='close'
