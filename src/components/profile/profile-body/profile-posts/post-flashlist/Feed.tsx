@@ -1,19 +1,17 @@
-import React, { createRef, useCallback, useEffect, useRef, useState } from 'react'
-import { Dimensions, View, ViewToken } from 'react-native'
-import { PostTile } from './PostTile'
-
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo'
 import { useNotifications } from '@context/notifications/useNotifications'
 import { Post } from '@models/posts'
 import { useScrollToTop } from '@react-navigation/native'
 import { FlashList } from '@shopify/flash-list'
 import * as Haptics from 'expo-haptics'
+import React, { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import { Dimensions, View, ViewToken } from 'react-native'
 import { RefreshControl } from 'react-native-gesture-handler'
 import { Host, Portal } from 'react-native-portalize'
 import { Header } from '../../../../header/Header'
 import { ConnectedNotificationsBell } from '../../../../home/notifications-drawer/bell/ConnectedNotificationsBell'
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer'
-import { PostTileRef } from './PostTile'
+import { PostTile, PostTileRef } from './PostTile'
 import { getFeed } from './service/getFeed'
 
 import { useIsFocused } from '@react-navigation/native'
@@ -85,6 +83,7 @@ export default function FeedScreen() {
     
         // Pause any previously viewable items that are no longer viewable
         visibleItemKeys.current.forEach((key) => {
+            console.log('checking', key)
             if (!newViewableSet.has(key)) {
                 console.log('pausing', key)
                 postTileRefs.current[key]?.current?.stop();
@@ -96,9 +95,8 @@ export default function FeedScreen() {
     
         // Play newly viewable items
         viewableItems.forEach(({ item }) => {
-            if (item.metadata.type === 'video') {
                 postTileRefs.current[item.filename]?.current?.play();
-            }
+            
         });
     };
 
