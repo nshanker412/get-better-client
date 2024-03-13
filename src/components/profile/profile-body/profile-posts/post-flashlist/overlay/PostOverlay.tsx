@@ -169,19 +169,24 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
   const handleUpdateLike = useCallback(
     throttle((currentLikeStateInst) => {
       try {
-        const postID = `${postData.user}_${postData.timestamp}`;
+        const postID = `${postData.timestamp}`;
         const newLikeState = !currentLikeStateInst.state;
         setCurrentLikeState({
           state: newLikeState,
           counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),
         });
-        setPostLiked(user, `${postData.timestamp}`, myUsername, newLikeState);
+        setPostLiked(user, postID, myUsername, newLikeState);
         if (newLikeState) {
 
           const pushNotifInfo: PushNotificationInfoPacket = {
             title: `${myUsername} liked your post.`,
             body: `check it out!`,
-            data: { path: 'profile', params: { profileUsername: postData.user, postId: postID } },
+            data: {
+              path: 'profile', params: {
+                profileUsername: postData.user,
+                postID: postID
+              }
+            },
           };
     
           sendOutPushNotification(postData?.user, pushNotifInfo);

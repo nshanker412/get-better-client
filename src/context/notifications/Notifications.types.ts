@@ -14,6 +14,20 @@ export interface NotificationContext {
     refreshNotifications: (username: string) => Promise<void>;
     setNotificationsSeen: () => Promise<void>;
 }
+
+
+
+export enum NotificationType {
+    LIKED_POST= "LIKED_POST",
+    COMMENTED_ON_POST = "COMMENTED_ON_POST",
+    FOLLOWED = "FOLLOWED",
+    MENTIONED = "MENTIONED",
+    CHALLENGE_COMPLETED = "CHALLENGE_COMPLETED",
+    CHALLENGE_CREATE = "CHALLENGE_CREATED",
+    DAILY_REMINDER = "DAILY_REMINDER",
+}
+
+
   
 export interface NotificationsProviderProps {
     myUsername: string ,
@@ -29,7 +43,10 @@ export interface PushNotificationPacket {
     title: string;
     body: string;
     data: {
-        path: string, params?: { [key: string]: string };
+        type?: NotificationType,
+        path: string,
+        params?: { [key: string]: string };
+
     }}
 
 /**
@@ -47,4 +64,3 @@ export interface PushNotificationInfoPacket {
 export interface NotificationTokenApiResponse {
     tokens: string[];
 }
-

@@ -8,8 +8,8 @@ import { PreviewFeedScreen } from './modals/PostPreviewModal';
 //helper to take in a postID and check if it exists in the posts array
 // if it does, set the previewPostId to the index of the post
 // else return -1 
-const findIdxByID = (postId: string, posts: Post[]) => {
-    const postIDint = parseInt(postId);
+const findIdxByID = (postID: string, posts: Post[]) => {
+    const postIDint = parseInt(postID);
     console.log('postIDint', postIDint)
 
     console.log('posts', posts)

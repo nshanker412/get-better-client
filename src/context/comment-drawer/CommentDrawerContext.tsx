@@ -110,7 +110,7 @@ export const CommentDrawerProvider= ({ children }) => {
             const pushNotifInfo: PushNotificationInfoPacket = {
                 title:  `${myUsername} commented on your post.`,
                 body: `"${comment}"`,
-                data: { path: 'profile', params: { profileUsername: poster, postId: id } },
+                data: { path: 'profile', params: { profileUsername: poster, postID: id } },
               };
         
               sendOutPushNotification(poster, pushNotifInfo);

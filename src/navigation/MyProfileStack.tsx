@@ -10,7 +10,7 @@ import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 
 
-export const MyProfileStack = () => {
+export const MyProfileStack = ({navigation}) => {
 	const ProfileStackNav = createStackNavigator();
 
 	return (

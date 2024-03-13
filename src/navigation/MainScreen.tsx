@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { SvgXml } from 'react-native-svg';
 import CreatePost from '../components/createPost/createPost';
@@ -155,9 +155,20 @@ const ProfileTabIcon = ({ focused }) => {
 	);
 };
 
-export function MainScreen() {
+export function MainScreen({navigation, route}) {
 	const Tab = createBottomTabNavigator();
 	const tabBarStyles = useFooterStyles();
+
+
+	useEffect(() => {
+		console.log('MainScreen mounted');
+		console.log('mainscreen tab route', route, route?.params);
+
+		// if (route?.params?.screen =="profile") {
+		// 	navigation.navigate('hometab', {screen: 'profile', params: {screen: 'profile'}});
+		// }
+
+	}, [navigation, route]);
 
 	return (
 		<CommentDrawerProvider>

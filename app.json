@@ -33,6 +33,7 @@
 			"url": "https://u.expo.dev/a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
 		},
 		"plugins": [
+
 			[
 				"expo-camera",
 				{

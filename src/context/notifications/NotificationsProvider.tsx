@@ -1,5 +1,5 @@
 import { NotificationsResponseV2 } from '@models/notifications';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ExpoNotifications from 'expo-notifications';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { NotificationContext, NotificationTokenApiResponse, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
@@ -14,13 +14,6 @@ import { setNotificationsSeen as _setNotificationsSeen } from './utils/setNotifi
 
 
 
-// ExpoNotifications.setNotificationHandler({
-//     handleNotification: async () => ({
-//       shouldShowAlert: true,
-//       shouldPlaySound: false,
-//       shouldSetBadge: false,
-//     }),
-// });
 
 
 /**
@@ -45,6 +38,10 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const responseListener = useRef<ExpoNotifications.Subscription>(null);
 
     const { navigate } = useNavigation();
+    const route = useRoute();
+
+
+
 
     /**
      * Called when a user taps on a notification
@@ -52,8 +49,30 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
      */
     const onNotificationResponseReceived = (event: ExpoNotifications.NotificationResponse) => {
         const path = event.notification.request.content.data.path;
-        if (path) {
-            navigate(path);
+        const params = event.notification.request.content.data.params;
+        console.log('Inbound Notification response', event);
+
+        console.log('current route' , route);
+
+        // find notification type, generate path
+
+        const navPacket = {
+            screen: "hometab", 
+            params: {
+                    screen: path,
+                params: {
+                    linkPostID: params?.postID,
+                    profileUsername: params?.profileUsername,
+                    
+                    }
+                }
+            
+        }
+
+        console.log("nav packet", navPacket)
+
+        if (path && params) {
+            navigate('Main', navPacket);
         }
     }
 
@@ -64,10 +83,22 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const onNotificationReceived = (notification: ExpoNotifications.Notification) => {
         // setNotification(notification);
         console.log('Inbound Notification received', notification);
+        console.log('notification.request.content.data', notification.request.content.data);
         // TODO: Add animatied handling for this
         refreshNotifications();
 
     }
+
+    useEffect(() => {
+
+        ExpoNotifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: true,
+                shouldPlaySound: true,
+                shouldSetBadge: true,
+            }),
+        });
+    }, []);
 
 
     useEffect(() => {
@@ -115,8 +146,11 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
             if (status !== 'granted') {
                 const { status: askStatus } = await ExpoNotifications.requestPermissionsAsync();
                 if (askStatus !== 'granted') {
-                    console.log('Notification permissions not granted');
+                    console.log(`Notification permissions not granted: ${askStatus}`);
                     return;
+                } else {
+                    setPermissions(true);
+
                 }
             } else {
                 setPermissions(true);

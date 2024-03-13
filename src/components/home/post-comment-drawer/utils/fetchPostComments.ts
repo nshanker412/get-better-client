@@ -3,13 +3,13 @@ import axios from 'axios';
 
 /**
  * fetch post comments
- * @param postId
+ * @param postID
  * 
  * @returns comments
  */
-export const fetchPostComments = async (origionalPoster: string, postId: string): Promise<Comment[] | void> => {
+export const fetchPostComments = async (origionalPoster: string, postID: string): Promise<Comment[] | void> => {
     
-    if (!postId) {
+    if (!postID) {
         console.log('Error fetching comments: Invalid parameters');
     }
     
@@ -18,7 +18,7 @@ export const fetchPostComments = async (origionalPoster: string, postId: string)
             `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
             {
                 profileUsername: origionalPoster,
-                postID: postId,
+                postID: postID,
             },
         );
         return response.data.comments;

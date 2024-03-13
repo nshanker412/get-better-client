@@ -119,7 +119,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 			const pushNotifInfo: PushNotificationInfoPacket = {
 				title: `${myUsername} liked your post.`,
 				body: `check it out!`,
-				data: { path: 'profile', params: { profileUsername: postData.user, postId: postID } },
+				data: { path: 'profile', params: { profileUsername: postData.user, postID: postID } },
 			};
         
 			sendOutPushNotification(postData.user, pushNotifInfo);

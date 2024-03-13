@@ -109,7 +109,7 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 		// 		const pushNotifInfo: PushNotificationInfoPacket = {
 		// 			title: `${myUsername} liked your post.`,
 		// 			body: `check it out!`,
-		// 			data: { path: 'profile', params: { profileUsername: profileUsername, postId: postID } },
+		// 			data: { path: 'profile', params: { profileUsername: profileUsername, postID: postID } },
 		// 		};
 				
 		// 		sendOutPushNotification(profileUsername, pushNotifInfo);
