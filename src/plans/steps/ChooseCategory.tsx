@@ -384,7 +384,7 @@ const onFoodsChange = (items: string[]) => {
         )}
         <View style={{ paddingBottom: 10, flex: 1, flexDirection: "row", justifyContent: 'flex-end', width:"100%", alignItems: 'flex-end' }}>
           <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-              <Button type="outline" buttonStyle={{backgroundColor:redDark.red2, borderColor: redDark.red10, borderWidth: 2, borderRadius: 8} } style={styles.buttonBase}  titleStyle={{color: redDark.red11, fontFamily: fonts.inter.bold}} title="Exit"  onPress={handleBackPress} />
+              <Button type="outline" buttonStyle={{backgroundColor:redDark.red3, borderColor: redDark.red11, borderWidth: 2, borderRadius: 8} } style={styles.buttonBase}  titleStyle={{color: redDark.red12, fontFamily: fonts.inter.bold}} title="Exit"  onPress={handleBackPress} />
             </View>
             <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
               <Button style={styles.buttonBase} disabled={!canGoNext} buttonStyle={styles.button } titleStyle={styles.buttonTitle} title="Next"  onPress={handleNextPress} />

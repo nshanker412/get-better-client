@@ -4,8 +4,7 @@ export interface ConnectedProfilePostsProps {
 }
 
 export interface ProfilePostsProps {
-	posts: Post[];
-	isError: boolean;
+	posts: Post[] | [];
 	isMyProfile: boolean;
 	fetchUserPosts: () => Promise<void>;
 }

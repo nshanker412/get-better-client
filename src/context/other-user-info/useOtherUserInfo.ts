@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { OtherUserInfoContext } from './OtherUserInfoProvider';
 
 export const useOtherUserInfo = () => {
@@ -8,5 +8,8 @@ export const useOtherUserInfo = () => {
 			'useOtherUserInfo must be used within a MyUserInfoProvider',
 		);
 	}
-	return context;
+
+	const memoizedContext = useMemo(() => context, [context]);
+
+	return memoizedContext;
 };

@@ -416,26 +416,28 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
       <> 
         {
             routines?.map((item, index) => {
+              const canExpand = item.fats || item.carbs || item.calories || item.proteins || item.notes || item.timeOfDay || item.cookingInstructions;
               return (
                 <React.Fragment key={`routine-fragment-${index}`}>
 
                       <View style={{width: "100%", padding: 2, alignItems: "center", justifyContent: "flex-start",}}/>
                       <ListItem.Accordion
                           containerStyle={{ backgroundColor: grayDark.gray10, borderRadius: 8}}
-                    key={`review-li-${index}`}
-                    style={{ backgroundColor: grayDark.gray5, borderRadius: 8 }}
-                    content={
-                    <>
-                        {/* <FontAwesome6 style={{ paddingRight: 10 }} name="dumbbell" size={24} color="black" /> */}
-                        <MaterialCommunityIcons name="food-fork-drink" size={24} color="black" style={{paddingRight: 5}} />
-                      <ListItem.Content>
-                          <ListItem.Title>{list[index].label} </ListItem.Title>
-                          <ListItem.Subtitle>{ list[index].type} </ListItem.Subtitle>
+                          key={`review-li-${index}`}
+                          style={{ backgroundColor: grayDark.gray5, borderRadius: 8 }}
+                          noIcon={!canExpand}
+                          content={
+                            <>
+                            <MaterialCommunityIcons name="food-fork-drink" size={24} color="black" style={{paddingRight: 5}} />
+                            <ListItem.Content>
+                                <ListItem.Title>{list[index].label} </ListItem.Title>
+                                <ListItem.Subtitle >{ list[index].type} </ListItem.Subtitle>
 
-                      </ListItem.Content>
+                            </ListItem.Content>
                     </>
                   }
-                  isExpanded={expanded === `${item.id}`}
+                    
+                  isExpanded={canExpand ? expanded === `${item.id}` : false}
                   onPress={
                     () => onAccordionPress(`${item.id}`)
                   }
@@ -444,7 +446,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                               <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
                 
                     {item.fats!==undefined && item.carbs !==undefined && item.calories!== undefined && (
-                        <ListItem key={`${item.id}-li1`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
+                        <ListItem key={`${item.id}-li1-preview`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
                         <ListItem.Content >
                           <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>{"Nutritional Value"}</ListItem.Title>
                             
@@ -474,10 +476,8 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                             {item?.notes && (
                               <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
                                 <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Notes</Text>
-
                                 <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.notes}</Text>
                               </View>
-                            
                             )}
 
                             {item.timeOfDay && (
@@ -485,6 +485,14 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                                 <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Eating time</Text>
 
                                 <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.timeOfDay}</Text>
+                              </View>
+                            
+                            )}
+                            {item.cookingInstructions && (
+                              <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14,  }}>Cooking Instructions</Text>
+
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 12, }}>{item.cookingInstructions}</Text>
                               </View>
                             
                             )}

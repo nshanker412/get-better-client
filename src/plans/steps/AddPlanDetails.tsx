@@ -39,6 +39,33 @@ import { FoodItemModal } from '../modals/FoodItemModal';
     // const ableToGoNext = planName !== "" && planDescription !== "";
       const ableToGoNext = planName !== ""; 
     const { username: myUsername } = useMyUserInfo();
+
+
+    let placeholderTitle = `e.g. ${myUsername}'s plan`;
+    switch (planState?.init?.planCategory) {
+      case PlanCategory.Lifting:
+        placeholderTitle = `e.g. ${myUsername}'s leg destroyer`;
+        break;
+      case PlanCategory.Nutrition:
+        placeholderTitle = `e.g. ${myUsername}'s meal plan`;
+        break;
+      default:
+        placeholderTitle = `e.g. ${myUsername}'s plan`;
+    }
+
+
+    let placeholderDescription = `e.g. this is my plan description`;
+    switch (planState?.init?.planCategory) {
+      case PlanCategory.Lifting:
+        placeholderDescription = `e.g. this is a leg workout that makes me cry`;
+        break;
+      case PlanCategory.Nutrition:
+        placeholderDescription = `e.g. post workout meal plan for leg day`;
+        break;
+      default:
+        placeholderDescription = `e.g. this is my plan description`;
+    }
+
   
   
     const onNext = () => {
@@ -58,25 +85,31 @@ import { FoodItemModal } from '../modals/FoodItemModal';
       <ScrollView style={{ flex: 1, width: "100%", height: "100%" }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'space-evenly' }}>
   
         <View style={{ flex: 1, justifyContent: 'center', width:"100%" , paddingTop: 20, minWidth: "80%" }}>
-        <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Name</Text>
           <Input
             // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
             // label="Name"
+            containerStyle={{ flexGrow: 1, width: "100%" }}
+            label={
+              <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Name</Text>
+
+            }
             value={planName ?? planState?.name }
-            style={{ color: "white", borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular, backgroundColor: grayDark.gray4 }}
+            style={{ color: "white", borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular, backgroundColor: grayDark.gray4,  padding: 5 }}
             onChangeText={setPlanName}
             placeholderTextColor={grayDark.gray9}
-            placeholder={`e.g. ${myUsername}'s leg destroyer`}
-                        keyboardAppearance='dark'
+            placeholder={placeholderTitle}
+            keyboardAppearance='dark'
 
           />
-         <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Description</Text>
   
           <Input
-            // label="Description"
+            label={
+              <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Description</Text>
+            }
             // labelStyle={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}
             value={ planDescription ?? planState?.description}
-            style={{ color: "white" , borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular,  backgroundColor: grayDark.gray4}}         
+            style={{ color: "white", borderRadius: 2, borderColor: grayDark.gray12, fontSize: 16, fontFamily: fonts.inter.regular, backgroundColor: grayDark.gray4, padding: 5 }}    
+            containerStyle={{ flexGrow: 1, width: "100%"  }} 
             multiline={true}
             keyboardAppearance='dark'
             keyboardType="default"
@@ -87,10 +120,10 @@ import { FoodItemModal } from '../modals/FoodItemModal';
             numberOfLines={4}
             maxLength={200}
             onChangeText={setPlanDescription}
-            placeholder=" e.g. this is a leg workout that makes me cry"
+            placeholder={placeholderDescription}
           />
         </View>
-        <View style={{ flex: 1, flexGrow: 2,  width: "100%",   justifyContent: "center" }}>
+        <View style={{ flex: 1, flexGrow: 2,  width: "100%",   justifyContent: "center", padding:10 }}>
           
   
           {planState?.init?.planCategory === PlanCategory.Lifting && planState?.init?.selectedExercises && (
@@ -205,7 +238,12 @@ import { FoodItemModal } from '../modals/FoodItemModal';
           )} */}
         </View>
   
-        <View style={{ flex: 1, width: "100%",  }}>
+        <View style={{
+          flex: 1,
+          width: "100%",
+          padding: 10,
+
+        }}>
           
           <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Media</Text>
                 <MediaPicker />
@@ -534,6 +572,7 @@ const MediaTile: React.FC<MediaProps> = ({ media, handleDelete}) => {
   
   const mediaTileStyles = StyleSheet.create({
     container: {
+  
       width: 100,
       height: 100,
       position: 'relative',

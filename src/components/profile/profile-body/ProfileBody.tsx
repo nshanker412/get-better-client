@@ -3,14 +3,15 @@
  * - move stats container to separate internally driven component (reduce prop spam & unnecessary rerenders)
  */
 
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { useProfileContext } from '@context/profile-context/useProfileContext';
 import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import axios from 'axios';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanModel } from 'src/plans/models/plan';
@@ -33,7 +34,10 @@ interface PlanTileType {
 	title: string;
 }
 
-const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
+
+const Feed: React.FC = () => {
+	
+
 	const profileBodyStyles = useProfileBodyStyles();
 
 	return (
@@ -43,7 +47,7 @@ const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 					<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
 						<View style={profileBodyStyles.scrollInnerContainer}>
 							<View style={profileBodyStyles.scrollInnerContainer}>
-								<ConnectedProfilePosts isMyProfile={isMyProfile}  />
+								<ConnectedProfilePosts   />
 							</View>
 						</View>
 					</View>
@@ -53,47 +57,23 @@ const MemoFeed: React.FC<{ isMyProfile: boolean }> = ({ isMyProfile }) => {
 	);
 };
 
-export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username }) => {
-	const { theme } = useThemeContext();
-	const profileBodyStyles = useProfileBodyStyles();
-	const ProfileTab = createMaterialTopTabNavigator();
+
+
+
+
+
+const _Plans: React.FC = () => {
+
 	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
 	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
 	const [refreshing, setRefreshing] = useState<boolean>(false);
-	const route = useRoute();
+	const { username: myUsername } = useMyUserInfo();
+
+	const { onFetchPlans, plans, username , isMyProfile} = useProfileContext();
 
 
-
+	const profileBodyStyles = useProfileBodyStyles();
 	const navig = useNavigation();
-
-	useEffect(() => {
-		const fetchV2 = async () => {
-			console.log(username)
-			try {
-				const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
-				const planList: PlanTileType[] = response.data?.plans?.map((plan: PlanModel) => ({
-					v: "v2",
-					id: plan.id,
-					title: plan.planName,
-					planType: plan.data.planCategory,
-				}));
-					
-				if (isMyProfile) {
-					const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
-					const newArr = [...newPlan, ...planList];
-					setPlaV2(newArr);
-				} else {
-					setPlaV2(planList);
-				}
-			} catch (error) {
-				console.log("couldnt fetch v2 plans", error);
-			}
-		}
-		fetchV2();
-	}, [username, isMyProfile]);
-
-
-
 
 	const onPressTile = (planID: string, planType: PlanType, version: string) => {
 		if (planType === PlanType.NewPlan) {
@@ -109,10 +89,10 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		}
 	}
 
-	const refreshV2 = async () => {
-		try {
-			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
-			const planList: PlanTileType[] = response.data?.plans?.map((plan: PlanModel) => ({
+	useEffect(() => {
+		if (plans) {
+
+			const planList: PlanTileType[] = plans?.map((plan: PlanModel) => ({
 				v: "v2",
 				id: plan.id,
 				title: plan.planName,
@@ -140,18 +120,8 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 			} else {
 				setPlaV2(planList);
 			}
-		} catch (error) {
-			console.log("couldnt fetch v2 plans", error);
-		} finally {
-			if (refreshing) {
-				setRefreshing(false);
-			}
-		}
 	}
-		
-
-
-
+}, [plans, isMyProfile]);
 
 	const PlanItem = ({ item }) => {
 		console.log(item)
@@ -168,7 +138,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 		)
 	}
 
-	const Plans = () => {
+
 
 		return (
 			<View style={{ flex: 1, width: "100%", height: "auto" }}>
@@ -183,7 +153,7 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}
 									refreshing={refreshing}
-									onRefresh={refreshV2}
+									onRefresh={onFetchPlans}
 									contentContainerStyle={{ paddingBottom: 150 }} // Adds bottom padding
 								/>
 							</View>
@@ -192,18 +162,22 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 				</View>
 			</View>
 		)
-	}
+	};
+const Plans = React.memo(_Plans);
+
+ const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
+	const { theme } = useThemeContext();
+	const ProfileTab = createMaterialTopTabNavigator();
+
+	const route = useRoute();
+	const linkPostIDParams = useMemo(() => ({ linkPostID: route?.params?.linkPostID }), [route?.params?.linkPostID]);
 
 
-	const _MemoFeed = React.memo(() => {
-		return (
-			<MemoFeed isMyProfile={isMyProfile}  />
-		)
-	})
+
 
 	return (
 		<ProfileTab.Navigator
-			
+
 			screenOptions={{
 					tabBarLabelStyle: {
 						fontSize: 15,
@@ -215,13 +189,13 @@ export const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile, username
 					},
 					tabBarStyle: { backgroundColor: 'transparent', width: Dimensions.get('window').width },
 			}}
-			initialRouteName='ProfilePostFeed'
+			// initialRouteName='ProfilePostFeed'
 			
 		>
 				<ProfileTab.Screen
 				name='ProfilePostFeed'
-				initialParams={{linkPostID: route?.params?.linkPostID}}
-				component={_MemoFeed}
+				initialParams={linkPostIDParams}
+				component={Feed}
 					options={{
 						tabBarLabel: "Dailys",
 					}}

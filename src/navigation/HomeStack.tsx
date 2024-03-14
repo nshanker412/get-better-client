@@ -42,6 +42,7 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					
 					name='profile'
 					component={Profile}
+					
 				/>
 				<HomeStackNav.Screen
 					options={{ headerShown: false }}

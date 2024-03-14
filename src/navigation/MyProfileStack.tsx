@@ -1,8 +1,9 @@
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
 import CreatePost from '../components/createPost/createPost';
-import { MyProfile } from '../components/profile/MyProfile';
+import { Profile } from '../components/profile/Profile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
 import { Search } from '../components/search/search';
 import { PreviewUserPlan } from '../plans/preview/PreviewUserPlan';
@@ -12,6 +13,7 @@ import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 export const MyProfileStack = ({navigation}) => {
 	const ProfileStackNav = createStackNavigator();
+	const {username} = useMyUserInfo();
 
 	return (
 		<>
@@ -29,25 +31,35 @@ export const MyProfileStack = ({navigation}) => {
 				cardStyle: { backgroundColor: 'black' },
 			}}>
 			<ProfileStackNav.Screen
-				options={{
-					headerShown: true,
-					headerLeftLabelVisible: false,
-					headerRightContainerStyle: {},
-					headerTitle: '',	
-					headerTintColor: 'white',
-					headerTransparent: true,
-					headerBackTitleVisible: true,
-					headerLeft: () => null,
-				}}
-				name='myProfile'
-				component={MyProfile}
+					options={{
+						headerShown: true,
+						headerLeftLabelVisible: false,
+						headerRightContainerStyle: {},
+						headerTitle: '',
+						headerTintColor: 'white',
+						headerTransparent: true,
+						headerBackTitleVisible: true,
+						headerLeft: () => null,
+					}}
+					name='myProfile'
+					component={Profile}
+					initialParams={{ profileUsername: username }}
 			/>
 			<ProfileStackNav.Screen
 				name='profileEdit'
-				component={ProfileEdit}
+					component={ProfileEdit}
+				
 			/>
 			<ProfileStackNav.Screen
-				name='createPlan'
+					name='createPlan'
+					options={
+						{
+							headerShown: true,
+							title: '',
+							headerTintColor: 'transparent',
+							headerBackTitleVisible: false,
+						}
+					}
 				component={CreatePlanScreen}
 			/>
 			<ProfileStackNav.Screen

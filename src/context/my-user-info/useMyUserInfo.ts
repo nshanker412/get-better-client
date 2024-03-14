@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { MyUserInfoContext } from './MyUserInfoProvider';
 
 export const useMyUserInfo = () => {
@@ -9,5 +9,7 @@ export const useMyUserInfo = () => {
 		);
 	}
 
-	return context;
+	const memoizedContext = useMemo(() => context, [context]);
+
+	return memoizedContext;
 };

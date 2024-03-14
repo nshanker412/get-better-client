@@ -2,22 +2,24 @@ import { useAuth } from '@context/auth/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
-import React, { createContext, useCallback, useEffect, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
 import Toast from 'react-native-toast-message';
 import { ApiLoadingState, UserData } from '../../types/types';
+import { defaultContextValue } from './MyUserInfo.types';
 
 import {
-    MyUserInfoAction,
-    MyUserInfoContextProps,
-    MyUserInfoProviderProps,
-    MyUserInfoState,
-    RESET_USER_INFO,
-    SET_LOAD_USER_INFO_STATE,
-    SET_LOAD_USER_PLANS_STATE,
-    SET_SHOWN_INTRO_PAGE,
-    SET_USER_INFO,
-    SET_USER_PLANS,
-    initialMyUserInfoState,
+	MyUserInfoAction,
+	MyUserInfoContextProps,
+	MyUserInfoProviderProps,
+	MyUserInfoState,
+	RESET_USER_INFO,
+	SET_LOAD_USER_INFO_STATE,
+	SET_LOAD_USER_PLANS_STATE,
+	SET_POSTS,
+	SET_SHOWN_INTRO_PAGE,
+	SET_USER_INFO,
+	SET_USER_PLANS,
+	initialMyUserInfoState,
 } from './MyUserInfo.types';
 
 // Reducer function
@@ -33,6 +35,8 @@ const myUserInfoReducer = (
 			};
 		case SET_USER_PLANS:
 			return { ...state, plans: action.payload.plans };
+		case SET_POSTS:
+			return { ...state, posts: action.payload.posts };
 		case SET_USER_INFO:
 			return { ...state, ...action.payload };
 		case SET_LOAD_USER_PLANS_STATE:
@@ -50,8 +54,8 @@ const myUserInfoReducer = (
 };
 
 export const MyUserInfoContext = createContext<
-	MyUserInfoContextProps | undefined
->(undefined);
+	MyUserInfoContextProps
+>(defaultContextValue);
 
 export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	children,
@@ -168,31 +172,25 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 	};
 
-	const fetchMyPlans = useCallback(async () => {
+	const fetchMyPlans = async () => {
 		try {
-			dispatch({
-				type: SET_LOAD_USER_PLANS_STATE,
-				payload: { loadUserPlansState: ApiLoadingState.Loading },
-			});
-			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${state.username}`,
-			);
-			dispatch({
-				type: SET_USER_PLANS,
-				payload: { ...state, plans: response?.data?.plans },
-			});
-			dispatch({
-				type: SET_LOAD_USER_PLANS_STATE,
-				payload: { loadUserPlansState: ApiLoadingState.Loaded },
-			});
+
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${state.username}`);
+			const plans = response.data?.plans;
+			// only set state if there are new plans
+			if (plans.length !== state.plans?.length) {
+				dispatch({
+					type: SET_USER_PLANS,
+					payload: { plans: plans },
+				});
+			}
+	
+		
 		} catch (error) {
 			console.log('fetchMyPlansError', error);
-			dispatch({
-				type: SET_LOAD_USER_PLANS_STATE,
-				payload: { loadUserPlansState: ApiLoadingState.Error },
-			});
+	
 		}
-	}, [state.username]);
+	}
 
 	const logout = async () => {
 		console.log('logout');
@@ -284,6 +282,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			});
 
 			await fetchMyPlans();
+			await fetchMyPosts();
 		} catch (error) {
 			console.error('Error fetching user info:', error);
 			// Handle the error as needed (e.g., show a user-friendly message)
@@ -361,6 +360,32 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	
 	};
 
+	const fetchMyPosts = async (): Promise<void> => {
+		if (!state.username) {
+			console.log('No username provided');
+			return;
+		}
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${state.username}`,
+			);
+
+			// only set state if there are new posts
+
+			const newPosts = response?.data?.posts;
+			// compare the lists and only set state if there are new posts
+			if (newPosts.length !== state.posts?.length) {
+				dispatch({
+					type: SET_POSTS,
+					payload: { posts: newPosts },
+				});
+			}
+		} catch (error) {
+			console.log('fetchMyposts', error);
+		}
+	}
+
+
 	const contextValue: MyUserInfoContextProps = {
 		...state,
 		setMyUserInfo,
@@ -369,6 +394,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		refreshMyUserInfo,
 		deletePost,
 		setShownIntroPage,
+		fetchMyPosts,
 	};
 
 	return (

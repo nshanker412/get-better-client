@@ -1,5 +1,5 @@
 import { Post } from '@models/posts';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { ProfilePostsProps } from './ProfilePosts.types';
@@ -10,23 +10,22 @@ import { PreviewFeedScreen } from './modals/PostPreviewModal';
 // else return -1 
 const findIdxByID = (postID: string, posts: Post[]) => {
     const postIDint = parseInt(postID);
-    console.log('postIDint', postIDint)
-
-    console.log('posts', posts)
 
     const index = posts.findIndex((post) => (post.metadata.timestamp as number) === postIDint);
     return index;
 }
 
-export const ProfilePosts: React.FC<ProfilePostsProps> = ({
+ export const ProfilePosts: React.FC<ProfilePostsProps> = ({
     posts,
     isMyProfile,
     fetchUserPosts,
 }) => {
     const route = useRoute();
-    const navigation = useNavigation();
     const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
     const [linkPostID, setLinkPostID] = useState<string | undefined>(undefined);
+
+
+
 
     useEffect(() => {
 

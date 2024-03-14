@@ -66,7 +66,7 @@ const LogoutModal: React.FC<{
 			</Modal.Container>
 		</Modal>
 	);
-};
+	};
 
 export const MyProfile: React.FC = () => {
 	const [logoutModalVisible, setLogoutModalVisible] =
@@ -109,7 +109,9 @@ export const MyProfile: React.FC = () => {
 					/>
 				</View>
 				<View style={{ flex: 7 }}>
-					<ConnectedProfileBody isMyProfile={true} username={myUsername} />
+					<ConnectedProfileBody
+						isMyProfile={true}
+					/>
 				</View>
 			</View>
 			<LogoutModal

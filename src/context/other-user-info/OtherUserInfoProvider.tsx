@@ -1,5 +1,6 @@
 import { ApiLoadingState, UserData } from '../../types';
 
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import axios from 'axios';
@@ -20,10 +21,14 @@ import {
 	SET_LOAD_FOLLOW_STATUS_STATE,
 	SET_LOAD_USER_INFO_STATE,
 	SET_LOAD_USER_PLANS_STATE,
+	SET_POSTS,
 	SET_USER_INFO,
 	SET_USER_PLANS,
+	defaultContextValue,
 	initialOtherUserInfoState,
 } from './OtherUserInfo.types';
+
+
 const otherUserInfoReducer = (
 	state: OtherUserInfoState,
 	action: OtherUserInfoAction,
@@ -66,6 +71,11 @@ const otherUserInfoReducer = (
 				...state,
 				loadChallengeUserState: action.payload.loadChallengeUserState,
 			};
+		case SET_POSTS:
+			return {
+					...state,
+					posts: action.payload.posts,
+				};
 
 		case RESET_USER_INFO:
 			return initialOtherUserInfoState;
@@ -75,21 +85,27 @@ const otherUserInfoReducer = (
 	}
 };
 
+
+
+
 export const OtherUserInfoContext = createContext<
-	OtherUserInfoContextProps | undefined
->(undefined);
+	OtherUserInfoContextProps
+>(defaultContextValue);
 
 export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
-	myUsername,
 	otherProfileUsername,
 	children,
 }) => {
 
-	const {sendOutPushNotification} = useNotifications();
+	const { sendOutPushNotification } = useNotifications();
+	const { username: myUsername } = useMyUserInfo();
+
 	const [state, dispatch] = useReducer(otherUserInfoReducer, {
 		...initialOtherUserInfoState,
 		username: otherProfileUsername,
 		myUsername: myUsername,
+		posts: [],
+		plans: [],
 	});
 
 	/**
@@ -146,7 +162,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 				payload: { loadUserPlansState: ApiLoadingState.Loading },
 			});
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/plans/fetch/${state.username}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${state.username}`,
 			);
 			dispatch({
 				type: SET_USER_PLANS,
@@ -296,7 +312,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 			);
 			console.log('post 2', resp.data);
 		} catch (error) {
-			console.error('challengeUserError', error, error.message);
+			console.error('challengeUserError', error, error?.message);
 			return Promise.reject(error);
 		}
 
@@ -322,49 +338,53 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 			sendOutPushNotification(state.username, notifPacket);
 			
 
-			// notificationTokens = (
-			// 	await axios.get(
-			// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${state.username}`,
-			// 	)
-			// ).data.tokens;
 
-			// notificationTokens.forEach(async (token) => {
-			// 	try {
-			// 		await fetch('https://exp.host/--/api/v2/push/send', {
-			// 			method: 'POST',
-			// 			headers: {
-			// 				Accept: 'application/json',
-			// 				'Content-Type': 'application/json',
-			// 			},
-			// 			body: JSON.stringify({
-			// 				to: token,
-			// 				sound: 'default',
-			// 				title: `${myUsername} challenged you!`,
-			// 				body: 'You have 1 week. Tap here to see the challenge!',
-			// 				data: {
-			// 					path: {
-			// 						screen: 'notifications',
-			// 						params: {
-			// 							profileUsername: state.username,
-			// 						},
-			// 					},
-			// 				},
-			// 			}),
-			// 		});
-			// 	} catch (error) {
-			// 		console.error('setFollowStatusError', error);
-			// 	}
-			// });
 			return Promise.resolve();
 		} catch (error) {
 			console.error('setFollowStatusError', error);
 		}
 	};
 
+
+	const fetchUserPosts = async (): Promise<void> => {
+		console.log("IN OTHER USER FETCHING PLANS")
+
+		if (!state.username) {
+			console.log('ERROR fetchUserPosts: No profile username provided');
+			return;
+		}
+
+		try {
+			const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${state.username}`);
+
+			const newPosts = resp?.data?.posts;
+			// compare the lists and only set state if there are new posts
+			if (newPosts.length !== state.posts?.length) {
+				dispatch({
+					type: SET_POSTS	,
+					payload: {
+						posts: newPosts,
+
+					},
+				});
+			}
+			console.log('fetchUserPosts', resp.data);
+
+		} catch (error) {
+			console.log('fetchUserPostsError', error);
+		}
+			
+	};
+
+
 	const contextValue: OtherUserInfoContextProps = {
 		...state,
+		userData: state.userData,
+		plans: state.plans,
+
 		setOtherUserInfo,
 		fetchUserPlans,
+		fetchUserPosts,
 		setFollowStatus,
 		challengeUser,
 	};

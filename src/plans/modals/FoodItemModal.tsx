@@ -97,16 +97,12 @@ const servingChoices = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   
 export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onClose, onSetDataCB }) => {
 
-
-
   const [servings, setServings] = useState<number >(1);
   const [notes, setNotes] = useState<string | undefined>(undefined);
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay | undefined>(undefined);
   const [cookingInstructions, setCookingInstructions] = useState<string | undefined>(undefined);
   const [metadata, setMetadata] = useState<string | undefined>(undefined);
 
   const [selectedIndex, setSelectedIndex] = useState(4);
-
   const foodDetails = findFoodById(food?.type, food?.id);
 
   const [calories, setCalories] = useState<number | undefined>(undefined);
@@ -116,8 +112,6 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
 
   const [timeOfDaySelected, setTimeOfDaySelected] = useState<TimeOfDay| undefined>(undefined);
   
-
-
 
     if (!food || !foodDetails) {
         return null;
@@ -218,31 +212,34 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
             <Ionicons name="close-sharp" size={24} color="black" />
           </Pressable>
           <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.headerTitle}>Enter your meal details</Text>
-            <Text style={styles.subHeaderTitle}>Food: {foodDetails.name}</Text>
+            <Text style={styles.headerTitle}>Enter your food details</Text>
+            <Text style={styles.subHeaderTitle}>{foodDetails.name}</Text>
           </View>
           <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: "100%" }}>
             <View style={{ flex: 1, width: "100%", gap: 10  }}> 
-              <View style={{ flex: 1, width: "100%", justifyContent: "flex-start" }}>
-              {/* <Text style={styles.smallLabel}>Servings</Text> */}
+              <View style={{ flex: 1, width: "100%", justifyContent: "flex-start", padding: 10 }}>
 
-                <View style={{ padding: 5, flexDirection: 'row', justifyContent: 'flex-start', gap: 20,alignItems: 'center', borderRadius: 6, borderWidth: 0.5, borderColor: grayDark.gray6 }}>
-                  <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: 5 }}>
-                  <Text style={styles.smallLabel}>{"Servings"}</Text>
+                <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'flex-start', gap: 10, alignItems: 'center', borderRadius: 6, borderWidth: 0.5, borderColor: grayDark.gray6 }}>
+                  <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                  <Text style={[styles.smallLabel]}>{"Servings"}</Text>
 
                   <Picker
-                      mode='dialog'
-                    style={{width: 50, height : 50}}  
+                    mode='dialog'
+                      style={{ width: 80, height: 50, margin: 0, padding: 0}}  
+                      
                     itemStyle={styles.item}
                     selectedValue={servings}
-                    selectionColor="rgba(0, 0, 0, 0.3)"
+                      selectionColor={grayDark.gray11}
+                      
+                      
                     onValueChange={(value) => setServings(value)}>
-                    {servingChoices.map((value) => (
+                      {servingChoices.map((value) => (
                       <Picker.Item
+                        style={{ fontFamily: fonts.inter.light, fontSize: 14, color: grayDark.gray11, }}
                         key={value}
                         value={value}
                         label={value}
-                      />
+                          />
                     ))}
                     </Picker>
                   </View>
@@ -271,42 +268,31 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
 
 
             </View>
-              <Input 
+                <Input 
+                  style={styles.input}
                   label={
                     <Text style={styles.smallLabel}>Notes</Text>
                   }
                 placeholder="Enter any notes"
                 value={notes}
                 onChangeText={setNotes}
-                style={styles.picker}
-              />
-              <Input 
 
+              />
+                <Input 
+                  style={styles.input} 
                   label={
                     <Text style={styles.smallLabel}>Cooking Instructions</Text>
                   }
                 placeholder="Enter any cooking instructions"
                 value={cookingInstructions}
                 onChangeText={setCookingInstructions}
-                style={styles.picker}
                 />
-                       <Input 
-
-                    label={
-                      <Text style={styles.smallLabel}>Ingredients</Text>
-                    }
-                  placeholder="Enter any ingredients"
-                  value={metadata}
-                  onChangeText={setMetadata}
-                  style={styles.picker}
-
-/>
-            </View>
+      
 
 
 
         
-              <View style={{  width: "100%",  }}>
+              <View style={{  width: "100%", padding: 10 }}>
                 <Text style={styles.smallLabel}>When will you eat?</Text>
                 <ButtonGroup  
                   buttonStyle={styles.buttonGroup}
@@ -323,7 +309,9 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
                   onPress={(selectedIndex) => setSelectedIndex(selectedIndex)}
                 />
               </View>
-            </View>
+              </View>
+              </View>
+
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', padding: 10 }}>
             <Button title="Save" onPress={onAddPress} buttonStyle={styles.button} titleStyle={styles.buttonTitle} />
@@ -339,13 +327,18 @@ FoodItemModal.displayName = 'FoodItemModal';
 const styles = StyleSheet.create({
     unitLabel: {
     fontFamily: fonts.inter.light,
-    fontSize: 12,
-    color: grayDark.gray9 
+    fontSize: 18,
+    color: grayDark.gray11
+  },
+  input: {
+    color: grayDark.gray11,
+    fontFamily: fonts.inter.light,
+    fontSize: 14,
   },
   smallLabel: {
     fontFamily: fonts.inter.bold,
     fontSize: 12,
-    color: grayDark.gray9 
+    color: grayDark.gray11
   },
   buttonContainer: {
     backgroundColor: grayDark.gray8, // Dark background for the ButtonGroup container
@@ -360,15 +353,17 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   item: {
-    width: 50,
+    width: 80,
     height: 50,
-    alignItems: 'flex-start',
+    // alignItems: 'flex-start',
+    // alignSelf: 'center',
     fontSize: 14,
     color: grayDark.gray12,
-    textAlign: 'left',
+    // textAlign: 'left',
     fontWeight: 'bold',
     padding: 0,
     margin: 0,
+
   },
     picker: {
         // marginTop: 10,
