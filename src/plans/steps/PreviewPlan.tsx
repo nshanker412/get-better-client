@@ -17,9 +17,13 @@ import {
   ExerciseDetail,
   ExerciseMainCategory,
   ExerciseRoutine,
+  FoodGroupsMainCategory,
+  Foods,
+  NutritionRoutine,
   PlanCategory
 } from '../plan.types';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const submitPlan = async (username: string | null, planState: PlanBuilderState): Promise<void> => {
     // Check if the plan is valid
@@ -129,17 +133,31 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                     </Text>
                 </View>
 
-                {planState.init.planCategory === PlanCategory.Lifting &&
+                {
+                  planState.init.planCategory === PlanCategory.Lifting &&
                   planState.init.subcategory &&
                   planState.init.selectedExercises &&
                   planState.routine && (
-                <View style={styles.exerciseList}>
-                <ReviewExerciseList 
-                  category={planState.init.subcategory} 
-                  list={planState.init.selectedExercises} 
-                  routines={planState.routine} 
-                  onInitChanged={() => {}} />
-                </View>
+                      <View style={styles.exerciseList}>
+                      <ReviewExerciseList 
+                        category={planState.init.subcategory} 
+                        list={planState.init.selectedExercises} 
+                        routines={planState.routine} 
+                        onInitChanged={() => {}} />
+                      </View>
+                  )}
+                    {
+                  planState.init.planCategory === PlanCategory.Nutrition &&
+                  planState.init.subcategory &&
+                  planState.init.selectedFoods &&
+                  planState.routine && (
+                      <View style={styles.exerciseList}>
+                      <ReviewNutritionList 
+                        category={planState.init.subcategory} 
+                        list={planState.init.selectedFoods} 
+                        routines={planState.routine} 
+                        onInitChanged={() => {}} />
+                      </View>
                     )}
                     </ScrollView>
                     </LinearGradient>
@@ -352,9 +370,161 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
   
   
   
+  interface ReviewNutritionListProps {
+    routines: NutritionRoutine[];
+    category: FoodGroupsMainCategory;
+    list: Foods[];
+    onInitChanged: (ready: boolean) => void;
+  }
   
+  const ReviewNutritionList: React.FC<ReviewNutritionListProps> = ({ list , routines, category, onInitChanged}) => {
+    const { state: planState } = usePlanBuilder();
   
-  const reviewStyles = StyleSheet.create({
+    useEffect(() => {
+      const allInitialized = planState?.routine?.every(item => item.init === true);
+    
+      if (!allInitialized) {
+        onInitChanged(false);
+      }
+    }, [planState.routine]);
+  
+    const [expanded, setExpanded] = useState<string | null>(null);
+  
+    const onAccordionPress = (id: string) => {
+      if (expanded === id) {
+        setExpanded(null);
+      } else {
+        setExpanded(id);
+      }
+    }
+
+    useEffect(() => {
+      console.log("list", list);
+    }, [list]);
+
+  
+
+
+    return (
+      <View style={{ flex: 1, width: "100%" }}> 
+        <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Food</Text>
+      <> 
+        {
+            routines?.map((item, index) => {
+              return (
+                <React.Fragment key={`routine-fragment-${index}`}>
+
+                      <View style={{width: "100%", padding: 2, alignItems: "center", justifyContent: "flex-start",}}/>
+                      <ListItem.Accordion
+                          containerStyle={{ backgroundColor: grayDark.gray10, borderRadius: 8}}
+                    key={`review-li-${index}`}
+                    style={{ backgroundColor: grayDark.gray5, borderRadius: 8 }}
+                    content={
+                    <>
+                        {/* <FontAwesome6 style={{ paddingRight: 10 }} name="dumbbell" size={24} color="black" /> */}
+                        <MaterialCommunityIcons name="food-fork-drink" size={24} color="black" style={{paddingRight: 5}} />
+                      <ListItem.Content>
+                          <ListItem.Title>{list[index].label} </ListItem.Title>
+                          <ListItem.Subtitle>{ list[index].type} </ListItem.Subtitle>
+
+                      </ListItem.Content>
+                    </>
+                  }
+                  isExpanded={expanded === `${item.id}`}
+                  onPress={
+                    () => onAccordionPress(`${item.id}`)
+                  }
+                  >
+                          <>
+                              <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
+                
+                    {item.fats!==undefined && item.carbs !==undefined && item.calories!== undefined && (
+                        <ListItem key={`${item.id}-li1`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
+                        <ListItem.Content >
+                          <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>{"Nutritional Value"}</ListItem.Title>
+                            
+                            <View style={{ flexDirection: "row", gap: 10 }}>
+                    
+
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                    <Text style={reviewStyles.unitLabel}>{item.carbs}g</Text>
+                      <Text style={reviewStyles.smallLabel}>carbs</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                    <Text style={reviewStyles.unitLabel}>{item.proteins}g</Text>
+                      <Text style={reviewStyles.smallLabel}>protein</Text> 
+                      </View>
+  
+                      <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                    <Text style={reviewStyles.unitLabel}>{item.fats}g</Text>
+                      <Text style={reviewStyles.smallLabel}>fat</Text> 
+                      </View>
+                      <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                    <Text style={reviewStyles.unitLabel}>{item.calories}</Text>
+                      <Text style={reviewStyles.smallLabel}>Cal</Text> 
+                      </View>
+                            </View>
+                            
+
+                            {item?.notes && (
+                              <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Notes</Text>
+
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.notes}</Text>
+                              </View>
+                            
+                            )}
+
+                            {item.timeOfDay && (
+                              <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Eating time</Text>
+
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.timeOfDay}</Text>
+                              </View>
+                            
+                            )}
+
+                            
+                            
+
+                            
+                            
+
+
+
+                        </ListItem.Content>
+                      </ListItem>
+                    )}
+                  
+    
+                    </>
+                    </ListItem.Accordion>
+                </React.Fragment>
+                  )
+          })
+        }
+        </>
+      </View>
+    );
+  };
+  
+
+
+
+
+
+  
+const reviewStyles = StyleSheet.create({
+  unitLabel: {
+    fontFamily: fonts.inter.light,
+    fontSize: 12,
+    color: grayDark.gray12 
+  },
+  smallLabel: {
+    fontFamily: fonts.inter.bold,
+    fontSize: 12,
+    color: grayDark.gray12 
+  },
     planTitle: {
       color: grayDark.gray12,
       fontFamily: fonts.inter.semi_bold,

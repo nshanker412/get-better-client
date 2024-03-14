@@ -99,7 +99,7 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
 
 
 
-  const [servings, setServings] = useState<number | undefined>(undefined);
+  const [servings, setServings] = useState<number >(1);
   const [notes, setNotes] = useState<string | undefined>(undefined);
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay | undefined>(undefined);
   const [cookingInstructions, setCookingInstructions] = useState<string | undefined>(undefined);
@@ -113,6 +113,8 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
   const [proteins, setProteins] = useState<number | undefined>(undefined);
   const [carbs, setCarbs] = useState<number | undefined>(undefined);
   const [fats, setFats] = useState<number | undefined>(undefined);
+
+  const [timeOfDaySelected, setTimeOfDaySelected] = useState<TimeOfDay| undefined>(undefined);
   
 
 
@@ -141,6 +143,24 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
   }, [servings]);
 
 
+  useEffect(() => {
+    console.log('selectedIndex', selectedIndex);
+    if (selectedIndex === 0) {
+      setTimeOfDaySelected(TimeOfDay.Breakfast);
+    } else if (selectedIndex === 1) {
+      setTimeOfDaySelected(TimeOfDay.Lunch);
+    } else if (selectedIndex === 2) {
+      setTimeOfDaySelected(TimeOfDay.Dinner);
+    } else if (selectedIndex === 3) {
+      setTimeOfDaySelected(TimeOfDay.Snack);
+    } else if (selectedIndex === 4) {
+      setTimeOfDaySelected(undefined);
+    }
+  }
+  , [selectedIndex]);
+
+
+
 
   const onAddPress = () => {
       
@@ -154,7 +174,7 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
           time: "00:00",
           servings,
           notes,
-          timeOfDay,
+          timeOfDay: timeOfDaySelected,
           cookingInstructions,
           calories,
           proteins,
@@ -211,7 +231,7 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
                   <Text style={styles.smallLabel}>{"Servings"}</Text>
 
                   <Picker
-                    mode='dialog'
+                      mode='dialog'
                     style={{width: 50, height : 50}}  
                     itemStyle={styles.item}
                     selectedValue={servings}
@@ -241,6 +261,10 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
                     <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                   <Text style={styles.unitLabel}>{fats}g</Text>
                     <Text style={styles.smallLabel}>fat</Text> 
+                    </View>
+                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+                  <Text style={styles.unitLabel}>{calories}</Text>
+                    <Text style={styles.smallLabel}>Cal</Text> 
                     </View>
                     </View>
 
@@ -302,7 +326,7 @@ export const FoodItemModal: React.FC<FoodItemModalProps> = ({ food, isOpen, onCl
             </View>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', padding: 10 }}>
-            <Button title="Add" onPress={onAddPress} buttonStyle={styles.button} titleStyle={styles.buttonTitle} />
+            <Button title="Save" onPress={onAddPress} buttonStyle={styles.button} titleStyle={styles.buttonTitle} />
           </View>
         </View>
       </Modal>
@@ -316,12 +340,12 @@ const styles = StyleSheet.create({
     unitLabel: {
     fontFamily: fonts.inter.light,
     fontSize: 12,
-    color: grayDark.gray12 
+    color: grayDark.gray9 
   },
   smallLabel: {
     fontFamily: fonts.inter.bold,
     fontSize: 12,
-    color: grayDark.gray12 
+    color: grayDark.gray9 
   },
   buttonContainer: {
     backgroundColor: grayDark.gray8, // Dark background for the ButtonGroup container
