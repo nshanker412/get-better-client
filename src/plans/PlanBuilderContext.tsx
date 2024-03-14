@@ -1,6 +1,6 @@
 // PlanContext.tsx
 import React, { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react';
-import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, NutritionPlanMainCategory, PlanCategory } from './plan.types';
+import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, Foods, NutritionPlanMainCategory, NutritionRoutine, PlanCategory } from './plan.types';
 
 export type MediaSource = {
   id: string;
@@ -8,12 +8,14 @@ export type MediaSource = {
   type: 'image' | 'video';
 };
 
+
 export type PlanInitSelection = {
   planCategory: PlanCategory | null;
   subcategory: ExerciseMainCategory | NutritionPlanMainCategory| null;
   selectedExercises: ExerciseDetail[] | null;
   selectedCardioExercise: CardioExerciseDetail | null;
   selectedNutritionFoodGroups: FoodGroupsMainCategory[] | null;
+  selectedFoods: Foods[] | null;
 };
 
 export type PlanMetadata = {
@@ -30,7 +32,7 @@ export interface PlanBuilderState {
   name: string | null;
   init: PlanInitSelection;
   description: string | null;
-  routine: ExerciseRoutine[] | [];
+  routine: ExerciseRoutine[] | NutritionRoutine[] | [];
   private: boolean;
   media: MediaSource[] | null;
   metadata: PlanMetadata | null;
@@ -53,6 +55,7 @@ const initialState: PlanBuilderState = {
     selectedExercises: [],
     selectedCardioExercise: null,
     selectedNutritionFoodGroups: null,
+    selectedFoods: null,
   },
   routine:  [],
   description: null,
@@ -81,7 +84,8 @@ function planReducer(state: PlanBuilderState, action: Action): PlanBuilderState 
     case 'RESET':
       return initialState;
     default:
-      console.log(`Unhandled action type: ${action.type}`);
+      console.log(`Unhandled action type: ${action?.type}`);
+      return state;
   }
 }
 

@@ -16,20 +16,26 @@ import { ExerciseItemModal } from '../modals/ExerciseItemModal';
 import {
   ExerciseDetail,
   ExerciseRoutine,
-  PlanCategory,
-  nutrition
+  NutritionDetail,
+  NutritionRoutine,
+  PlanCategory
 } from '../plan.types';
 
-import { AntDesign } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { FoodItemModal } from '../modals/FoodItemModal';
+
+
   export const AddPlanDetails: React.FC = () => {
     const { state: planState, dispatch: dispatchPlanState } = usePlanBuilder();
     const { dispatch: screenDispatch } = usePlanScreen();
 
     const [planName, setPlanName] = useState<string>(planState?.name || '');
-      const [planDescription, setPlanDescription] = useState<string>(planState?.description || '');
+    const [planDescription, setPlanDescription] = useState<string>(planState?.description || '');
+    const [selectedFoodsSet, setSelectedFoodsSet] = useState(new Set());
+
 
     const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
+    const [isFoodReady, setIsFoodReady] = useState<boolean>(false);
     // const ableToGoNext = planName !== "" && planDescription !== "";
       const ableToGoNext = planName !== ""; 
     const { username: myUsername } = useMyUserInfo();
@@ -40,8 +46,6 @@ import { ScrollView } from 'react-native-gesture-handler';
       screenDispatch({ type: ActionType.NextStep });
     };
   
-
-
     // export type KeyboardTypeIOS =
     // | 'ascii-capable'
     // | 'numbers-and-punctuation'
@@ -51,9 +55,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 
     return (
-  
-      <View style={{ flex: 1, width: "100%", height: "100%" }}>
-   
+      <ScrollView style={{ flex: 1, width: "100%", height: "100%" }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'space-evenly' }}>
   
         <View style={{ flex: 1, justifyContent: 'center', width:"100%" , paddingTop: 20, minWidth: "80%" }}>
         <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Name</Text>
@@ -97,17 +99,22 @@ import { ScrollView } from 'react-native-gesture-handler';
               < ExerciseList list={planState.init.selectedExercises} onInitChanged={(ready) => setIsExerciseReady(ready)}/>
               </>
           )}
+
+          {planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.selectedFoods && (
+            <>
+              <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Food Details</Text>
+              <FoodList list={planState.init.selectedFoods} onInitChanged={(ready) => setIsFoodReady(ready)}/>
+              </>
+          )}
           
-          {planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.selectedNutritionFoodGroups && (
+          {/* {planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.selectedNutritionFoodGroups && planState.init.selectedFoods && (
             <>
 
               <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Customize</Text>
-              <ScrollView>
 
 
-              {planState.init.selectedNutritionFoodGroups.map((item) => {
-                const foodGroupList = nutrition[item]
-                console.log("foodGroupList", foodGroupList);
+              {planState.init.selectedFoods?.map((food) => {
+                // console.log("foodGroupList", foodGroupList);
 
 
                 const [selectedFoodGroup, setSelectedFoodGroup] = useState<string | null>(null);
@@ -121,8 +128,29 @@ import { ScrollView } from 'react-native-gesture-handler';
                   }
                 }
                 
-                //set of added foods 
-                 const [selectedFoods, setSelectedFoods] = useState<string[]>([]);
+
+                // Function to handle selection
+                const toggleFoodSelection = (foodGroup) => {
+
+                  const foodID = foodGroup.id;
+                  console.log(foodID)
+                  // Create a new Set from the current state to ensure immutability
+                  const newSelectedFoodsSet = new Set(selectedFoodsSet);
+              
+                  if (newSelectedFoodsSet.has(foodID)) {
+                    newSelectedFoodsSet.delete(foodID);
+                  } else {
+                    newSelectedFoodsSet.add(foodID);
+                  }
+              
+                  // Update the state to trigger a re-render
+                  setSelectedFoodsSet(newSelectedFoodsSet);
+                };
+
+                useEffect(() => {
+                  console.log("selectedFoodsSet", selectedFoodsSet);
+                }, [selectedFoodsSet])
+              
 
                 return (
                   <ListItem.Accordion
@@ -130,7 +158,6 @@ import { ScrollView } from 'react-native-gesture-handler';
                     bottomDivider
                     style={{ borderRadius: 8, backgroundColor: grayDark.gray5, borderColor: grayDark.gray5, overflow:  "hidden" }}
                     containerStyle={{ borderRadius: 8 , backgroundColor: grayDark.gray12, borderColor: grayDark.gray5}}
-              
                     isExpanded={item ==selectedFoodGroup}
                     onPress={() => onPressGroup(item)}
                     
@@ -147,19 +174,21 @@ import { ScrollView } from 'react-native-gesture-handler';
                   >
 
                     <>
-                      {foodGroupList?.map((foodGroup) => {
+                      {foodGroupList?.map((food) => {
                         return (
-                          <ListItem key={foodGroup.id}
-                            bottomDivider style={{ borderRadius: 8, borderColor: grayDark.gray5, backgroundColor: 'transparent' }}
-                            containerStyle={{ borderRadius: 2 , backgroundColor: grayDark.gray11 , width: "95%", alignSelf: "center"}}
+                          <ListItem
+                            key={food.id}
+                            bottomDivider style={{ borderRadius: 8, borderColor: grayDark.gray5, backgroundColor: 'transparent',}}
+                            containerStyle={{ borderRadius: 5 , backgroundColor: selectedFoodsSet.has(food?.id) ? greenDark.green4 : grayDark.gray11  , width: "95%", alignSelf: "center", borderColor: selectedFoodsSet.has(food.id) ? "green" : grayDark.gray5, overflow:  "hidden" , borderWidth: 1}}
                           >
-                            
                             <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
-                              <ListItem.Title style={{ color: grayDark.gray7, fontFamily: fonts.inter.medium, fontSize: 15, flex: 1 }}>
-                                {foodGroup?.name}
+                              <ListItem.Title style={{ color: selectedFoodsSet.has(food.id) ? greenDark.green11 : grayDark.gray7, fontFamily: fonts.inter.medium, fontSize: 15, flex: 1 }}>
+                                {food?.name}
 
                               </ListItem.Title>
-                              <AntDesign name="pluscircleo" size={24} color="green" />
+                              <TouchableOpacity onPress={() => toggleFoodSelection(food)}>
+                              <AntDesign name="pluscircleo" size={24} color={selectedFoodsSet.has(food.id) ? "green" : "gray"} />
+                            </TouchableOpacity>
                             </ListItem.Content>
                           </ListItem>
                         )
@@ -170,11 +199,10 @@ import { ScrollView } from 'react-native-gesture-handler';
               
               }
                 )}
-              </ScrollView>
 
 
               </>
-          )}
+          )} */}
         </View>
   
         <View style={{ flex: 1, width: "100%",  }}>
@@ -182,17 +210,102 @@ import { ScrollView } from 'react-native-gesture-handler';
           <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Media</Text>
                 <MediaPicker />
           </View>
-        <View style={{ flex: 1, justifyContent: 'flex-end', width: "100%",  alignItems: 'flex-end', flexDirection: "row", paddingBottom: 10 }}>
+
+        <View style={{ flex: 4, justifyContent: 'flex-end', width: "100%",  alignItems: 'center', flexDirection: "row", padding: 10}}>
                <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                <Button style={buttonStyles.buttonBase} buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle} title="Back" onPress={() => screenDispatch({ type: ActionType.PrevStep })} />
+            <Button
+              style={buttonStyles.buttonBase}
+              buttonStyle={buttonStyles.button}
+              titleStyle={buttonStyles.buttonTitle}
+              title="Back"
+              onPress={() => screenDispatch({ type: ActionType.PrevStep })}
+            />
                 </View>
                 <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
             <Button style={ buttonStyles.buttonBase}   buttonStyle={buttonStyles.button} titleStyle={buttonStyles.buttonTitle}  disabled={ !ableToGoNext} title="Next" onPress={onNext} />
                 </View> 
-        </View>
-      </View>
+          </View>
+
+      </ScrollView>
+
     );
   };
+
+
+  interface FoodListProps {
+    list: NutritionDetail[];
+    onInitChanged: (ready: boolean) => void;
+  }
+
+  const FoodList: React.FC<FoodListProps> = ({ list , onInitChanged}) => {
+    const [selected, setSelected] = useState<NutritionDetail | null>(null);
+    const { state: planState, dispatch: dispatchPlan } = usePlanBuilder();
+  
+    useEffect(() => {
+      planState.routine.forEach((item) => {
+        if (item.init === false) {
+          onInitChanged(false);
+          return;
+        }
+      });
+    }, [planState.routine])
+  
+  
+    const setDataCB = (data: NutritionRoutine) => {
+      const newRoutineList: NutritionRoutine[] = planState.routine?.map((item) => {
+        if (item.id === data.id) {
+          return data
+        }
+        return item;
+      });
+  
+      dispatchPlan({
+        type: 'SET_PLAN_ROUTINE',
+        payload: newRoutineList
+      });
+      closeModal();
+    }
+  
+    const closeModal = () => setSelected(null);
+  
+  
+    return (
+      <>
+        {list?.map((item, index) => (
+          <React.Fragment key={item.id}>
+            <ListItem
+                    bottomDivider
+              style={{ borderRadius: 8 }}
+              containerStyle={{ backgroundColor: grayDark.gray5, borderRadius: 2}} 
+              onPress={() => setSelected(item)}
+            >
+              <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+              <ListItem.Title style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, flex: 1 }}>
+                {item?.value}
+              </ListItem.Title>
+              <FontAwesome5
+                name="check-circle"
+                size={24}
+                color={planState?.routine[index].init ? greenDark.green11 : grayDark.gray8}
+              />
+            </ListItem.Content>
+            </ListItem>
+            {selected?.id === item.id && (
+              <FoodItemModal
+                key={`${item.id}-food-item-modal`}
+                food={selected}
+                isOpen={selected !== undefined}
+                onClose={closeModal}
+                onSetDataCB={setDataCB}
+              />
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+
+
 
 
 interface ExerciseListProps {
@@ -203,7 +316,6 @@ interface ExerciseListProps {
   const ExerciseList: React.FC<ExerciseListProps> = ({ list , onInitChanged}) => {
     const [selected, setSelected] = useState<ExerciseDetail | null>(null);
     const { state: planState, dispatch: dispatchPlan } = usePlanBuilder();
-  
   
     useEffect(() => {
       planState.routine.forEach((item) => {
@@ -318,11 +430,11 @@ export const MediaPicker: React.FC = () => {
       }
   
       const result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true, // Note: Editing is only available for images
-        aspect: [4, 3],
+        // aspect: [4, 3],
         quality: 1,
-        videoMaxDuration: 10, // Limit video duration to 10 seconds
+        // videoMaxDuration: 10, // Limit video duration to 10 seconds
       });
         
         console.log("result", result);

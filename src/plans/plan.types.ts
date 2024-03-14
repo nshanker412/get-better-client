@@ -146,24 +146,7 @@ export interface Exercise {
   /**
    *    Subcategory Interfaces for Nutrition Plans
    */
-  interface Meal {
-    id: string;
-    name: string;
-    time: string; // Suggested time for the meal, e.g., "08:00", "12:30"
-    calories: number;
-    proteins: number; // grams
-    carbs: number; // grams
-    fats: number; // grams
-    ingredients: Ingredient[];
-  }
-  
-  interface Ingredient {
-    id: string;
-    name: string;
-    quantity: number; // Quantity could be in grams, milliliters, or unit count
-    unit: 'g' | 'ml' | 'unit';
-  }
-  
+
 
 
   /** 
@@ -441,9 +424,9 @@ export function generateCardioDropdownItems(): CardioDropdownItem[] {
 
 
 export enum NutritionPlanMainCategory {
-    SomeShitPlan = 'Some Shit Plan',
-    SomeCoolPlan    = 'Some Cool Plan',
-    Custom = 'Custom',
+    PremadeMealPlanA = 'Premade Meal Plan A',
+    PremadeMealPlanB    = 'Premade Meal Plan B',
+    Custom = 'Build My Own Plan',
 }
 
 export enum FoodGroupsMainCategory {
@@ -464,6 +447,41 @@ export interface Foods {
     carbs: number | undefined;
     fats: number | undefined;
     calories: number;
+}
+
+export enum TimeOfDay {
+    Breakfast = 'Breakfast',
+    Lunch = 'Lunch',
+    Dinner = 'Dinner',
+    Snack = 'Snack',
+}
+
+export interface Ingredient {
+    id: string;
+    name: string;
+    quantity: number; // Quantity could be in grams, milliliters, or unit count
+    unit: 'g' | 'ml' | 'unit' | 'cups'| 'oz' | string;
+}
+  
+export interface Meal {
+    id: string;
+    name: string;
+    time: string; // Suggested time for the meal, e.g., "08:00", "12:30"
+    calories?: number;
+    proteins?: number; // grams
+    carbs?: number; // grams
+    fats?: number; // grams
+    ingredients: Ingredient[] | [];
+  }
+
+
+export interface NutritionRoutine extends Meal {
+    servings: number | undefined;
+    notes: string | undefined;
+    timeOfDay: TimeOfDay | undefined;
+    cookingInstructions: string | undefined;
+    init: boolean;
+    metadata: []
 }
 
 export interface NutritionCategories {
@@ -537,6 +555,28 @@ export const nutritionFoodGroupsDropdownItems: NutritionFoodGroupsDropdownItem[]
 }));
 
 
+export interface NutritionFoodDropdownItem {
+    id: string;
+    label: string;
+    value: string;
+    type: FoodGroupsMainCategory;
+    icon?: string; 
+}
+
+
+export const nutritionFoodsDropdownItems: NutritionFoodDropdownItem[] = Object.entries(FoodGroupsMainCategory).map(([key, value]) => ({
+    id: key, // Using enum key as label
+    label: key, // Using enum key as label
+    value: value, // Using enum value as value
+    type: value as FoodGroupsMainCategory, // Correctly assigning the enum value to type
+}));
+
+export type NutritionDetail = {
+    id: string;
+    name: string;
+    type: string; // This could represent a sub-category or a specific attribute of the exercise
+}
+
 
 // export function genFoodDropdownItems(category: FoodGroupsMainCategory): ExerciseDropdownItem[] {
 //     const exerciseDetails = ( as FoodGroupsMainCategory)[category];
@@ -550,7 +590,16 @@ export const nutritionFoodGroupsDropdownItems: NutritionFoodGroupsDropdownItem[]
 //     });
 // }
 
+export const findFoodById = (category: FoodGroupsMainCategory, id: string): Foods | undefined => {
+    const foods = nutrition[category];
+    return foods.find(food => food.id === id);   
+}
 
+
+export const findFoodByName = (category: FoodGroupsMainCategory, name: string): Foods | undefined => {
+    const foods = nutrition[category];
+    return foods.find(food => food.name === name);   
+}
 
 
 /**

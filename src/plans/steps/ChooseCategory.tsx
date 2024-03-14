@@ -4,7 +4,7 @@ import { grayDark, redDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import { Button } from '@rneui/themed';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
@@ -13,6 +13,7 @@ import {
   CategoryDropdownItem,
   ExerciseDetail,
   ExerciseDropdownItem,
+  NutritionFoodDropdownItem,
   NutritionFoodGroupsDropdownItem,
   NutritionPlanMainCategory,
   NutritionSubcategoryDropdownItem,
@@ -21,6 +22,7 @@ import {
   findExerciseByName,
   generateCardioDropdownItems,
   generateExerciseDropdownItems,
+  nutrition,
   nutritionFoodGroupsDropdownItems,
   nutritionSubcategoryDropdownItems,
   planCategoryDropdownItems,
@@ -34,18 +36,54 @@ interface ChooseCategoryProps {
    export const ChooseCategory: React.FC<ChooseCategoryProps> = () => {
     const { state: planState, dispatch: dispatch } = usePlanBuilder();
        const { dispatch: screenDispatch } = usePlanScreen();
-       const navigation = useNavigation();
-       
+     const navigation = useNavigation();
+     const [nutritionDropdownBlur, setNutritionDropdownBlur] = useState(false);
+     const [potentialFoodChoices, setPotentialFoodChoices] = useState<NutritionFoodDropdownItem[] | null>(null);
+
+
+
+     useEffect(() => {
+
+       // generated and update the potential food choices
+       if (planState.init?.selectedNutritionFoodGroups) {
+         const foodGroups = planState.init.selectedNutritionFoodGroups;
+         const potentialFoods: NutritionFoodDropdownItem[] = [];
+         foodGroups.forEach((foodGroup) => {
+          const foodGroupItems = nutrition[foodGroup];
+          if (foodGroupItems) {
+            const transformedItems: NutritionFoodDropdownItem[] = foodGroupItems.map((item) => ({
+              id: item.id,
+              value: item.name,
+              key: item.id,
+              label: item.name,
+              type: foodGroup,
+            }));
+        
+            if (transformedItems.length > 0) {
+              potentialFoods.push(...transformedItems); // Using spread operator to flatten the array
+            }
+          }
+        });
+
+         setPotentialFoodChoices(potentialFoods);
+       }
+     }, [planState.init.selectedNutritionFoodGroups])
+
+     useEffect(() => {
+       console.log("potential food choicess", potentialFoodChoices)
+      }, [potentialFoodChoices])
+     
     const onCardioTypeChange = (item: CardioDropdownItem) => {  
       dispatch(
         {
           type: 'SET_PLAN_BASE',
           payload: {
             init: {
-              planCategory: PlanCategory.Cardio,
+            planCategory: PlanCategory.Cardio,
               subcategory: null,
               selectedExercises: [],
               selectedNutritionFoodGroups: null,
+              selectedFoods: null,
               selectedCardioExercise: {
                 id: item.id,
                 name: item.label,
@@ -71,6 +109,8 @@ interface ChooseCategoryProps {
               selectedExercises: [],
               selectedCardioExercise: null,
               selectedNutritionFoodGroups: null,
+              selectedFoods: null,
+
             },
             routine: [],
           }
@@ -92,6 +132,8 @@ interface ChooseCategoryProps {
                  selectedExercises: [],
                  selectedCardioExercise: null,
                  selectedNutritionFoodGroups: null,
+                 selectedFoods: null,
+
                },
                routine: [],
              }
@@ -110,6 +152,7 @@ interface ChooseCategoryProps {
                  selectedExercises: null,
                  selectedCardioExercise: null,
                  selectedNutritionFoodGroups: [],
+                 selectedFoods: [],
                },
                routine: [],
              }
@@ -147,6 +190,7 @@ interface ChooseCategoryProps {
                   selectedExercises: exerciseList,
                   selectedCardioExercise: null,
                   selectedNutritionFoodGroups: null,
+                  selectedFoods: null,
 
                 },
                 routine: routines
@@ -170,7 +214,9 @@ interface ChooseCategoryProps {
                   ...planState.init,
                   selectedExercises: null,
                   selectedCardioExercise: null,
-                  selectedNutritionFoodGroups: items,
+                 selectedNutritionFoodGroups: items,
+                 selectedFoods: null,
+
                },
                routine: []
   
@@ -179,6 +225,46 @@ interface ChooseCategoryProps {
          );
       
      }
+     }
+     
+const onFoodsChange = (items: string[]) => {
+       
+       
+      //  const foodList: NutritionDetail[] = items.map((ex) => findFoodByName(planState.init.subcategory!, ex)!);
+
+       const foodList = potentialFoodChoices?.filter((item) => items.includes(item.label));
+       console.log('onFoodsChange', foodList);
+       if (!foodList) {
+         return;
+       }
+
+       const routines = foodList?.map((item) => {
+        return {
+          id: item.key,
+          sets: undefined,
+          reps: undefined,
+          weight: undefined,
+          notes: undefined,
+          init: false
+        }
+      })
+
+        if (planState.init?.subcategory && items.length > 0) {
+          dispatch(
+            {
+              type: 'SET_PLAN_BASE',
+              payload: {
+                init: {
+                    ...planState.init,
+                    selectedExercises: null,
+                    selectedCardioExercise: null,
+                    selectedFoods: foodList,
+                },
+                routine: routines
+              }
+            }
+          );
+        }
       }
   
   
@@ -261,14 +347,36 @@ interface ChooseCategoryProps {
                 icon="food-apple"
                 placeholder = "Choose your food groups..."
                 key="foodGroups"
-                label="Exercise"
+                label="food-apple"
                 initial={
-                  planState.init.selectedExercises 
-                  ? planState.init.selectedExercises.map(exercise => exercise.name) 
+                  planState.init.selectedNutritionFoodGroups 
+                  ? planState.init.selectedNutritionFoodGroups.map(foodgroup => foodgroup.name) 
                     : []
                 }
                 data={nutritionFoodGroupsDropdownItems}
                 onSelectionChange={onFoodGroupsChange}
+                onBlur={() => setNutritionDropdownBlur(true)}
+
+
+                />
+            )}
+
+            {nutritionDropdownBlur
+              && planState.init.subcategory == NutritionPlanMainCategory.Custom
+              && planState.init.selectedNutritionFoodGroups.length > 0
+              && potentialFoodChoices && potentialFoodChoices?.length > 0 && (
+                <MultiSelectComponent<NutritionFoodDropdownItem>
+                  icon="food-apple"
+                  placeholder="Choose your foods..."
+                  key="foodGroupsChild"
+                  label="food-apple"
+                  initial={
+                    planState.init.selectedFoods
+                      ? planState.init.selectedFoods.map(food => food.name)
+                    : []
+                }
+                data={potentialFoodChoices}
+                onSelectionChange={onFoodsChange}
                 />
             )}
  

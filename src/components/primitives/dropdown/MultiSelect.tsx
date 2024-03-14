@@ -28,10 +28,11 @@ export interface DropdownProps<T extends BaseDropdownItem> {
     onSelectionChange: (items: T[]) => void;
     icon?: string;
     styles?: any;
-    search?: boolean;
+  search?: boolean;
+  onBlur?: () => void;
   }
 
-export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, label, initial, data, onSelectionChange, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
+export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, label, initial, data, onSelectionChange, onBlur, icon, styles = stylesd, search = false }: DropdownProps<T>) => {
   const [selected, setSelected] = useState<T[]>([]);
 
   const renderItem = (item: any) => {
@@ -69,6 +70,7 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, 
         onChange={(item) => {
             setSelected(item);
         }}
+        onBlur={onBlur}
         renderItem={renderItem}
         renderSelectedItem={(item, unSelect) => (
             <View style={styles.selectedStyle}>

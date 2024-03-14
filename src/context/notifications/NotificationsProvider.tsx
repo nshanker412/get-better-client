@@ -123,25 +123,16 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         const params = event.notification.request.content.data.params;
         const notificationType = event.notification.request.content.data.type;
         console.log('Inbound Notification response', event);
-
         console.log('current route' , route);
 
         // find notification type, generate path
 
+         const navParams = genNavPacket(notificationType, path, params);
+
         const navPacket = {
             screen: "hometab", 
-            params: {
-                    screen: path,
-                params: {
-                    linkPostID: params?.postID,
-                    profileUsername: params?.profileUsername,
-
-                    }
-                }
-            
+            params: navParams
         }
-
-        console.log("nav packet", navPacket)
 
         if (path && params) {
             navigate('Main', navPacket);

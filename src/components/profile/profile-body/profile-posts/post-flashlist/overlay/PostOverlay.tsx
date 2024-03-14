@@ -8,7 +8,6 @@ import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
-import { Entypo } from '@expo/vector-icons';
 import { PostMetadata } from "@models/posts";
 import { Link, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -23,6 +22,7 @@ import { SvgXml } from 'react-native-svg';
 import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
 
+import { FontAwesome5 } from '@expo/vector-icons';
 
 interface PostOverlayProps {
   user: string;
@@ -288,7 +288,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
                 style={{ padding: 10, backgroundColor: "transparent" }}
                 onPressItem={onPressAction}
                 floatingIcon={
-                  <Entypo name="dots-three-vertical" size={30} color="white" />
+                  // <Entypo name="dots-three-vertical" size={30} color="white" />
+                  <FontAwesome5 name="running" size={24} color="white" />
                 }
               />}
             </View>
