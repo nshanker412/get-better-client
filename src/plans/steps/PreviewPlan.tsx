@@ -54,6 +54,8 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
       subcategory: planState.init?.subcategory ?? "",
       selectedExercises: planState.init?.selectedExercises ?? [],
       selectedCardioExercise: planState.init?.selectedCardioExercise ?? null,
+      selectedFoodGroups: planState.init?.selectedNutritionFoodGroups ?? [],
+      selectedFoods: planState.init?.selectedFoods ?? [],
       routine: planState?.routine ?? [],
     };
   
@@ -73,6 +75,9 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
             }
         });
      }
+  
+     console.log("Form data", formData)
+  
     // Perform the POST request
     try {
         const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/save`,
@@ -483,15 +488,6 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                               </View>
                             
                             )}
-
-                            
-                            
-
-                            
-                            
-
-
-
                         </ListItem.Content>
                       </ListItem>
                     )}
