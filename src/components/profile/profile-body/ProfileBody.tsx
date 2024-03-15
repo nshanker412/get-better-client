@@ -3,7 +3,6 @@
  * - move stats container to separate internally driven component (reduce prop spam & unnecessary rerenders)
  */
 
-import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useProfileContext } from '@context/profile-context/useProfileContext';
 import { grayDark } from '@context/theme/colors_neon';
 import { useThemeContext } from '@context/theme/useThemeContext';
@@ -59,19 +58,11 @@ const Feed: React.FC = () => {
 
 
 
-
-
-
 const _Plans: React.FC = () => {
-
 	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
-	const [loadedPlans, setLoadedPlans] = useState(true); //TODO: ERIC REMEMTO TO ADD ANIMATED LOADER
 	const [refreshing, setRefreshing] = useState<boolean>(false);
-	const { username: myUsername } = useMyUserInfo();
 
-	const { onFetchPlans, plans, username , isMyProfile} = useProfileContext();
-
-
+	const { onFetchPlans, plans, username, isMyProfile } = useProfileContext();
 	const profileBodyStyles = useProfileBodyStyles();
 	const navig = useNavigation();
 
@@ -84,14 +75,11 @@ const _Plans: React.FC = () => {
 			navig.navigate('profilePlanV2', { planID: planID, profileUsername: username });
 		} else {
 			navig.navigate('profilePlan', { planID: planID, profileUsername: username });
-		
-		
 		}
 	}
 
 	useEffect(() => {
 		if (plans) {
-
 			const planList: PlanTileType[] = plans?.map((plan: PlanModel) => ({
 				v: "v2",
 				id: plan.id,
@@ -121,7 +109,12 @@ const _Plans: React.FC = () => {
 				setPlaV2(planList);
 			}
 	}
-}, [plans, isMyProfile]);
+	}, [plans, isMyProfile, refreshing]);
+
+	useEffect(() => {
+		onFetchPlans();
+	}, []	);
+	
 
 	const PlanItem = ({ item }) => {
 		console.log(item)
@@ -132,15 +125,21 @@ const _Plans: React.FC = () => {
 						<View style={{ flex: 1, width: 140, height: 140, borderColor: grayDark.gray9, borderWidth: 0.5, borderRadius: 8, padding: 10, alignItems: "center", justifyContent: "center" }}>
 							<ConnectedPlanItem planType={item?.planType} planTitle={item?.title} />
 						</View>
+			
 					</LinearGradient>
 				</TouchableOpacity>
 			</View>
 		)
 	}
 
+	const onRefresh = async () => {
+		setRefreshing(true);
+		await onFetchPlans();
+		setRefreshing(false);
+	}
 
-
-		return (
+	return (
+			<>
 			<View style={{ flex: 1, width: "100%", height: "auto" }}>
 				<View style={profileBodyStyles.container}>
 					<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
@@ -153,7 +152,7 @@ const _Plans: React.FC = () => {
 									keyExtractor={(item) => `${item.id}`}
 									renderItem={PlanItem}
 									refreshing={refreshing}
-									onRefresh={onFetchPlans}
+									onRefresh={onRefresh}
 									contentContainerStyle={{ paddingBottom: 150 }} // Adds bottom padding
 								/>
 							</View>
@@ -161,6 +160,7 @@ const _Plans: React.FC = () => {
 					</View>
 				</View>
 			</View>
+			</>
 		)
 	};
 const Plans = React.memo(_Plans);
@@ -172,12 +172,8 @@ const Plans = React.memo(_Plans);
 	const route = useRoute();
 	const linkPostIDParams = useMemo(() => ({ linkPostID: route?.params?.linkPostID }), [route?.params?.linkPostID]);
 
-
-
-
 	return (
 		<ProfileTab.Navigator
-
 			screenOptions={{
 					tabBarLabelStyle: {
 						fontSize: 15,
@@ -189,10 +185,9 @@ const Plans = React.memo(_Plans);
 					},
 					tabBarStyle: { backgroundColor: 'transparent', width: Dimensions.get('window').width },
 			}}
-			// initialRouteName='ProfilePostFeed'
 			
 		>
-				<ProfileTab.Screen
+			<ProfileTab.Screen
 				name='ProfilePostFeed'
 				initialParams={linkPostIDParams}
 				component={Feed}

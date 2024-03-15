@@ -25,6 +25,7 @@ export interface MyUserInfoContextProps extends MyUserInfoState {
 	deletePost: (postID: string) => Promise<void>;
 	refreshMyUserInfo: () => void;
 	fetchMyPosts: () => Promise<void>;
+	deletePlan: (planID: string) => Promise<void>;
 	
 }
 
@@ -108,5 +109,6 @@ export const defaultContextValue: MyUserInfoContextProps = {
 	setShownIntroPage: () => {},
 	deletePost: async () => {},
 	refreshMyUserInfo: () => {},
-	fetchMyPosts: async () => {},
+	fetchMyPosts: async () => { },
+	deletePlan: async () => { },
 };

@@ -1,6 +1,8 @@
-import { grayDark, greenDark } from '@context/theme/colors_neon';
+import { DeletePlanModal } from '@components/profile/profile-body/profile-posts/modals/DeletePlanModal';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { grayDark, greenDark, redDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { Card, Divider, ListItem } from '@rneui/base';
 import axios from 'axios';
@@ -19,16 +21,35 @@ import {
   PlanCategory
 } from '../plan.types';
 
-export const PreviewUserPlan: React.FC = ( ) => {
+export const PreviewUserPlan: React.FC = ( {navigation}) => {
     const route = useRoute();
   const planID = route?.params?.planID;
-  console.log("planID", planID) 
+  const user = route?.params?.profileUsername;
+    console.log("planID", planID) 
     const [loading, setLoading] = useState<boolean>(false);
-  const [planState, setPlan] = useState<PlanModel | null>(null);
+    const [planState, setPlan] = useState<PlanModel | null>(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [deletePlanId, setDeletePlanId] = useState<string | undefined>(undefined);
+  const {username: myUsername} = useMyUserInfo();
   
 
 
-          useEffect(() => {
+  const onClosePress = (deleted: boolean) => {
+    setOpenDeleteModal(false);
+    setDeletePlanId(undefined);
+    if (deleted) {
+      navigation.goBack();
+    }
+  }
+
+  const onDeleteModalOpen = (planId: string) => {
+    setDeletePlanId(planId);
+    setOpenDeleteModal(true);
+  }
+
+
+
+    useEffect(() => {
             const getPlan = async (planID: string) => {
                 setLoading(true);
                   try {
@@ -56,14 +77,30 @@ export const PreviewUserPlan: React.FC = ( ) => {
                 )
             }
     
-        return (
+  return (
+          <>
             <View style={{flex: 1,  alignItems: "center", justifyContent: "center", width: "100%", padding: 10, height: "100%"}}>
             <View style={{flex: 8, width: "100%", justifyContent: "center", alignItems: "center"}}>   
             <Card
-                    containerStyle={styles.cardContainer}
-                    wrapperStyle={styles.cardWrapper}
-                    >
-                    <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1 ]} style={{ borderRadius: 8, width: '100%'}}>
+                containerStyle={styles.cardContainer}
+                wrapperStyle={styles.cardWrapper}
+              >
+                <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]} style={{ borderRadius: 8, width: '100%' }}>
+              {user === myUsername && ( 
+              <TouchableOpacity 
+                style={{position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width: 100,
+                  height: 100
+                }}
+                onLongPress={() => onDeleteModalOpen(planID)} 
+                hitSlop={20}
+                >
+                    <MaterialCommunityIcons name="delete" size={24} color={redDark.red12} style={{ position: "absolute", top: 0, right: 0 }} />
+                  </TouchableOpacity>
+              )}
+
                     <Card.Title style={styles.cardTitle }>{planState.planName}</Card.Title>
                     <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.data.planCategory}</Card.FeaturedSubtitle>
                       
@@ -73,7 +110,7 @@ export const PreviewUserPlan: React.FC = ( ) => {
                         <Card.Image style={{ backgroundColor: "transparent", width: "100%" }} >
                         
                           <MediaTile 
-                            media={{
+                              media={{
                               id: planState.media[0]?.mediaId,
                               url: planState.media[0]?.filename,
                               type: 'image',
@@ -109,7 +146,15 @@ export const PreviewUserPlan: React.FC = ( ) => {
               </View>
             <View style={{flex: 1, width: "100%", justifyContent: "flex-end", alignItems: "center"}}/>
 
-              </View>
+          </View>
+      <DeletePlanModal
+        deletePlanId={deletePlanId }
+        isVisible={openDeleteModal}
+        onClosePress={onClosePress}  
+                      
+      />
+
+          </>
           );
       }
     

@@ -65,7 +65,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		initialMyUserInfoState,
 	);
 
-
 	const { userToken } = useAuth();	
 
 	useEffect(() => {
@@ -191,6 +190,25 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	
 		}
 	}
+
+	const deletePlan = async (planID: string) => {
+
+		if (!state.username || !planID ) {
+			console.log('No username or planID provided');
+			return;
+		}
+		try {
+
+			await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/delete/${state.username}/${planID}/${state.username}`);
+
+			await fetchMyPlans();
+		
+		} catch (error) {
+			console.log('Error deleting plan', error);
+	
+		}
+	}
+
 
 	const logout = async () => {
 		console.log('logout');
@@ -395,6 +413,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		deletePost,
 		setShownIntroPage,
 		fetchMyPosts,
+		deletePlan
 	};
 
 	return (
