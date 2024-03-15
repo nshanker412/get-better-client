@@ -123,7 +123,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                         </Card.Image>
                               )}
                     <Card.Divider />
-                    <ScrollView>
+              <ScrollView scrollEnabled={true} >
     
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", padding: 10}}>
                         <Text style={styles.cardDescription}>
@@ -251,7 +251,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
             minWidth: "80%",
             width: "100%",
             minHeight: "50%",
-            maxHeight: "60%",
+            maxHeight: "80%",
             borderColor: 'rgba(137, 133, 133, 0.3)',
             backgroundColor: grayDark.gray2, // Dark background for the card
             borderRadius: 8,
