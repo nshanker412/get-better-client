@@ -10,6 +10,7 @@ import { usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
 import {
   CardioDropdownItem,
+  CardioRoutine,
   CategoryDropdownItem,
   ExerciseDetail,
   ExerciseDropdownItem,
@@ -73,7 +74,23 @@ interface ChooseCategoryProps {
        console.log("potential food choicess", potentialFoodChoices)
       }, [potentialFoodChoices])
      
-    const onCardioTypeChange = (item: CardioDropdownItem) => {  
+     const onCardioTypeChange = (item: CardioDropdownItem) => {  
+       
+       const routine: CardioRoutine[] = [{
+        id: item.id,
+        name: undefined,
+        type: undefined,
+        targetDuration:  undefined, // Duration in minutes
+        targetDistance: undefined, // Distance in miles
+        intensity: undefined,
+         goal: undefined,
+         metadata: null,
+        goalCategory: undefined,
+          init: false
+
+      }]
+      
+       console.log('onCardioTypeChange', item); 
       dispatch(
         {
           type: 'SET_PLAN_BASE',
@@ -90,7 +107,7 @@ interface ChooseCategoryProps {
                 type: item.type,
               }
             },
-            routine: [],
+            routine: routine
           }
         }
       );
@@ -127,7 +144,7 @@ interface ChooseCategoryProps {
              type: 'SET_PLAN_BASE',
              payload: {
                init: {
-                 planCategory: PlanCategory.Lifting,
+                 ...planState.init,
                  subcategory: item.type,
                  selectedExercises: [],
                  selectedCardioExercise: null,

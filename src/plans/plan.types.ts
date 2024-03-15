@@ -134,15 +134,34 @@ export interface Exercise {
     metadata: []
   }
   
-  interface CardioActivity {
-    id: string;
-    name: string;
-    types: 'run' | 'walk';
-    duration: number; // Duration in minutes
-    intensity: 'low' | 'medium' | 'high';
-  }
+//   interface CardioActivity {
+//     id: string;
+//     name: string;
+//     types: 'run' | 'walk';
+//     duration: number; // Duration in minutes
+//     intensity: 'low' | 'medium' | 'high';
+//   }
   
+export enum CardioGoalCategory {
+    Distance = 'distance',
+    Duration = 'duration',
+    Intensity = 'intensity',
+    PR = 'personal record',
+    None = 'none'
+}
 
+
+  export interface CardioActivity {
+    id: string | undefined;
+    name: string | undefined;
+    type: CardioExerciseDetail | undefined;
+    targetDuration: number  | undefined; // Duration in minutes
+    targetDistance: number | undefined; // Distance in miles
+    targetTime: number | undefined; // Time in minutes
+    intensity: 'low' | 'medium' | 'high' | undefined;
+    goal: string | undefined;
+    goalCategory: CardioGoalCategory | undefined;
+  }
   /**
    *    Subcategory Interfaces for Nutrition Plans
    */
@@ -392,6 +411,14 @@ export type CardioExerciseDetail = {
     type: string; // This could represent a sub-type like "Endurance", "HIIT", etc.
 };
 
+
+export interface CardioRoutine extends CardioActivity {
+    notes: string | undefined;
+    init: boolean;
+    metadata: [] | null;
+}
+
+
 const cardioExercises: CardioExerciseDetail[] = [
     { id: "ca-01", name: "Running", type: "Endurance" },
     { id: "ca-02", name: "Cycling", type: "Endurance" },
@@ -483,6 +510,7 @@ export interface NutritionRoutine extends Meal {
     init: boolean;
     metadata: []
 }
+
 
 export interface NutritionCategories {
     [foods: string]: Foods[];
@@ -607,3 +635,111 @@ export const findFoodByName = (category: FoodGroupsMainCategory, name: string): 
  * Endpoint : https://developer.nrel.gov/api/alt-fuel-stations/v1.json?limit=1&api_key=mhHF6tA0tjaE4nUflTsa43zb9ayEt39lmdWsnEhy
 */
 
+
+
+// export const Activities = {
+//     AmericanFootball: 'AmericanFootball',
+//     Archery: 'Archery',
+//     AustralianFootball: 'AustralianFootball',
+//     Badminton: 'Badminton',
+//     Baseball: 'Baseball',
+//     Basketball: 'Basketball',
+//     Bowling: 'Bowling',
+//     Boxing: 'Boxing',
+//     CardioDance: 'CardioDance',
+//     Climbing: 'Climbing',
+//     Cooldown: 'Cooldown',
+//     Cricket: 'Cricket',
+//     CrossTraining: 'CrossTraining',
+//     Curling: 'Curling',
+//     Cycling: 'Cycling',
+//     Dance: 'Dance',
+//     DiscSports: 'DiscSports',
+//     Elliptical: 'Elliptical',
+//     EquestrianSports: 'EquestrianSports',
+//     Fencing: 'Fencing',
+//     FitnessGaming: 'FitnessGaming',
+//     Fishing: 'Fishing',
+//     FunctionalStrengthTraining: 'FunctionalStrengthTraining',
+//     Golf: 'Golf',
+//     Gymnastics: 'Gymnastics',
+//     Handball: 'Handball',
+//     Hiking: 'Hiking',
+//     Hockey: 'Hockey',
+//     Hunting: 'Hunting',
+//     Lacrosse: 'Lacrosse',
+//     MartialArts: 'MartialArts',
+//     MindAndBody: 'MindAndBody',
+//     PaddleSports: 'PaddleSports',
+//     Play: 'Play',
+//     Pickleball: 'Pickleball',
+//     PreparationAndRecovery: 'PreparationAndRecovery',
+//     Racquetball: 'Racquetball',
+//     Rowing: 'Rowing',
+//     Rugby: 'Rugby',
+//     Running: 'Running',
+//     Sailing: 'Sailing',
+//     SkatingSports: 'SkatingSports',
+//     SnowSports: 'SnowSports',
+//     Soccer: 'Soccer',
+//     SocialDance: 'SocialDance',
+//     Softball: 'Softball',
+//     Squash: 'Squash',
+//     StairClimbing: 'StairClimbing',
+//     SurfingSports: 'SurfingSports',
+//     Swimming: 'Swimming',
+//     TableTennis: 'TableTennis',
+//     Tennis: 'Tennis',
+//     TrackAndField: 'TrackAndField',
+//     TraditionalStrengthTraining: 'TraditionalStrengthTraining',
+//     Volleyball: 'Volleyball',
+//     Walking: 'Walking',
+//     WaterFitness: 'WaterFitness',
+//     WaterPolo: 'WaterPolo',
+//     WaterSports: 'WaterSports',
+//     Wrestling: 'Wrestling',
+//     Yoga: 'Yoga',
+//     Barre: 'Barre',
+//     CoreTraining: 'CoreTraining',
+//     CrossCountrySkiing: 'CrossCountrySkiing',
+//     DownhillSkiing: 'DownhillSkiing',
+//     Flexibility: 'Flexibility',
+//     HighIntensityIntervalTraining: 'HighIntensityIntervalTraining',
+//     JumpRope: 'JumpRope',
+//     Kickboxing: 'Kickboxing',
+//     Pilates: 'Pilates',
+//     Snowboarding: 'Snowboarding',
+//     Stairs: 'Stairs',
+//     StepTraining: 'StepTraining',
+//     WheelchairWalkPace: 'WheelchairWalkPace',
+//     WheelchairRunPace: 'WheelchairRunPace',
+//     TaiChi: 'TaiChi',
+//     MixedCardio: 'MixedCardio',
+//     HandCycling: 'HandCycling',
+// }
+  
+
+// export const Units = {
+//     bpm: 'bpm',
+//     calorie: 'calorie',
+//     celsius: 'celsius',
+//     count: 'count',
+//     day: 'day',
+//     fahrenheit: 'fahrenheit',
+//     foot: 'foot',
+//     gram: 'gram',
+//     hour: 'hour',
+//     inch: 'inch',
+//     joule: 'joule',
+//     kilocalorie: 'kilocalorie',
+//     meter: 'meter',
+//     mgPerdL: 'mgPerdL',
+//     mile: 'mile',
+//     minute: 'minute',
+//     mmhg: 'mmhg',
+//     mmolPerL: 'mmolPerL',
+//     percent: 'percent',
+//     pound: 'pound',
+//     second: 'second',
+//     mlPerKgMin: 'mlPerKgMin',
+//   }

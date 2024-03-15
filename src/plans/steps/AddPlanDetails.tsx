@@ -12,9 +12,10 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MediaSource, usePlanBuilder } from '../PlanBuilderContext';
 import { ActionType, usePlanScreen } from '../PlanScreenContext';
+import { CardioItemModal } from '../modals/CardioItemModal';
 import { ExerciseItemModal } from '../modals/ExerciseItemModal';
 import {
-  ExerciseDetail,
+  CardioRoutine, ExerciseDetail,
   ExerciseRoutine,
   NutritionDetail,
   NutritionRoutine,
@@ -23,6 +24,7 @@ import {
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { FoodItemModal } from '../modals/FoodItemModal';
+import { CardioExerciseDetail } from '../plan.types';
 
 
   export const AddPlanDetails: React.FC = () => {
@@ -36,6 +38,7 @@ import { FoodItemModal } from '../modals/FoodItemModal';
 
     const [isExerciseReady, setIsExerciseReady] = useState<boolean>(false);
     const [isFoodReady, setIsFoodReady] = useState<boolean>(false);
+    const [isCardioReady, setIsCardioReady] = useState<boolean>(false);
     // const ableToGoNext = planName !== "" && planDescription !== "";
       const ableToGoNext = planName !== ""; 
     const { username: myUsername } = useMyUserInfo();
@@ -49,6 +52,9 @@ import { FoodItemModal } from '../modals/FoodItemModal';
       case PlanCategory.Nutrition:
         placeholderTitle = `e.g. ${myUsername}'s meal plan`;
         break;
+      case PlanCategory.Cardio:
+        placeholderTitle = `e.g. ${myUsername}'s running plan`;
+        break;
       default:
         placeholderTitle = `e.g. ${myUsername}'s plan`;
     }
@@ -61,6 +67,9 @@ import { FoodItemModal } from '../modals/FoodItemModal';
         break;
       case PlanCategory.Nutrition:
         placeholderDescription = `e.g. post workout meal plan for leg day`;
+        break;
+      case PlanCategory.Cardio:
+        placeholderDescription = `e.g run 10 miles a week`;
         break;
       default:
         placeholderDescription = `e.g. this is my plan description`;
@@ -139,6 +148,15 @@ import { FoodItemModal } from '../modals/FoodItemModal';
               <FoodList list={planState.init.selectedFoods} onInitChanged={(ready) => setIsFoodReady(ready)}/>
               </>
           )}
+
+
+        {planState?.init?.planCategory === PlanCategory.Cardio && planState?.init && (
+            <>
+              <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Cardio Details</Text>
+              <CardioList cardioExercise={planState.init.selectedCardioExercise} onInitChanged={(ready) => setIsCardioReady(ready)}/>
+              </>
+          )}
+          
           
           {/* {planState?.init?.planCategory === PlanCategory.Nutrition && planState?.init?.selectedNutritionFoodGroups && planState.init.selectedFoods && (
             <>
@@ -270,6 +288,86 @@ import { FoodItemModal } from '../modals/FoodItemModal';
   };
 
 
+
+
+  interface CardioListProps {
+    cardioExercise: CardioExerciseDetail;
+    onInitChanged: (ready: boolean) => void;
+  }
+
+  const CardioList: React.FC<CardioListProps> = ({ cardioExercise , onInitChanged}) => {
+    const [selected, setSelected] = useState<CardioExerciseDetail | null>(null);
+    const { state: planState, dispatch: dispatchPlan } = usePlanBuilder();
+  
+    useEffect(() => {
+      planState.routine.forEach((item) => {
+        if (item.init === false) {
+          onInitChanged(false);
+          return;
+        }
+      });
+    }, [planState.routine])
+  
+  
+    const setDataCB = (data: CardioRoutine) => {
+      const newRoutineList: CardioRoutine[] = planState.routine?.map((item) => {
+        if (item.id === data.id) {
+          return data
+        }
+        return item;
+      });
+
+      console.log("newRoutineList", newRoutineList);
+  
+      dispatchPlan({
+        type: 'SET_PLAN_ROUTINE',
+        payload: newRoutineList
+      });
+      closeModal();
+    }
+  
+    const closeModal = () => setSelected(null);
+  
+  
+    return (
+      <>
+
+          <React.Fragment key={cardioExercise.id}>
+            <ListItem
+              bottomDivider
+              style={{ borderRadius: 8 }}
+              containerStyle={{ backgroundColor: grayDark.gray5, borderRadius: 2}} 
+              onPress={() => setSelected(cardioExercise)}
+            >
+              <ListItem.Content style={{ borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+              <ListItem.Title style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, flex: 1 }}>
+                {cardioExercise.name}
+              </ListItem.Title>
+              <FontAwesome5
+                name="check-circle"
+                size={24}
+                color={planState?.routine.init ? greenDark.green11 : grayDark.gray8}
+              />
+            </ListItem.Content>
+            </ListItem>
+            {selected?.id === cardioExercise.id && (
+              <CardioItemModal
+                key={`${cardioExercise.id}-cardio-item-modal`}
+                cardio={selected}
+                isOpen={selected !== undefined}
+                onClose={closeModal}
+                onSetDataCB={setDataCB}
+              />
+            )}
+          </React.Fragment>
+      </>
+    );
+  };
+
+
+
+
+
   interface FoodListProps {
     list: NutritionDetail[];
     onInitChanged: (ready: boolean) => void;
@@ -312,7 +410,7 @@ import { FoodItemModal } from '../modals/FoodItemModal';
         {list?.map((item, index) => (
           <React.Fragment key={item.id}>
             <ListItem
-                    bottomDivider
+              bottomDivider
               style={{ borderRadius: 8 }}
               containerStyle={{ backgroundColor: grayDark.gray5, borderRadius: 2}} 
               onPress={() => setSelected(item)}
@@ -342,6 +440,8 @@ import { FoodItemModal } from '../modals/FoodItemModal';
       </>
     );
   };
+
+
 
 
 

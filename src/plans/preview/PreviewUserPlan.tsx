@@ -16,6 +16,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { MediaSource } from '../PlanBuilderContext';
 import { PlanModel } from "../models/plan";
 import {
+  CardioActivity,
+  CardioExerciseDetail,
+  CardioRoutine,
   ExerciseDetail,
   ExerciseMainCategory,
   ExerciseRoutine,
@@ -85,7 +88,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                 containerStyle={styles.cardContainer}
                 wrapperStyle={styles.cardWrapper}
               >
-                <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]} style={{ borderRadius: 8, width: '100%' }}>
+            <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}  style={{ borderRadius: 8, width: '100%' , height: "100%" }}>
               {user === myUsername && ( 
               <TouchableOpacity 
                 style={{position: "absolute",
@@ -144,20 +147,38 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                 {planState.data.planCategory === PlanCategory.Nutrition &&
                   planState.data.subcategory &&
                   planState.data.routine && (
-                  
+                    <View style={styles.exerciseList}>
+
                     <ReviewNutritionList
                         routines={planState.data.routine}
                         category={planState.data.subcategory}
                         list={planState.data.selectedFoods}
                         onInitChanged={() => {}}
-                      />
-                    )}
+                    />
+                  </View>
+
+                  )}
+                
+
+                {planState.data.planCategory === PlanCategory.Cardio &&
+                    planState.data.selectedExercises &&
+                    planState.data.routine && (
+                    <View style={styles.exerciseList}>
+                      <ReviewCardioList 
+                        category={planState.data.subcategory} 
+                        list={planState.data.selectedCardioExercise} 
+                        routines={planState.data.routine} 
+                        onInitChanged={() => {}} />
+                    </View>
+                  )}
 
 
 
 
-                        </ScrollView>
-                        </LinearGradient>
+              </ScrollView>
+              </LinearGradient>
+
+                
               </Card>
               </View>
             <View style={{flex: 1, width: "100%", justifyContent: "flex-end", alignItems: "center"}}/>
@@ -229,12 +250,15 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
             borderWidth: 0.5,
             minWidth: "80%",
             width: "100%",
+            minHeight: "50%",
+            maxHeight: "60%",
             borderColor: 'rgba(137, 133, 133, 0.3)',
             backgroundColor: grayDark.gray2, // Dark background for the card
             borderRadius: 8,
           },
           cardWrapper: {
             backgroundColor: grayDark.gray2, // Dark background for the card
+
             borderRadius: 8,
         },
         cardTitle: {
@@ -661,3 +685,107 @@ const reviewStylesT = StyleSheet.create({
   
   })
   
+
+
+
+interface ReviewCardioListProps {
+  routines: CardioRoutine[];
+  category: CardioActivity;
+  list: CardioExerciseDetail[];
+  onInitChanged: (ready: boolean) => void;
+}
+
+const ReviewCardioList: React.FC<ReviewCardioListProps> = ({ list , routines, category, onInitChanged}) => {
+
+  useEffect(() => {
+    const allInitialized = routines?.every(item => item.init === true);
+  
+    if (!allInitialized) {
+      onInitChanged(false);
+    }
+  }, [routines]);
+
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const onAccordionPress = (id: string) => {
+    if (expanded === id) {
+      setExpanded(null);
+    } else {
+      setExpanded(id);
+    }
+  }
+
+
+  return (
+    <View style={{ flex: 1, width: "100%" }}> 
+      <Text style={{ color: grayDark.gray12, marginBottom: 5, textAlign: "left", fontFamily: fonts.inter.semi_bold }}>Cardio</Text>
+    <> 
+      {
+          routines?.map((item, index) => {
+            return (
+              <React.Fragment key={`routine-fragment-${index}`}>
+
+                    <View style={{width: "100%", padding: 2, alignItems: "center", justifyContent: "flex-start",}}/>
+                    <ListItem.Accordion
+                        containerStyle={{ backgroundColor: grayDark.gray10, borderRadius: 8}}
+                  key={`review-li-${index}`}
+                  style={{ backgroundColor: grayDark.gray5, borderRadius: 8 }}
+                  content={
+                  <>
+                    <FontAwesome6 style={{paddingRight: 10}} name="dumbbell" size={24} color="black"  />
+                    <ListItem.Content>
+                      <ListItem.Title>{ item.type.name}</ListItem.Title>
+                    </ListItem.Content>
+                  </>
+                }
+                isExpanded={expanded === `${item.id}`}
+                onPress={
+                  () => onAccordionPress(`${item.id}`)
+                }
+                >
+                  <>
+                    <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
+              
+                    <ListItem key={`${item.id}-li1-preview`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
+                        <ListItem.Content >
+                          <ListItem.Title style={{ color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14,  }}>{"Workout Details"}</ListItem.Title>
+                            
+                        <View style={{ flexDirection: "column", gap: 10, paddingTop: 10 }}>
+
+                          {item?.type?.type && (
+                              <View style={{ flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Type</Text>
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.type?.type}</Text>
+                              </View>
+                    )}
+                    
+                    
+                    {item?.goal && (
+                              <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Goal</Text>
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.goal}</Text>
+                              </View>
+                    )}
+                    
+ 
+                    
+                    {item?.notes && (
+                              <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center",}}>
+                                <Text style={{textAlign: "left", alignSelf: 'flex-start',  color: grayDark.gray10, fontFamily: fonts.inter.light, fontSize: 14 }}>Notes</Text>
+                                <Text style={{ color: grayDark.gray12, fontFamily: fonts.inter.regular, fontSize: 14 }}>{item.notes}</Text>
+                              </View>
+                          )}
+                          </View>
+      
+            </ListItem.Content>
+                      </ListItem>
+                  </>
+                  </ListItem.Accordion>
+              </React.Fragment>
+                )
+        })
+      }
+      </>
+    </View>
+  );
+};

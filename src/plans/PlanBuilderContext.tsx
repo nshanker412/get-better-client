@@ -1,6 +1,6 @@
 // PlanContext.tsx
 import React, { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react';
-import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, Foods, NutritionPlanMainCategory, NutritionRoutine, PlanCategory } from './plan.types';
+import { CardioExerciseDetail, CardioRoutine, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, Foods, NutritionPlanMainCategory, NutritionRoutine, PlanCategory } from './plan.types';
 
 export type MediaSource = {
   id: string;
@@ -32,7 +32,7 @@ export interface PlanBuilderState {
   name: string | null;
   init: PlanInitSelection;
   description: string | null;
-  routine: ExerciseRoutine[] | NutritionRoutine[] | [];
+  routine: ExerciseRoutine[] | NutritionRoutine[] | CardioRoutine[] | [];
   private: boolean;
   media: MediaSource[] | null;
   metadata: PlanMetadata | null;
