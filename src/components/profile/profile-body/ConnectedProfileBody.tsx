@@ -19,7 +19,6 @@ type Bar = {
  */
 export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	isMyProfile,
-	username, 
 }) => {
 
 
@@ -81,7 +80,7 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 					/>
 					</View>
 			<View style={{flex: 21}}>
-			<ProfileBody isMyProfile={isMyProfile} username={username} />
+			<ProfileBody isMyProfile={isMyProfile}  />
 			</View>
 		</>
 	)

@@ -339,8 +339,8 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                     () => onAccordionPress(`${item.id}`)
                   }
                   >
-                          <>
-                              <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
+                    <>
+                      <Divider style={{ backgroundColor: grayDark.gray8, width: "90%", alignSelf: "center"}}/>
                 
                     {item.reps!==undefined && item.sets !==undefined && item.weight!== undefined && (
                         <ListItem key={`${item.id}-li1`} onPress={() => { }} topDivider bottomDivider containerStyle={{backgroundColor: grayDark.gray8, borderRadius: 4, width: "90%", alignSelf: "center"}}>
@@ -382,7 +382,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
     onInitChanged: (ready: boolean) => void;
   }
   
-  const ReviewNutritionList: React.FC<ReviewNutritionListProps> = ({ list , routines, category, onInitChanged}) => {
+export   const ReviewNutritionList: React.FC<ReviewNutritionListProps> = ({ list , routines, category, onInitChanged}) => {
     const { state: planState } = usePlanBuilder();
   
     useEffect(() => {
