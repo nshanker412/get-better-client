@@ -463,6 +463,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
         style={styles.iconShadow}
         width={size}
         height={size}
+        strokeWidth={1}
         xml={CI}
       />
 
@@ -478,26 +479,17 @@ const useLikeButtonStyle = (isEmbeddedFeed: boolean) => {
   const iconSize = isEmbeddedFeed ? 20 : 45;
   const animationSize = isEmbeddedFeed ? 35: 80;
   const animationInset = (animationSize - iconSize) / 2;
-  const paddingLeft = isEmbeddedFeed ? 5 : 10;
 
-  console.log('animationInset', animationInset);
-  console.log('paddingLeft', paddingLeft);
 
   const styles = StyleSheet.create({
     animationContainer: {
       width: animationSize,
       height: animationSize,
       position: 'absolute',
-      // bottom: animationInset,
-      // right: animationInset,
-      // top: animationInset,
-      // left: animationInset,
-
       bottom: animationInset,
-        right: animationInset,
-      left:-(animationInset), // 0,
-        top: -(animationInset),
-      
+      right: animationInset,
+      left:-(animationInset), 
+      top: -(animationInset),
       zIndex: 2,
     },
     iconShadow: {
@@ -576,8 +568,7 @@ const StarIconView = forwardRef<StarIconViewHandles,  StarIconViewProps>(({likes
         height={size}
         xml={isLiked ? StarIconFilled : StarIcon}
       />
-            <View style={styles.animationContainer}>
-
+      <View style={styles.animationContainer}>
       <LottieView
         ref={animation}
         style={styles.starAnimation}
@@ -585,7 +576,7 @@ const StarIconView = forwardRef<StarIconViewHandles,  StarIconViewProps>(({likes
         autoPlay={false}
         loop={false}
       />
-        </View>
+      </View>
       <Text style={styles.actionButtonText}>
         {likes}
         </Text>

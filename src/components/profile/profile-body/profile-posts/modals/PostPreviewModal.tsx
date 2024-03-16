@@ -178,6 +178,12 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     setContentHeight(contentHeight);
   }, []);
 
+  const onHapticFeedback = () => {
+    isFullscreen && Haptics.impactAsync(
+      Haptics.ImpactFeedbackStyle.Medium,
+    );
+  }
+
   return (
     <View style={{ width: "100%", height: "100%"}} >
         {isFullscreenPreview ? (
@@ -260,11 +266,9 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 keyExtractor={item => item.filename}
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
-                onMomentumScrollEnd={() => {
-                  Haptics.impactAsync(
-                    Haptics.ImpactFeedbackStyle.Medium,
-                  );
-                }}
+                onMomentumScrollEnd={
+                  onHapticFeedback
+                }
                 onScrollEndDrag={() => {
                   Haptics.impactAsync(
                     Haptics.ImpactFeedbackStyle.Medium,

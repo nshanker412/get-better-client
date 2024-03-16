@@ -36,8 +36,8 @@ const Loader = () => {
 		  autoPlay
 		  ref={animation}
 		  style={{
-			width: 200,
-			  height: 200,
+			width: 150,
+			  height: 150,
 		
 			  backgroundColor: 'transparent',
 			
