@@ -1,96 +1,17 @@
+import { ButtonAsync } from '@components/primitives/async-button/ButtonAsync';
 import { grayDark } from '@context/theme/colors_neon';
-import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { ActionButton } from '../../primitives/action-button/ActionButton';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { ProfileHeaderProps } from './ProfileHeader.types';
-
-
-// title?: string | React.ReactElement<{}>;
-// titleStyle?: StyleProp<TextStyle>;
-// titleProps?: TextProps;
-// buttonStyle?: StyleProp<ViewStyle>;
-// type?: 'solid' | 'clear' | 'outline';
-// loading?: boolean;
-// loadingStyle?: StyleProp<ViewStyle>;
-// loadingProps?: ActivityIndicatorProps;
-// containerStyle?: StyleProp<ViewStyle>;
-// icon?: IconNode;
-// iconContainerStyle?: StyleProp<ViewStyle>;
-// iconRight?: boolean;
-// linearGradientProps?: object;
-// TouchableComponent?: typeof React.Component;
-// ViewComponent?: typeof React.Component;
-// disabled?: boolean;
-// disabledStyle?: StyleProp<ViewStyle>;
-// disabledTitleStyle?: StyleProp<TextStyle>;
-// raised?: boolean;
-// iconPosition?: 'left' | 'right' | 'top' | 'bottom';
-// uppercase?: boolean;
-// radius?: number | StringOmit<keyof ThemeSpacing>;
-// size?: 'sm' | 'md' | 'lg';
-// color?: StringOmit<'primary' | 'secondary' | 'success' | 'error' | 'warning'>;
-
-const buttonStyle = StyleSheet.create({	
-	button: {
-		borderRadius: 10,
-		padding: 10,
-		color: grayDark.gray12,
-		backgroundColor: grayDark.gray3,
-
-	},
-	textStyle: {
-		fontSize: 16,
-		fontFamily: fonts.inter.bold,
-		color: grayDark.gray12,
-	},
-	containerStyle: {
-		width: '100%',
-		flex: 1,
-
-	},
-});
-
-interface ButtonAsyncProps {
-	loading: boolean;
-	title: string;
-	onPress: () => void;
-	buttonStyle?: any;
-	textStyle?: any;
-	containerStyle?: any;
-}
-
-export const ButtonAsync: React.FC<ButtonAsyncProps> = ({
-	loading, 
-	title,
-	buttonStyle,
-	textStyle,
-	containerStyle,
-	onPress
-}) => {
-
-	return (
-		<Button 
-			containerStyle={containerStyle ?? buttonStyle.containerStyle}
-			style={buttonStyle ??buttonStyle.button}
-			titleStyle={textStyle ?? buttonStyle.textStyle}
-			loading={loading}
-			onPress={onPress}
-			title={title}
-			/>
-	)
-}
-
-
 
 
 
@@ -473,18 +394,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							]}>
 							<View style={{flex: 1} }/>
 						<View style={{ flex: 2 }}>
-								{/* <ActionButton
-								defaultPressed={false}
-								isPrimary={false}
-								onPress={onOpenChallengeModal}
-								title={'Challenge'}
-							/> */}
+						
 								<ButtonAsync
 									loading={false}
 									title={'Challenge'}
 									onPress={onOpenChallengeModal}
-									buttonStyle={buttonStyle}
-									textStyle={buttonStyle.textStyle}
+							
 								/>
 						</View>
 
