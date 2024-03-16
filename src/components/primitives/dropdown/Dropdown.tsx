@@ -26,15 +26,31 @@ export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label,
     <View style={styles.container}>
       {renderLabel()}
           <DD
-              containerStyle={{ backgroundColor: 'transparent'}}
-              style={[styles.dropdown, isFocus && {  }]}
+        containerStyle={{
+          backgroundColor: grayDark.gray4,
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
+          borderColor: grayDark.gray12,
+          width: "100%",
+          
+        
+        }}
+        style={[styles.dropdown, isFocus && {}]}
+        
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              itemContainerStyle={{ backgroundColor: grayDark.gray5 }}
-              itemTextStyle={{ color: grayDark.gray10, fontFamily: fonts.inter.regular }}   
-              backgroundColor={'rgba(0,0,0,0.2)'}
+        iconStyle={styles.iconStyle}
+
+              itemStyle={{
+                backgroundColor: grayDark.gray4,
+                fontFamily: fonts.inter.medium,
+                color: grayDark.gray10,
+              }}
+              itemContainerStyle={{
+                backgroundColor: grayDark.gray4,
+              }}
+              itemTextStyle={{ color: grayDark.gray10, fontFamily: fonts.inter.regular }} 
               showsVerticalScrollIndicator={false}
               data={data}
               label={label}

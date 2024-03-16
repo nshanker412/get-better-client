@@ -1,4 +1,4 @@
-import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, PlanCategory } from "../plan.types";
+import { CardioExerciseDetail, ExerciseDetail, ExerciseMainCategory, ExerciseRoutine, FoodGroupsMainCategory, Foods, PlanCategory } from "../plan.types";
 
 
 export type PlanModel  = {
@@ -12,6 +12,8 @@ export type PlanModel  = {
         subcategory: ExerciseMainCategory | null;
         selectedExercises: ExerciseDetail[] | null;
         selectedCardioExercise: CardioExerciseDetail | null;
+        selectedNutritionFoodGroups: FoodGroupsMainCategory[] | null;
+        selectedFoods: Foods[] | null;
         routine: ExerciseRoutine[] | [];
     },
     createdAt: number; // UTC timestamp

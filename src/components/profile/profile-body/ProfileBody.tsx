@@ -58,7 +58,7 @@ const Feed: React.FC = () => {
 
 
 
-const _Plans: React.FC = () => {
+const Plans: React.FC = () => {
 	const [plaV2, setPlaV2] = useState<PlanTileType[] | []>([]);
 	const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -163,7 +163,6 @@ const _Plans: React.FC = () => {
 			</>
 		)
 	};
-const Plans = React.memo(_Plans);
 
  const _ProfileBody: React.FC<ProfileBodyProps> = ({ isMyProfile }) => {
 	const { theme } = useThemeContext();

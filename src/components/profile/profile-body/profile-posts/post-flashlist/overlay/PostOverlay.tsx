@@ -8,13 +8,15 @@ import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { PostMetadata } from "@models/posts";
 import { Link, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import throttle from 'lodash/throttle';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import LottieView from 'lottie-react-native';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FloatingAction, IFloatingActionProps } from 'react-native-floating-action';
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
@@ -22,7 +24,6 @@ import { SvgXml } from 'react-native-svg';
 import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
 
-import { FontAwesome5 } from '@expo/vector-icons';
 
 interface PostOverlayProps {
   user: string;
@@ -40,6 +41,8 @@ interface PlanTileType {
 	planType: PlanType;
 	title: string;
 }
+
+
 
 
 // fn to generate list of icons for floating action button
@@ -77,7 +80,7 @@ const genPlanIconList = (linkedPlans: PlanTileType[]) => {
  */
 const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   const { sendOutPushNotification } = useNotifications(); 
-
+  const animationRef = useRef<StarIconViewHandles>(null);
   // console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
@@ -86,6 +89,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
 
   const [linkedActionFab, setLinkedActionFab] = useState([]);
   const navigation = useNavigation();
+
+
 
   const onPressAction = (name: string) => {
     console.log(`selected button: ${name}`);
@@ -98,6 +103,43 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
       profileUsername: user
     });
   };
+
+
+    const handleUpdateLike = useCallback(
+        throttle((currentLikeStateInst) => {
+          try {
+            const postID = `${postData.timestamp}`;
+            const newLikeState = !currentLikeStateInst.state;
+            setCurrentLikeState({
+              state: newLikeState,
+              counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),
+            });
+            setPostLiked(user, postID, myUsername, newLikeState);
+            if (newLikeState) {
+    
+              const pushNotifInfo: PushNotificationInfoPacket = {
+                title: `${myUsername} liked your post.`,
+                body: `check it out!`,
+                data: {
+                  type: NotificationType.LIKED_POST,
+                  path: 'profile',
+                  params: {
+                    profileUsername: postData.user,
+                    postID: postID
+                  }
+                },
+              };
+        
+              sendOutPushNotification(postData?.user, pushNotifInfo);
+            }
+          } catch (error) {
+              console.log('setPostLikedError', error);
+            }
+      
+        }, 500),
+        []
+      );
+
 
   useEffect(() => {
     const fetchLinkedPlans = async () => {
@@ -166,40 +208,6 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
   }, [onPostChange, openDrawer, user, postData.timestamp]);
 
 
-  const handleUpdateLike = useCallback(
-    throttle((currentLikeStateInst) => {
-      try {
-        const postID = `${postData.timestamp}`;
-        const newLikeState = !currentLikeStateInst.state;
-        setCurrentLikeState({
-          state: newLikeState,
-          counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),
-        });
-        setPostLiked(user, postID, myUsername, newLikeState);
-        if (newLikeState) {
-
-          const pushNotifInfo: PushNotificationInfoPacket = {
-            title: `${myUsername} liked your post.`,
-            body: `check it out!`,
-            data: {
-              type: NotificationType.LIKED_POST,
-              path: 'profile',
-              params: {
-                profileUsername: postData.user,
-                postID: postID
-              }
-            },
-          };
-    
-          sendOutPushNotification(postData?.user, pushNotifInfo);
-        }
-      } catch (error) {
-          console.log('setPostLikedError', error);
-        }
-  
-    }, 500),
-    []
-  );
 
   const onDoubleTapEvent = async (event): Promise<void> => {
     if (event.nativeEvent.state === State.ACTIVE) {
@@ -210,6 +218,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
       // image wasn't already liked
       if (!currentLikeState.state) {
         handleUpdateLike(currentLikeState);
+        animationRef?.current?.play();
+
       }
     }
   };
@@ -293,12 +303,17 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
                 }
               />}
             </View>
+      
+
             <StarIconView
+              ref={animationRef}
               likes={currentLikeState.counter}
               isLiked={currentLikeState.state}
               onLikePress={() => handleUpdateLike(currentLikeState)}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
+      
+
             <CommentIcon
               commentCount={postData?.comments?.length ?? 0}
               openCommentDrawer={handleOpenCommentDrawer}
@@ -420,6 +435,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
       shadowOpacity: 0.65,
       shadowRadius: 3,
       backgroundColor: 'transparent',
+      zIndex: 2,
     },
     actionButtonText: {
       textShadowColor: 'rgba(0, 0, 0, 0.55)',
@@ -449,6 +465,7 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
         height={size}
         xml={CI}
       />
+
       <Text style={styles.actionButtonText}>
         {commentCount}
       </Text>
@@ -456,10 +473,33 @@ const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => voi
   );
 };
 
-const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () => void;isEmbeddedFeed: boolean }> = ({ likes, isLiked, onLikePress, isEmbeddedFeed }) => {
-  
-  
+const useLikeButtonStyle = (isEmbeddedFeed: boolean) => {
+
+  const iconSize = isEmbeddedFeed ? 20 : 45;
+  const animationSize = isEmbeddedFeed ? 35: 80;
+  const animationInset = (animationSize - iconSize) / 2;
+  const paddingLeft = isEmbeddedFeed ? 5 : 10;
+
+  console.log('animationInset', animationInset);
+  console.log('paddingLeft', paddingLeft);
+
   const styles = StyleSheet.create({
+    animationContainer: {
+      width: animationSize,
+      height: animationSize,
+      position: 'absolute',
+      // bottom: animationInset,
+      // right: animationInset,
+      // top: animationInset,
+      // left: animationInset,
+
+      bottom: animationInset,
+        right: animationInset,
+      left:-(animationInset), // 0,
+        top: -(animationInset),
+      
+      zIndex: 2,
+    },
     iconShadow: {
       shadowColor: '#000000',
       shadowOffset: { width: -3, height: 3 },
@@ -474,35 +514,88 @@ const StarIconView: React.FC<{ likes: number; isLiked: boolean; onLikePress: () 
       fontFamily: fonts.inter.bold,
       color: 'white',
       textAlign: 'center',
-      marginTop: isEmbeddedFeed ? 2:4,
+      marginTop: isEmbeddedFeed ? 2 : 4,
       fontSize: isEmbeddedFeed ? 12 : 16,
       backgroundColor: 'transparent',
-},
+    },
+    starAnimation: {
+      
+      width: animationSize,
+      height: animationSize,  
+    },
   });
 
+  
+  return styles;
+}
 
+interface StarIconViewProps  {
+  likes: number;
+  isLiked: boolean;
+  onLikePress: () => void;
+  isEmbeddedFeed: boolean;
+}
+
+interface StarIconViewHandles {
+  play: () => void;
+}
+
+
+const StarIconView = forwardRef<StarIconViewHandles,  StarIconViewProps>(({likes, isLiked, onLikePress, isEmbeddedFeed}, ref) => {
+  const animation = useRef<LottieView>(null);
+
+
+  const styles = useLikeButtonStyle(isEmbeddedFeed);
+
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      console.log('play in lottie')
+      animation?.current?.play();
+    },
+  }));
+
+  const onLikePressCallback = useCallback(() => {
+    onLikePress(); 
+    if (!isLiked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      animation?.current?.play(); // Assuming play() is the method to start the animation
+    }
+  }, [isLiked, onLikePress]);
+
+
+  
+ 
   const size = isEmbeddedFeed ? 20 : 45;
   
   return (
     <TouchableOpacity
-      onPress={onLikePress}>
+      onPress={onLikePressCallback}>
       <SvgXml
-          style={styles.iconShadow}
+        style={styles.iconShadow}
         width={size}
         height={size}
         xml={isLiked ? StarIconFilled : StarIcon}
-        />
-  
+      />
+            <View style={styles.animationContainer}>
+
+      <LottieView
+        ref={animation}
+        style={styles.starAnimation}
+        source={require('@assets/lottie/starExplode.json')}
+        autoPlay={false}
+        loop={false}
+      />
+        </View>
       <Text style={styles.actionButtonText}>
         {likes}
         </Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
   );
-};
+});
+StarIconView.displayName = 'StarIconView';
 
 const ChallengeMedalIcon: React.FC<{ isEmbeddedFeed: boolean }> = ({ isEmbeddedFeed }) => {
 
-  // const size = isEmbeddedFeed ? 20 : 45;
 const size = isEmbeddedFeed ? 20 : 45;
   return (
     <Image

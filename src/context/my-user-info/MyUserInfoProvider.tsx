@@ -199,7 +199,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 		try {
 
-			await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/delete/${state.username}/${planID}/${state.username}`);
+			await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/delete/${state.username}/${planID}`);
 
 			await fetchMyPlans();
 		

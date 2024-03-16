@@ -123,7 +123,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                         </Card.Image>
                               )}
                     <Card.Divider />
-              <ScrollView scrollEnabled={true} >
+              <ScrollView scrollEnabled={true}  >
     
                     <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", padding: 10}}>
                         <Text style={styles.cardDescription}>
