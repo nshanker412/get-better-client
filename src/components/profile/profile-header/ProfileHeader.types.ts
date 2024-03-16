@@ -16,7 +16,7 @@ export interface ProfileHeaderProps {
 	profileImage: string | null;
 	isMyProfile: boolean;
 	myUsername: string | null;
-	amIFollowing: boolean;
+	amIFollowing: boolean |undefined;
 	onLogout: null | (() => void);
 }
 

@@ -1,6 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ApiLoadingState } from '../../../types/types';
 import { ProfileHeader } from './ProfileHeader';
 import {
@@ -44,19 +44,53 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 		loadUserInfoState,
 		username: otherUsername,
 		userData,
-		setFollowStatus: onMotivatePress,
 	} = useOtherUserInfo();
 
-	const { username: myUsername } = useMyUserInfo();
+	const {
+		username: myUsername,
+		fetchIsFollowing,
+		updateFollowStatus,
+	} = useMyUserInfo();
+	const [isFollowing, setIsFollowing] = React.useState<boolean | undefined>(
+		undefined
+	);
+	const [isFollowingLoading, setIsFollowingLoading] = React.useState<boolean>(
+		false
+	);
 
-	const onMotivatePressCb = (): Promise<void>  => {
-		return	onMotivatePress(myUsername!);
-	};
+	useEffect(() => {
+		const fetchIsFollowingCb = async (otherUsername: string) => {
+			setIsFollowingLoading(true);
+			if (myUsername && otherUsername) {
+				try {
+					const isFollowing = await fetchIsFollowing(otherUsername);
+				
+					if (isFollowing !== undefined) {
+						setIsFollowing(isFollowing);
+					}
+
+				} catch (e) {
+					console.log('Error fetching isFollowing: ', e);
+				}
+			}
+			setIsFollowingLoading(false);
+			fetchIsFollowing
+		}
+		if (otherUsername) {
+			fetchIsFollowingCb(otherUsername);
+		}
+	}, [otherUsername]);
+
+	const onMotivatePressCb = useCallback((newFollowStatus: boolean) => {
+		if (myUsername && otherUsername) {
+			updateFollowStatus(otherUsername,newFollowStatus ? "follow" : "unfollow");
+		}
+	}, [myUsername, otherUsername]);
 
 	return (
 		<ProfileHeader
 			isMyProfile={false}
-			isLoading={loadUserInfoState === ApiLoadingState.Loading}
+			isLoading={isFollowingLoading}
 			userHandle={`@${otherUsername}`}
 			username={otherUsername}
 			bio={userData?.bio}
@@ -66,7 +100,7 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			followers={userData?.followers}
 			profileImage={userData?.profileImage}
 			myUsername={otherUsername}
-			amIFollowing={userData?.isFollowing}
+			amIFollowing={isFollowing}
 			onLogout={null}
 		/>
 	);

@@ -26,6 +26,9 @@ export interface MyUserInfoContextProps extends MyUserInfoState {
 	refreshMyUserInfo: () => void;
 	fetchMyPosts: () => Promise<void>;
 	deletePlan: (planID: string) => Promise<void>;
+	updateFollowStatus:  (userToFollowOrUnfollow: string, newFollowStatus: FollowStatus) => Promise<boolean |void>;
+	fetchIsFollowing: (username: string) => Promise<boolean | void>;
+	fetchSocialConnections: () => Promise<void>;
 	
 }
 
@@ -106,9 +109,28 @@ export const defaultContextValue: MyUserInfoContextProps = {
 	setMyUserInfo: async () => '',
 	fetchMyPlans: () => Promise.resolve(),
 	onLogout: async () => {},
-	setShownIntroPage: () => {},
+	setShownIntroPage: () => { },
+	fetchSocialConnections: () => Promise.resolve(),
 	deletePost: async () => {},
 	refreshMyUserInfo: () => {},
 	fetchMyPosts: async () => { },
 	deletePlan: async () => { },
+	updateFollowStatus: async () => { },
+	fetchIsFollowing: async () => false,
 };
+
+
+// API response types (move)
+export type FollowStatus = 'unfollow' | 'follow';
+export interface UpdateFollowForm {
+		newFollowStatus: FollowStatus;
+		usernameToFollowOrUnfollow: string;
+		myUsername: string;
+	}
+
+
+export interface UpdateFollowStatusResp {
+		isFollowing: boolean
+		myUsername: string,
+		userToFollowOrUnfollow: string,
+	}

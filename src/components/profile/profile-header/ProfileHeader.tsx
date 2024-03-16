@@ -8,7 +8,6 @@ import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import { ActionButton } from '../../primitives/action-button/ActionButton';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { ProfileHeaderProps } from './ProfileHeader.types';
@@ -31,16 +30,22 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
 	const profileHeaderStyles = useProfileHeaderStyles();
 	const navigation = useNavigation();
-
 	const { theme } = useThemeContext();
 
-	const [loadingMotivate, setLoadingMotivate] = useState(false);
+	const [isFollowing, setIsFollowing] = useState<boolean>(amIFollowing);
+	const [motivateButtonTitle, setMotivateButtonTitle] = useState<string>('');
+		
 
-	const onMotivatePressCb = async () => {
-		setLoadingMotivate(true);
-		await onMotivatePress!();
-		setLoadingMotivate(false);
+	const onToggleFollow = (newState: boolean) => {
+		console.log('Follow Pressed');
+		setIsFollowing(newState);
+		onMotivatePress!();
 	}
+	// const onMotivatePressCb = async () => {
+	// 	setLoadingMotivate(true);
+	// 	await onMotivatePress!();
+	// 	setLoadingMotivate(false);
+	// }
 
 
 
@@ -396,10 +401,13 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 						<View style={{ flex: 2 }}>
 						
 								<ButtonAsync
+									id={'challenge-button'}
 									loading={false}
+									gradientColor='gray'
+									isPrimary={true}
 									title={'Challenge'}
+									size='lg'
 									onPress={onOpenChallengeModal}
-							
 								/>
 						</View>
 
@@ -411,15 +419,17 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 							</View> */}
 						</View>
 						<View style={{ flex: 2 }}>
-								<ActionButton
-									loading={loadingMotivate}
-									defaultPressed={amIFollowing}
-									isPrimary={true}
-									onPress={onMotivatePressCb}
-									title={
-										!amIFollowing ? 'Motivate' : 'Motivating'
-									}
-							/>
+								<ButtonAsync
+									id={'follow-button'}
+									loading={isLoading}
+									gradientColor={'gray' }
+									disabled={isLoading}
+									isPrimary={!isFollowing}
+									size='lg'
+									type = {isFollowing ?  'outline' :'solid' }
+									title={isFollowing ?'Motivating' :  'Motivate' }
+									onPress={() => onToggleFollow(!isFollowing)}
+								/>
 							</View>
 							<View style={{flex: 1} }/>
 

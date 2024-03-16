@@ -26,35 +26,35 @@ export const blueDark = {
     gray11: 'rgba(0, 0, 0, 0.628)',
     gray12: 'rgba(0, 0, 0, 0.930)',
   }
-  // export const greenDark = {
-  //   green1: 'rgba(37, 79, 36, 0.074)',
-  //   green2: 'rgba(39, 112, 42, 0.084)',
-  //   green3: 'rgba(39, 116, 45, 0.109)',
-  //   green4: 'rgba(39, 123, 49, 0.129)',
-  //   green5: 'rgba(39, 126, 52, 0.149)',
-  //   green6: 'rgba(39, 130, 56, 0.176)',
-  //   green7: 'rgba(39, 135, 63, 0.218)',
-  //   green8: 'rgba(39, 140, 72, 0.284)',
-  //   green9: 'rgba(39, 140, 106, 0.415)',
-  //   green10: 'rgba(39, 125, 118, 0.465)',
-  //   green11: 'rgba(39, 127, 135, 0.532)',
-  //   green12: 'rgba(35, 183, 191, 0.940)',
-  // }
-
   export const greenDark = {
-    green1: 'rgba(8, 60, 0, 1)',
-    green2: 'rgba(9, 68, 0, 1)',
-    green3: 'rgba(11, 88, 0, 1)',
-    green4: 'rgba(13, 103, 0, 1)',
-    green5: 'rgba(16, 118, 0, 1)',
-    green6: 'rgba(19, 140, 0, 1)',
-    green7: 'rgba(23, 178, 0, 1)',
-    green8: 'rgba(30, 228, 0, 1)',
-    green9: 'rgba(43, 250, 0, 1)',
-    green10: 'rgba(47, 255, 0, 1)',
-    green11: 'rgba(54, 255, 0, 1)',
-    green12: 'rgba(87, 255, 0, 1)',
-  };
+    green1: 'rgba(37, 79, 36, 0.074)',
+    green2: 'rgba(39, 112, 42, 0.084)',
+    green3: 'rgba(39, 116, 45, 0.109)',
+    green4: 'rgba(39, 123, 49, 0.129)',
+    green5: 'rgba(39, 126, 52, 0.149)',
+    green6: 'rgba(39, 130, 56, 0.176)',
+    green7: 'rgba(39, 135, 63, 0.218)',
+    green8: 'rgba(39, 140, 72, 0.284)',
+    green9: 'rgba(39, 140, 106, 0.415)',
+    green10: 'rgba(39, 125, 118, 0.465)',
+    green11: 'rgba(39, 127, 135, 0.532)',
+    green12: 'rgba(35, 183, 191, 0.940)',
+  }
+
+  // export const greenDark = {
+  //   green1: 'rgba(8, 60, 0, 1)',
+  //   green2: 'rgba(9, 68, 0, 1)',
+  //   green3: 'rgba(11, 88, 0, 1)',
+  //   green4: 'rgba(13, 103, 0, 1)',
+  //   green5: 'rgba(16, 118, 0, 1)',
+  //   green6: 'rgba(19, 140, 0, 1)',
+  //   green7: 'rgba(23, 178, 0, 1)',
+  //   green8: 'rgba(30, 228, 0, 1)',
+  //   green9: 'rgba(43, 250, 0, 1)',
+  //   green10: 'rgba(47, 255, 0, 1)',
+  //   green11: 'rgba(54, 255, 0, 1)',
+  //   green12: 'rgba(87, 255, 0, 1)',
+  // };
   
   export const greenDarkMoreTranslucent = {
     green1: 'rgba(8, 60, 0, 0.02)',

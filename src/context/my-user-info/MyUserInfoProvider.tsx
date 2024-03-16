@@ -2,10 +2,10 @@ import { useAuth } from '@context/auth/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
-import React, { createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useCallback, useEffect, useReducer } from 'react';
 import Toast from 'react-native-toast-message';
 import { ApiLoadingState, UserData } from '../../types/types';
-import { defaultContextValue } from './MyUserInfo.types';
+import { FollowStatus, UpdateFollowForm, defaultContextValue } from './MyUserInfo.types';
 
 import {
 	MyUserInfoAction,
@@ -65,7 +65,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		initialMyUserInfoState,
 	);
 
-	const { userToken } = useAuth();	
+	const { userToken } = useAuth();
 
 	useEffect(() => {
 		const fetchUserInfo = async (token: string | null) => {
@@ -80,11 +80,11 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 						type: SET_LOAD_USER_INFO_STATE,
 						payload: { loadUserInfoState: ApiLoadingState.Error },
 					});
-						Toast.show({
-							type: 'error',
-							text1: `Hmm.. There seems to be an issue: ${userToken}`,
-							text2: 'Please try logging in again',
-						});
+					Toast.show({
+						type: 'error',
+						text1: `Hmm.. There seems to be an issue: ${userToken}`,
+						text2: 'Please try logging in again',
+					});
 					
 				}
 			
@@ -193,7 +193,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 	const deletePlan = async (planID: string) => {
 
-		if (!state.username || !planID ) {
+		if (!state.username || !planID) {
 			console.log('No username or planID provided');
 			return;
 		}
@@ -314,17 +314,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	const deletePost = async (postID: string): Promise<void> => {
 		//1. confirm the post exists and its my post
 
-		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`)
-		// await axios
-		// 	.get(
-		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
-		// 	)
-		// 	.then(async (response) => {
-		// 		console.log('it exsists', response.data);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log('trying to delete a post that does not exist');
-		// 	});
 
 		//2. delete the post
 		await axios
@@ -350,32 +339,6 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				refreshMyUserInfo();
 			});
 		
-			console.log('actually in deleting post', postID);
-
-
-
-		// //3. fetch to configm the post is deleted (may need to flush cache when configured)
-		// await axios
-		// 	.get(
-		// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/media/${state.username}/${postID}`,
-		// 	)
-		// 	.then(async (response) => {
-		// 		console.log('post deletion unsuccessful', response.data);
-		// 		Toast.show({
-		// 			type: 'error',
-		// 			text1: 'There was an issue deleting the post',
-		// 			text2: 'Please try again',
-		// 		});
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log('Post does not exist', error);
-		// 		Toast.show({
-		// 			type: 'success',
-		// 			text1: 'Post successfully deleted!',
-		// 		});
-		// 		return;
-		// 	});
-	
 	};
 
 	const fetchMyPosts = async (): Promise<void> => {
@@ -403,12 +366,95 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 	}
 
+	const fetchSocialConnections = async () => {
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/fetch/social/${state.username}`,
+			);
+			return response.data;
+		} catch (error) {
+			console.log('fetchSocial', error);
+		}
+	}
+
+
+	const fetchIsFollowing = async (amIFollowingThisPerson: string): Promise<boolean> => {
+		if (!state.username) {
+			console.log('No username provided');
+			return false;
+		}
+
+		if (amIFollowingThisPerson === state.username) {
+			return false;
+		}
+
+		console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isFollowing/${state.username}/${amIFollowingThisPerson}`)
+
+
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isFollowing/${state.username}/${amIFollowingThisPerson}`,
+			);
+			return response.data.isFollowing;
+		} catch (error) {
+			console.log('onCheckIfFollowing', error);
+			return false;
+		}
+	}
+
+
+	
+	const updateFollowStatus = useCallback(async (userToFollowOrUnfollow: string, newFollowStatus: FollowStatus): Promise<boolean | void> => {
+		if (!state.username) {
+			console.log('No username provided');
+			return;
+		}
+		try {
+			// create the form data
+			
+			const form: UpdateFollowForm = {
+				newFollowStatus: newFollowStatus,
+				usernameToFollowOrUnfollow: userToFollowOrUnfollow,
+				myUsername: state.username!
+			};
+
+			const formD = new FormData();
+			formD.append('newFollowStatus', newFollowStatus);
+			formD.append('usernameToFollowOrUnfollow', userToFollowOrUnfollow);
+
+			formD.append('myUsername', state.username!);
+	
+
+			console.log('updateFollowStatus', form);
+
+			const response = await axios.post(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/update/following`,
+				formD,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+			console.log('onChangeFollowStatus', response.data);
+
+			
+
+			return response.data?.isFollowing;
+		} catch (error) {
+			console.log('onChangeFollowStatus', error);
+		}
+	}, [state.username]);
+
 
 	const contextValue: MyUserInfoContextProps = {
 		...state,
 		setMyUserInfo,
 		onLogout,
+		fetchIsFollowing,
 		fetchMyPlans,
+		updateFollowStatus,
+		fetchSocialConnections,
 		refreshMyUserInfo,
 		deletePost,
 		setShownIntroPage,
