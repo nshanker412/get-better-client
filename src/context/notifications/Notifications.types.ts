@@ -3,7 +3,7 @@ import React from 'react';
 
 export interface NotificationContextType {
     /** GB service */
-    permissionsGranted: boolean;
+    permissionsGranted: boolean | undefined;
     initialized: boolean;
     unreadNum: number | undefined;
     notifications: NotificationModel[] | [];

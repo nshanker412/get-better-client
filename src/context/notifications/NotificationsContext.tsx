@@ -2,12 +2,17 @@ import { createContext } from 'react';
 import { NotificationContextType } from './Notifications.types';
 
 const defaultContextValue: NotificationContextType = {  
+    permissionsGranted: undefined,
+    initialized: false,
+    unreadNum:  undefined,
     notifications: [],
-    setNotifications: () => {},
-    pushNotification: () => {},
-    removeNotification: () => {},
-    clearNotifications: () => {},
-    };
+    lastReadTime:  undefined,
+    configureMyNotifications: () => {},
+    sendOutPushNotification: () => { },
+    removePushToken: () => Promise.resolve(),
+    refreshNotifications: () => Promise.resolve(),
+    setNotificationsSeen: () => Promise.resolve(),
+};
 
 
 /**

@@ -355,7 +355,6 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                         params: pushPacket.data?.params
                     },
                 }
-                console.log('actually sending payload', payload);    
                 await sendPushNotification(payload)
             
             } catch (e) {

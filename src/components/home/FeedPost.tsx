@@ -129,7 +129,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 				},
 			};
         
-			sendOutPushNotification(NotificationType.LIKED_POST, postData.user, pushNotifInfo);
+			sendOutPushNotification(postData.user, pushNotifInfo);
 		}
 		
 		refresh();
