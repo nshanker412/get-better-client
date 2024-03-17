@@ -11,6 +11,7 @@ import {
 	View,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { showErrorToast } from '../error/showErrorToast';
 import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useLoginStyles } from './login.styles';
@@ -29,25 +30,28 @@ export const SignIn: React.FC = () => {
 	const { theme } = useThemeContext();
 	const loginStyles = useLoginStyles();
 
-	const showErrorToast = (error) => {
-		console.log('this is error passed ot toast: ', error);
-		Toast.show({
-			text1: error,
-			type: 'error',
-			visibilityTime: 5000,
-			topOffset: 150,
-			autoHide: true,
-		});
-	};
+	// const showErrorToast = (error) => {
+	// 	console.log('this is error passed ot toast: ', error);
+	// 	Toast.show({
+	// 		text1: error,
+	// 		type: 'error',
+	// 		visibilityTime: 5000,
+	// 		topOffset: 150,
+	// 		autoHide: true,
+	// 	});
+	// };
 
 	const login = useCallback(async () => {
 		setLoading(true);
 		try {
 			await signIn(email, password);
 		} catch (error) {
-			console.log('error', error.message);
-			showErrorToast(error.message);
-			false;
+			if (error instanceof Error) {
+				console.log('error', error.message);
+				showErrorToast(error.message);
+			} else {
+				showErrorToast('Something went wrong');
+			}
 		} finally {
 			setLoading(false);
 		}

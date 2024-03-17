@@ -8,6 +8,7 @@ import {
 	redDarkMoreTranslucent,
 } from './colors_pastel';
 
+
 export const toastConfig = {
 	success: ({ text1, text2, props }) => (
 		<View

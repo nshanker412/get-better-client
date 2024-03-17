@@ -4,19 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import axios, { AxiosError } from 'axios';
 import React, { useCallback, useRef, useState } from 'react';
 import {
-    Keyboard,
-    KeyboardAvoidingView,
-    SafeAreaView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+	Keyboard,
+	KeyboardAvoidingView,
+	SafeAreaView,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useLoginStyles } from './login.styles';
+
+import { showErrorToast } from '../error/showErrorToast';
 
 interface RegisterData {
 	email: string;
@@ -49,18 +51,6 @@ export const Register: React.FC = () => {
 		navigate.navigate('SignIn');
 	};
 
-	const showErrorToast = (msg: string | undefined) => {
-		let message = msg ? msg : 'Something went wrong, please try again';
-		console.log('this is error passed ot toast: ', msg);
-		Toast.show({
-			type: 'error',
-			text1: 'Error',
-			text2: message,
-			visibilityTime: 3000,
-			topOffset: 80,
-			autoHide: true,
-		});
-	};
 
 	const registerUser = async (data: RegisterData): Promise<any> => {
 		try {
@@ -103,10 +93,9 @@ export const Register: React.FC = () => {
 	const attemptFbSignUp = async (email: string, password: string) => {
 		try {
 			await signupFb(email, password);
-		} catch (error) {
-			console.log('error', error);
-			if (error?.message) {
-				console.log(error.message);
+		} catch (error ) {
+			if (error instanceof Error) {
+				showErrorToast(error.message);
 			} else {
 				console.log('Firebase Error');
 			}
@@ -125,20 +114,29 @@ export const Register: React.FC = () => {
 	) => {
 		if (!email || !password || !name || !username) {
 			console.log('Please fill out all fields!');
+			showErrorToast('Please fill out all fields!');
 		}
 		if (!isValidEmail(email)) {
 			console.log('Please enter a valid email');
+			showErrorToast('Please fill out all fields!');
+
 		}
 
 		if (password.length < 6) {
 			console.log('Password must be at least 6 characters');
+			showErrorToast('Please fill out all fields!');
+
 		}
 
 		if (username.length < 5) {
 			console.log('Password must be at least 6 characters');
+			showErrorToast('Please fill out all fields!');
+
 		}
 		if (username.length > 20) {
 			console.log('Username must be less than 20 characters');
+			showErrorToast('Please fill out all fields!');
+
 		}
 	};
 
@@ -155,10 +153,11 @@ export const Register: React.FC = () => {
 			await attemptFbSignUp(email, password);
 			console.log('Successful register');
 		} catch (error) {
-			console.log('top level error', error);
-			if (error?.message) {
+			if (error instanceof Error) {
+				console.log('Error:', error.message);
 				showErrorToast(error.message);
-			} else {
+			}
+			 else {
 				showErrorToast('something went wrong, please try again');
 			}
 		} finally {

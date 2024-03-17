@@ -1,4 +1,4 @@
-
+import { FirebaseError } from "firebase/app";
 
 
     enum FIREBASE_AUTH_ERROR_CODES {
@@ -35,7 +35,6 @@
         INVALID_EMAIL = "auth/invalid-email",
         INVALID_EMULATOR_SCHEME = "auth/invalid-emulator-scheme",
         INVALID_IDP_RESPONSE = "auth/invalid-credential",
-        INVALID_LOGIN_CREDENTIALS = "auth/invalid-credential",
         INVALID_MESSAGE_PAYLOAD = "auth/invalid-message-payload",
         INVALID_MFA_SESSION = "auth/invalid-multi-factor-session",
         INVALID_OAUTH_CLIENT_ID = "auth/invalid-oauth-client-id",
@@ -112,23 +111,27 @@
 
 //write a function to parse the firebase errors
 
-export const firebaseErrorToMessage = (error: string): string => {
-    console.log("Firebase error", error)
-    //check if error is a firebase error
-        switch (error) {
-            case 'auth/invalid-email':
+export const firebaseErrorToMessage = (error: FirebaseError | string): string => {
+
+    if (error instanceof FirebaseError) {
+       
+        switch (error.code) {
+            case FIREBASE_AUTH_ERROR_CODES.INVALID_EMAIL:
                 return 'Invalid email or password.';
-            case 'auth/user-disabled':
+            case FIREBASE_AUTH_ERROR_CODES.USER_DISABLED:
                 return 'This user has been disabled. Please contact support.';
-            case 'auth/user-not-found':
+            case FIREBASE_AUTH_ERROR_CODES.USER_DELETED:
                 return 'No user found with this email.';
-            case 'auth/wrong-password':
-                return 'Incorrect password. Please try again.';
-            case 'auth/email-already-in-use':
-                return 'This email is already in use.';
-            case 'auth/weak-password':
+            case FIREBASE_AUTH_ERROR_CODES.WEAK_PASSWORD:
                 return 'The password is too weak.';
+            case FIREBASE_AUTH_ERROR_CODES.EMAIL_EXISTS:
+                return 'This email is already in use.';
+            case FIREBASE_AUTH_ERROR_CODES.INVALID_PASSWORD:
+                return 'Incorrect password. Please try again.';
             default:
                 return 'An unexpected error occurred.';
         }
+    } else {
+        return 'An unexpected error occurred.';
     }
+}

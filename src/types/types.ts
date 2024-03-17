@@ -38,7 +38,7 @@ export type Notification = {
 };
 
 export interface UserData {
-	bio: string | null;
+	bio: string | null | undefined;
 	challengesComplete: number | null;
 	consistency: number | null;
 	followers: number | null;

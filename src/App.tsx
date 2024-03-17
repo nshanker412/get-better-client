@@ -1,8 +1,10 @@
 import { AuthProvider } from '@context/auth/AuthProvider';
 import { ThemeContextProvider } from '@context/theme/ThemeContextProvider';
+import { toastConfig } from '@context/theme/toastConfig';
 import * as Sentry from '@sentry/react-native';
 import 'expo-dev-client';
 import React from 'react';
+import Toast from 'react-native-toast-message';
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -21,9 +23,12 @@ Sentry.init({
 
 const App = () => {
 	return (
-		<ThemeContextProvider>
+		<>
+			<ThemeContextProvider>
 			<AuthProvider routingInstrumentation={routingInstrumentation} />
-		</ThemeContextProvider>
+			</ThemeContextProvider>
+		<Toast config={toastConfig} />
+		</>
 	);
 };
 

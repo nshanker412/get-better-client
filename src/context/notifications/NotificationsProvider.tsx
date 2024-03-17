@@ -2,7 +2,7 @@ import { NotificationsResponseV2 } from '@models/notifications';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ExpoNotifications from 'expo-notifications';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { NotificationContext, NotificationTokenApiResponse, NotificationType, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
+import { NotificationContextType, NotificationTokenApiResponse, NotificationType, NotificationsProviderProps, PushNotificationInfoPacket, PushNotificationPacket } from './Notifications.types';
 import { NotificationsContext } from './NotificationsContext';
 import { fetchNotifications } from './utils/fetchNotifications';
 import { fetchTokens } from './utils/fetchTokens';
@@ -12,9 +12,7 @@ import { scheduleDailyNotification } from './utils/scheduleDailyNotification';
 import { sendPushNotification } from './utils/sendPushNotification';
 import { setNotificationsSeen as _setNotificationsSeen } from './utils/setNotificationsSeen';
 
-
-
-
+import { Notification as NotificationModel } from '@models/notifications';
 
 /**
  *  Notifications Provider 
@@ -30,7 +28,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const [permissions, setPermissions] = useState<boolean>(false);
     const [notificationsResponse, setNotificationsResponse] = useState<NotificationsResponseV2| null>(null);
     const [unreadNum, setUnreadNum] = useState<number | undefined>(undefined);
-    const [notifications, setNotifications] = useState<Notification[] | []>([])
+    const [notifications, setNotifications] = useState<NotificationModel[] | []>([])
     const [lastReadTime, setLastReadTime] = useState<number | undefined>(undefined);
 
     /** EXPO  */
@@ -146,7 +144,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const onNotificationReceived = (notification: ExpoNotifications.Notification) => {
         // setNotification(notification);
         console.log('Inbound Notification received', notification);
-        console.log('notification.request.content.data', notification.request.content.data);
+        console.log('notification.request.content.data', notification?.request?.content?.data);
         // TODO: Add animatied handling for this
         refreshNotifications();
 
@@ -351,7 +349,11 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                     sound: 'default',
                     title: pushPacket.title,
                     body: pushPacket.body,
-                    data: { path: pushPacket.data.path, params: pushPacket.data?.params },
+                    data: {
+                        type: NotificationType.LIKED_POST,
+                        path: pushPacket.data.path,
+                        params: pushPacket.data?.params
+                    },
                 }
                 console.log('actually sending payload', payload);    
                 await sendPushNotification(payload)
@@ -363,7 +365,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         })
     }
 
-    const contextValue: NotificationContext = useMemo(() => {
+    const memoContextValue: NotificationContextType = useMemo(() => {
         return {
             initialized,
             permissionsGranted: permissions,
@@ -379,8 +381,10 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     }, [initialized, permissions, unreadNum, lastReadTime, notifications, myUsername]);
 
 
+
+
 	return (
-			<NotificationsContext.Provider value={contextValue}>
+			<NotificationsContext.Provider value={memoContextValue}>
                 {children}
 			</NotificationsContext.Provider>
 	);

@@ -1,7 +1,16 @@
 import { createContext } from 'react';
-import { NotificationContext } from './Notifications.types';
+import { NotificationContextType } from './Notifications.types';
+
+const defaultContextValue: NotificationContextType = {  
+    notifications: [],
+    setNotifications: () => {},
+    pushNotification: () => {},
+    removeNotification: () => {},
+    clearNotifications: () => {},
+    };
+
 
 /**
  * Notifications Context
  */
-export const NotificationsContext = createContext<NotificationContext | undefined>(undefined);
+export const NotificationsContext = createContext<NotificationContextType>(defaultContextValue);

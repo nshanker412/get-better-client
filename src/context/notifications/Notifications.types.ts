@@ -1,15 +1,15 @@
-import { Notification } from '@models/notifications';
+import { Notification as NotificationModel } from '@models/notifications';
 import React from 'react';
 
-export interface NotificationContext {
+export interface NotificationContextType {
     /** GB service */
     permissionsGranted: boolean;
     initialized: boolean;
     unreadNum: number | undefined;
-    notifications: Notification[] | undefined;
+    notifications: NotificationModel[] | [];
     lastReadTime: number | undefined;
     configureMyNotifications: (myUsername: string) => void;
-    sendOutPushNotification: (recipient: string, PushNotificationPacket: PushNotificationInfoPacket) => void; // Non-blocking
+    sendOutPushNotification: ( recipient: string, PushNotificationPacket: PushNotificationInfoPacket) => void; // Non-blocking
     removePushToken: () => Promise<void>;
     refreshNotifications: (username: string) => Promise<void>;
     setNotificationsSeen: () => Promise<void>;
@@ -43,7 +43,7 @@ export interface PushNotificationPacket {
     title: string;
     body: string;
     data: {
-        type?: NotificationType,
+        type: NotificationType,
         path: string,
         params?: { [key: string]: string };
 

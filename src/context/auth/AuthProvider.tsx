@@ -1,17 +1,17 @@
 import { MyUserInfoProvider } from '@context/my-user-info/MyUserInfoProvider';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { FirebaseError } from 'firebase/app';
 import { User } from 'firebase/auth';
 import React, { useEffect, useReducer, useRef } from 'react';
-import Toast from 'react-native-toast-message';
 import { AuthStack } from '../../navigation/AuthStack';
 import { UnAuthStack } from '../../navigation/UnAuthStack';
 import { FirebaseService } from '../../service/firebase'; // Replace with the actual path to your Firebase service
-import { toastConfig } from '../theme/toastConfig';
 import { AuthContextProps } from './Auth.types';
 import { AuthContext } from './AuthContext';
 import { authenticationReducer, initialState } from './authReducer';
 import { firebaseErrorToMessage } from './firebaseErrorToMessage';
+
 
 import { InfinityAnimation } from '@components/animations/InfinityAnimation';
 
@@ -86,9 +86,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 				dispatch({ type: 'SIGN_IN', token: user.email });
 			}
 		} catch (err) {
-			console.log('firebase error handle', err, err.code);
-			const error = firebaseErrorToMessage(err?.code);
-			console.log(error);
+			if (err instanceof FirebaseError) {
+				const error = firebaseErrorToMessage(err);
+				console.log('firebase error handle', error);	
+				throw new Error(error);
+
+		
+			} else {
+				console.log('Non firebas error', err);
+			}
 		}
 	};
 
@@ -100,9 +106,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		try {
 			await firebaseService.sendPasswordResetEmailFb(email);
 		} catch (err) {
-			console.log('firebase  handle', err);
-			const error = firebaseErrorToMessage(err?.code);
-			console.log(error);
+			if (err instanceof FirebaseError) {
+				const error = firebaseErrorToMessage(err);
+				console.log('firebase error handle', error);
+				throw new Error(error);
+			} else {
+				console.log('Non firebas error', err);
+			}
+			
 		}
 	};
 
@@ -119,9 +130,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 				);
 			console.log(userCred);
 		} catch (err) {
-			console.log('firebase error handle', err);
-			const error = firebaseErrorToMessage(err?.code);
-			console.log(error);
+			if (err instanceof FirebaseError) {
+				const error = firebaseErrorToMessage(err);
+				console.log('useAuth(): signUp(): firebase error handle', err);
+				throw new Error(error);
+			} else {
+				console.log('Auth: signUp: Non firebas error', err);
+			}
 		}
 	};
 
@@ -130,9 +145,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			await firebaseService.signOutFb();
 			dispatch({ type: 'SIGN_OUT' });
 		} catch (err) {
-			console.log('firebase error handle', err);
-			const error = firebaseErrorToMessage(err?.code);
-			console.log(error);
+			if (err instanceof FirebaseError) {
+				const error = firebaseErrorToMessage(err);
+				console.log('firebase error handle', error);	
+				// throw new Error(error);
+			} else {
+				console.log('Non firebas error', err);
+			}
+	
 		}
 	};
 
@@ -151,7 +171,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 	}
 
 	return (
-		<>
+	
+
+
 			<AuthContext.Provider value={contextValue}>
 				<MyUserInfoProvider>
 					<NavigationContainer
@@ -183,7 +205,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 						</NavigationContainer>
 				</MyUserInfoProvider>
 			</AuthContext.Provider>
-			<Toast config={toastConfig} />
-		</>
 	);
 };
