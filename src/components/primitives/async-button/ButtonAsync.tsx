@@ -1,5 +1,6 @@
-import { darkPalette, grayDark } from '@context/theme/colors_neon';
+import { blue, darkPalette, grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
+import { AntDesign } from '@expo/vector-icons';
 import { Button } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo } from 'react';
@@ -8,6 +9,7 @@ import { LGColor, LGdirection, getLinearGradientProps } from './utils/getLinearG
 
 interface ButtonAsyncProps {
     id?: string;
+    icon?: string;
 	loading: boolean;
 	title: string;
     onPress: () => void;
@@ -30,6 +32,7 @@ export const ButtonAsync: React.FC<ButtonAsyncProps> = ({
     type,
     buttonStyle,
     textStyle,
+    icon,
     isPrimary = true,
     containerStyle,
     gradientDirection = "diagonalTR",
@@ -63,6 +66,9 @@ export const ButtonAsync: React.FC<ButtonAsyncProps> = ({
             type={type ?? 'solid'}
             size={size}
             radius={10}
+            iconPosition='left'
+            icon={icon === "edit" ? <AntDesign name="edit" size={15} color={blue.blue5} />:  null}
+            iconContainerStyle={{ marginRight: 10 }}
 			title={title}
 			/>
 	)

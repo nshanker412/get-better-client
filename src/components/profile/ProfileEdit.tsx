@@ -1,17 +1,21 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { grayDark, redDark } from '@context/theme/colors_neon';
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { Input } from '@rneui/base';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Text, View } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useProfileEditStyles } from './ProfileEdit.styles';
+
 
 export const ProfileEdit: React.FC = () =>  {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
@@ -44,9 +48,11 @@ export const ProfileEdit: React.FC = () =>  {
 
 	// fetch user info
 	useEffect(() => {
+		const fetchUser = async () => {
 		setLoading(true);
 		if (myUsername) {
-			axios
+	
+			await axios
 				.get(
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${myUsername}/${myUsername}/True`,
 				)
@@ -63,6 +69,8 @@ export const ProfileEdit: React.FC = () =>  {
 					console.log('fetchUserError', error);
 				});
 		}
+		}
+		fetchUser();
 	}, [myUsername]);
 
 	// convert image to base64 string
@@ -195,6 +203,7 @@ export const ProfileEdit: React.FC = () =>  {
 							{ alignItems: 'center', justifyContent: 'center' },
 						]}>
 						<ConnectedProfileAvatar
+							overrideImage={newProfileImage || oldProfileImage}
 							username={myUsername}
 							size={138}
 							onNavigateToProfile={() => {
@@ -210,82 +219,75 @@ export const ProfileEdit: React.FC = () =>  {
 						/>
 					</View>
 				</TouchableOpacity>
+
+
 				<View style={[profileEditStyles.inputContainer]}>
-					<Text style={profileEditStyles.inputText}>full name</Text>
-					<TextInput
-						style={profileEditStyles.input}
-						placeholder='full name'
-						textAlign='left'
+					<Input
+						containerStyle={{
+							width: '100%',
+							marginTop: 10,
+							padding:20
+						}}
+						style={{
+							textAlign: 'justify'
+						}}
+						placeholderTextColor={grayDark.gray12}
+						
+						labelStyle={{
+							color: grayDark.gray12,
+							fontFamily: fonts.inter.bold,
+						
+						}}
+						inputStyle={{
+							color: grayDark.gray12,
+							fontFamily: fonts.inter.light,
+							fontSize: 16
+						}}
+						label='full name'
+						placeholder='Jane Doe'
 						value={name}
 						onChangeText={setName}
+						maxLength={50}
+						keyboardAppearance='dark'
 					/>
 				</View>
-				<View
-					style={[
-						profileEditStyles.inputContainer,
-						profileEditStyles.lastInputContainer,
-					]}>
-					<Text style={profileEditStyles.inputText}>bio</Text>
-					<TextInput
-						style={[
-							profileEditStyles.input,
-							profileEditStyles.multiLineInput,
-						]}
-						placeholder='bio'
-						textAlign='left'
-						multiline={true}
-						numberOfLines={4}
+		
+				<View style={[profileEditStyles.inputContainer]}>
+					<Input
+						containerStyle={{
+							width: '100%',
+							marginTop: 10,
+							padding:20
+						}}
+						style={{
+							textAlign: 'justify'
+						}}
+						placeholderTextColor={grayDark.gray12}
+						
+						labelStyle={{
+							color: grayDark.gray12,
+							fontFamily: fonts.inter.bold,
+						
+						}}
+						inputStyle={{
+							color: grayDark.gray12,
+							fontFamily: fonts.inter.light,
+							fontSize: 16
+						}}
+						label='Bio'
+						placeholder='description about me'
 						value={bio}
 						onChangeText={setBio}
-						blurOnSubmit={true}
-						onSubmitEditing={() => Keyboard.dismiss()}
+						maxLength={200}
+						numberOfLines={4}
+						errorStyle={{ color: redDark.red10, borderRadius: 10, borderColor: redDark.red10}}
+						multiline={true}
+						keyboardAppearance='dark'
+
 					/>
 				</View>
 
-				
-				<View
-					style={[
-						profileEditStyles.inputContainer,
-						profileEditStyles.lastInputContainer,
-					]}>
-					<Text style={profileEditStyles.inputText}>Info box 1</Text>
-					<TextInput
-						style={[
-							profileEditStyles.input,
-							profileEditStyles.multiLineInput,
-						]}
-						placeholder='box1'
-						textAlign='left'
-						multiline={true}
-						numberOfLines={1}
-						// value={bio}
-						onChangeText={setBio}
-						blurOnSubmit={true}
-						onSubmitEditing={() => Keyboard.dismiss()}
-					/>
-				</View>
 
-				<View
-					style={[
-						profileEditStyles.inputContainer,
-						profileEditStyles.lastInputContainer,
-					]}>
-					<Text style={profileEditStyles.inputText}>bio</Text>
-					<TextInput
-						style={[
-							profileEditStyles.input,
-							profileEditStyles.multiLineInput,
-						]}
-						placeholder='enter box2'
-						textAlign='left'
-						multiline={true}
-						numberOfLines={1}
-						// value={bio}
-						onChangeText={setBio}
-						blurOnSubmit={true}
-						onSubmitEditing={() => Keyboard.dismiss()}
-					/>
-				</View>
 
 				<Text>{errorMessage}</Text>
 				<TouchableOpacity

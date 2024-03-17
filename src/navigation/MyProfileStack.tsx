@@ -46,7 +46,11 @@ export const MyProfileStack = ({navigation}) => {
 					component={Profile}
 					initialParams={{ profileUsername: username }}
 			/>
-			<ProfileStackNav.Screen
+				<ProfileStackNav.Screen
+			
+					options={{
+						presentation: 'modal',
+					}}
 				name='profileEdit'
 					component={ProfileEdit}
 				

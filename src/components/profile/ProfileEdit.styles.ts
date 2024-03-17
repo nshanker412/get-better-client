@@ -49,8 +49,9 @@ export const useProfileEditStyles = () => {
 
 		inputContainer: {
 			// ...theme.innerContainer,
-			backgroundColor: theme.innerContainer.backgroundColor,
+			// backgroundColor: theme.innerContainer.backgroundColor,
 			borderRadius: 5,
+			
 
 			width: '90%',
 			display: 'flex',
@@ -58,6 +59,7 @@ export const useProfileEditStyles = () => {
 			justifyContent: 'flex-start',
 			alignItems: 'center',
 			borderTopWidth: 1,
+		
 			marginBottom: 10,
 		},
 

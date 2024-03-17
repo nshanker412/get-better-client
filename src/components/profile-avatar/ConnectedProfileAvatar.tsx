@@ -11,6 +11,7 @@ import useProfileImage from './hooks/useProfileImage';
  * Details:
  */
 export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
+	overrideImage,
 	username,
 	fetchSize = 200,
 	size = 40,
@@ -50,7 +51,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 				username={username}
 				size={size}
 				onError={onErrorCallback}
-				imgSrc={profileImage}
+				imgSrc={overrideImage??profileImage}
 				hasProfileImage={hasProfileImage}
 				priority={priority}
 			/>

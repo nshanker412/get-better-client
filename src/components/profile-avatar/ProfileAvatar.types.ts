@@ -3,6 +3,7 @@ import { ImageErrorEventData, ImageSource } from 'expo-image';
 export interface ConnectedProfileAvatarProps {
 	username: string;
 	fetchSize?: number;
+	overrideImage?: ImageSource;
 	size?: number;
 	onNavigateToProfile?: null | (() => void);
 	priority?: 'low' | 'normal' | 'high';

@@ -1,4 +1,6 @@
-import { grayDark } from '@context/theme/colors_neon';
+import { ButtonAsync } from '@components/primitives/async-button/ButtonAsync';
+import { blue, grayDark } from '@context/theme/colors_neon';
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +13,7 @@ import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAva
 import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { MyProfileHeaderProps } from './ProfileHeader.types';
 import { handleSocialPress } from './utils/handleSocialPress';
+
 
 export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	isLoading,
@@ -26,8 +29,9 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	const { theme } = useThemeContext();
 	const profileHeaderStyles = useProfileHeaderStyles();
 
-
-
+	const onPressEditProfile = () => {
+		navigation.navigate('profileEdit');
+	}
 
     const onSocialPress = async (screen: 'Followers' | 'Following') => {
         handleSocialPress(
@@ -61,6 +65,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 								justifyContent: 'flex-start',
 								padding: 5,
 							}}>
+					
 							<TouchableOpacity onPress={onLogout}>
 								<MaterialIcons
 									name='logout'
@@ -68,6 +73,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 									color={"white"}
 								/>
 							</TouchableOpacity>
+							
 						</View>
 					</View>
 
@@ -119,13 +125,48 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 										}}></LinearGradient>
 										
 								
-								<View style={{ flex: 1, width: '100%' }}>
+								<View style={{ flex: 1, width: '100%', gap: 10 }}>
 									<Text
 										style={
 											profileHeaderStyles.userHandleStyle
 										}>
 										{userHandle}
-									</Text>
+										</Text>
+										<View style={{alignItems:"center", justifyContent:"center"}}>
+										<ButtonAsync
+								onPress={onPressEditProfile}
+								title='edit'
+								size='sm'
+								type='outline'
+								icon='edit'
+								loading={false}
+								loadingColor='white'
+								loadingSize='small'
+								loadingStyle={{ marginRight: 5 }}
+								style={{
+									backgroundColor: 'transparent',
+									borderWidth: 0,
+									padding: 0,
+									margin: 0,
+									marginTop: 0
+
+								}}
+								containerStyle={{
+									backgroundColor: 'transparent',
+									borderWidth: 0,
+									padding: 0,
+									margin: 0,
+									marginTop: 0
+								}
+								}
+								textStyle={{
+									color: blue.blue5,
+									fontSize: 12,
+									fontFamily: fonts.inter.bold,
+									fontWeight: 'bold',
+								}}
+							/>
+											</View>
 								</View>
 
 								<ConnectedProfileAvatar
