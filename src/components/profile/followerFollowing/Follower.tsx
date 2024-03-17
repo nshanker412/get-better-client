@@ -1,6 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { TabActions, useRoute } from '@react-navigation/native';
+import { TabActions } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
@@ -9,12 +9,9 @@ import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useSearchStyles } from './search.styles';
 
-export const Follower = ({ navigation }) => {
-	const route = useRoute();
+export const Follower = ({ route, navigation }) => {
 
 	const profileUsername = route.params?.profileUsername;
-
-	// const navigation = useNavigation();
 	const { username: myUsername } = useMyUserInfo();
 	const { theme } = useThemeContext();
 
@@ -58,11 +55,12 @@ export const Follower = ({ navigation }) => {
 
 	const onPressProfile = (username: string) => {
 		if (!username) return;
-		if (username === myUsername) {
+		if (username === myUsername && (profileUsername !== myUsername)) {
 			navigation.dispatch(TabActions.jumpTo('myProfile'));
 		}
 
-		navigation.navigate('profile', { profileUsername: username })
+		navigation.dispatch(navigation.navigate('profile', { profileUsername: username }))
+		
 		
 	};
 

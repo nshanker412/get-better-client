@@ -11,6 +11,7 @@ export function FollowerFollowingTab() {
 	const route = useRoute();
 	const navigation = useNavigation();
 	const { theme } = useThemeContext();
+	
 	const uname = route?.params?.profileUsername;
 	const followerCount = route?.params?.followers;
 	const followingCount = route?.params?.following;
@@ -19,7 +20,6 @@ export function FollowerFollowingTab() {
 		navigation.setOptions({ title: `@${uname}`, headerShown: true, headerBackTitle: 'back'});
 	}, [uname]);
 
-	const initroute = route?.params?.initial;
 
 	/**
 	 * Todo: add text hygene to follower count
@@ -28,7 +28,6 @@ export function FollowerFollowingTab() {
 
 	return (
 		<Tab.Navigator
-			initialRouteName={initroute}
 			screenOptions={{
 				tabBarLabelStyle: {
 					fontSize: 15,
@@ -44,10 +43,11 @@ export function FollowerFollowingTab() {
 				name='Following'
 				component={Following}
 				options={{
-					tabBarLabel: followerCount
-						? `Motivators (${followerCount})`
-						: 'Motivators',
+					tabBarLabel: followingCount
+						? `Motivating (${followingCount})`
+						: 'Motivating',
 				}}
+			
 				initialParams={{ profileUsername: uname }}
 			/>
 			<Tab.Screen
@@ -55,8 +55,8 @@ export function FollowerFollowingTab() {
 				component={Follower}
 				options={{
 					tabBarLabel: followerCount
-						? `Motivating (${followingCount})`
-						: 'Motivating',
+						? `Motivators (${followerCount})`
+						: 'Motivators',
 				}}
 				initialParams={{ profileUsername: uname }}
 			/>

@@ -10,12 +10,9 @@ export interface OtherUserInfoProviderProps {
 export type OtherUserInfoState = {
 	loadUserInfoState: ApiLoadingState;
 	username: string | null;
-	myUsername: string | null;
-	userData: UserData | null;
+	otherUserData: UserData | null;
 	loadPlansState: ApiLoadingState;
-	loadFollowStatusState: ApiLoadingState;
-	loadChallengeUserState: ApiLoadingState;
-	plans: Array<any> | null;
+	plans: Array<any> | [];
 	posts: Post[] | [];
 };
 
@@ -51,7 +48,7 @@ export interface SetUserInfoAction {
 	type: typeof SET_USER_INFO;
 	payload: {
 		username: string | null;
-		userData: UserData;
+		otherUserData: UserData;
 	};
 }
 
@@ -71,13 +68,9 @@ export interface SetLoadUserPlansStateAction {
 
 export interface SetFollowStatusAction {
 	type: typeof SET_FOLLOW_STATUS;
-	payload: { followers: number };
+	payload: { followers: number, following: number};
 }
 
-export interface SetLoadFollowStatusState {
-	type: typeof SET_LOAD_FOLLOW_STATUS_STATE;
-	payload: { loadFollowStatusState: ApiLoadingState };
-}
 
 export interface SetLoadChallengeUserState {
 	type: typeof SET_LOAD_CHALLENGE_USER_STATE;
@@ -95,19 +88,15 @@ export type OtherUserInfoAction =
 	| SetLoadUserInfoStateAction
 	| SetLoadUserPlansStateAction
 	| SetFollowStatusAction
-	| SetLoadFollowStatusState
 	| SetLoadChallengeUserState
 	| SetPostsAction;
 
 export const initialOtherUserInfoState: OtherUserInfoState = {
 	loadUserInfoState: ApiLoadingState.Idle,
 	loadPlansState: ApiLoadingState.Idle,
-	loadFollowStatusState: ApiLoadingState.Idle,
-	loadChallengeUserState: ApiLoadingState.Idle,
-	myUsername: null,
 	username: null,
-	userData: null,
-	plans: null,
+	otherUserData: null,
+	plans: [],
 	posts: []
 };
 

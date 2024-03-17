@@ -21,7 +21,7 @@ export const MyProfileStack = ({navigation}) => {
 			initialRouteName='myProfile'
 			screenOptions={{
 				headerShown: true,
-				headerTintColor: 'white',
+				// headerTintColor: 'white',
 				headerTitle: '',
 				headerTitleStyle: false,
 

@@ -2,7 +2,7 @@ import { Post } from '@models/posts';
 
 export interface ProfileProviderProps {
     isMyProfile: boolean | undefined;
-  
+    profileUsername: string;
     children: React.ReactNode;
 }
 

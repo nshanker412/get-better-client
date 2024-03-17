@@ -7,15 +7,49 @@ import { ProfileProviderProps } from './ProfileContext.types';
 
 
 
-export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMyProfile }) => {
-    const [isMine, setIsMine] = useState(isMyProfile);  
+export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMyProfile , profileUsername}) => {
     // const useProfile = isMyProfile ? useMyUserInfo : useOtherUserInfo;
-    const { username: myUsername, fetchMyPlans, fetchMyPosts, plans: myPlans, posts: myPosts} = useMyUserInfo();
-    const { username: otherUsername, fetchUserPlans, fetchUserPosts, plans: otherPlans, posts: otherPosts} = useOtherUserInfo();
+    const {
+        username: myUsername,
+        fetchMyPlans,
+        fetchMyPosts,
+        plans: myPlans,
+        posts: myPosts
+    } = useMyUserInfo();
+
+    const [isMine, setIsMine] = useState(isMyProfile);
+
+
+    const {
+        username: otherUsername,
+        fetchUserPlans,
+        fetchUserPosts,
+        plans: otherPlans,
+        posts: otherPosts
+    } = useOtherUserInfo();
+    
+
+
+
+
+    /**
+     * Header shit
+     */
+
+
 
     useEffect(() => {
-        setIsMine(isMyProfile);
-    }, [isMyProfile])
+
+        if (profileUsername === "undefined") {
+            setIsMine(true)
+        } else {
+            setIsMine(profileUsername === myUsername);
+        } 
+    }, [profileUsername])
+
+    /**
+     * Body shit
+     */
 
     useEffect(() => {
         console.log("ProfileProvider: ", isMine, myUsername, otherUsername)

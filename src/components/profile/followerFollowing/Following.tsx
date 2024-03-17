@@ -1,6 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { TabActions, useRoute } from '@react-navigation/native';
+import { TabActions } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
@@ -9,12 +9,13 @@ import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useSearchStyles } from './search.styles';
 
-export const Following = ({ navigation }) => {
-	const route = useRoute();
-	const profileUsername = route.params?.profileUsername;
+export const Following = ({ route, navigation }) => {
 	// const navigation = useNavigation();
 	const { username: myUsername } = useMyUserInfo();
-	const { theme } = useThemeContext();
+	const { theme } = useThemeContext();	
+	const profileUsername = route.params?.profileUsername;
+	const followers = route.params?.followers;
+	const following = route.params?.following;
 
 	const searchStyles = useSearchStyles();
 
@@ -34,9 +35,9 @@ export const Following = ({ navigation }) => {
 				);
 
 				setProfiles(response.data.profiles);
-				console.log('profile followers', response.data.profiles);
+				console.log('profile Following', response.data.profiles);
 			} catch (error) {
-				console.log('profile followers', error);
+				console.log('profile Following', error);
 			} finally {
 				setLoading(false);
 			}
@@ -56,7 +57,7 @@ export const Following = ({ navigation }) => {
 
 	const onPressProfile = (username: string) => {
 		if (!username) return;
-		if (username === myUsername) {
+		if (username === myUsername && !(profileUsername === myUsername)) {
 			navigation.dispatch(
 				TabActions.jumpTo('myProfile', { name: 'MyProfile' }),
 			);

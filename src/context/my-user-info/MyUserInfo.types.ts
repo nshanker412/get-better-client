@@ -116,7 +116,8 @@ export const defaultContextValue: MyUserInfoContextProps = {
 	fetchMyPosts: async () => { },
 	deletePlan: async () => { },
 	updateFollowStatus: async () => { },
-	fetchIsFollowing: async () => false,
+	fetchIsFollowing: async () => { }
+
 };
 
 

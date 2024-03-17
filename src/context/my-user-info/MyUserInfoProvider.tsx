@@ -124,7 +124,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			// await scheduleDailyNotification();
 
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${username}/${username}/True`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${username}/${username}/False`,
 			);
 			const myData: UserData = userDataResponse.data;
 
@@ -388,12 +388,12 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			return false;
 		}
 
-		console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isFollowing/${state.username}/${amIFollowingThisPerson}`)
+		console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isfollowing/${state.username}/${amIFollowingThisPerson}`)
 
 
 		try {
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isFollowing/${state.username}/${amIFollowingThisPerson}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isfollowing/${state.username}/${amIFollowingThisPerson}`,
 			);
 			return response.data.isFollowing;
 		} catch (error) {

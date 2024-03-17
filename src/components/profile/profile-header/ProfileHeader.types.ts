@@ -4,7 +4,7 @@ export interface ConnectedProfileHeaderProps {
 	onOpenChallengeModal?: () => void;
 }
 
-export interface ProfileHeaderProps {
+export interface OtherProfileHeaderProps {
 	isLoading: boolean;
 	userHandle: string | null;
 	username: string | null;
@@ -13,16 +13,29 @@ export interface ProfileHeaderProps {
 	onMotivatePress: (() => Promise<void>) | null;
 	followers: number | null;
 	following: number | null;
+	myUsername: string | null;
+	amIFollowing: boolean |undefined;
+}
+
+
+
+export interface MyProfileHeaderProps {
+	isLoading: boolean;
+	userHandle: string | null;
+	username: string | null;
+	bio: string | null;
+	followers: number | null;
+	following: number | null;
 	profileImage: string | null;
-	isMyProfile: boolean;
 	myUsername: string | null;
 	amIFollowing: boolean |undefined;
 	onLogout: null | (() => void);
 }
 
-export interface MyProfileHeaderProps {
+
+export interface MyProfileHeaderConnectedProps {
 	onOpenLogoutModal: () => void;
 }
-export interface OtherProfileHeaderProps {
+export interface OtherProfileHeaderConnectedProps {
 	onOpenChallengeModal: () => void;
 }

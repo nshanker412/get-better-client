@@ -2,24 +2,25 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
 import React, { useCallback, useEffect } from 'react';
 import { ApiLoadingState } from '../../../types/types';
-import { ProfileHeader } from './ProfileHeader';
+import { MyProfileHeader } from './MyProfileHeader';
+import { OtherProfileHeader } from './OtherProfileHeader';
 import {
 	ConnectedProfileHeaderProps,
-	MyProfileHeaderProps,
-	OtherProfileHeaderProps,
+	MyProfileHeaderConnectedProps,
+	OtherProfileHeaderConnectedProps
 } from './ProfileHeader.types';
 
 /**
  * Connected ProfileHeader Component
  * Details:
  */
-const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
+const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 	onOpenLogoutModal,
 }) => {
 	const { loadUserInfoState, username: myUsername, myData } = useMyUserInfo();
 
 	return (
-		<ProfileHeader
+		<MyProfileHeader
 			isMyProfile={true}
 			isLoading={loadUserInfoState === ApiLoadingState.Loading}
 			userHandle={`@${myUsername}`}
@@ -37,13 +38,14 @@ const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	);
 };
 
-const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
+const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps> = ({
 	onOpenChallengeModal,
 }) => {
 	const {
 		loadUserInfoState,
 		username: otherUsername,
-		userData,
+
+		otherUserData,
 	} = useOtherUserInfo();
 
 	const {
@@ -51,6 +53,8 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 		fetchIsFollowing,
 		updateFollowStatus,
 	} = useMyUserInfo();
+
+
 	const [isFollowing, setIsFollowing] = React.useState<boolean | undefined>(
 		undefined
 	);
@@ -74,7 +78,6 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 				}
 			}
 			setIsFollowingLoading(false);
-			fetchIsFollowing
 		}
 		if (otherUsername) {
 			fetchIsFollowingCb(otherUsername);
@@ -88,17 +91,16 @@ const OtherUserProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	}, [myUsername, otherUsername]);
 
 	return (
-		<ProfileHeader
-			isMyProfile={false}
-			isLoading={isFollowingLoading}
+		<OtherProfileHeader
+			isLoading={loadUserInfoState === ApiLoadingState.Loading}
 			userHandle={`@${otherUsername}`}
 			username={otherUsername}
-			bio={userData?.bio}
+			bio={otherUserData?.bio}
 			onOpenChallengeModal={onOpenChallengeModal}
 			onMotivatePress={onMotivatePressCb}
-			following={userData?.following}
-			followers={userData?.followers}
-			profileImage={userData?.profileImage}
+			following={otherUserData?.following}
+			followers={otherUserData?.followers}
+			profileImage={otherUserData?.profileImage}
 			myUsername={otherUsername}
 			amIFollowing={isFollowing}
 			onLogout={null}
@@ -112,8 +114,8 @@ export const ConnectedProfileHeader: React.FC<ConnectedProfileHeaderProps> = ({
 	onOpenChallengeModal,
 }) => {
 	return isMyProfile ? (
-		<MyProfileHeader onOpenLogoutModal={onOpenLogoutModal!} />
+		<MyProfileHeaderConnected onOpenLogoutModal={onOpenLogoutModal!} />
 	) : (
-		<OtherUserProfileHeader onOpenChallengeModal={onOpenChallengeModal!} />
+		<OtherUserProfileHeaderConnected onOpenChallengeModal={onOpenChallengeModal!} />
 	);
 };

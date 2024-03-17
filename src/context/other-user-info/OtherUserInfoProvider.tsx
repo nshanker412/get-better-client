@@ -7,8 +7,7 @@ import axios from 'axios';
 import React, {
 	createContext,
 	useCallback,
-	useEffect,
-	useReducer,
+	useReducer
 } from 'react';
 import {
 	OtherUserInfoAction,
@@ -18,14 +17,13 @@ import {
 	RESET_USER_INFO,
 	SET_FOLLOW_STATUS,
 	SET_LOAD_CHALLENGE_USER_STATE,
-	SET_LOAD_FOLLOW_STATUS_STATE,
 	SET_LOAD_USER_INFO_STATE,
 	SET_LOAD_USER_PLANS_STATE,
 	SET_POSTS,
 	SET_USER_INFO,
 	SET_USER_PLANS,
 	defaultContextValue,
-	initialOtherUserInfoState,
+	initialOtherUserInfoState
 } from './OtherUserInfo.types';
 
 
@@ -44,7 +42,7 @@ const otherUserInfoReducer = (
 		case SET_USER_INFO:
 			return {
 				...state,
-				userData: action.payload.userData,
+				otherUserData: action.payload.otherUserData,
 				username: action.payload.username,
 			};
 		case SET_LOAD_USER_PLANS_STATE:
@@ -55,21 +53,11 @@ const otherUserInfoReducer = (
 		case SET_FOLLOW_STATUS:
 			return {
 				...state,
-				userData: {
-					...state.userData,
+				otherUserData: {
+					...state.otherUserData,
 					followers: action.payload.followers,
+					following: action.payload.following,
 				},
-			};
-		case SET_LOAD_FOLLOW_STATUS_STATE:
-			return {
-				...state,
-				loadFollowStatusState: action.payload.loadFollowStatusState,
-			};
-
-		case SET_LOAD_CHALLENGE_USER_STATE:
-			return {
-				...state,
-				loadChallengeUserState: action.payload.loadChallengeUserState,
 			};
 		case SET_POSTS:
 			return {
@@ -103,7 +91,6 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 	const [state, dispatch] = useReducer(otherUserInfoReducer, {
 		...initialOtherUserInfoState,
 		username: otherProfileUsername,
-		myUsername: myUsername,
 		posts: [],
 		plans: [],
 	});
@@ -111,24 +98,25 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 	/**
 	 * Initializes the OtherUserInfo after the user logs in
 	 */
-	const setOtherUserInfo = useCallback(
-		async (myUsername: string, otherProfileUsername: string) => {
+	const setOtherUserInfo = useCallback(async () => {
 			dispatch({
 				type: SET_LOAD_USER_INFO_STATE,
 				payload: { loadUserInfoState: ApiLoadingState.Loading },
 			});
 
 			try {
+				console.log('fetching user info:', otherProfileUsername, myUsername);
 				const userDataResponse = await axios.get<UserData>(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${otherProfileUsername}/${myUsername}/True`,
+
 				);
-				const userData: UserData = userDataResponse.data;
+				const otherUserData: UserData = userDataResponse.data;
+
 
 				// Dispatch SET_USER_INFO action with fetched data
 				dispatch({
 					type: SET_USER_INFO,
 					payload: {
-						userData: userData,
+						otherUserData: otherUserData,
 						username: otherProfileUsername,
 					},
 				});
@@ -145,15 +133,8 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 					payload: { loadUserInfoState: ApiLoadingState.Loaded },
 				});
 			}
-		},
-		[state.username],
-	);
+		}, [otherProfileUsername, myUsername]);
 
-	useEffect(() => {
-		setOtherUserInfo(myUsername, otherProfileUsername);
-		// nullify state on unmount
-		return () => dispatch({ type: RESET_USER_INFO });
-	}, [myUsername, otherProfileUsername]);
 
 	const fetchUserPlans = useCallback(async () => {
 		try {
@@ -181,50 +162,45 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 	}, [state.username]);
 
-	const setFollowStatus = async (myUsername?: string) => {
+	const setFollowStatus = async () => {
 		if (!state.username || !myUsername) {
 			console.log(
 				'ERROR Setting follow status: no profile username or myUsername provided',
 			);
 			return;
 		}
-		console.log('setFollowStatus', state.username, state.myUsername);
 
-		const previouslyFollowing = state.userData?.isFollowing;
+		const previouslyFollowing = state.otherUserData?.isFollowing;
 
 		console.log(
 			'setFollowStatus',
 			state.username,
-			state.myUsername,
 			previouslyFollowing,
 		);
-		dispatch({
-			type: SET_LOAD_FOLLOW_STATUS_STATE,
-			payload: { loadFollowStatusState: ApiLoadingState.Loading },
-		});
+	
 
 		try {
-			const followers = (
-				await axios.post(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/follow`,
-					{
-						following: !previouslyFollowing,
-						recievingUser: state.username,
-						sendingUser: myUsername,
-					},
-				)
-			).data.followers;
+			const ff = await axios.post(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/follow`,
+				{
+					following: !previouslyFollowing,
+					recievingUser: state.username,
+					sendingUser: myUsername,
+				},
+			);
+			const followers = ff.data.followers;
+			const following = ff.data.following;
 
 			dispatch({
 				type: SET_FOLLOW_STATUS,
-				payload: { followers: followers },
+				payload: { followers: followers, following: following},
 			});
 		} catch (error) {
 			console.error('setFollowStatusError', error);
 			return;
 		}
 
-		if (!previouslyFollowing) {
+		if (!previouslyFollowing && myUsername !== otherProfileUsername) {
 
 			try {
 				const notifPacket: PushNotificationInfoPacket = {
@@ -246,10 +222,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 			}
 		}
 
-		dispatch({
-			type: SET_LOAD_FOLLOW_STATUS_STATE,
-			payload: { loadFollowStatusState: ApiLoadingState.Loaded },
-		});
+
 	};
 
 	/**
@@ -379,7 +352,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 
 	const contextValue: OtherUserInfoContextProps = {
 		...state,
-		userData: state.userData,
+		otherUserData: state.otherUserData,
 		plans: state.plans,
 
 		setOtherUserInfo,
