@@ -1,5 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
+import { UserFollowProvider } from '@context/user-follow/UserFollowProvider';
 import React, { useCallback, useEffect } from 'react';
 import { ApiLoadingState } from '../../../types/types';
 import { MyProfileHeader } from './MyProfileHeader';
@@ -20,6 +21,8 @@ const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 	const { loadUserInfoState, username: myUsername, myData } = useMyUserInfo();
 
 	return (
+		<UserFollowProvider key="username-Provider" username={ myUsername ?? undefined}>
+
 		<MyProfileHeader
 			isMyProfile={true}
 			isLoading={loadUserInfoState === ApiLoadingState.Loading}
@@ -34,7 +37,9 @@ const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 			myUsername={myUsername}
 			amIFollowing={false}
 			onLogout={onOpenLogoutModal}
-		/>
+			/>
+		</UserFollowProvider>
+
 	);
 };
 
@@ -44,20 +49,17 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 	const {
 		loadUserInfoState,
 		username: otherUsername,
-
+		setFollowStatus,
 		otherUserData,
 	} = useOtherUserInfo();
 
 	const {
 		username: myUsername,
+		 myData,
 		fetchIsFollowing,
-		updateFollowStatus,
+		
 	} = useMyUserInfo();
 
-
-	const [isFollowing, setIsFollowing] = React.useState<boolean | undefined>(
-		undefined
-	);
 	const [isFollowingLoading, setIsFollowingLoading] = React.useState<boolean>(
 		false
 	);
@@ -69,9 +71,9 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 				try {
 					const isFollowing = await fetchIsFollowing(otherUsername);
 				
-					if (isFollowing !== undefined) {
-						setIsFollowing(isFollowing);
-					}
+					// if (isFollowing !== undefined) {
+					// 	setIsFollowing(isFollowing);
+					// }
 
 				} catch (e) {
 					console.log('Error fetching isFollowing: ', e);
@@ -84,15 +86,18 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 		}
 	}, [otherUsername]);
 
-	const onMotivatePressCb = useCallback((newFollowStatus: boolean) => {
-		if (myUsername && otherUsername) {
-			updateFollowStatus(otherUsername,newFollowStatus ? "follow" : "unfollow");
-		}
-	}, [myUsername, otherUsername]);
+	const onMotivatePressCb = useCallback(async() => {
+		setIsFollowingLoading(true);
+		await setFollowStatus();
+		setIsFollowingLoading(false);
+		
+	}, [myUsername, otherUsername, myData?.isFollowing, setFollowStatus]);
 
 	return (
+		<UserFollowProvider key="other-profile-context" username={ otherUsername}>
+
 		<OtherProfileHeader
-			isLoading={loadUserInfoState === ApiLoadingState.Loading}
+				isLoading={loadUserInfoState === ApiLoadingState.Loading}
 			userHandle={`@${otherUsername}`}
 			username={otherUsername}
 			bio={otherUserData?.bio}
@@ -102,9 +107,10 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 			followers={otherUserData?.followers}
 			profileImage={otherUserData?.profileImage}
 			myUsername={otherUsername}
-			amIFollowing={isFollowing}
+			amIFollowing={otherUserData?.isFollowing}
 			onLogout={null}
-		/>
+			/>
+			</UserFollowProvider>
 	);
 };
 
@@ -114,8 +120,12 @@ export const ConnectedProfileHeader: React.FC<ConnectedProfileHeaderProps> = ({
 	onOpenChallengeModal,
 }) => {
 	return isMyProfile ? (
-		<MyProfileHeaderConnected onOpenLogoutModal={onOpenLogoutModal!} />
-	) : (
-		<OtherUserProfileHeaderConnected onOpenChallengeModal={onOpenChallengeModal!} />
-	);
+			<MyProfileHeaderConnected onOpenLogoutModal={onOpenLogoutModal!} />
+		) : (
+			<OtherUserProfileHeaderConnected onOpenChallengeModal={onOpenChallengeModal!} />
+		)
+					
+			
+			
+
 };

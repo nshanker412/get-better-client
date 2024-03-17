@@ -4,6 +4,7 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { NotificationsProvider } from '@context/notifications/NotificationsProvider';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { View } from 'react-native';
 import { MainScreen } from '../navigation/MainScreen';
 
 
@@ -14,7 +15,9 @@ export const AuthStack = () => {
 
 	if (myUsername == null) {
 		return (
-			<InfinityAnimation />
+			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				<InfinityAnimation />
+			</View>
 		)
 	}
 	return (

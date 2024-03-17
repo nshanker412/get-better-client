@@ -265,6 +265,19 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		});
 	};
 
+
+	const setRelationship = async (isFollowing: boolean) => {
+		dispatch({
+			type: SET_USER_INFO,
+			payload: {
+				myData: {
+					...state.myData,
+					isFollowing: isFollowing,
+				},
+			},
+		});
+	}
+
 	const refreshMyUserInfo = async () => {
 		dispatch({
 			type: SET_LOAD_USER_INFO_STATE,
@@ -273,7 +286,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 		try {
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${state.username}/False`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${ state.username}/False`,
 			);
 			const myData: UserData = userDataResponse.data;
 
@@ -452,6 +465,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		setMyUserInfo,
 		onLogout,
 		fetchIsFollowing,
+		setRelationship,
 		fetchMyPlans,
 		updateFollowStatus,
 		fetchSocialConnections,

@@ -1,61 +1,37 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { TabActions } from '@react-navigation/native';
+import { useUserFollowContext } from '@context/user-follow/UserFollowProvider';
+import { TabActions, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import axios from 'axios';
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useSearchStyles } from './search.styles';
 
-export const Follower = ({ route, navigation }) => {
 
-	const profileUsername = route.params?.profileUsername;
+export const Follower = () => {
+
+	const navigation = useNavigation();
+
 	const { username: myUsername } = useMyUserInfo();
+	const { username: currentUsername, followers: followerList, onFetchFollowers} = useUserFollowContext();
 	const { theme } = useThemeContext();
-
 	const searchStyles = useSearchStyles();
-
-	const [profiles, setProfiles] = useState([]);
-	const [loading, setLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 
-	const fetchData = useCallback(
-		async (profileUsername: string) => {
-			setLoading(true);
-			try {
-				console.log(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${profileUsername}/followers`,
-				);
-				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${profileUsername}/followers`,
-				);
+	
 
-				setProfiles(response.data.profiles);
-				console.log('profile followers', response.data.profiles);
-			} catch (error) {
-				console.log('profile followers', error);
-			} finally {
-				setLoading(false);
-			}
-		},
-		[route.params?.profileUsername],
-	);
-
-	useEffect(() => {
-		fetchData(route.params?.profileUsername);
-	}, [route.params?.profileUsername]);
 
 	const onRefreshCallback = async () => {
 		setRefreshing(true);
-		await fetchData(route.params?.profileUsername);
+		await onFetchFollowers();
 		setRefreshing(false);
 	};
 
 	const onPressProfile = (username: string) => {
 		if (!username) return;
-		if (username === myUsername && (profileUsername !== myUsername)) {
+		if (username === myUsername && (currentUsername !== myUsername)) {
 			navigation.dispatch(TabActions.jumpTo('myProfile'));
 		}
 
@@ -83,6 +59,11 @@ export const Follower = ({ route, navigation }) => {
 		</TouchableOpacity>
 	);
 
+	useEffect(() => {
+		console.log('Follower: profileUsername', followerList);
+		console.log('Follower: profileUsername', currentUsername);
+	}, [followerList, currentUsername]);
+
 	return (
 		<View
 			style={{
@@ -90,7 +71,7 @@ export const Follower = ({ route, navigation }) => {
 				backgroundColor: theme.backgroundColor,
 			}}>
 			<FlashList
-				data={profiles}
+				data={followerList}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.username}
 				estimatedItemSize={100}

@@ -103,7 +103,8 @@ export const MyProfile: React.FC = () => {
 		<SafeAreaView style={profileStyles.safeAreaViewContainer}>
 			<View style={profileStyles.profileContainer}>
 				<View style={{ flex: 3 }}>
-					<ConnectedProfileHeader
+						<ConnectedProfileHeader
+							username={myUsername!}
 						isMyProfile={true}
 						onOpenLogoutModal={onOpenLogoutModal}
 					/>

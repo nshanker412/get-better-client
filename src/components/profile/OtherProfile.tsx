@@ -30,6 +30,7 @@ import { useProfileStyles } from './profile.styles';
 				<View style={profileStyles.profileContainer}>
 					<View style={{ flex: 3 }}>
 						<ConnectedProfileHeader
+							username={username!}
 							onOpenChallengeModal={onChallengePress}
 							isMyProfile={false}
 						/>

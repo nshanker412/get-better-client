@@ -22,7 +22,7 @@ export interface OtherUserInfoContextProps extends OtherUserInfoState {
 		otherProfileUsername: string,
 	) => void;
 	fetchUserPlans: () => Promise<void>;
-	setFollowStatus: (myUsername: string) => Promise<void>;
+	setFollowStatus: () => Promise<void>;
 	challengeUser: (challengeText: string, myUsername: string) => Promise<void>;
 	fetchUserPosts: () => Promise<void>;
 }

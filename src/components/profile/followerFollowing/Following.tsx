@@ -1,57 +1,37 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { TabActions } from '@react-navigation/native';
+import { useUserFollowContext } from '@context/user-follow/UserFollowProvider';
+import { TabActions, useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import axios from 'axios';
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useSearchStyles } from './search.styles';
 
-export const Following = ({ route, navigation }) => {
-	// const navigation = useNavigation();
+
+
+
+export const Following = () => {
+	const navigation = useNavigation();
+	const route = useRoute();
 	const { username: myUsername } = useMyUserInfo();
-	const { theme } = useThemeContext();	
+	const { theme } = useThemeContext();
+
+	const { following: flist, onFetchFollowing} = useUserFollowContext();
+
 	const profileUsername = route.params?.profileUsername;
 	const followers = route.params?.followers;
 	const following = route.params?.following;
 
 	const searchStyles = useSearchStyles();
-
-	const [profiles, setProfiles] = useState([]);
-	const [loading, setLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 
-	const fetchData = useCallback(
-		async (profileUsername: string) => {
-			setLoading(true);
-			try {
-				console.log(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${profileUsername}/following`,
-				);
-				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${profileUsername}/following`,
-				);
 
-				setProfiles(response.data.profiles);
-				console.log('profile Following', response.data.profiles);
-			} catch (error) {
-				console.log('profile Following', error);
-			} finally {
-				setLoading(false);
-			}
-		},
-		[route.params?.profileUsername],
-	);
-
-	useEffect(() => {
-		fetchData(route.params?.profileUsername);
-	}, [route.params?.profileUsername]);
 
 	const onRefreshCallback = async () => {
 		setRefreshing(true);
-		await fetchData(route.params?.profileUsername);
+		await onFetchFollowing();
 		setRefreshing(false);
 	};
 
@@ -91,7 +71,7 @@ export const Following = ({ route, navigation }) => {
 	return (
 		<View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
 			<FlashList
-				data={profiles}
+				data={flist ??[]}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.username}
 				estimatedItemSize={100}

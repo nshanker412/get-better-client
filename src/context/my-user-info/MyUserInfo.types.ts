@@ -22,6 +22,7 @@ export interface MyUserInfoContextProps extends MyUserInfoState {
 	fetchMyPlans: () => Promise<void>;
 	onLogout: () => Promise<void>;
 	setShownIntroPage: () => void;
+	setRelationship: (isFollowing: boolean) => Promise<void>;
 	deletePost: (postID: string) => Promise<void>;
 	refreshMyUserInfo: () => void;
 	fetchMyPosts: () => Promise<void>;

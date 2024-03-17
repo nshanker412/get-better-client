@@ -20,13 +20,14 @@ export const MyProfileStack = ({navigation}) => {
 		<ProfileStackNav.Navigator
 			initialRouteName='myProfile'
 			screenOptions={{
-				headerShown: true,
-				// headerTintColor: 'white',
-				headerTitle: '',
+				headerShown: false,
+				headerTintColor: 'white',
 				headerTitleStyle: false,
-
 				headerShadowVisible: false,
-				headerStyle: { backgroundColor: 'black',height: 80 },
+				headerStyle: {
+					backgroundColor: 'black',
+					height: 80
+				},
 				headerBackTitleVisible: false,
 				cardStyle: { backgroundColor: 'black' },
 			}}>
@@ -82,11 +83,18 @@ export const MyProfileStack = ({navigation}) => {
 				component={Search}
 			/>
 			<ProfileStackNav.Screen
-				name='followerFollowing'
-				options={{
-					headerShown: true,
+					name='followerFollowing'
+
+					options={{
+					
+					headerShown: false,
 					headerBackTitleVisible: false, 
+					title: '',
 					headerTintColor: 'white',
+
+
+
+					// headerTintColor: 'white',
 				 }}
 				component={FollowerFollowingTab}
 			/>

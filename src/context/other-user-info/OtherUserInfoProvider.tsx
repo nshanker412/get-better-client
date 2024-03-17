@@ -7,6 +7,7 @@ import axios from 'axios';
 import React, {
 	createContext,
 	useCallback,
+	useEffect,
 	useReducer
 } from 'react';
 import {
@@ -86,7 +87,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 }) => {
 
 	const { sendOutPushNotification } = useNotifications();
-	const { username: myUsername } = useMyUserInfo();
+	const { username: myUsername, refreshMyUserInfo, setRelationship } = useMyUserInfo();
 
 	const [state, dispatch] = useReducer(otherUserInfoReducer, {
 		...initialOtherUserInfoState,
@@ -95,46 +96,55 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		plans: [],
 	});
 
+
+	useEffect(() => {
+		if (otherProfileUsername) {
+			setOtherUserInfo();
+		}
+	}, [otherProfileUsername]);
+
+
 	/**
 	 * Initializes the OtherUserInfo after the user logs in
 	 */
-	const setOtherUserInfo = useCallback(async () => {
+	const setOtherUserInfo = async () => {
+		dispatch({
+			type: SET_LOAD_USER_INFO_STATE,
+			payload: { loadUserInfoState: ApiLoadingState.Loading },
+		});
+
+		try {
+			console.log('fetching user info:', otherProfileUsername, myUsername);
+			const userDataResponse = await axios.get<UserData>(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${otherProfileUsername}/${myUsername}/False`,
+
+			);
+			console.log('userDataResponse', userDataResponse.data)
+			const otherUserData: UserData = userDataResponse.data;
+
+
+			// // Dispatch SET_USER_INFO action with fetched data
+			dispatch({
+				type: SET_USER_INFO,
+				payload: {
+					otherUserData: otherUserData,
+					username: otherProfileUsername,
+				},
+			});
+		} catch (error) {
+			console.error('Error fetching user info:', error);
+			// Handle the error as needed (e.g., show a user-friendly message)
 			dispatch({
 				type: SET_LOAD_USER_INFO_STATE,
-				payload: { loadUserInfoState: ApiLoadingState.Loading },
+				payload: { loadUserInfoState: ApiLoadingState.Error },
 			});
-
-			try {
-				console.log('fetching user info:', otherProfileUsername, myUsername);
-				const userDataResponse = await axios.get<UserData>(
-
-				);
-				const otherUserData: UserData = userDataResponse.data;
-
-
-				// Dispatch SET_USER_INFO action with fetched data
-				dispatch({
-					type: SET_USER_INFO,
-					payload: {
-						otherUserData: otherUserData,
-						username: otherProfileUsername,
-					},
-				});
-			} catch (error) {
-				console.error('Error fetching user info:', error);
-				// Handle the error as needed (e.g., show a user-friendly message)
-				dispatch({
-					type: SET_LOAD_USER_INFO_STATE,
-					payload: { loadUserInfoState: ApiLoadingState.Error },
-				});
-			} finally {
-				dispatch({
-					type: SET_LOAD_USER_INFO_STATE,
-					payload: { loadUserInfoState: ApiLoadingState.Loaded },
-				});
-			}
-		}, [otherProfileUsername, myUsername]);
-
+		} finally {
+			dispatch({
+				type: SET_LOAD_USER_INFO_STATE,
+				payload: { loadUserInfoState: ApiLoadingState.Loaded },
+			});
+		}
+	}
 
 	const fetchUserPlans = useCallback(async () => {
 		try {
@@ -162,6 +172,8 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 	}, [state.username]);
 
+	
+
 	const setFollowStatus = async () => {
 		if (!state.username || !myUsername) {
 			console.log(
@@ -171,30 +183,40 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 
 		const previouslyFollowing = state.otherUserData?.isFollowing;
-
-		console.log(
-			'setFollowStatus',
-			state.username,
-			previouslyFollowing,
-		);
 	
 
 		try {
-			const ff = await axios.post(
+			const resp = await axios.post(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/follow`,
 				{
 					following: !previouslyFollowing,
-					recievingUser: state.username,
-					sendingUser: myUsername,
+					recievingUser: state.username, 
+					sendingUser: myUsername, 
 				},
 			);
-			const followers = ff.data.followers;
-			const following = ff.data.following;
+
+
+			console.log('setFollowStatus', resp.data);
+
+			// update the follow status in the context
+
 
 			dispatch({
-				type: SET_FOLLOW_STATUS,
-				payload: { followers: followers, following: following},
+				type: SET_USER_INFO,
+				payload: { 
+					...state,
+					username: state.username,
+					otherUserData: {
+						...state.otherUserData,
+						isFollowing: resp?.data?.isFollowing,
+						followers: resp?.data?.followers,
+						following: resp?.data?.following,
+					},
+				},
 			});
+
+			refreshMyUserInfo(resp?.data?.isFollowing);
+
 		} catch (error) {
 			console.error('setFollowStatusError', error);
 			return;
@@ -210,7 +232,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 						type: NotificationType.FOLLOWED,
 						path: 'notifications',
 						params: {
-							profileUsername: state.username,
+							profileUsername: myUsername,
 						},
 					},
 				};

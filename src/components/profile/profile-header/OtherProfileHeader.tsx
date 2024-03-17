@@ -19,24 +19,16 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	userHandle,
 	username,
 	bio,
+	followers, 
+	following,
 	onOpenChallengeModal,
 	onMotivatePress,
-	following,
-	followers,
+
 	amIFollowing,
 }) => {
 	const profileHeaderStyles = useProfileHeaderStyles();
 	const navigation = useNavigation();
 	const { theme } = useThemeContext();
-
-	
-
-	const onToggleFollow = (newState: boolean) => {
-		console.log('Follow Pressed');
-		onMotivatePress!();
-    }
-
- 
 
 
     const onSocialPress = async (screen: 'Followers' | 'Following') => {
@@ -48,9 +40,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
             screen
         );
 
-    };
-
-
+	};
 	
 		return (
 			<View style={profileHeaderStyles.headerOuterContainer}>
@@ -235,7 +225,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 									size='lg'
 									type = {amIFollowing ?  'outline' :'solid' }
 									title={amIFollowing ?'Motivating' :  'Motivate' }
-									onPress={() => onToggleFollow(!amIFollowing)}
+									onPress={onMotivatePress}
 								/>
 							</View>
 							<View style={{flex: 1} }/>

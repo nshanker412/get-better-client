@@ -6,13 +6,14 @@ import React, { useEffect, useReducer, useRef } from 'react';
 import Toast from 'react-native-toast-message';
 import { AuthStack } from '../../navigation/AuthStack';
 import { UnAuthStack } from '../../navigation/UnAuthStack';
-import { LoadingScreen } from '../../screens/LoadingScreen'; //TODO: replace with splash screen
 import { FirebaseService } from '../../service/firebase'; // Replace with the actual path to your Firebase service
 import { toastConfig } from '../theme/toastConfig';
 import { AuthContextProps } from './Auth.types';
 import { AuthContext } from './AuthContext';
 import { authenticationReducer, initialState } from './authReducer';
 import { firebaseErrorToMessage } from './firebaseErrorToMessage';
+
+import { InfinityAnimation } from '@components/animations/InfinityAnimation';
 
 interface AuthProviderProps {
 	routingInstrumentation: any;
@@ -144,7 +145,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 	};
 
 	if (state.isLoading) {
-		return <LoadingScreen />;
+		return (
+			<InfinityAnimation />
+		)
 	}
 
 	return (
@@ -152,6 +155,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			<AuthContext.Provider value={contextValue}>
 				<MyUserInfoProvider>
 					<NavigationContainer
+					
 						ref={navigation}
 						onReady={() => {
 							// Register the navigation container with the instrumentation

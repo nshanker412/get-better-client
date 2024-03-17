@@ -3,19 +3,19 @@ export const handleSocialPress = (username: string, navigation: any, numFollower
 
     if (screen === 'Followers') {
         navigation.navigate('profileTab',
-            {
-                screen: 'followerFollowing', params: {
-                    screen: 'Followers',
+        {
+            screen: 'followerFollowing',
+            params: {
+                screen: 'Followers',
+                profileUsername: username,
+                following: numFollowing,
+                followers: numFollowers,
+                params: {
+                    profileUsername: username,
                     following: numFollowing,
-                    followers: numFollowers,
-                    params: {
-                        profileUsername: username,
-                        following: numFollowing,
-                        followers: numFollowers,
-                    }
-               
-                }
+                    followers: numFollowers,}
             }
+        }
         );
     }
 
@@ -25,15 +25,13 @@ export const handleSocialPress = (username: string, navigation: any, numFollower
                 screen: 'followerFollowing',
                 params: {
                     screen: 'Following',
+                    profileUsername: username,
                     following: numFollowing,
                     followers: numFollowers,
                     params: {
-                        // profileUsername: username,
-
                         profileUsername: username,
                         following: numFollowing,
-                        followers: numFollowers,
-                    }
+                        followers: numFollowers,}
                 }
             }
         );
