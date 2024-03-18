@@ -194,10 +194,12 @@ export function MainScreen({navigation, route}) {
 					tabBarIcon: ({ focused }) => <SearchTabIcon focused={focused} />,
 				}}
 			/>
-			<Tab.Screen
+				<Tab.Screen
+				
 				name='post'
 				component={CreatePost}
 					options={{
+
 						tabBarIcon: ({ focused }) => <PostTabIcon focused={focused} />
 					}}
 			/>

@@ -8,6 +8,7 @@ import { PlanType } from '@components/profile/profile-body/plan-list/plan-item/P
 import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
+import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { PostMetadata } from "@models/posts";
 import { Link, useNavigation } from '@react-navigation/native';
@@ -323,12 +324,30 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
               openCommentDrawer={handleOpenCommentDrawer}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
-            <View 
-              style={{ position: "absolute", bottom: 0, right: 0, width: Dimensions.get("window").width, flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 10, gap: 10 }}>
-              <Text style={styles.description}>
+          
+            {postData?.caption && !isEmbeddedFeed && (
+              <View
+              style={{
+                position: "absolute",
+                  bottom: 100,
+                  marginLeft: 60,
+                  minHeight: 50,
+                maxHeight: 100,
+                width: Dimensions.get("window").width - 160,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                  padding: 10,
+                  gap: 10,
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                borderRadius: 10,
+                display: 'flex',
+              }}>
+              <Text style={{ fontFamily: fonts.inter.medium, color: grayDark.gray12, fontSize: 16 }}>
                 {postData?.caption}
               </Text>
             </View>
+            )}
           </View>
           <View style={{ position: 'absolute', right: 0, bottom: 100 }}>
           </View>
@@ -385,8 +404,14 @@ const styles = useMemo(() => StyleSheet.create({
         fontSize: 16
     },
     description: {
-        marginTop: 10,
-        color: 'white',
+      marginTop: 10,
+      color: grayDark.gray12,
+      fontSize: 16,
+      fontFamily: fonts.inter.medium,
+      shadowColor: 'rgba(0, 0, 0, 0.55)',
+      shadowOffset: { width: -1, height: 1 },
+      shadowRadius: 2,
+      backgroundColor: 'transparent',
     },
     avatar: {
         height: 50,
