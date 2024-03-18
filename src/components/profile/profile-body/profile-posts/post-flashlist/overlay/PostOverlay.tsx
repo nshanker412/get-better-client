@@ -1,6 +1,7 @@
 import { CommentIcon as CI } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
+import { GBIcon } from '@components/custom-icons/GBIcon';
 import { ConnectedProfileAvatar } from "@components/profile-avatar/ConnectedProfileAvatar";
 import { PlanItem } from '@components/profile/profile-body/plan-list/plan-item/PlanItem';
 import { PlanType } from '@components/profile/profile-body/plan-list/plan-item/PlanItem.types';
@@ -8,7 +9,6 @@ import { useCommentDrawer } from "@context/comment-drawer/CommentDrawerContext";
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
 import { fonts } from '@context/theme/fonts';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { PostMetadata } from "@models/posts";
 import { Link, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -23,7 +23,6 @@ import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
 import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked } from "../service/post";
-
 
 interface PostOverlayProps {
   user: string;
@@ -290,18 +289,23 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
           <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10 : 100, paddingLeft: isEmbeddedFeed ? 5 : 10, paddingRight: 10, gap: 5 }}>
             {eval(postData?.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={!!isEmbeddedFeed} />)}
             <View style={{ position: "absolute", bottom: 80, right: 0, width: Dimensions.get("window").width }}>
-              {linkedActionFab?.length > 0 && <FloatingAction
-                actions={linkedActionFab}
-                showBackground={true}
-                color={"black"}
-                
-                style={{ padding: 10, backgroundColor: "transparent" }}
-                onPressItem={onPressAction}
-                floatingIcon={
-                  // <Entypo name="dots-three-vertical" size={30} color="white" />
-                  <FontAwesome5 name="running" size={24} color="white" />
+              {linkedActionFab?.length > 0 &&
+                (
+                <FloatingAction
+                  actions={linkedActionFab}
+                  showBackground={true}
+                  color={"black"}
+                  overlayColor={"transparent"}
+                  style={{ padding: 10, backgroundColor: "transparent" }}
+                  onPressItem={onPressAction}
+                  floatingIcon={
+                    <GBIcon
+                      size={40}
+                    />
                 }
-              />}
+                  />
+                )
+              }
             </View>
       
 

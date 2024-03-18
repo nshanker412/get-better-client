@@ -35,6 +35,10 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					component={FeedScreen}
 				/>
 				<HomeStackNav.Screen
+					options={{
+						presentation: 'modal',
+					}}
+					
 					name='post'
 					component={CreatePost}
 				/>
