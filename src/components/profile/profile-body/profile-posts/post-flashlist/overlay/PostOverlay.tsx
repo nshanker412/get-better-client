@@ -319,6 +319,12 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
               openCommentDrawer={handleOpenCommentDrawer}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
+            <View 
+              style={{ position: "absolute", bottom: 0, right: 0, width: Dimensions.get("window").width, flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 10, gap: 10 }}>
+              <Text style={styles.description}>
+                {postData?.caption}
+              </Text>
+            </View>
           </View>
           <View style={{ position: 'absolute', right: 0, bottom: 100 }}>
           </View>

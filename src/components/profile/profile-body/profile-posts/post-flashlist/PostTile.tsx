@@ -340,7 +340,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
                     style={{ flex: 1 }}
                     resizeMode={ResizeMode.COVER}
                     onError={onVideoError}
-                        isLooping={true}
+                    isLooping={true}
                     volume={1.0}
                     rate={1.0}
                     PosterComponent={() => <LoadingSpinner />}
