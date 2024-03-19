@@ -17,6 +17,9 @@ import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar
 import { useProfileEditStyles } from './ProfileEdit.styles';
 
 
+
+const BIO_MAX_LENGTH = 160;
+
 export const ProfileEdit: React.FC = () =>  {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
 	const navigate = useNavigation();
@@ -278,7 +281,7 @@ export const ProfileEdit: React.FC = () =>  {
 						placeholder='description about me'
 						value={bio}
 						onChangeText={setBio}
-						maxLength={200}
+						maxLength={ BIO_MAX_LENGTH}
 						numberOfLines={4}
 						errorStyle={{ color: redDark.red10, borderRadius: 10, borderColor: redDark.red10}}
 						multiline={true}

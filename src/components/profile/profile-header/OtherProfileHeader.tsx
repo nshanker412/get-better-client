@@ -4,7 +4,7 @@ import { useThemeContext } from '@context/theme/useThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
@@ -13,6 +13,23 @@ import { OtherProfileHeaderProps } from './ProfileHeader.types';
 import { handleSocialPress } from './utils/handleSocialPress';
 
 
+const s = StyleSheet.create({
+	r: {
+		borderColor: 'red',
+		// borderWidth: 1,
+	},
+	b: {
+		borderColor: 'blue',
+		// borderWidth: 1,
+	},
+	g: {
+		borderColor: 'green',
+		// borderWidth: 1,
+	},
+	
+	
+}
+);
 
 export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	isLoading,
@@ -36,29 +53,22 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
             username!,
             navigation!,
             following ?? 0,
-            following ??0,
+            following ?? 0,
             screen
         );
 
 	};
 	
 		return (
-			<View style={profileHeaderStyles.headerOuterContainer}>
-						<View
-						style={{
-							flex: 1,
-							alignItems: 'center',
-							justifyContent: 'center',
-						}}>
-				
-					</View>
+			<View style={[profileHeaderStyles.headerOuterContainer, s.r]}>
+		
 			
-				<View style={{ flex: 5, width: '100%', alignSelf: 'center' , justifyContent: "center"}}>
+				<View style={[{ flexBasis: 100, flexShrink: 0 , width: '100%', alignSelf: 'center'  ,  justifyContent: "flex-start"}, s.g]}>
 					{isLoading ? (
 						<ShimmerPlaceholder
 							style={{
 								height: 90,
-								width: '80%',
+								maxWidth: '80%',
 								borderRadius: 20,
 								alignSelf: 'center',
 								alignItems: 'center',
@@ -77,7 +87,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 						
 							<View
 								style={[
-								profileHeaderStyles.headerInnerContainer,
+									profileHeaderStyles.headerInnerContainer,
+								
 								{ justifyContent: 'center', alignItems: 'center',},
 									]}
 							>
@@ -96,15 +107,19 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 											justifyContent: 'space-between',
 										}}></LinearGradient>
 
-							<View
-								style={{
+								<View
+									id={'profile-avatar'}
+								style={[s.b, {
 									display: 'flex',
 									flexDirection: 'row',
 										alignItems: 'center',
-										justifyContent: 'space-around',
+									justifyContent: 'space-around',
+										minHeight:122,
+									
+									
 										// justifyContent: 'space-aroun',
 				
-								}}>
+								}]}>
 						
 								<View style={{ flex: 1, width: '100%' }}>
 									<Text
@@ -163,61 +178,45 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 
 					)}
 				</View>
-
-				{isLoading ? (
-					<ShimmerPlaceholder
-						style={{
-							height: 15,
-							width: '75%',
-							borderRadius: 20,
-							alignSelf: 'center',
-							alignItems: 'center',
-							flexDirection: 'row',
-							opacity: 0.5,
-						}}
-						shimmerColors={[
-							theme.grayShades.gray500,
-							theme.grayShades.gray600,
-							theme.grayShades.gray700,
-						]}
-						LinearGradient={LinearGradient}
-					/>
-				) : (
-					<View
+				<View
 						style={[
-							profileHeaderStyles.nameBioContainer,
+							s.b,
 							{
-								flex:4 ,
+								// flex:1 ,
+								flexShrink: 0,
 								alignItems: 'center',
 								justifyContent: 'center',
 								// top: 5,
+								flexBasis: 50,
+								// minHeight: 50,
+								// padding:5, 
+								marginTop: 5,
+								marginBottom: 5,
 								flexDirection: 'row',
 							},
-							]}>
-							<View style={{flex: 1} }/>
-						<View style={{ flex: 2 }}>
+						]}>
 						
-								<ButtonAsync
-									id={'challenge-button'}
-									loading={false}
-									gradientColor='gray'
-									isPrimary={true}
-									title={'Challenge'}
-									size='lg'
-									onPress={onOpenChallengeModal}
-								/>
+						<View style={{ flex: 1, alignItems: "center",  }}>
+						<ButtonAsync
+							containerStyle={{ width: 100, height: 35, }}
+							buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5 ,paddingVertical:2,  alignItems:"center", justifyContent:"center"}}
+								id={'challenge-button'}
+								loading={false}
+								gradientColor='gray'
+								isPrimary={true}
+								title={'Challenge'}
+								size='lg'
+								onPress={onOpenChallengeModal}
+							/>
 						</View>
 
-						<View style={{ flex: 1 }}>
-							{/* <View style={[profileHeaderStyles.nameContainer]}>
-								<Text style={profileHeaderStyles.name}>
-									{username}
-								</Text>
-							</View> */}
-						</View>
-						<View style={{ flex: 2 }}>
+					
+
+						<View style={{ flex: 1, alignItems:"center" }}>
 								<ButtonAsync
-									id={'follow-button'}
+							id={'follow-button'}
+							containerStyle={{ width: 100, height: 35, }}
+							buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5 ,paddingVertical:2,  alignItems:"center", justifyContent:"center"}}
 									loading={isLoading}
 									gradientColor={'gray' }
 									disabled={isLoading}
@@ -228,33 +227,46 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 									onPress={onMotivatePress}
 								/>
 							</View>
-							<View style={{flex: 1} }/>
 
-					</View>
-				)}
-
-				<View
-					style={[
-						profileHeaderStyles.nameBioContainer,
-						{
-							flex: 1,
-							alignItems: 'flex-start',
-							justifyContent: 'center',
-							flexDirection: 'row',
-						
-						},
-					]}>
-					<View style={[profileHeaderStyles.bioContainer]}>
-						<Text
-							style={[
-								profileHeaderStyles.bio,
-								{ textAlign: 'center' },
-							]}>
-							{bio}
-						</Text>
-					</View>
 				</View>
-			</View>
+
+				<View style={{flex:1,  flexShrink:1, flexBasis:100, alignItems:"center",  }}>
+					
+							<View style={{flex:1, width: "85%",  }}>
+								<Text
+									style={[
+										profileHeaderStyles.bio,
+										{ textAlign: 'center' },
+									]}>
+									{bio}
+								</Text>
+					</View>
+			
+					</View>
+							
+					{isLoading &&(
+						<ShimmerPlaceholder
+							style={{
+								height: 15,
+								width: '75%',
+								borderRadius: 20,
+								alignSelf: 'center',
+								alignItems: 'center',
+								flexDirection: 'row',
+								opacity: 0.5,
+							}}
+							shimmerColors={[
+								theme.grayShades.gray500,
+								theme.grayShades.gray600,
+								theme.grayShades.gray700,
+							]}
+							LinearGradient={LinearGradient}
+						/>
+					)}
+					</View>
+
+
+		
 		);
 	}
 

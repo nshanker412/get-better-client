@@ -105,6 +105,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 									profileHeaderStyles.headerInnerContainer,
 									{
 										display: 'flex',
+						
 										flexDirection: 'row',
 										alignItems: 'center',
 										justifyContent: 'space-between',

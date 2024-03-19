@@ -15,11 +15,12 @@ export const useProfileStyles = () => {
 		},
 
 		profileContainer: {
-			...theme.container,
-
+			
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
 			display: 'flex',
 			flexDirection: 'column',
-			alignItems: 'center',
 
 		},
 

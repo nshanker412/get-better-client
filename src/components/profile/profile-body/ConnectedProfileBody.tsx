@@ -56,7 +56,7 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	const renderItemS = ({ item }: { item: Bar }) => {
 		return (
 			
-			<View style={{ flex: 2, height: 80, width: "100%", padding: 5, backgroundColor: "black" }}>
+			<View style={{ flex: 1, height: 60, width: "100%", paddingLeft:5, paddingRight:5,  backgroundColor: "black", alignItems:"center" , justifyContent:"center"}}>
 				
 			<View style={{ height: 60, width: 150,  borderWidth:1 ,padding: 2, borderRadius: 5, backgroundColor: "black", borderColor: grayDark.gray9, shadowColor: grayDark.gray4, shadowOffset: {width: -5, height: 5}, shadowRadius:8, shadowOpacity:0}}>
 					<Text style={{ padding: 2, fontSize: 14, color: "white", fontFamily: fonts.inter.extra_bold }}>{item.h}</Text>
@@ -70,18 +70,17 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	}
 
 	return (
-	<>
-			<View style={{ flexShrink: 3, flex: 3}}>
-			<FlatList 
+	<View style={{ flex: 1, flexDirection: "column", alignItems: "flex-start"}}>
+			<View style={{ flexBasis: 60 }}>
+				<FlatList 
 					data={data}
 					renderItem={renderItemS}		
 					horizontal={true}
 					showsHorizontalScrollIndicator={false}
 					/>
-					</View>
-			<View style={{flex: 21}}>
-			<ProfileBody isMyProfile={isMyProfile}  />
 			</View>
-		</>
+				<ProfileBody isMyProfile={isMyProfile} />
+			
+		</View>
 	)
 };
