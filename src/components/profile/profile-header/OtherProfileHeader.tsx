@@ -160,8 +160,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  alignItems: 'center',
 			  justifyContent: 'center',
 			  flexBasis: 50,
-			  marginTop: 5,
-			  marginBottom: 5,
+			  marginTop: 2,
+			  marginBottom: 2,
 			  flexDirection: 'row',
 			},
 		  ]}
@@ -195,18 +195,19 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			/>
 		  </View>
 			</View>
-			<View>
-				{bio && (<View style={{ flexBasis: "auto", height:"auto", minHeight:20,  width:"85%%", flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf:"center", flexWrap:1,  }}>
-					<Text
-						style={
-							profileHeaderStyles.bio
-						}
-					>
-						{bio}
-					</Text>
-				</View>)}
+			{bio ? (<View style={{ flexBasis: "auto", height: "auto", minHeight: 20, width: "85%",  padding: 10, marginBottom: 5,  flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf: "center", flexWrap: 1, }}>
+				<Text
+					style={
+						profileHeaderStyles.bio
+					}
+				>
+					{bio}
+				</Text>
+			</View>) :
+				<View style={{ minHeight: 20 }} />
+			}
+
 		  
-		</View>
 	  </View>
 	);
 	}
