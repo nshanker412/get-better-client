@@ -1,5 +1,5 @@
-import { ButtonAsync } from '@components/primitives/async-button/ButtonAsync';
-import { blue, grayDark } from '@context/theme/colors_neon';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -28,6 +28,8 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	const navigation = useNavigation();
 	const { theme } = useThemeContext();
 	const profileHeaderStyles = useProfileHeaderStyles();
+
+	const {myData } = useMyUserInfo();
 
 	const onPressEditProfile = () => {
 		navigation.navigate('profileEdit');
@@ -125,15 +127,36 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 										}}></LinearGradient>
 										
 								
-								<View style={{ flex: 1, width: '100%', gap: 10 }}>
-									<Text
-										style={
-											profileHeaderStyles.userHandleStyle
+									<View style={{ flex: 1, width: '100%', gap: 10,  alignItems: 'stretch', height: "100%", justifyContent: 'center' }}>
+											<View style={{ alignItems: "center", justifyContent: "center" ,  }}>
+											
+												<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+													<Text style={[profileHeaderStyles.userNameStyle, {fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin}]}>
+													{myData?.consistency}%
+
+														</Text>	
+											</View> 
+											
+											
+											</View>
+											<View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center',  }}>
+												<Text
+										style={[
+														profileHeaderStyles.userHandleStyle,
+														{
+															fontSize: 11,
+															textAlign: 'left',
+														
+												
+											}
+										]
 										}>
-										{userHandle}
-										</Text>
-										<View style={{alignItems:"center", justifyContent:"center"}}>
-										<ButtonAsync
+												{userHandle}
+
+													</Text>
+												</View>
+
+										{/* <ButtonAsync
 								onPress={onPressEditProfile}
 								title='edit'
 								size='sm'
@@ -165,8 +188,8 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 									fontFamily: fonts.inter.bold,
 									fontWeight: 'bold',
 								}}
-							/>
-											</View>
+							/> */}
+											{/* </View> */}
 								</View>
 
 								<ConnectedProfileAvatar
