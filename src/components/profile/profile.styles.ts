@@ -8,7 +8,7 @@ export const useProfileStyles = () => {
 
 	const profileStyles = StyleSheet.create({
 		safeAreaViewContainer: {
-			flex: 1,
+			// flex: 1,
 			width: '100%',
 			height: '100%',
 			backgroundColor: theme.backgroundColor,

@@ -7,7 +7,7 @@ import { ConnectedProfileBody } from './profile-body/ConnectedProfileBody';
 import { ConnectedProfileHeader } from './profile-header/ConnectedProfileHeader';
 import { useProfileStyles } from './profile.styles';
 
- const _OtherProfile: React.FC = () => {
+ export const OtherProfile: React.FC = () => {
 	/** TODO
 	 * 1. make challenge modal its own component
 	 */
@@ -27,25 +27,26 @@ import { useProfileStyles } from './profile.styles';
 	return (
 		<Host>
 			<SafeAreaView style={profileStyles.safeAreaViewContainer}>
-				<View style={{ flex:1,  flexDirection:"column", alignItems:"center", justifyContent:"flex-start", display:"flex" }}>
-				<View style={[profileStyles.profileContainer, {minHeight:270, flexBasis:300, flexShrink:1}]}>
+				<View style={{  flexBasis:"auto",  flexDirection:"column", alignItems:"center", justifyContent:"flex-start", display:"flex" }}>
 						<ConnectedProfileHeader
 							username={username!}
 							onOpenChallengeModal={onChallengePress}
 							isMyProfile={false}
 						/>
-				</View>
-						<ConnectedProfileBody isMyProfile={false}   />
+					<View style={{ flexBasis:"auto",  flexShrink: 1, flexGrow: 1}}>
+						<ConnectedProfileBody isMyProfile={false} />
+						</View>
 				</View>
 
-				<ChallengeModal
+			</SafeAreaView>
+			
+			<ChallengeModal
 					isVisible={isChallengeModalOpen}
 					challengee={username!}
 					onClosePress={onCloseModalPress}
 				/>
-				</SafeAreaView>
 			</Host>
 	);
 };
 
-export const OtherProfile = React.memo(_OtherProfile);
+// export const OtherProfile = React.memo(_OtherProfile);

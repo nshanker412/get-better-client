@@ -48,20 +48,15 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 
 
 		return (
-			<>
-				<View style={[profileHeaderStyles.headerOuterContainer]}>
-					<View
-						style={{
-							flex: 1,
-							alignItems: 'center',
-							justifyContent: 'center',
-						}}>
+			
+			<View style={[profileHeaderStyles.headerOuterContainer,  { flexBasis: "auto", flexGrow:1, flexShrink: 1 }]}>
+			
 						<View
 							style={{
 								// flex: 1,
 								position: 'absolute',
 								right: -15,
-								top: -15,
+								top: 0,
 							
 								alignItems: 'flex-end',
 								justifyContent: 'flex-start',
@@ -77,10 +72,9 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							</TouchableOpacity>
 							
 						</View>
-					</View>
 
 					<View
-						style={{ flex: 5, width: '100%', alignSelf: 'center' }}>
+						style={{ flexBasis:"auto", width: '100%', alignSelf: 'center' }}>
 						{isLoading ? (
 							<ShimmerPlaceholder
 								style={{
@@ -249,7 +243,8 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 						style={[
 							profileHeaderStyles.nameBioContainer,
 							{
-								flex: 4,
+								// flex: 4,
+								flexBasis: "auto",
 								flexShrink:2,
 								alignItems: 'center',
 								justifyContent: 'center',
@@ -259,7 +254,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 
 						<View
 							style={{
-								flex: 1,
+								// flex: 1,
 								maxWidth: '80%',
 								alignSelf: 'center',
 
@@ -273,7 +268,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 						</View>
 					</View>
 				</View>
-			</>
+			
 		);
 }
 	

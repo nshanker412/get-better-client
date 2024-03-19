@@ -61,7 +61,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	
 
 	return (
-	  <View style={[profileHeaderStyles.headerOuterContainer, s.r, { flexBasis: "auto", flexGrow:1, flexShrink: 1 }]}>
+	  <View style={[profileHeaderStyles.headerOuterContainer, s.r, { flexBasis: "auto", flexGrow:1, flexShrink: 0 }]}>
 		<View style={[{ flexBasis: 100, flexShrink: 0, width: '100%', alignSelf: 'center', justifyContent: "flex-start" }, s.g]}>
 		  {isLoading ? (
 			<ShimmerPlaceholder
@@ -194,18 +194,18 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  onPress={onMotivatePress}
 			/>
 		  </View>
-		</View>
-		<View style={{ alignItems: "center", flexShrink: 1, flexGrow: 1}}>
-		  <View style={{ flexShrink: 1, width: "85%", height: "auto", alignSelf: "center" }}>
-			<Text
-			  style={[
-				profileHeaderStyles.bio,
-				{ textAlign: 'center' },
-			  ]}
-			>
-			  {bio}
-			</Text>
-		  </View>
+			</View>
+			<View>
+				{bio && (<View style={{ flexBasis: "auto", height:"auto", minHeight:20,  width:"85%%", flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf:"center", flexWrap:1,  }}>
+					<Text
+						style={
+							profileHeaderStyles.bio
+						}
+					>
+						{bio}
+					</Text>
+				</View>)}
+		  
 		</View>
 	  </View>
 	);
