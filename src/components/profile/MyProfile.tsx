@@ -101,16 +101,15 @@ export const MyProfile: React.FC = () => {
 	return (
 		<Host>
 			<SafeAreaView style={profileStyles.safeAreaViewContainer}>
-			<View style={{ flex:1,  flexDirection:"column", alignItems:"center", justifyContent:"flex-start", display:"flex" }}>
+			<View style={{  flexBasis:"auto",  flexDirection:"column", alignItems:"center", justifyContent:"flex-start", display:"flex" }}>
 
-				<View style={[profileStyles.profileContainer, {
-					minHeight: 200, flexBasis: 200, flexShrink: 1
-				}]}>
+
 						<ConnectedProfileHeader
 							username={myUsername!}
 						isMyProfile={true}
 						onOpenLogoutModal={onOpenLogoutModal}
 					/>
+			<View style={{ flexBasis:"auto",  flexShrink: 1, flexGrow: 1}}>
 				</View>
 					<ConnectedProfileBody
 						isMyProfile={true}

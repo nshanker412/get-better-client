@@ -5,6 +5,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { FlatList } from "react-native-gesture-handler";
 import { ProfileBody } from './ProfileBody';
+import { useProfileBodyStyles } from "./ProfileBody.styles";
 import { ConnectedProfileBodyProps } from './ProfileBody.types';
 
 type Bar = {
@@ -19,8 +20,11 @@ type Bar = {
  */
 export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	isMyProfile,
+	bio,
 }) => {
 
+
+	const styles = useProfileBodyStyles();
 
 
 	const data: Bar[] = [
@@ -70,7 +74,8 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	}
 
 	return (
-	<View style={{ flexGrow:1,  flexDirection: "column", alignItems: "flex-start"}}>
+		<View style={{ flexGrow: 1, flexDirection: "column", alignItems: "flex-start" }}>
+	
 			<View style={{ flexBasis: 60 }}>
 				<FlatList 
 					data={data}
@@ -84,3 +89,4 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 		</View>
 	)
 };
+

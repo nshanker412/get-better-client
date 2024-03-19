@@ -140,6 +140,18 @@ export const useProfileBodyStyles = () => {
 			borderRightColor: theme.innerBorderColor,
 			// borderTopRightRadius: 5,
 		},
+		bio: {
+			fontFamily: theme.text.body.mediumer.fontFamily,
+			fontSize: 15,
+			color: theme.grayShades.gray700,
+			textAlign: 'center',
+			flexWrap: 'wrap',
+			alignItems: 'center',
+			justifyContent: 'center',
+			width: 'auto',
+			height: 'auto',
+			padding: 1,
+		},
 	});
 
 	return ProfileBodyStyles;

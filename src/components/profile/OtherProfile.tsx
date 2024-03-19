@@ -13,7 +13,7 @@ import { useProfileStyles } from './profile.styles';
 	 */
 	const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
 	 const profileStyles = useProfileStyles();
-	 const {username} = useOtherUserInfo();
+	 const {username, otherUserData} = useOtherUserInfo();
 
 
 	const onCloseModalPress = () => {
@@ -34,7 +34,7 @@ import { useProfileStyles } from './profile.styles';
 							isMyProfile={false}
 						/>
 					<View style={{ flexBasis:"auto",  flexShrink: 1, flexGrow: 1}}>
-						<ConnectedProfileBody isMyProfile={false} />
+						<ConnectedProfileBody isMyProfile={false} bio={otherUserData?.bio } />
 						</View>
 				</View>
 

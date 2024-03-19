@@ -1,8 +1,8 @@
+import { ButtonAsync } from '@components/primitives/async-button/ButtonAsync';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
-import { grayDark } from '@context/theme/colors_neon';
+import { blue, grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -13,7 +13,6 @@ import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAva
 import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { MyProfileHeaderProps } from './ProfileHeader.types';
 import { handleSocialPress } from './utils/handleSocialPress';
-
 
 export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	isLoading,
@@ -48,10 +47,11 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 
 
 		return (
+			<View style={[profileHeaderStyles.headerOuterContainer, { flexBasis: "auto", flexGrow:1, flexShrink: 0 }]}>
+			<View style={[{ flexBasis: 100, flexShrink: 0, width: '100%', alignSelf: 'center', justifyContent: "flex-start" }]}>
+			{/* <View style={[profileHeaderStyles.headerOuterContainer,  { flexBasis: "auto", flexGrow:1, flexShrink: 1 }]}> */}
 			
-			<View style={[profileHeaderStyles.headerOuterContainer,  { flexBasis: "auto", flexGrow:1, flexShrink: 1 }]}>
-			
-						<View
+						{/* <View
 							style={{
 								// flex: 1,
 								position: 'absolute',
@@ -71,7 +71,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 								/>
 							</TouchableOpacity>
 							
-						</View>
+						</View> */}
 
 					<View
 						style={{ flexBasis:"auto", width: '100%', alignSelf: 'center' }}>
@@ -97,14 +97,10 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							<View
 								style={[
 									profileHeaderStyles.headerInnerContainer,
-									{
-										display: 'flex',
-						
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between',
-									},
-									]}>
+									
+										{ justifyContent: 'center', alignItems: 'center' },
+										
+																	]}>
 									<LinearGradient
 										colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
 										style={{
@@ -151,46 +147,13 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 													</Text>
 												</View>
 
-										{/* <ButtonAsync
-								onPress={onPressEditProfile}
-								title='edit'
-								size='sm'
-								type='outline'
-								icon='edit'
-								loading={false}
-								loadingColor='white'
-								loadingSize='small'
-								loadingStyle={{ marginRight: 5 }}
-								style={{
-									backgroundColor: 'transparent',
-									borderWidth: 0,
-									padding: 0,
-									margin: 0,
-									marginTop: 0
-
-								}}
-								containerStyle={{
-									backgroundColor: 'transparent',
-									borderWidth: 0,
-									padding: 0,
-									margin: 0,
-									marginTop: 0
-								}
-								}
-								textStyle={{
-									color: blue.blue5,
-									fontSize: 12,
-									fontFamily: fonts.inter.bold,
-									fontWeight: 'bold',
-								}}
-							/> */}
-											{/* </View> */}
+										
 								</View>
-
 								<ConnectedProfileAvatar
 									username={username!}
 									size={120}
-								/>
+										/>
+					
 
 								<View
 									style={[
@@ -238,35 +201,58 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							</View>
 						)}
 					</View>
+				</View>
+				<View
+		  style={[
+			{
+			  flexShrink: 0,
+			  alignItems: 'center',
+			  justifyContent: 'center',
+			  flexBasis: 25,
+			  marginTop: 2,
+			  marginBottom: 2,
+			  flexDirection: 'row',
+			},
+		  ]}
+				>
+										<View style={{ flex: 1, alignItems: "flex-end", justifyContent: "center", borderRadius: 20,}}/>
 
-					<View
-						style={[
-							profileHeaderStyles.nameBioContainer,
-							{
-								// flex: 4,
-								flexBasis: "auto",
-								flexShrink:2,
-								alignItems: 'center',
-								justifyContent: 'center',
-							},
-						]}>
+
+					<View style={{ flex: 1, alignItems: "center", justifyContent: "center" ,  borderRadius: 20,}}>
 						
+						
+						<ButtonAsync
+							containerStyle={{ width: 80, height: 25, }}
+							buttonStyle={{ width: 80, height: 25, paddingHorizontal: 2, paddingVertical: 2, alignItems: "center", justifyContent: "center" , borderRadius: 20, borderWidth: 1, borderColor: blue.blue5,}}
+							textStyle={{
+								color: blue.blue5,
+								fontSize: 10,
+								fontFamily: fonts.inter.bold,
+								fontWeight: 'bold',
+							}}
+							onPress={onPressEditProfile}
+							title='edit'
+							size='sm'
+							type='outline'
+							icon='edit'
+							loading={false}
+							loadingSize='small'
+							loadingStyle={{ marginRight: 0 }}
+			/>
+		  </View>
 
-						<View
-							style={{
-								// flex: 1,
-								maxWidth: '80%',
-								alignSelf: 'center',
-
-								// overflow: 'ellipsis',
-							}}>
-							<View style={[profileHeaderStyles.bioContainer]}>
-								<Text style={profileHeaderStyles.bio}>
-									{bio}
-								</Text>
-							</View>
-						</View>
-					</View>
+				</View>
+					{bio ? (<View style={{ flexBasis: "auto", height: "auto", minHeight: 20, width: "85%",  padding: 5, marginBottom: 5,  flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf: "center", flexWrap: 1, }}>
+				<Text
+					style={
+						profileHeaderStyles.bio
+					}
+				>
+					{bio}
+				</Text>
+			</View>) :
+				<View style={{ minHeight: 20 }} />
+			}
 				</View>
 			
 		);
