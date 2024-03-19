@@ -171,13 +171,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 	}
 
 	return (
-	
-
-
 			<AuthContext.Provider value={contextValue}>
 				<MyUserInfoProvider>
 					<NavigationContainer
-					
 						ref={navigation}
 						onReady={() => {
 							// Register the navigation container with the instrumentation

@@ -7,6 +7,7 @@ export interface ConnectedProfileAvatarProps {
 	size?: number;
 	onNavigateToProfile?: null | (() => void);
 	priority?: 'low' | 'normal' | 'high';
+	disableLink?: boolean;
 }
 
 export interface ProfileAvatarProps {

@@ -286,7 +286,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 		try {
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${ state.username}/False`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${state.username}/False`,
 			);
 			const myData: UserData = userDataResponse.data;
 

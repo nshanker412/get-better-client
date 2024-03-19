@@ -1,6 +1,11 @@
+import { SettingsScreen } from '@components/settings/SettingsScreen';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { grayDark } from '@context/theme/colors_neon';
+import { fonts } from '@context/theme/fonts';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Text } from '@rneui/themed';
 import React from 'react';
+import { View } from 'react-native';
 import { CreatePlanScreen } from 'src/plans/CreatePlanScreen';
 import CreatePost from '../components/createPost/createPost';
 import { Profile } from '../components/profile/Profile';
@@ -9,11 +14,26 @@ import { Search } from '../components/search/search';
 import { PreviewUserPlan } from '../plans/preview/PreviewUserPlan';
 import { FollowerFollowingTab } from './FollowerFollowingTab';
 
+function SettingsTitle(props) {
+	return (
+		<View style={{ flexDirection: 'column', alignItems: 'center' }}>
+			<Text style={{ fontSize: 18, fontFamily: fonts.inter.bold, color: grayDark.gray12 }}>Profile Settings</Text>
+			<Text style={{ fontSize: 12, fontFamily: fonts.inter.black, color: grayDark.gray10 }}>{`@${props.username}`}</Text>
+		</View>
+	
+	);
+  }
+
 
 
 export const MyProfileStack = ({navigation}) => {
 	const ProfileStackNav = createStackNavigator();
-	const {username} = useMyUserInfo();
+	const { username } = useMyUserInfo();
+	
+	const Header = () => {
+		<SettingsTitle username={username} />
+	}
+
 
 	return (
 		<>
@@ -101,7 +121,24 @@ export const MyProfileStack = ({navigation}) => {
 					// headerTintColor: 'white',
 				 }}
 				component={FollowerFollowingTab}
-			/>
+				/>
+				<ProfileStackNav.Screen
+
+					options={{
+						headerShown: true,
+						// headerTransparent: true,
+						headerTitle: "Settings",
+						// headerTitle: () => <SettingsTitle username={username} /> ,
+
+				
+					
+						// headerTitleStyle: { fontSize: 20, fontFamily: fonts.inter.bold, color: grayDark.gray12 },
+						headerTintColor: 'white',
+						headerBackTitleVisible: false,
+					}}
+					name='settings'
+					component={SettingsScreen}
+				/>
 			</ProfileStackNav.Navigator>
 			</>
 	);

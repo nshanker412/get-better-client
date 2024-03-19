@@ -3,9 +3,10 @@ import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { blue, grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -43,7 +44,22 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
             screen
         );
 
-    };
+	};
+
+
+	const onSettingsPress = () => {
+		navigation.navigate('settings');
+	}
+	
+	useEffect(() => {
+		// Use `setOptions` to update the button that we previously specified
+		// Now the button includes an `onPress` handler to update the count
+		navigation.setOptions({
+		  headerRight: () => (
+				<MaterialIcons name="settings" size={24} color={ grayDark.gray12} onPress={onSettingsPress} />
+		  ),
+		});
+	  }, [navigation]);
 
 
 		return (
@@ -235,7 +251,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							title='edit'
 							size='sm'
 							type='outline'
-							icon='edit'
+							icon={<AntDesign name="edit" size={15} color={blue.blue5} />}
 							loading={false}
 							loadingSize='small'
 							loadingStyle={{ marginRight: 0 }}

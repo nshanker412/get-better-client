@@ -1,6 +1,5 @@
-import { blue, darkPalette, grayDark } from '@context/theme/colors_neon';
+import { darkPalette, grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { AntDesign } from '@expo/vector-icons';
 import { Button } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useMemo } from 'react';
@@ -9,18 +8,22 @@ import { LGColor, LGdirection, getLinearGradientProps } from './utils/getLinearG
 
 interface ButtonAsyncProps {
     id?: string;
-    icon?: string;
+    icon?:  JSX.Element;
 	loading: boolean;
 	title: string;
     onPress: () => void;
     disabled?: boolean; 
     isPrimary?: boolean;
+    hasLG?: boolean; 
     buttonStyle?: any;
+    loadingStyle?: any;
+    iconContainerStyle?: any;
     gradientDirection?: LGdirection;
 	textStyle?: any;
     containerStyle?: any;
     type?: 'solid' | 'clear' | 'outline';
     size?: 'sm' | 'md' | 'lg';
+    iconPosition?: 'left' | 'right' | 'top' | 'bottom';
     gradientColor?: LGColor;
 }
 
@@ -31,9 +34,13 @@ export const ButtonAsync: React.FC<ButtonAsyncProps> = ({
     disabled = false,
     type,
     buttonStyle,
+    hasLG=true,
     textStyle,
     icon,
+    iconContainerStyle,
     isPrimary = true,
+    loadingStyle,
+    iconPosition = 'left',
     containerStyle,
     gradientDirection = "diagonalTR",
     gradientColor = 'blue',
@@ -49,26 +56,30 @@ export const ButtonAsync: React.FC<ButtonAsyncProps> = ({
         start: { x: 0, y: 0 },
         end: { x: 1, y: 1 },
         } : lgProps;
-    
+
+    const lg = hasLG ? linearGradientProps : undefined;
+
 
 	return (
         <Button 
             id={id}
-            ViewComponent={LinearGradient}
-            linearGradientProps={linearGradientProps}
+
+            ViewComponent={hasLG ? LinearGradient : undefined}
+            linearGradientProps={lg}
             containerStyle={containerStyle ?? style.containerStyle}
             buttonStyle={buttonStyle ?? style.button}
             disabled={disabled}
             disabledStyle={style.disabledButton}
 			titleStyle={textStyle ?? style.textStyle}
-			loading={loading}
+            loading={loading}
+            loadingStyle={loadingStyle}
             onPress={onPress}
             type={type ?? 'solid'}
             size={size}
             radius={10}
-            iconPosition='left'
-            icon={icon === "edit" ? <AntDesign name="edit" size={15} color={blue.blue5} />:  null}
-            iconContainerStyle={{ marginRight: 10 }}
+            iconPosition={iconPosition}
+            icon={icon}
+            iconContainerStyle={iconContainerStyle ?? { marginRight: 10 }}
 			title={title}
 			/>
 	)
@@ -98,7 +109,6 @@ const useButtonAsyncStyles = (isDark: boolean, isOutline: boolean) => {
             backgroundColor: grayDark.gray3,
         },
         textStyle: {
-       
             backgroundColor: 'transparent',
             fontSize: 14,
             fontFamily: isOutline ? fonts.inter.medium : fonts.inter.black,

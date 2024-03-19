@@ -12,6 +12,7 @@ import useProfileImage from './hooks/useProfileImage';
  */
 export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 	overrideImage,
+	disableLink=false,
 	username,
 	fetchSize = 200,
 	size = 40,
@@ -39,6 +40,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 	return (
 		<TouchableOpacity
 			activeOpacity={0.9}
+			disabled={disableLink}
 			onPress={onPressCallback}
 			style={{
 				width: size,
