@@ -118,10 +118,11 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 										}}></LinearGradient>
 										
 								
-									<View style={{ flex: 1, width: '100%', gap: 10,  alignItems: 'stretch', height: "100%", justifyContent: 'center' }}>
-											<View style={{ alignItems: "center", justifyContent: "center" ,  }}>
+									<View style={{ flex: 1, width: '100%', gap: 10, alignItems: 'stretch', height: "100%", justifyContent: 'center', }}>
+
+											<View style={{ alignItems: "center", justifyContent: "center" ,   }}>
 											
-												<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+												<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',}}>
 													<Text style={[profileHeaderStyles.userNameStyle, {fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin}]}>
 													{myData?.consistency}%
 
@@ -130,12 +131,12 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 											
 											
 											</View>
-											<View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center',  }}>
+											<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',  }}>
 												<Text
 										style={[
 														profileHeaderStyles.userHandleStyle,
 														{
-															fontSize: 11,
+															fontSize: 12,
 															textAlign: 'left',
 														
 												
