@@ -49,7 +49,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 
 		return (
 			<>
-				<View style={profileHeaderStyles.headerOuterContainer}>
+				<View style={[profileHeaderStyles.headerOuterContainer]}>
 					<View
 						style={{
 							flex: 1,

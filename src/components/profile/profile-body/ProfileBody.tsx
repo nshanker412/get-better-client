@@ -139,7 +139,7 @@ const Plans: React.FC = () => {
 	}
 
 	return (
-			<View style={{ flex: 1, width: "100%", height: "auto" }}>
+			<View style={{ flex: 1, width: "100%",}}>
 				<View style={profileBodyStyles.container}>
 					<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
 						<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>

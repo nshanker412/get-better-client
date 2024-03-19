@@ -27,17 +27,15 @@ import { useProfileStyles } from './profile.styles';
 	return (
 		<Host>
 			<SafeAreaView style={profileStyles.safeAreaViewContainer}>
-				<View style={profileStyles.profileContainer}>
-					<View style={{ flexBasis: 350, flexGrow:1, flexShrink:1}}>
+				<View style={{ flex:1,  flexDirection:"column", alignItems:"center", justifyContent:"flex-start", display:"flex" }}>
+				<View style={[profileStyles.profileContainer, {minHeight:270, flexBasis:300, flexShrink:1}]}>
 						<ConnectedProfileHeader
 							username={username!}
 							onOpenChallengeModal={onChallengePress}
 							isMyProfile={false}
 						/>
-					</View>
-					<View style={{ flexGrow: 1, flexShrink: 1 }}>
+				</View>
 						<ConnectedProfileBody isMyProfile={false}   />
-					</View>
 				</View>
 
 				<ChallengeModal

@@ -70,7 +70,7 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 	}
 
 	return (
-	<View style={{ flex: 1, flexDirection: "column", alignItems: "flex-start"}}>
+	<View style={{ flexGrow:1,  flexDirection: "column", alignItems: "flex-start"}}>
 			<View style={{ flexBasis: 60 }}>
 				<FlatList 
 					data={data}

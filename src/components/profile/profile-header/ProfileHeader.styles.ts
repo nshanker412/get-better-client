@@ -14,7 +14,7 @@ export const useProfileHeaderStyles = () => {
 			// flexBasis: 260,
 			// flexShrink: 1,
 			// width: '100%',
-			// marginTop: 30, 
+			marginTop: 20,
 			// height: '100%',
 			// padding: 10,
 		},

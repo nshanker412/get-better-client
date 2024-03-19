@@ -16,11 +16,12 @@ export const useProfileStyles = () => {
 
 		profileContainer: {
 			
-			flex: 1,
+			// flex: 1,
 			justifyContent: 'center',
 			alignItems: 'center',
 			display: 'flex',
 			flexDirection: 'column',
+
 
 		},
 

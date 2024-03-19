@@ -184,6 +184,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     );
   }
 
+
   return (
     <View style={{ width: "100%", height: "100%"}} >
         {isFullscreenPreview ? (
@@ -269,11 +270,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 onMomentumScrollEnd={
                   onHapticFeedback
                 }
-                onScrollEndDrag={() => {
-                  Haptics.impactAsync(
-                    Haptics.ImpactFeedbackStyle.Medium,
-                  );
-                }}
+          
                 onScrollToTop={() => onClosePress(false)}
                 refreshing={refreshing}
 
