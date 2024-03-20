@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"main": "node_modules/expo/AppEntry.js",
 	"scripts": {
+		"ts:check": "tsc",
 		"start": "NODE_ENV=development npx expo start",
 		"start:prod": "NODE_ENV=production npx expo start",
 		"ios": "NODE_ENV=production npx  expo run:ios --configuration development --",
@@ -56,7 +57,6 @@
 		"fontfaceobserver": "^2.3.0",
 		"lodash": "^4.17.21",
 		"lottie-react-native": "6.5.1",
-		"node-fetch": "2.6.1",
 		"react": "18.2.0",
 		"react-hook-form": "^7.49.3",
 		"react-native": "0.73.5",

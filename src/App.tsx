@@ -14,6 +14,11 @@ Sentry.init({
 	environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
 	// debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
 	tracesSampleRate: 0.1,
+	_experiments: {
+		// The sampling rate for profiling is relative to TracesSampleRate.
+		// In this case, we'll capture profiles for 100% of transactions.
+		profilesSampleRate: 1.0,
+	  },
 	integrations: [
 		new Sentry.ReactNativeTracing({
 			routingInstrumentation,

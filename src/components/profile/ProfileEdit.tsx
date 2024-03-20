@@ -57,7 +57,7 @@ export const ProfileEdit: React.FC = () =>  {
 	
 			await axios
 				.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${myUsername}/${myUsername}/True`,
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${myUsername}/${myUsername}/False`,
 				)
 				.then((response) => {
 					console.log('fetchUser', response.data.name);
