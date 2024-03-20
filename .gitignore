@@ -37,3 +37,6 @@ android/
 # Jest
 coverage/
 src/__snapshots__/
+
+
+eas-build-local/
