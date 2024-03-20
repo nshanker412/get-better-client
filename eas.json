@@ -28,14 +28,17 @@
 			"autoIncrement": true,
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "production",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
 			}
 		},
 		"preview": {
 			"extends": "production",
 			"channel": "staging",
-			"EXPO_PUBLIC_ENVIRONMENT": "production",
-			"distribution": "internal"
+			"distribution": "internal",
+			"env": {
+				"EXPO_PUBLIC_ENVIRONMENT": "staging",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
+			}
 		}
 	},
 	"submit": {

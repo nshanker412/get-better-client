@@ -10,6 +10,11 @@
 		"userInterfaceStyle": "dark",
 		"backgroundColor": "#000000",
 		"icon": "./assets/icon.png",
+		"extra": {
+			"eas": {
+				"projectId": "a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
+			}
+		},
 		"splash": {
 			"image": "./assets/splash.png",
 			"resizeMode": "contain",
