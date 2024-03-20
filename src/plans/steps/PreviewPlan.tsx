@@ -695,7 +695,7 @@ const ReviewCardioList: React.FC<ReviewCardioListProps> = ({ list , routines, ca
                   <>
                     <FontAwesome6 style={{paddingRight: 10}} name="dumbbell" size={24} color="black"  />
                     <ListItem.Content>
-                      <ListItem.Title>{ item.type.name}</ListItem.Title>
+                      <ListItem.Title>{ item.name}</ListItem.Title>
                     </ListItem.Content>
                   </>
                 }

@@ -143,7 +143,7 @@ const Plans: React.FC = () => {
 				<View style={profileBodyStyles.container}>
 					<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
 						<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
-							<View style={[profileBodyStyles.scrollInnerContainer, { flex: 1, width: Dimensions.get("screen").width, height: 500, minHeight: 500 }]}>
+							<View style={[profileBodyStyles.scrollInnerContainer, { flex: 1, width: Dimensions.get("screen").width, height: 800, minHeight: 800 }]}>
 								<FlashList
 									estimatedItemSize={100}
 									data={plaV2}
@@ -152,7 +152,7 @@ const Plans: React.FC = () => {
 									renderItem={PlanItem}
 									refreshing={refreshing}
 									onRefresh={onRefresh}
-									contentContainerStyle={{ paddingBottom: 150 }} // Adds bottom padding
+									contentContainerStyle={{ paddingBottom: 450 }} // Adds bottom padding
 								/>
 							</View>
 						</View>
