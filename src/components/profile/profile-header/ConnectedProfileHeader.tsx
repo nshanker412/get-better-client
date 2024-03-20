@@ -101,7 +101,8 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 			userHandle={`@${otherUsername}`}
 			username={otherUsername}
 			bio={otherUserData?.bio}
-			onOpenChallengeModal={onOpenChallengeModal}
+				onOpenChallengeModal={onOpenChallengeModal}
+				consistency={otherUserData?.consistency}
 			onMotivatePress={onMotivatePressCb}
 			following={otherUserData?.following}
 			followers={otherUserData?.followers}

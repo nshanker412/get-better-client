@@ -1,5 +1,6 @@
 import { ButtonAsync } from '@components/primitives/async-button/ButtonAsync';
 import { grayDark } from '@context/theme/colors_neon';
+import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,6 +34,7 @@ const s = StyleSheet.create({
 
 export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	isLoading,
+	consistency,
 	userHandle,
 	username,
 	bio,
@@ -117,9 +119,18 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 				}]}
 			  >
 				<View style={{ flex: 1, width: '100%' }}>
-				  <Text style={profileHeaderStyles.userHandleStyle}>
-					{userHandle}
-				  </Text>
+				<View style={{ alignItems: "center", justifyContent: "center" }}>
+								<View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+								  <Text style={[profileHeaderStyles.userNameStyle, { fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin }]}>
+									{consistency}%
+								  </Text>
+								</View>
+							  </View>
+							  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+								<Text style={profileHeaderStyles.userHandleStyle}>
+								  {userHandle}
+								</Text>
+							  </View>
 				</View>
 				<ConnectedProfileAvatar
 				  username={username!}
@@ -195,7 +206,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			/>
 		  </View>
 			</View>
-			{bio ? (<View style={{ flexBasis: "auto", height: "auto", minHeight: 20, width: "85%",  padding: 10, marginBottom: 5,  flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf: "center", flexWrap: 1, }}>
+			{bio ? (
+				<View style={{ flexBasis: "auto", height: "auto", minHeight: 20, width: "85%", padding: 10, marginBottom: 5, flexShrink: 1, alignItems: "center", justifyContent: 'center', alignSelf: "center", flexWrap: 1, }}>
 				<Text
 					style={
 						profileHeaderStyles.bio

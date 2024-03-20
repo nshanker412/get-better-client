@@ -89,7 +89,6 @@ export const useProfileHeaderStyles = () => {
 			alignItems: 'center',
 			justifyContent: 'center',
 			width: 'auto',
-			height: 'auto',
 			padding: 1,
 		},
 		handleContainer: {
@@ -102,7 +101,7 @@ export const useProfileHeaderStyles = () => {
 		userHandleStyle: {
 			color: theme.grayShades.gray700,
 			textAlign: 'center',
-			fontSize: 15,
+			fontSize: 12,
 			alignItems: 'center',
 		},
 		motivatorOuterContainer: {

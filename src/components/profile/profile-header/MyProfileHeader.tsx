@@ -166,17 +166,13 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 					]}
 				>
 			<View style={{ flex: 1, alignItems: "flex-end", justifyContent: "center", borderRadius: 20,}}/>
-
-
 					<View style={{ flex: 1, alignItems: "center", justifyContent: "center" ,  borderRadius: 20,}}>
-						
-						
 						<ButtonAsync
 							containerStyle={{ width: 80, height: 25, }}
-							buttonStyle={{ width: 80, height: 25, paddingHorizontal: 2, paddingVertical: 2, alignItems: "center", justifyContent: "center" , borderRadius: 20, borderWidth: 1, borderColor: blue.blue5,}}
+							buttonStyle={{ width: 80, height: 25, gap: 5, paddingHorizontal: 2, paddingVertical: 2, alignItems: "center", justifyContent: "center" , borderRadius: 20, borderWidth: 1, borderColor: blue.blue5,}}
 							textStyle={{
 								color: blue.blue5,
-								fontSize: 10,
+								fontSize: 12,
 								fontFamily: fonts.inter.bold,
 								fontWeight: 'bold',
 							}}
