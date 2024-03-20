@@ -365,11 +365,11 @@ export const SettingsScreen = ({ navigation }) => {
                   disabled={form.allPushNotificationsEnabled === true}
                   style={styles.row}>
                     
-                    <Text style={styles.rowLabel}>Customize</Text>
+                    <Text style={[styles.rowLabel, form.allPushNotificationsEnabled === true && {color: grayDark.gray6}]}>Customize</Text>
 
-                    <View style={styles.rowSpacer} />
+                    <View style={[styles.rowSpacer]} />
                         <FeatherIcon
-                    color="#C6C6C6"
+                      color={form.allPushNotificationsEnabled === true ? grayDark.gray6 : "#C6C6C6"}
                     name="chevron-right"
                     size={20} />
 
