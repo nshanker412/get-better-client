@@ -6,32 +6,25 @@ import 'expo-dev-client';
 import React from 'react';
 import Toast from 'react-native-toast-message';
 
-const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
+// const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 Sentry.init({
 	dsn: 'https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936',
 	// enableAutoSessionTracking: true,
 	environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
 	debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
-	tracesSampleRate: 1.0,
+	tracesSampleRate: 0.2,
+	// attachViewHierarchy: true,
+
 	// captureFailedRequestsEnabled: true,
-	_experiments: {
-		// The sampling rate for profiling is relative to TracesSampleRate.
-		// In this case, we'll capture profiles for 100% of transactions.
-		profilesSampleRate: 0.1,
-	  },
-	integrations: [
-		new Sentry.ReactNativeTracing({
-			routingInstrumentation,
-		}),
-	],
+
 });
 
 const App = () => {
 	return (
 		<>
 			<ThemeContextProvider>
-			<AuthProvider routingInstrumentation={routingInstrumentation} />
+			<AuthProvider routingInstrumentation={null} />
 			</ThemeContextProvider>
 		<Toast config={toastConfig} />
 		</>

@@ -20,9 +20,6 @@
 				"usesNonExemptEncryption": false
 			}
 		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
 		"extra": {
 			"eas": {
 				"projectId": "a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
@@ -66,8 +63,10 @@
 			[
 				"@sentry/react-native/expo",
 				{
+					"url": "https://sentry.io/",
 					"organization": "benson-e4",
-					"project": "get-better"
+					"project": "get-better",
+					"authToken": "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"
 				}
 			  ]
 		]

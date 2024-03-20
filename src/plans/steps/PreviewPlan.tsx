@@ -434,7 +434,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
                             <>
                             <MaterialCommunityIcons name="food-fork-drink" size={24} color="black" style={{paddingRight: 5}} />
                             <ListItem.Content>
-                                <ListItem.Title>{list[index].label} </ListItem.Title>
+                                <ListItem.Title>{list[index]?.label} </ListItem.Title>
                                 <ListItem.Subtitle >{ list[index].type} </ListItem.Subtitle>
 
                             </ListItem.Content>
