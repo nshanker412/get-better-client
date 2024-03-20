@@ -6,76 +6,22 @@ import { useNotifications } from '@context/notifications/useNotifications';
 import { blue, grayDark, red } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { Switch } from '@rneui/base';
+import * as Application from 'expo-application';
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
+  Linking,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
-
-// const sectionStyle = StyleSheet.create({
-//   section: {
-//     paddingTop: 12,
-//   },
-//   sectionTitle: {
-//     marginVertical: 8,
-//     marginHorizontal: 24,
-//     fontSize: 14,
-//     fontWeight: '600',
-//     color: '#a7a7a7',
-//     textTransform: 'uppercase',
-//     letterSpacing: 1.2,
-//   },
-//   sectionBody: {
-//     paddingLeft: 24,
-//     backgroundColor: '#fff',
-//     borderTopWidth: 1,
-//     borderBottomWidth: 1,
-//     borderColor: '#e3e3e3',
-//   },
-// });
-
-
-// const SettingsSection = (props: any) => {
-
-//   return (
-//   <View style={sectionStyle.section}>
-//       <Text style={sectionStyle.sectionTitle}>Preferences</Text>
-//       {props.children}
-//     </View>
-//   );
-// }
-
-// const Sections = [
-//   "User info": 
-    
-//   },
-//   "Settings": {
-//     "Dark Mode": false,
-//     "Email Notifications": true,
-//     "Push Notifications": false,
-//   },
-//   "About": {
-    
-//   }
-// ]
-
-
-const screens = [
-  "Edit Public Profile",
-  "Preferences",
-  "Notifications",
-  "Account",
-  "About",
-]
-
+const PRIVACY_POLICY_URL = 'https://getbetterbrand.com/privacy-policy';
 
 export const SettingsScreen = ({ navigation }) => {
   
@@ -83,6 +29,25 @@ export const SettingsScreen = ({ navigation }) => {
   const { signOut, userToken, sendPasswordResetEmail } = useAuth();
 
   const [sendPasswordResetLoading, setSendPasswordResetLoading] = useState(false);
+
+
+  const [appVersion, setAppVersion] = useState();
+  const [buildVersion, setBuildVersion] = useState();
+
+
+  useEffect(() => {
+
+    // console.log('SettingsScreen mounted', Application.nativeApplicationVersion);
+    const appVersion = Application.nativeApplicationVersion;
+    setAppVersion(appVersion);
+
+
+    const buildVersion = Application.nativeBuildVersion;
+    console.log('appVersion', appVersion);
+    setBuildVersion(buildVersion);
+
+    // });
+  }, []);
 
 
   
@@ -96,6 +61,7 @@ export const SettingsScreen = ({ navigation }) => {
     darkMode: false,
     emailNotifications: true,
     pushNotifications: false,
+    allPushNotificationsEnabled: true,
   });
 
   const onPressEditProfile = () => {
@@ -206,12 +172,29 @@ export const SettingsScreen = ({ navigation }) => {
   };
 
 
+  const sendFeatureInDevelopmentAlert = () => {
+    Alert.alert(
+      'Feature in development', // Alert Title',
+      'This feature is not yet available', // Alert Message
+      [
+        {
+          text: 'OK',
+          onPress: () => console.log('OK Pressed'),
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       <View style={styles.container}>
       {/* <ScreenHeader title="Settings"  subtitle="edit your settings"/> */}
 
         <ScrollView
+
          
         >
           <View style={styles.profile}>
@@ -340,78 +323,119 @@ export const SettingsScreen = ({ navigation }) => {
                   <TouchableOpacity
                     onPress={() => { deleteAccountAlert() }}>
                   <MaterialIcons name="delete" size={24} color={red.red6} />
-                  {/* <FeatherIcon
-                    color="#C6C6C6"
-                    name="chevron-right"
-                    size={20} /> */}
+              
                 </TouchableOpacity>
                 </View>
                 </View> 
             </View>
 
             <View style={styles.section}>
-            <View style={styles.sectionTitleContainer}>
+              <View style={styles.sectionTitleContainer}>
                 <MaterialIcons name="notifications" size={24} color={grayDark.gray10} />
                 <Text style={styles.sectionTitle}>Push Notifications</Text>
               </View>
               <View style={styles.sectionBody}>
-                {/* <View style={[styles.rowWrapper, styles.rowFirst]}>
-                  <View style={styles.row}>
-                 
 
-                    <Text style={styles.rowLabel}>Email Notifications</Text>
-
-                    <View style={styles.rowSpacer} />
-
-                    <Switch
-                      onValueChange={emailNotifications =>
-                        setForm({ ...form, emailNotifications })
-                      }
-                      value={form.emailNotifications} />
-                  </View>
-                </View> */}
-
-                <View style={styles.rowWrapper}>
+              <View style={styles.rowWrapper}>
                   <View style={styles.row}>
                     
-                    <Text style={styles.rowLabel}>Push Notifications</Text>
+                    <Text style={styles.rowLabel}>Enable all</Text>
 
                     <View style={styles.rowSpacer} />
+          
 
                     <Switch
-                      onValueChange={pushNotifications =>
-                        setForm({ ...form, pushNotifications })
+                      onValueChange={allPushNotificationsEnabled =>
+                        setForm({ ...form, allPushNotificationsEnabled })
                       }
-                      value={form.pushNotifications} />
-                  </View>
+                      value={form.allPushNotificationsEnabled}
+                      
+                    /> 
+                    </View>
+
                 </View>
+                <View style={styles.rowWrapper}>
+
+                <TouchableOpacity
+                  onPress={
+                    () => {
+                      sendFeatureInDevelopmentAlert();
+                  }
+                  }
+                  disabled={form.allPushNotificationsEnabled === true}
+                  style={styles.row}>
+                    
+                    <Text style={styles.rowLabel}>Customize</Text>
+
+                    <View style={styles.rowSpacer} />
+                        <FeatherIcon
+                    color="#C6C6C6"
+                    name="chevron-right"
+                    size={20} />
+
+      
+                  </TouchableOpacity>
+                  </View>
+              </View> 
+            </View>
+          
+            
+            <View style={styles.section}>
+              <View style={styles.sectionTitleContainer}>
+                <MaterialIcons name="info-outline" size={24} color={grayDark.gray10} />
+                <Text style={styles.sectionTitle}>App Details</Text>
+              </View>
+              <View style={styles.sectionBody}>
+
+              <View style={styles.rowWrapper}>
+                <TouchableOpacity
+                  onPress={
+                    () => {
+                    Linking.openURL(PRIVACY_POLICY_URL);
+                  }}
+                    style={styles.row}
+                  >
+                    <Text style={styles.rowLabel}>Privacy Policy</Text>
+                    <View style={styles.rowSpacer} />
+                    <Text style={styles.rowValue}>View</Text>
+
+                        <FeatherIcon
+                            color="#C6C6C6"
+                            name="chevron-right"
+                            size={20} />
+
+
+                  </TouchableOpacity>
+                  </View>
 
                 
 
 
-                {/* <View style={styles.rowWrapper}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      // handle onPress
-                    }}
-                    style={styles.row}>
-                   
-
-                    <Text style={styles.rowLabel}>Sound</Text>
+                <View style={styles.rowWrapper}>
+                <View style={styles.row}>
+                    <Text style={styles.rowLabel}>App Version</Text>
 
                     <View style={styles.rowSpacer} />
+                                   <Text style={styles.rowValue}>{`beta-${appVersion}`?? "-"}</Text>
 
-                    <Text style={styles.rowValue}>Default</Text>
 
-                    <FeatherIcon
-                      color="#C6C6C6"
-                      name="chevron-right"
-                      size={20} />
-                  </TouchableOpacity>
-                  </View> */}
+      
+                  </View>
+                </View>
+                
+                <View style={styles.rowWrapper}>
+                <View style={styles.row}>
+                    <Text style={styles.rowLabel}>Build Version</Text>
+
+                    <View style={styles.rowSpacer} />
+                    <Text style={styles.rowValue}>{buildVersion ?? "-"}</Text>
+
+      
+                  </View>
+                  </View>
               </View> 
             </View>
-          
+
           </View>
           <ButtonAsync 
             hasLG={false}
