@@ -10,14 +10,15 @@ const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 Sentry.init({
 	dsn: 'https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936',
-	enableAutoSessionTracking: true,
+	// enableAutoSessionTracking: true,
 	environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
-	// debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
-	tracesSampleRate: 0.1,
+	debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
+	tracesSampleRate: 1.0,
+	// captureFailedRequestsEnabled: true,
 	_experiments: {
 		// The sampling rate for profiling is relative to TracesSampleRate.
 		// In this case, we'll capture profiles for 100% of transactions.
-		profilesSampleRate: 1.0,
+		profilesSampleRate: 0.1,
 	  },
 	integrations: [
 		new Sentry.ReactNativeTracing({

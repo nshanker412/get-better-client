@@ -9,9 +9,8 @@
 			"yarn": "1.22.10",
 			"env": {
 				"EXPO_PUBLIC_SERVER_BASE_URL": "http://localhost:13131",
-				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936",
-				"EXPO_PUBLIC_ENVIRONMENT": "development",
-				"SENTRY_AUTH_TOKEN": "853418dc677c56f2c9d0f04e07e394898cb6ab65bf67eb7150f95bedd2467e42"
+				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936",
+				"EXPO_PUBLIC_ENVIRONMENT": "development"
 
 			},
 			"distribution": "internal"
@@ -28,8 +27,7 @@
 			},
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "development",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
-				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936",
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
 			}
 		},
 		"staging": {
@@ -37,8 +35,7 @@
 			"distribution": "internal",
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "staging",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
-				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
 
 			}
 		},
@@ -48,8 +45,7 @@
 			"autoIncrement": true,
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "production",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
-				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.sentry.io/4506748872359936"
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
 			}
 		}
 	},
