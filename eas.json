@@ -35,8 +35,7 @@
 			"distribution": "internal",
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "staging",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
-
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
 			}
 		},
 		"production": {
@@ -45,7 +44,8 @@
 			"autoIncrement": true,
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "production",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
+				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
+				"SENTRY_AUTH_TOKEN": "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"
 			}
 		}
 	},
