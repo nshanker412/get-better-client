@@ -199,6 +199,7 @@ export function MainScreen({navigation, route}) {
 				name='post'
 				component={CreatePost}
 					options={{
+							presentation: 'modal',
 
 						tabBarIcon: ({ focused }) => <PostTabIcon focused={focused} />
 					}}

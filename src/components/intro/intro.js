@@ -11,6 +11,7 @@ export default function Intro() {
 	const navigation = useNavigation();
 
 	const introStyles = useIntroStyles();
+	
 
 	return (
 		<>
