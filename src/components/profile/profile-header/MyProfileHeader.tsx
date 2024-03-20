@@ -15,6 +15,8 @@ import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { MyProfileHeaderProps } from './ProfileHeader.types';
 import { handleSocialPress } from './utils/handleSocialPress';
 
+
+
 export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	isLoading,
 	onLogout,
@@ -65,29 +67,6 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 		return (
 			<View style={[profileHeaderStyles.headerOuterContainer, { flexBasis: "auto", flexGrow:1, flexShrink: 0 }]}>
 			<View style={[{ flexBasis: 100, flexShrink: 0, width: '100%', alignSelf: 'center', justifyContent: "flex-start" }]}>
-			{/* <View style={[profileHeaderStyles.headerOuterContainer,  { flexBasis: "auto", flexGrow:1, flexShrink: 1 }]}> */}
-			
-						{/* <View
-							style={{
-								// flex: 1,
-								position: 'absolute',
-								right: -15,
-								top: 0,
-							
-								alignItems: 'flex-end',
-								justifyContent: 'flex-start',
-								padding: 5,
-							}}>
-					
-							<TouchableOpacity onPress={onLogout}>
-								<MaterialIcons
-									name='logout'
-									size={24}
-									color={"white"}
-								/>
-							</TouchableOpacity>
-							
-						</View> */}
 
 					<View
 						style={{ flexBasis:"auto", width: '100%', alignSelf: 'center' }}>
@@ -110,129 +89,83 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 								LinearGradient={LinearGradient}
 							/>
 						) : (
-							<View
-								style={[
-									profileHeaderStyles.headerInnerContainer,
-									
-										{ justifyContent: 'center', alignItems: 'center' },
-										
-																	]}>
-									<LinearGradient
-										colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
-										style={{
-											borderRadius: 20,
-											width: '100%',
-											// flex: 1,
-											height: 90,
-											position: 'absolute',
-											borderWidth: 0.5,
-											borderColor: theme.innerBorderColor,
-											display: 'flex',
-											flexDirection: 'row',
-											alignItems: 'center',
-											justifyContent: 'space-between',
-										}}></LinearGradient>
-										
-								
-									<View style={{ flex: 1, width: '100%', gap: 10, alignItems: 'stretch', height: "100%", justifyContent: 'center', }}>
-
-											<View style={{ alignItems: "center", justifyContent: "center" ,   }}>
-											
-												<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',}}>
-													<Text style={[profileHeaderStyles.userNameStyle, {fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin}]}>
-													{myData?.consistency}%
-
-														</Text>	
-											</View> 
-											
-											
-											</View>
-											<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',  }}>
-												<Text
-										style={[
-														profileHeaderStyles.userHandleStyle,
-														{
-															fontSize: 12,
-															textAlign: 'left',
-														
-												
-											}
-										]
-										}>
-												{userHandle}
-
-													</Text>
-												</View>
-
-										
+							<View style={profileHeaderStyles.headerInnerContainer}>
+							<LinearGradient
+							  colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}
+							  style={{
+								borderRadius: 20,
+								width: '100%',
+								height: 90,
+								position: 'absolute',
+								borderWidth: 0.5,
+								borderColor: theme.innerBorderColor,
+								alignItems: 'center',
+								justifyContent: 'space-between',
+							  }}
+							/>
+							<View style={{
+							  flex: 1,
+							  width: '100%',
+							  alignItems: 'center',
+							  justifyContent: 'center',
+							}}>
+							  <View style={{ alignItems: "center", justifyContent: "center" }}>
+								<View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+								  <Text style={[profileHeaderStyles.userNameStyle, { fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin }]}>
+									{myData?.consistency}%
+								  </Text>
 								</View>
-								<ConnectedProfileAvatar
-									username={username!}
-									size={120}
-										/>
-					
-
-								<View
-									style={[
-										profileHeaderStyles.motivatorOuterContainer,
-										{ flex: 1,  },
-									]}>
-									<TouchableOpacity
-										onPress={() => onSocialPress('Followers')}>
-										<View
-											style={{
-												flexDirection: 'column',
-											}}>
-											<Text
-												style={
-													profileHeaderStyles.motivateNum
-												}>
-												{followers ?? '-'}
-											</Text>
-
-											<Text
-												style={
-													profileHeaderStyles.motivatorText
-												}>
-												Motivators
-											</Text>
-										</View>
-									</TouchableOpacity>
-									<TouchableOpacity
-											onPress={() => onSocialPress('Following')}>
-
-										<Text
-											style={
-												profileHeaderStyles.motivateNum
-											}>
-											{following ?? '-'}
-										</Text>
-										<Text
-											style={
-												profileHeaderStyles.motivatorText
-											}>
-											Motivating
-										</Text>
-									</TouchableOpacity>
-										</View>
+							  </View>
+							  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+								<Text style={profileHeaderStyles.userHandleStyle}>
+								  {userHandle}
+								</Text>
+							  </View>
 							</View>
+							<ConnectedProfileAvatar
+							  username={username!}
+							  size={120}
+							/>
+							<View style={profileHeaderStyles.motivatorOuterContainer}>
+							  <TouchableOpacity onPress={() => onSocialPress('Followers')}>
+								<View style={{ flexDirection: 'column', alignItems: 'center' }}>
+								  <Text style={profileHeaderStyles.motivateNum}>
+									{followers ?? '-'}
+								  </Text>
+								  <Text style={profileHeaderStyles.motivatorText}>
+									Motivators
+								  </Text>
+								</View>
+							  </TouchableOpacity>
+							  <TouchableOpacity onPress={() => onSocialPress('Following')}>
+								<View style={{ flexDirection: 'column', alignItems: 'center' }}>
+								  <Text style={profileHeaderStyles.motivateNum}>
+									{following ?? '-'}
+								  </Text>
+								  <Text style={profileHeaderStyles.motivatorText}>
+									Motivating
+								  </Text>
+								</View>
+							  </TouchableOpacity>
+							</View>
+						  </View>
 						)}
 					</View>
 				</View>
 				<View
-		  style={[
-			{
-			  flexShrink: 0,
-			  alignItems: 'center',
-			  justifyContent: 'center',
-			  flexBasis: 25,
-			  marginTop: 2,
-			  marginBottom: 2,
-			  flexDirection: 'row',
-			},
-		  ]}
+					style={[
+						{
+						flexShrink: 0,
+						alignItems: 'center',
+						justifyContent: 'center',
+						flexBasis: 25,
+						marginTop: 2,
+						marginBottom: 2,
+						flexDirection: 'row',
+						},
+					]}
 				>
-										<View style={{ flex: 1, alignItems: "flex-end", justifyContent: "center", borderRadius: 20,}}/>
+			<View style={{ flex: 1, alignItems: "flex-end", justifyContent: "center", borderRadius: 20,}}/>
 
 
 					<View style={{ flex: 1, alignItems: "center", justifyContent: "center" ,  borderRadius: 20,}}>
