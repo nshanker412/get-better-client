@@ -10,8 +10,9 @@
 			"env": {
 				"EXPO_PUBLIC_SERVER_BASE_URL": "http://localhost:13131",
 				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936",
-				"EXPO_PUBLIC_ENVIRONMENT": "development"
-
+				"EXPO_PUBLIC_ENVIRONMENT": "development",
+				"SENTRY_ORG":"benson-e4",
+				"SENTRY_PROJECT":"get-better"
 			},
 			"distribution": "internal"
 		},
@@ -19,40 +20,30 @@
 			"extends": "base",
 			"developmentClient": true
 		},
-		"development-simulator": {
-			"extends": "base",
-			"developmentClient": true,
-			"ios": {
-				"simulator": true
-			},
-			"env": {
-				"EXPO_PUBLIC_ENVIRONMENT": "development",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
-			}
-		},
-		"staging": {
-			"extends": "base",
-			"distribution": "internal",
-			"env": {
-				"EXPO_PUBLIC_ENVIRONMENT": "staging",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
-			}
-		},
 		"production": {
 			"extends": "base",
 			"distribution": "store",
+			"channel": "production",
+
 			"autoIncrement": true,
 			"env": {
 				"EXPO_PUBLIC_ENVIRONMENT": "production",
 				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131",
-				"SENTRY_AUTH_TOKEN": "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"
 			}
+		},
+		"preview": {
+			"extends": "production",
+			"channel": "staging",
+			"EXPO_PUBLIC_ENVIRONMENT": "production",
+			"distribution": "internal"
 		}
 	},
 	"submit": {
 		"production": {
 			"ios": {
-				"appleTeamId": "L6C35JVHVC"
+				"appleId": "erictbenson10@gmail.com",
+				"appleTeamId": "L6C35JVHVC",
+				"ascAppId": "6475650513"
 			}
 		}
 	}

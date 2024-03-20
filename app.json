@@ -1,12 +1,15 @@
 {
 	"expo": {
-		"version": "1.0.9",
 		"name": "GetBetter.",
 		"slug": "getb",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"runtimeVersion": "1.0.0",
+		"sdkVersion": "50.0.6",
+		"version": "1.0.9",
+		"owner": "bensone146",
 		"platforms": ["ios"],
+		"orientation": "portrait",
+		"userInterfaceStyle": "dark",
+		"backgroundColor": "#000000",
+		"icon": "./assets/icon.png",
 		"splash": {
 			"image": "./assets/splash.png",
 			"resizeMode": "contain",
@@ -14,20 +17,13 @@
 		},
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
+			"userInterfaceStyle": "dark",
+			"backgroundColor": "#000000",
 			"supportsTablet": true,
 			"bundleIdentifier": "com.bensone146.getbetter",
 			"config": {
 				"usesNonExemptEncryption": false
 			}
-		},
-		"extra": {
-			"eas": {
-				"projectId": "a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
-			}
-		},
-		"owner": "bensone146",
-		"updates": {
-			"url": "https://u.expo.dev/a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
 		},
 		"plugins": [
 			[
@@ -65,14 +61,11 @@
 				{
 					"url": "https://sentry.io/",
 					"organization": "benson-e4",
-					"project": "get-better",
-					"authToken": "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"
+					"project": "get-better"
+
 				}
 			  ]
 		]
-	},
-	"packagerOpts": {
-		"config": "metro.config.js",
-		"sourceExts": ["js", "jsx", "svg", "ts", "tsx"]
 	}
+	
 }

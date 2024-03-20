@@ -109,16 +109,19 @@ export const CardioItemModal: React.FC<CardioItemModalProps> = ({ cardio: cardio
                   }
                 placeholder="e.g. get better"
                 value={goal}
-                onChangeText={setGoal}
+                  onChangeText={setGoal}
+                  keyboardAppearance='dark'
+
                 />
-                               <Input 
+              <Input 
                   style={styles.input}
                   label={
                     <Text style={styles.smallLabel}>Notes</Text>
                   }
                 placeholder="Enter any notes"
                 value={notes}
-                onChangeText={setNotes}
+                  onChangeText={setNotes}
+                  keyboardAppearance='dark'
               />
      
 

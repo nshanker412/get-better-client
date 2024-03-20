@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 Sentry.init({
-	dsn: 'https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936',
+	dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
 	enableAutoSessionTracking: true,
 	environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
 	debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
