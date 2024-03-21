@@ -127,7 +127,6 @@ const Plans: React.FC = () => {
 						<View style={{ flex: 1, width: 140, height: 140, borderColor: grayDark.gray9, borderWidth: 0.5, borderRadius: 8, padding: 10, alignItems: "center", justifyContent: "center" }}>
 							<ConnectedPlanItem planType={item?.planType} planTitle={item?.title} />
 						</View>
-			
 					</LinearGradient>
 				</TouchableOpacity>
 			</View>

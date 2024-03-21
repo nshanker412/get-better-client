@@ -254,7 +254,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 data={posts ??[]}
                 ListEmptyComponent={
                   <View style={{ height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center" , paddingTop: 50, gap: 20}}>
-                    <Text style={{ color: "white", fontSize: 20, fontFamily: fonts.inter.thin,  }}>No posts to show</Text>
+                    <Text style={{ color: "white", fontSize: 20, fontFamily: fonts.inter.thin,  }}>No posts created yet</Text>
                     <View style={{
                       maxHeight: 200,
                       maxWidth: 200,

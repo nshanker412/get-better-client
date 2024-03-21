@@ -61,14 +61,10 @@ export const ConnectedProfileBody: React.FC<ConnectedProfileBodyProps> = ({
 		return (
 			
 			<View style={{ flex: 1, height: 60, width: "100%", paddingLeft:5, paddingRight:5,  backgroundColor: "black", alignItems:"center" , justifyContent:"center"}}>
-				
-			<View style={{ height: 60, width: 150,  borderWidth:1 ,padding: 2, borderRadius: 5, backgroundColor: "black", borderColor: grayDark.gray9, shadowColor: grayDark.gray4, shadowOffset: {width: -5, height: 5}, shadowRadius:8, shadowOpacity:0}}>
+				<View style={{ height: 60, width: 150,  borderWidth:1 ,padding: 2, borderRadius: 5, backgroundColor: "black", borderColor: grayDark.gray9, shadowColor: grayDark.gray4, shadowOffset: {width: -5, height: 5}, shadowRadius:8, shadowOpacity:0}}>
 					<Text style={{ padding: 2, fontSize: 14, color: "white", fontFamily: fonts.inter.extra_bold }}>{item.h}</Text>
 					<Text style={{ padding: 2,  fontSize: 25, color: grayDark.gray10, fontFamily: fonts.inter.extra_light }}>{item.s}</Text>
-
 					</View>
-					
-			
 			</View>
 		)
 	}
