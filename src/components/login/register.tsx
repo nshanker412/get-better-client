@@ -51,7 +51,6 @@ export const Register: React.FC = () => {
 		navigate.navigate('SignIn');
 	};
 
-
 	const registerUser = async (data: RegisterData): Promise<any> => {
 		try {
 			const response = await axios.post(
@@ -149,9 +148,40 @@ export const Register: React.FC = () => {
 				name,
 				username,
 			};
-			await registerUser(input);
+			const resp = await registerUser(input);
 			await attemptFbSignUp(email, password);
+	
+				console.log('Unsuccessful register');
+				showErrorToast('Unsuccessful register');
+				//delete user from server
+				try {
+
+					const form = new FormData();
+					form.append('email', email);
+					form.append('username', username);
+					form.append('name', name);
+
+					const response = await axios.post(
+						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/deleteUser`,
+						form,
+					);
+					console.log('delete user resp', response);
+				} catch (err) {
+					console.log('error deleting user', err);	
+
+					Toast.show({
+						text1: "Woah there...",
+						text2: "Your having some back luck, try again later.",
+						type: 'error',
+						visibilityTime: 5000,
+						topOffset: 150,
+						autoHide: true,
+					});
+				}
+			
 			console.log('Successful register');
+
+			navigate.navigate('SignIn');
 		} catch (error) {
 			if (error instanceof Error) {
 				console.log('Error:', error.message);

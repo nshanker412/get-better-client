@@ -114,8 +114,9 @@ import { FirebaseError } from "firebase/app";
 export const firebaseErrorToMessage = (error: FirebaseError | string): string => {
 
     if (error instanceof FirebaseError) {
+        console.log(error.code, error.message)
        
-        switch (error.code) {
+        switch (error?.code) {
             case FIREBASE_AUTH_ERROR_CODES.INVALID_EMAIL:
                 return 'Invalid email or password.';
             case FIREBASE_AUTH_ERROR_CODES.USER_DISABLED:
