@@ -24,13 +24,8 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
     const [linkPostID, setLinkPostID] = useState<string | undefined>(undefined);
 
-
-
-
     useEffect(() => {
-
         setLinkPostID(route?.params?.linkPostID);
-
         console.log("ROUTE IN PROFILE POSTS", route);
     }, [route]);
 
@@ -38,9 +33,6 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     // check if linked from notification
     useEffect(() => {
         if (!posts.length) return;
-
-
-        console.log('inprofile', linkPostID);
 
         if (linkPostID !== undefined) {
             console.log('it exists' , linkPostID);
@@ -74,10 +66,6 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     const onFetchUserPosts = async () => {
         await fetchUserPosts();
     }
-
-    useEffect(() => {
-        console.log('linkid preview changes', previewPostId);
-    }, [previewPostId]);
 
     return (
             <PreviewFeedScreen

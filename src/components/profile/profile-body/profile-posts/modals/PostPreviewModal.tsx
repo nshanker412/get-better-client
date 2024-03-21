@@ -1,17 +1,18 @@
 import { useCommentDrawer } from '@context/comment-drawer/CommentDrawerContext';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { grayDark } from '@context/theme/colors_neon';
+import { fonts } from '@context/theme/fonts';
 import { AntDesign } from '@expo/vector-icons';
 import { Post } from '@models/posts';
-import { useScrollToTop } from '@react-navigation/native';
+import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, RefreshControl, TouchableOpacity, View, ViewToken } from 'react-native';
+import { Dimensions, RefreshControl, Text, TouchableOpacity, View, ViewToken } from 'react-native';
 import { Host, Portal } from 'react-native-portalize';
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer';
 import { PostTile } from '../post-flashlist/PostTile';
 import { DeletePostModal } from './DeletePostModal';
-
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -31,6 +32,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [contentHeight, setContentHeight] = useState(0);
   const [scrollViewHeight, setScrollViewHeight] = useState(0);
+  const { navigate } = useNavigation();
 
   useScrollToTop(profileFeedRef);
 
@@ -184,7 +186,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     );
   }
 
-
   return (
     <View style={{ width: "100%", height: "100%"}} >
         {isFullscreenPreview ? (
@@ -206,7 +207,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               <FlashList
                 id='preview-feed-flash-list-fullscreen'
                 ref={profileFeedRef}
-                data={posts}
+                data={posts ?? []}
                 estimatedItemSize={Dimensions.get("screen").height}
                 initialScrollIndex={currentIndex}
                 showsVerticalScrollIndicator={false}
@@ -246,13 +247,39 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
         ) : (
           <Host>
-
-
             <View style={embeddedViewStyle} >
               <FlashList
                 id='preview-feed-flash-list-embedded'
                 ref={profileFeedRef}
-                data={posts}
+                data={posts ??[]}
+                ListEmptyComponent={
+                  <View style={{ height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center" , paddingTop: 50, gap: 20}}>
+                    <Text style={{ color: "white", fontSize: 20, fontFamily: fonts.inter.thin,  }}>No posts to show</Text>
+                    <View style={{
+                      maxHeight: 200,
+                      maxWidth: 200,
+                      height: 200,
+                      width: 200, 
+                      justifyContent: "center",
+                      alignItems: "center",
+                      // borderWidth: 0.5,
+
+                      flex: 1,
+                      flexGrow: 2,
+                      padding: 10,
+                      borderWidth: 1,
+                      borderColor: grayDark.gray10,
+                      borderStyle: 'dashed',
+                      borderRadius: 10,
+                      
+                    }}>
+                      <TouchableOpacity onPress={() => navigate('post')}>
+                        <AntDesign name="pluscircleo" size={60} color={grayDark.gray10} />
+                      </TouchableOpacity>
+
+                    </View>
+                    </View>
+                }
                 estimatedItemSize={200}
                 showsVerticalScrollIndicator={false}
                 removeClippedSubviews
