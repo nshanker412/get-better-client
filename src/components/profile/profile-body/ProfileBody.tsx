@@ -108,6 +108,9 @@ const Plans: React.FC = () => {
 			} else {
 				setPlaV2(planList);
 			}
+		} else {
+			setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
+		
 	}
 	}, [plans, isMyProfile, refreshing]);
 
