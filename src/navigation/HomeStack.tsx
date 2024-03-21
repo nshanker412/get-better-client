@@ -7,7 +7,6 @@ import CreatePost from '../components/createPost/createPost';
 import { Notifications } from '../components/notifications/Notifications';
 import { Profile } from '../components/profile/Profile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
-import { ProfilePlan } from '../components/profile/ProfilePlan';
 import { ProfilePost } from '../components/profile/ProfilePost';
 
 export const HomeStack: React.FC = ({ navigation }) => {
@@ -57,10 +56,7 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					name='profilePost'
 					component={ProfilePost}
 				/>
-				<HomeStackNav.Screen
-					name='profilePlan'
-					component={ProfilePlan}
-				/>
+				
 				<HomeStackNav.Screen
 					name='profilePlanV2'
 					component={PreviewUserPlan}

@@ -12,7 +12,7 @@ Sentry.init({
 	dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
 	enableAutoSessionTracking: true,
 	environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
-	debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
+	// debug: process.env.EXPO_PUBLIC_ENVIRONMENT !== 'production',
 	tracesSampleRate: 0.2,
 	integrations: [
 		new Sentry.ReactNativeTracing({

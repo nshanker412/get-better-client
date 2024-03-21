@@ -11,18 +11,14 @@ import { NotificationsBell } from './NotificationsBell';
 export const ConnectedNotificationsBell: React.FC = () => {
     const { username: myUsername } = useMyUserInfo();
     const {navigate} = useNavigation();
-
     const { initialized, unreadNum, lastReadTime } = useNotifications();
     
-
     const onPressNotification = useCallback(async () => {
-        
         const navigateParams = {
             profileUsername: myUsername,
             unreadNum: unreadNum,
             lastReadTime: lastReadTime,
         }
-
         navigate('notifications', navigateParams);
 	
     }, [myUsername, unreadNum, lastReadTime, navigate]);

@@ -113,7 +113,7 @@ const Plans: React.FC = () => {
 
 	useEffect(() => {
 		onFetchPlans();
-	}, []	);
+	}, []);
 	
 
 	const PlanItem = ({ item }) => {

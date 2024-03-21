@@ -6,7 +6,7 @@ import { EvilIcons } from '@expo/vector-icons';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import React, { useEffect, useState } from 'react';
-import { Linking, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { timeAgo } from '../../utils/timeAgo';
 import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
@@ -41,25 +41,29 @@ enum NotificationType {
 
 export const Notifications = ({route}) => {
     const { theme } = useThemeContext();
-    const {goBack, navigate, dispatch} = useNavigation();
+    const {goBack, dispatch} = useNavigation();
     const notificationStyles = useNotificationsStyles();
-    const { unreadNum, notifications, permissionsGranted, refreshNotifications, setNotificationsSeen } = useNotifications();
+    const {
+        unreadNum,
+        notifications,
+        permissionsGranted,
+        refreshNotifications,
+        setNotificationsSeen
+    } = useNotifications();
+
     const [refreshing, setRefreshing] = useState(false);
     const { username: myUsername } = useMyUserInfo();
 
 
     useEffect(() => {
-
         // if routed from deep link, refresh
-
         if (route?.params?.refreshNotifs) {
             refreshNotifications(myUsername);
         }
-    }, [route?.params?.refreshNotifs]);
+    }, [route?.params?.refreshNotifs, myUsername]);
 
 
     useEffect(() => {
-
         return () => setNotificationsSeen();
     }, []);
 
@@ -310,18 +314,7 @@ export const Notifications = ({route}) => {
             <Header />
       
             <View style={notificationStyles.notificationsContainer}>
-                {!permissionsGranted && (
-                    <View style={notificationStyles.settingsContainer}>
-                        <Text style={{ color: theme.textColorPrimary }}>
-                            Please enable notifications in your settings.
-                        </Text>
-                        <TouchableOpacity
-                            style={notificationStyles.settingsButton}
-                            onPress={() => Linking.openSettings()}>
-                            <Text style={notificationStyles.notificationUser}>Settings</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+            
                 <NotificationListHeader />
                 <View style={{flex: 1, width: "100%", minHeight: 400}}>
                 <FlashList

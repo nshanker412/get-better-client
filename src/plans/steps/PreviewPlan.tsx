@@ -567,9 +567,6 @@ const MediaTile: React.FC<MediaTileProps> = ({ media }) => {
 
   const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
     
-
-    console.log("in media tile", media)
-
   return (
     <View style={stylesD.container}>
       <TouchableOpacity style={{flex: 1}} onPress={toggleFullscreen}>

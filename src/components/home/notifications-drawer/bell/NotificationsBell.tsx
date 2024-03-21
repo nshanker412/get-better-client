@@ -13,7 +13,6 @@ import { NotificationsBellProps } from '../NotificationsDrawer.types';
  */
 const BellIconAlert = ({ num = 0, width = 50, height = 54 }) => {
 	const showNotification = num >= 1;
-
 	const displayNumber = num <= 9 ? num : '9+';
 
 	return (

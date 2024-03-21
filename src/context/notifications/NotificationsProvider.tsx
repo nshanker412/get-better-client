@@ -208,6 +208,10 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                 const { status: askStatus } = await ExpoNotifications.requestPermissionsAsync();
                 if (askStatus !== 'granted') {
                     console.log(`Notification permissions not granted: ${askStatus}`);
+                    setPermissions(false);
+                    setInitialized(true);
+
+                    //set permissions to false
                     return;
                 } else {
                     setPermissions(true);

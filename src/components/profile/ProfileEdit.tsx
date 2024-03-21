@@ -1,7 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { grayDark, redDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
-import { useThemeContext } from '@context/theme/useThemeContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -16,12 +15,11 @@ import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useProfileEditStyles } from './ProfileEdit.styles';
 
-
-
 const BIO_MAX_LENGTH = 160;
 
 export const ProfileEdit: React.FC = () =>  {
 	const { username: myUsername, refreshMyUserInfo } = useMyUserInfo();
+	// const myUsername = 'Kevin';
 	const navigate = useNavigation();
 	const [newProfileImage, setNewProfileImage] = useState(null);
 	const [newProfileImageB64, setNewProfileImageB64] = useState(null);
@@ -31,7 +29,6 @@ export const ProfileEdit: React.FC = () =>  {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [updateLoading, setUpdateLoading] = useState(false);
-	const { theme } = useThemeContext();
 
 	// todo update to make dynamic 
 
@@ -174,14 +171,16 @@ export const ProfileEdit: React.FC = () =>  {
 	// upload a profile picture from camera roll
 	const uploadProfileImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 			allowsMultipleSelection: false,
 		});
 
-		console.log(result);
+
+
+		console.log("pickedmedia", result?.assets[0]);
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const uri = result.assets[0].uri;
@@ -218,7 +217,7 @@ export const ProfileEdit: React.FC = () =>  {
 						<MaterialCommunityIcons
 							name='camera-plus-outline'
 							size={30}
-							color={theme.textColorPrimary}
+							color={"white"}
 						/>
 					</View>
 				</TouchableOpacity>
