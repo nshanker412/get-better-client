@@ -120,7 +120,6 @@ const Plans: React.FC = () => {
 	
 
 	const PlanItem = ({ item }) => {
-		console.log(item)
 		return (
 			<View style={{ flex: 1, width: "100%", height: "100%", alignItems: "center", justifyContent: "center", gap: 10, padding: 10 }}>
 				<TouchableOpacity onPress={() => onPressTile(item?.id, item.planType, item.v)}>

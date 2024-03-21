@@ -61,10 +61,10 @@ export const useProfileBodyStyles = () => {
 			alignSelf: 'flex-start',
 		},
 		statsCategoryColumn: {
-			borderLeftColor: theme.innerBorderColor,
-			borderLeftWidth: 1,
-			borderTopColor: theme.innerBorderColor,
-			borderTopWidth: 1,
+			// borderLeftColor: theme.innerBorderColor,
+			// borderLeftWidth: 1,
+			// borderTopColor: theme.innerBorderColor,
+			// borderTopWidth: 1,
 			// borderTopLeftRadius: 5,
 			// borderTopRightRadius: 5,
 
