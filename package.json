@@ -5,7 +5,7 @@
 	"scripts": {
 		"secrets": "source .env.local &&   eas secret:list",
 		"prebuild": "npx expo prebuild --clean",
-		"build": "npx expo run:ios",
+		"build": "npx expo run:ios -d",
 		"expo:build": "expo build:ios --release-channel production --no-publish",
 		"expo:run:dev": "expo start --dev-client",
 		"start": "NODE_ENV=development npx expo start -i ios --clear --dev-client",
