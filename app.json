@@ -2,7 +2,6 @@
 	"expo": {
 		"name": "GetBetter.",
 		"slug": "getb",
-		"sdkVersion": "50.0.6",
 		"version": "1.0.9",
 		"owner": "bensone146",
 		"platforms": ["ios"],
