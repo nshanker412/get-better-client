@@ -1,7 +1,7 @@
 {
 	"expo": {
 		"name": "GetBetter.",
-		"slug": "getb",
+		"slug": "getbetter",
 		"version": "1.0.9",
 		"owner": "bensone146",
 		"platforms": ["ios"],
@@ -11,7 +11,7 @@
 		"icon": "./assets/icon.png",
 		"extra": {
 			"eas": {
-				"projectId": "a4bda6f3-c73a-4e87-a62e-5b48a9d8671b"
+		        "projectId": "f7f4e221-dbe0-4cfe-a36b-dadcd907051e"
 			}
 		},
 		"splash": {
