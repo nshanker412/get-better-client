@@ -1,3 +1,7 @@
+# Agreement to License
+
+By using this software, you agree to the terms and conditions set forth in the LICENSE file. Please review the LICENSE file located in the root directory of this project for detailed information.
+
 # get-better
 
 To run your project, navigate to the directory and run one of the following npm commands.

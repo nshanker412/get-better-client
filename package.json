@@ -1,6 +1,7 @@
 {
   "name": "get-better",
   "version": "1.0.0",
+  "license": "SEE LICENSE IN LICENSE",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "secrets": "source .env.local &&   eas secret:list",
