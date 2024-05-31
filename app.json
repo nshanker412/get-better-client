@@ -3,7 +3,7 @@
 		"name": "GetBetter.",
 		"slug": "getbetter",
 		"version": "1.0.9",
-		"owner": "bensone146",
+		"owner": "getbettter",
 		"platforms": ["ios"],
 		"orientation": "portrait",
 		"userInterfaceStyle": "dark",
@@ -59,16 +59,8 @@
 				{
 					"photosPermission": "The app accesses your photos to let you share them with your friends."
 				}
-			],
-			[
-				"@sentry/react-native/expo",
-				{
-					"url": "https://sentry.io/",
-					"organization": "benson-e4",
-					"project": "get-better"
-
-				}
-			  ]
+			]
+	
 		]
 	}
 	

@@ -9,10 +9,7 @@
 			"yarn": "1.22.10",
 			"env": {
 				"EXPO_PUBLIC_SERVER_BASE_URL": "http://localhost:13131",
-				"EXPO_PUBLIC_SENTRY_DSN": "https://5728c28ba041addaf03fc22c9fbab2c8@o4506748669919232.ingest.us.sentry.io/4506748872359936",
-				"EXPO_PUBLIC_ENVIRONMENT": "development",
-				"SENTRY_ORG":"benson-e4",
-				"SENTRY_PROJECT":"get-better"
+				"EXPO_PUBLIC_ENVIRONMENT": "development"
 			},
 			"distribution": "internal"
 		},
