@@ -1,9 +1,9 @@
 {
 	"expo": {
 		"name": "GetBetter.",
-		"slug": "getbetter",
+		"slug": "get-better",
 		"version": "1.0.9",
-		"owner": "getbettter",
+		"owner": "nshanker4",
 		"platforms": ["ios"],
 		"orientation": "portrait",
 		"userInterfaceStyle": "dark",
@@ -11,7 +11,7 @@
 		"icon": "./assets/icon.png",
 		"extra": {
 			"eas": {
-		        "projectId": "f7f4e221-dbe0-4cfe-a36b-dadcd907051e"
+		        "projectId": "6984b730-74db-4c70-a52b-28bbf178d5b8"
 			}
 		},
 		"splash": {

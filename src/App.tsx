@@ -25,9 +25,9 @@ const App = () => {
 	return (
 		<>
 			<ThemeContextProvider>
-			<AuthProvider routingInstrumentation={null} />
+				<AuthProvider routingInstrumentation={null} />
 			</ThemeContextProvider>
-		<Toast config={toastConfig} />
+			<Toast config={toastConfig} />
 		</>
 	);
 };

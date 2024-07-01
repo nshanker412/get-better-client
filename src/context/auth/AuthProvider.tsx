@@ -13,6 +13,7 @@ import { AuthContext } from './AuthContext';
 import { authenticationReducer, initialState } from './authReducer';
 import { firebaseErrorToMessage } from './firebaseErrorToMessage';
 
+import { useNavigationContainerRef } from '@react-navigation/native';
 interface AuthProviderProps {
 	routingInstrumentation: any;
 }
@@ -20,7 +21,9 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({
 	routingInstrumentation,
 }) => {
-	const navigation = useRef();
+	// const mynavigation = useRef();
+	const mynavigation = useNavigationContainerRef();
+	
 	const RootAuthStack = createStackNavigator();
 	const firebaseService = FirebaseService.getInstance(); // Initialize your Firebase service
 	const [state, dispatch] = useReducer(authenticationReducer, initialState);
@@ -172,11 +175,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			<AuthContext.Provider value={contextValue}>
 				<MyUserInfoProvider>
 					<NavigationContainer
-						ref={navigation}
+						ref={mynavigation}
 						onReady={() => {
-							routingInstrumentation.registerNavigationContainer(
-								navigation,
-							);
+							
+							// if (mynavigation != null) {
+							// 	console.log(mynavigation)
+							// 	routingInstrumentation.registerNavigationContainer(
+							// 		mynavigation,
+							// 	);
+							// }
+							
 						}}>
 							<RootAuthStack.Navigator
 								screenOptions={{
