@@ -436,7 +436,7 @@ export const SettingsScreen = ({ navigation }) => {
                     <Text style={styles.rowLabel}>App Version</Text>
 
                     <View style={styles.rowSpacer} />
-                                   <Text style={styles.rowValue}>{`beta-${appVersion}`?? "-"}</Text>
+                                   <Text style={styles.rowValue}>{`${appVersion}`?? "-"}</Text>
 
 
       
