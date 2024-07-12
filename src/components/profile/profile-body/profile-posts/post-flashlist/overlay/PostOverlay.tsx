@@ -23,7 +23,9 @@ import { FloatingAction, IFloatingActionProps } from 'react-native-floating-acti
 import { State, TapGestureHandler } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
 import { timeAgo } from '../../../../../../utils/timeAgo';
-import { setPostLiked } from "../service/post";
+import { setPostLiked, setFlagged } from "../service/post";
+import { FlagFilled } from '@assets/darkSvg/FlagFilled';
+import { FlagBlank } from '@assets/darkSvg/Flag';
 
 interface PostOverlayProps {
   user: string;
@@ -86,6 +88,10 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
     state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
   });
+  const [currentFlagState, setCurrentFlagState] = useState({
+    state: postData.likes?.includes(myUsername),
+    counter: postData?.likes?.length,
+  });
 
   const [linkedActionFab, setLinkedActionFab] = useState([]);
   const navigation = useNavigation();
@@ -140,7 +146,41 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
         []
       );
 
-
+      const handleUpdateFlag = useCallback(
+        throttle((currentFlagStateInt) => {
+          console.log(currentFlagStateInt)
+          try {
+            const postID = `${postData.timestamp}`;
+            const newFlagState = !currentFlagStateInt.state;
+            setCurrentFlagState({
+              state: newFlagState,
+              counter: currentFlagStateInt.counter + (newFlagState ? 1 : -1),
+            });
+            setFlagged(user, postID, myUsername, newFlagState);
+            if (newFlagState) {
+    
+              const pushNotifInfo: PushNotificationInfoPacket = {
+                title: `${myUsername} Flagged your post.`,
+                body: `check it out!`,
+                data: {
+                  type: NotificationType.LIKED_POST,
+                  path: 'profile',
+                  params: {
+                    profileUsername: postData.user,
+                    postID: postID
+                  }
+                },
+              };
+        
+              sendOutPushNotification(postData?.user, pushNotifInfo);
+            }
+          } catch (error) {
+              console.log('setPostLikedError', error);
+            }
+      
+        }, 500),
+        []
+      );
   useEffect(() => {
     const fetchLinkedPlans = async () => {
       if (postData.linkedPlans) {
@@ -317,7 +357,13 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
               onLikePress={() => handleUpdateLike(currentLikeState)}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
-      
+            <FlagIconView 
+            ref={animationRef}
+            flags={currentFlagState.counter}
+            isFlagged={currentFlagState.state}
+            onFlagPress={() => handleUpdateFlag(currentFlagState)}
+            isEmbeddedFeed={!!isEmbeddedFeed}
+            />
 
             <CommentIcon
               commentCount={postData?.comments?.length ?? 0}
@@ -619,6 +665,69 @@ const StarIconView = forwardRef<StarIconViewHandles,  StarIconViewProps>(({likes
   );
 });
 StarIconView.displayName = 'StarIconView';
+
+interface FlagIconViewProps  {
+  flags: number;
+  isFlagged: boolean;
+  onFlagPress: () => void;
+  isEmbeddedFeed: boolean;
+}
+
+interface FlagIconViewHandles {
+  play: () => void;
+}
+
+const FlagIconView = forwardRef<FlagIconViewHandles,  FlagIconViewProps>(({flags, isFlagged, onFlagPress, isEmbeddedFeed}, ref) => {
+  const animation = useRef<LottieView>(null);
+
+
+  const styles = useLikeButtonStyle(isEmbeddedFeed);
+
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      console.log('play in lottie')
+      animation?.current?.play();
+    },
+  }));
+
+  const onFlagPressCallback = useCallback(() => {
+    onFlagPress(); 
+    if (!isFlagged) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      animation?.current?.play(); // Assuming play() is the method to start the animation
+    }
+  }, [isFlagged, onFlagPress]);
+
+
+  
+ 
+  const size = isEmbeddedFeed ? 20 : 45;
+  
+  return (
+    <TouchableOpacity
+      onPress={onFlagPressCallback}>
+      <SvgXml
+        style={styles.iconShadow}
+        width={size}
+        height={size}
+        xml={isFlagged ? FlagFilled : FlagBlank }
+        />
+      <View style={styles.animationContainer}>
+      <LottieView
+        ref={animation}
+        style={styles.starAnimation}
+        source={require('@assets/lottie/starExplode.json')}
+        autoPlay={false}
+        loop={false}
+        />
+      </View>
+      <Text style={styles.actionButtonText}>
+        {flags}
+        </Text>
+      </TouchableOpacity>
+  );
+});
+FlagIconView.displayName = 'FlagIconView';
 
 const ChallengeMedalIcon: React.FC<{ isEmbeddedFeed: boolean }> = ({ isEmbeddedFeed }) => {
 

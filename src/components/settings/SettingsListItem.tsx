@@ -41,6 +41,10 @@ const actionForMenuItem = (item: MenuItem) => {
         return Linking.openURL("https://getbetterbrand.com/privacy-policy");
         break;
       }
+    case 'EULA': {
+      return Linking.openURL("https://getbetterbrand.com/eula");
+      break;
+    }
       default: {
         return null;
         break;

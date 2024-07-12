@@ -22,6 +22,7 @@ import {
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const PRIVACY_POLICY_URL = 'https://getbetterbrand.com/privacy-policy';
+const EULA = 'https://getbetterbrand.com/eula';
 
 export const SettingsScreen = ({ navigation }) => {
   
@@ -408,7 +409,26 @@ export const SettingsScreen = ({ navigation }) => {
                   </TouchableOpacity>
                   </View>
 
-                
+                  <View style={styles.rowWrapper}>
+                <TouchableOpacity
+                  onPress={
+                    () => {
+                    Linking.openURL(EULA);
+                  }}
+                    style={styles.row}
+                  >
+                    <Text style={styles.rowLabel}>EULA</Text>
+                    <View style={styles.rowSpacer} />
+                    <Text style={styles.rowValue}>View</Text>
+
+                        <FeatherIcon
+                            color="#C6C6C6"
+                            name="chevron-right"
+                            size={20} />
+
+
+                  </TouchableOpacity>
+                  </View>
 
 
                 <View style={styles.rowWrapper}>

@@ -6,19 +6,24 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
 	Keyboard,
 	KeyboardAvoidingView,
+	Linking,
 	SafeAreaView,
 	Text,
 	TextInput,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
+	
 } from 'react-native';
+import  CheckBox  from "@react-native-community/checkbox";
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useLoginStyles } from './login.styles';
 
 import { showErrorToast } from '../error/showErrorToast';
+import { blue } from '@context/theme/colors_neon';
+
 
 interface RegisterData {
 	email: string;
@@ -32,6 +37,7 @@ export const Register: React.FC = () => {
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
+	const [isSelected, setSelection] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigation();
 
@@ -45,6 +51,7 @@ export const Register: React.FC = () => {
 	const usernameRef = useRef(null);
 	const passwordRef = useRef(null);
 	const submitButtonRef = useRef(null);
+
 
 	const onClickSignUp = () => {
 		Toast?.hide();
@@ -282,6 +289,25 @@ export const Register: React.FC = () => {
 								returnKeyType='next'
 								onSubmitEditing={Keyboard.dismiss}
 							/>
+							<View style={{
+									flexDirection: 'column',
+									gap: 5,
+									alignItems: 'center',
+									justifyContent: 'center',
+								}}
+								>
+							<CheckBox
+								value={isSelected}
+								onValueChange={setSelection}
+
+							/>
+							<Text style={{
+								color: 'white',
+								
+								}} >
+								I Agree to the <Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/privacy-policy")}>EULA</Text> and<Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text>
+								</Text>
+							</View>
 							<View
 								style={{
 									flexDirection: 'column',

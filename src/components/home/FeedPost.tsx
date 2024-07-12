@@ -7,6 +7,8 @@
 import { CommentIcon } from '@assets/darkSvg/CommentIcon';
 import { StarIcon } from '@assets/darkSvg/StarIcon.js';
 import { StarIconFilled } from '@assets/darkSvg/StarIconFilled.js';
+import { FlagBlank } from '@assets/darkSvg/Flag.js';
+import { FlagFilled } from '@assets/darkSvg/FlagFilled.js';
 import { BLUR_HASH } from '@constants/constants';
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
 import { useNotifications } from '@context/notifications/useNotifications';
@@ -62,12 +64,14 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		liked,
 		commentsCount,
 		postMedia,
+		flagged,
 		// setPostLiked: hookSetIsPostLiked,
 		refresh,
 	} = usePostLifecycle({ filename, postID, metadata: postData, myUsername });
 
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [_liked, _setIsLiked] = useState(postData.likes.includes(myUsername));
+	const [_flagged, _setIsFlagged] = useState(postData.likes.includes(myUsername));
 	const [_likesCount, _setLikesCount] = useState(postData.likes.length);
 	const doubleTapRef = useRef();
 	const commentDrawerRef = useRef(null);
@@ -148,6 +152,11 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 		_setIsLiked(newLikedStatus);
 		 setPostLiked(newLikedStatus);
 	}, [_liked, _likesCount, setPostLiked]);
+
+	const onFlagPress = useCallback( (newFlagPressed:boolean) => {
+		console.log(newFlagPressed)
+	}, []);
+
 
 
 	return (
@@ -279,6 +288,31 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 												_liked
 													? StarIconFilled
 													: StarIcon
+											}
+										/>
+									</View>
+								</TouchableOpacity>
+								{(loadingMedia && loadingLikesCount) ?
+								(<Text style={feedPostStyles.username}>
+									<LoadingSpinner />
+								</Text>
+								) : (
+									<Text style={feedPostStyles.username}>
+										{_likesCount}
+									</Text>
+								)}
+							</View>
+							<View style={feedPostStyles.postDataInnerRow}>
+								<TouchableOpacity
+									onPress={() => onFlagPress(!_flagged)}>
+									<View style={feedPostStyles.icon}>
+										<SvgXml
+											width={40}
+											height={40}
+											xml={
+												_flagged
+													? FlagFilled
+													: FlagBlank
 											}
 										/>
 									</View>

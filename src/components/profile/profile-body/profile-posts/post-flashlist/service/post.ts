@@ -18,3 +18,22 @@ export const setPostLiked = async (user: string, id: string, myUsername: string,
     }
     
 };
+
+
+export const setFlagged = async (user: string, id: string, myUsername: string, isFlagged: boolean): Promise<void> => {
+    console.log(`sending out flagged notification ${user}_${id}`)
+    
+    try {
+      await axios
+            .post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/flag`, {
+                profileUsername: user,
+                postID: id,
+                myUsername,
+                status: isFlagged,
+            })
+
+    } catch (error) {
+        console.log('setFlaggedError', error);
+    }
+    
+};

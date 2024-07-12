@@ -5,6 +5,7 @@ export const useLoginStyles = () => {
 	const { theme } = useThemeContext();
 
 	const loginStyles = StyleSheet.create({
+		
 		loginContainer: {
 			display: 'flex',
 			flexDirection: 'column',
