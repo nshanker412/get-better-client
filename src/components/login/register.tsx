@@ -305,7 +305,7 @@ export const Register: React.FC = () => {
 								color: 'white',
 								
 								}} >
-								I Agree to the <Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/privacy-policy")}>EULA</Text> and<Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text>
+								I Agree to the <Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/eula")}>EULA</Text> and<Text style={{color:"blue"}} onPress={()=>Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text>
 								</Text>
 							</View>
 							<View
