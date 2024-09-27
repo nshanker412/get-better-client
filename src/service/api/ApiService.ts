@@ -25,7 +25,7 @@ class ApiService implements ApiServiceInterface {
 		username: string,
 	): Promise<AxiosResponse | AxiosError> {
 		try {
-			const response = await axios.post(`${this.baseUrl}/user/register`, {
+			const response = await axios.post(`${this.baseUrl}/api/auth/register`, {
 				email,
 				name,
 				username,

@@ -2,7 +2,7 @@ import { useAuth } from '@context/auth/useAuth';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import axios, { AxiosError } from 'axios';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState,useReducer } from 'react';
 import {
 	Keyboard,
 	KeyboardAvoidingView,
@@ -13,6 +13,7 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
+	AsyncStorage
 	
 } from 'react-native';
 import  CheckBox  from "@react-native-community/checkbox";
@@ -23,12 +24,14 @@ import { useLoginStyles } from './login.styles';
 
 import { showErrorToast } from '../error/showErrorToast';
 import { blue } from '@context/theme/colors_neon';
-
+import { authenticationReducer, initialState } from '@context/auth/authReducer';
 
 interface RegisterData {
 	email: string;
 	name: string;
 	username: string;
+	password: string;
+	is_eula: boolean;
 }
 
 export const Register: React.FC = () => {
@@ -37,6 +40,7 @@ export const Register: React.FC = () => {
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
+	const [state, dispatch] = useReducer(authenticationReducer, initialState);
 	const [isSelected, setSelection] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigation();
@@ -58,13 +62,23 @@ export const Register: React.FC = () => {
 		navigate.navigate('SignIn');
 	};
 
+
 	const registerUser = async (data: RegisterData): Promise<any> => {
 		try {
-			const response = await axios.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/register`,
+			await axios.post(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/auth/register`,
 				data,
-			);
-			return response.data;
+			).then((response)=>{
+				console.log(response)
+				Toast.show({
+					type: 'success',
+					text1: 'you are successfully Registered',
+					});
+				navigate.navigate('SignIn');
+			}).catch((err)=>{
+				console.log(err)
+				showErrorToast('Unsuccessful register,Try again');
+			})
 		} catch (error) {
 			const axiosError = error as AxiosError;
 			if (axiosError && axiosError.response) {
@@ -128,7 +142,7 @@ export const Register: React.FC = () => {
 
 		}
 
-		if (password.length < 6) {
+		if (password.length > 6) {
 			console.log('Password must be at least 6 characters');
 			showErrorToast('Please fill out all fields!');
 
@@ -154,41 +168,48 @@ export const Register: React.FC = () => {
 				email,
 				name,
 				username,
+				password,
+				is_eula: isSelected,
 			};
 			const resp = await registerUser(input);
-			await attemptFbSignUp(email, password);
-	
-				console.log('Unsuccessful register');
-				showErrorToast('Unsuccessful register');
-				//delete user from server
-				try {
-
-					const form = new FormData();
-					form.append('email', email);
-					form.append('username', username);
-					form.append('name', name);
-
-					const response = await axios.post(
-						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/deleteUser`,
-						form,
-					);
-					console.log('delete user resp', response);
-				} catch (err) {
-					console.log('error deleting user', err);	
-
-					Toast.show({
-						text1: "Woah there...",
-						text2: "Your having some back luck, try again later.",
-						type: 'error',
-						visibilityTime: 5000,
-						topOffset: 150,
-						autoHide: true,
-					});
-				}
 			
-			console.log('Successful register');
+			
+			
 
-			navigate.navigate('SignIn');
+			// await attemptFbSignUp(email, password);
+	
+			// 	// console.log('Unsuccessful register');
+			// 	// showErrorToast('Unsuccessful register');
+			// 	//delete user from server
+			// 	try {
+
+			// 		const form = new FormData();
+			// 		form.append('email', email);
+			// 		form.append('username', username);
+			// 		form.append('name', name);
+			// 		form.append('password', password);
+
+			// 		// const response = await axios.post(
+			// 		// 	`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/deleteUser`,
+			// 		// 	form,
+			// 		// );
+			// 		// console.log('delete user resp', response);
+			// 	} catch (err) {
+			// 		console.log('error deleting user', err);	
+
+			// 		Toast.show({
+			// 			text1: "Woah there...",
+			// 			text2: "Your having some back luck, try again later.",
+			// 			type: 'error',
+			// 			visibilityTime: 5000,
+			// 			topOffset: 150,
+			// 			autoHide: true,
+			// 		});
+			// 	}
+			
+			// console.log('Successful register');
+
+			// navigate.navigate('SignIn');
 		} catch (error) {
 			if (error instanceof Error) {
 				console.log('Error:', error.message);

@@ -36,24 +36,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			const authUserJson = JSON.stringify(authUser);
 			console.log('Auth state changed:', authUserJson);
 
-			if (authUser.email) {
-				const uname = await fetch(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetchUsername/${authUser.email}`,
-				).then((res) => res.json());
+			// if (authUser.email) {
+			// 	const uname = await fetch(
+			// 		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetchUsername/${authUser.email}`,
+			// 	).then((res) => res.json());
 
-				console.log('uname', uname['username']);
-				if (uname['username']) {
-					dispatch({
-						type: 'RESTORE_SESSION',
-						token: authUser.email,
-					});
-				}
-			}
+			// 	console.log('uname', uname['username']);
+			// 	if (uname['username']) {
+			// 		dispatch({
+			// 			type: 'RESTORE_SESSION',
+			// 			token: authUser.email,
+			// 		});
+			// 	}
+			// }
 		} else {
 			console.log('Auth state changed:', authUser);
 
 			dispatch({ type: 'SIGN_OUT' });
 		}
+		dispatch({ type: 'SIGN_OUT' });
 	};
 
 	// Subscribe to the firebase auth state change
