@@ -103,31 +103,33 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	 * Initializes the MyUserInfo after the user logs in
 	 */
 
-	const setMyUserInfo = async (email: string) => {
+	const setMyUserInfo = async (auth_token: string) => {
 		dispatch({
 			type: SET_LOAD_USER_INFO_STATE,
 			payload: { loadUserInfoState: ApiLoadingState.Loading },
 		});
 
 		try {
-			if (!email) {
+			if (!auth_token) {
 				console.log('No email provided');
 			}
-
-			const usernameResponse = await axios.get<{ username: string }>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetchUsername/${email}`,
-			);
-			const username = usernameResponse.data.username;
-
+			// {
+			// 	"bio": "",
+			// 	"challengesComplete": 0,
+			// 	"consistency": 2,
+			// 	"followers": 0,
+			// 	"following": 0,
+			// 	"isFollowing": false,
+			// 	"name": "Kunal"
+			// 	}
 			// Initialize and register notifications
 			// await registerForPushNotificationsAsync(username);
 			// await scheduleDailyNotification();
 
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${username}/${username}/False`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${auth_token}`} }
 			);
 			const myData: UserData = userDataResponse.data;
-
 			// const notificationTokensResponse = await axios.get<{
 			// 	tokens: string[];
 			// }>(
@@ -135,20 +137,22 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			// );
 			// const notificationTokens = notificationTokensResponse.data.tokens;
 
-			const hasPostedDailyResponse = await axios.get<{
-				hasPosted: boolean;
-			}>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/hasPosted/${username}`,
+			const hasPostedDailyResponse = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${auth_token}`} }
 			);
-			const hasPostedDaily = hasPostedDailyResponse.data.hasPosted;
+			const posts = hasPostedDailyResponse.data["results"]
+			let hasPostedDaily = false;
+			if(posts){
+				hasPostedDaily = true
+			}
 
 			// Dispatch SET_USER_INFO action with fetched data
 			dispatch({
 				type: SET_USER_INFO,
 				payload: {
 					...state,
-					myData: myData,
-					username: username,
+					myData: myData["profile"],
+					username: myData["username"],
 					hasPostedDaily: hasPostedDaily,
 				},
 			});
@@ -159,7 +163,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 				type: SET_LOAD_USER_INFO_STATE,
 				payload: { loadUserInfoState: ApiLoadingState.Loaded },
 			});
-			return Promise.resolve(username);
+			return Promise.resolve(myData["username"]);
 		} catch (error) {
 			console.error('Error fetching user info:', error);
 			// Handle the error as needed (e.g., show a user-friendly message)
