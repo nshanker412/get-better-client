@@ -20,7 +20,9 @@ import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { FeedPost } from './FeedPost';
 import { useHomeStyles } from './Home.styles';
 import { ConnectedNotificationsBell } from './notifications-drawer/bell/ConnectedNotificationsBell';
+import { useAuth } from '@context/auth/useAuth';
 
+const { userToken } = useAuth();
 export const Home: React.FC = () => {
 	const [posts, setPosts] = useState<Post[]| undefined>([]);
 	const [loadingPosts, setLoadingPosts] = useState(false);
@@ -63,7 +65,8 @@ export const Home: React.FC = () => {
 		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`)
 		await axios
 			.get<PostsApiResponse>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 			)
 			.then((response) => {
 				console.log('fetchFriendsPosts', response.data);
@@ -88,7 +91,7 @@ export const Home: React.FC = () => {
 		setLoadingPosts(true);
 		await axios
 			.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/public/${myUsername}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			)
 			.then((response) => {
 				setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);

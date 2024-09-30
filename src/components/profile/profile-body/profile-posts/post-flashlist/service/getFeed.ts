@@ -28,12 +28,15 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
     }
 }
 //fetch all friends post metadata
-const fetchFriendsPosts = async (myUsername: string): Promise<Post[] | []> => {
+const fetchFriendsPosts = async (userToken: string): Promise<Post[] | []> => {
     try {
-        const response = await axios.get<PostsApiResponse>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`);
+        const response = await axios.get<PostsApiResponse>(
+            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+        );
 
 
-        return response.data.posts;
+        return response.data["results"];
     } catch (error) {
         return [];
     }
@@ -42,14 +45,17 @@ const fetchFriendsPosts = async (myUsername: string): Promise<Post[] | []> => {
 
 /**
  * 
- * @param myUsername 
+ * @param userToken 
  * @returns 
  */
-const fetchPublicPosts = async (myUsername: string): Promise<Post[] | []> => {
+const fetchPublicPosts = async (userToken: string): Promise<Post[] | []> => {
+        console.log(userToken)
         try {
-            const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/public/${myUsername}`);
+            const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+            );
 
-            return response.data.posts;
+            return response.data["results"];
         }
         catch (error) {
             console.log('fetchPublicPostsError', error);

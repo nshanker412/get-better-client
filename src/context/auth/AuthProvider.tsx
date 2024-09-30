@@ -87,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 				console.log('uname', uname['username']);
 
 				dispatch({ type: 'SIGN_IN', token: user.auth_token });
+				
 			}
 		} catch (err) {
 			if (err instanceof FirebaseError) {

@@ -102,12 +102,12 @@ class ApiService implements ApiServiceInterface {
 	/**
 	 * Fetch posts from friends
 	 */
-	public async fetchFriendsPosts(myUsername: string): Promise<any> {
+	public async fetchFriendsPosts(userToken: string): Promise<any> {
 		try {
 			const response = await axios.get(
-				`${this.baseUrl}/feed/fetch/friends/${myUsername}`,
+				`${this.baseUrl}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			);
-			return response.data.posts;
+			return response.data["results"];
 		} catch (error) {
 			console.error('fetchFriendsPostsError:', error);
 			throw error;

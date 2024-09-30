@@ -1,4 +1,6 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo'
+import { useAuth } from '@context/auth/useAuth';
+
 import { useNotifications } from '@context/notifications/useNotifications'
 import { Post } from '@models/posts'
 import { useScrollToTop } from '@react-navigation/native'
@@ -15,6 +17,9 @@ import { PostTile, PostTileRef } from './PostTile'
 import { getFeed } from './service/getFeed'
 
 import { useIsFocused } from '@react-navigation/native'
+// import { useAuth } from '@context/auth/useAuth';
+
+
 
 /**
  * Component that renders a list of posts meant to be 
@@ -26,14 +31,14 @@ import { useIsFocused } from '@react-navigation/native'
 export default function FeedScreen() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [refreshing, setRefreshing] = useState(false);
-    const { username: myUsername } = useMyUserInfo();
+    const { username } = useMyUserInfo();
+    const { userToken } = useAuth();
     const { refreshNotifications } = useNotifications();
     const feedRef = useRef<FlashList<Post>>(null);
     const postTileRefs = useRef<{ [key: string]: React.RefObject<PostTileRef> }>({});
     const visibleItemKeys = useRef(new Set<string>());
     const isFocused = useIsFocused();
     const postSize = Dimensions.get('window').height - 100;
-
 
     // if not focused, stop all videos
     useEffect(() => {
@@ -53,7 +58,7 @@ export default function FeedScreen() {
 
     useEffect(() => {
         const fetchFeed = async () => {
-            const newPosts = await getFeed(myUsername);
+            const newPosts = await getFeed(userToken);
             setPosts(newPosts);
 
             // Update refs for the new posts
@@ -64,7 +69,7 @@ export default function FeedScreen() {
             postTileRefs.current = updatedRefs;
         };
         fetchFeed();
-    }, [myUsername]);
+    }, [username]);
 
     useEffect(() => {
         // When posts are fetched or updated...
@@ -109,15 +114,15 @@ export default function FeedScreen() {
                 ref={postTileRefs.current[item.filename]}
             />
         </View>
-    ), [myUsername]);
+    ), [username]);
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        const newPosts = await getFeed(myUsername);
+        const newPosts = await getFeed(userToken);
         setPosts(newPosts);
-        refreshNotifications(myUsername!);
+        refreshNotifications(userToken!);
         setRefreshing(false);
-    }, [myUsername, refreshNotifications]);
+    }, [username, refreshNotifications]);
 
     return (
         <Host>
