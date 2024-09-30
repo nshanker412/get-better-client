@@ -8,6 +8,7 @@ import { SearchItemCell } from './SearchItemCell';
 import { SearchUser } from './models/SearchUser';
 import { SearchBar } from './search-bar/SearchBar';
 import { ShimmerTile } from './skeleton/ShimmerTile';
+import {useAuth} from "@context/auth/useAuth";
 
 
 
@@ -31,7 +32,8 @@ interface SearchProps {
 
 export const Search: React.FC = () => {
 	const { theme } = useThemeContext();
-	const [profiles, setProfiles] = useState<SearchUser[]>([]);
+	const {userToken} =useAuth();
+ 	const [profiles, setProfiles] = useState<SearchUser[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [refreshing, setRefreshing] = useState(false);
 	const [keyword, setKeyword] = useState('');
@@ -85,13 +87,13 @@ export const Search: React.FC = () => {
 			let url = '';
 
 			if (keyword) {
-				url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/${keyword}`;
+				url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${keyword}`;
 			} else {
-				url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all`;
+				url = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users`;
 			}
 
-			const response = await axios.get(url);
-			setProfiles(response.data.profiles);
+			const response = await axios.get(url,{ headers: {"Authorization" : `Bearer ${userToken}`}});
+			setProfiles(response.data.results);
 		} catch (error) {
 			console.log('searchError', error);
 			console.log('Error fetching profiles');
