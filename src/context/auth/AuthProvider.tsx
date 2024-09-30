@@ -12,6 +12,7 @@ import { AuthContextProps } from './Auth.types';
 import { AuthContext } from './AuthContext';
 import { authenticationReducer, initialState } from './authReducer';
 import { firebaseErrorToMessage } from './firebaseErrorToMessage';
+import { signInWithEmailAndPasswordAPI } from './WithDjangoAPI';
 
 import { useNavigationContainerRef } from '@react-navigation/native';
 interface AuthProviderProps {
@@ -72,20 +73,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
 	const signIn = async (email: string, password: string) => {
 		try {
-			const userCred = await firebaseService.signInWithEmailAndPasswordFb(
+			const userCred = await signInWithEmailAndPasswordAPI(
 				email,
 				password,
 			);
-			const user = userCred.user;
+			const user = userCred.data;
 			console.log('user', user, user.email);
 			if (user?.email) {
 				const uname = await fetch(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetchUsername/${user.email}`,
-				).then((res) => res.json());
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${user.auth_token}`} }
+				).then((res) => res.json()).catch((err)=>console.log(err));
 
 				console.log('uname', uname['username']);
 
-				dispatch({ type: 'SIGN_IN', token: user.email });
+				dispatch({ type: 'SIGN_IN', token: user.auth_token });
 			}
 		} catch (err) {
 			if (err instanceof FirebaseError) {
