@@ -1,7 +1,7 @@
 import { useRoute } from '@react-navigation/core';
 import axios from 'axios';
 import React, { ReactNode, createContext, useEffect, useState } from 'react';
-
+import { useAuth } from '@context/auth/useAuth';
 
 
 type UserFollow = {
@@ -40,6 +40,7 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
     const route = useRoute();
     const profileUsername = route.params?.profileUsername;
     const [username, setUsername] = useState(profileUsername);
+	const {userToken} =useAuth();
 
 
     useEffect(() => {
@@ -56,17 +57,16 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 
 	const onFetchFollowers = async () => {
 		
-		console.log("onFetchFollow3rs", `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${username}/followers`)
 
 		if (username) {
 			
 			// Implement the fetch logic her
 			try {
 				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${username}/followers`,
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 				);
-				setFollowers(response.data.profiles);
-				console.log('profile followerss', response.data.profiles);
+				setFollowers(response.data.followers_list);
+				console.log('profile followerss', response.data.followers_list);
 			} catch (error) {
 				console.log('ERROR: onFetchFollowers ', error);
 			}
@@ -76,8 +76,7 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 
 	const onFetchFollowing = async () => {
 		console.log('onFetchFollowing pre shit')
-		console.log("onFetchFollow3rs",
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${username}/following`)	
+
 
 
 		// Implement the fetch logic her
@@ -85,11 +84,10 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 
 			try {
 				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${username}/following`,
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 				);
-				console.log('profile Following', response.data.profiles);
-				setFollowing(response.data.profiles);
-				console.log('profile Following', response.data.profiles);
+				setFollowing(response.data.following_list);
 			} catch (error) {
 				console.log('ERROR: onFetchFollowing ', error);
 			}
@@ -110,11 +108,11 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 
 			try {
 				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/fetch/all/${username}/following`,
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 				);
-				console.log('profile Following', response.data.profiles);
-				setFollowing(response.data.profiles);
-				console.log('profile Following', response.data.profiles);
+				console.log('profile Following', response.data.following_list);
+				setFollowing(response.data.following_list);
 			} catch (error) {
 				console.log('ERROR: onFetchFollowing ', error);
 			}
