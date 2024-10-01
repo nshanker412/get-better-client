@@ -14,6 +14,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useProfileEditStyles } from './ProfileEdit.styles';
+import { useAuth } from '@context/auth/useAuth';
 
 const BIO_MAX_LENGTH = 160;
 
@@ -29,6 +30,7 @@ export const ProfileEdit: React.FC = () =>  {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [updateLoading, setUpdateLoading] = useState(false);
+	const {userToken} =useAuth();
 
 	// todo update to make dynamic 
 
@@ -54,7 +56,8 @@ export const ProfileEdit: React.FC = () =>  {
 	
 			await axios
 				.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${myUsername}/${myUsername}/False`,
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 				)
 				.then((response) => {
 					console.log('fetchUser', response.data.name);
@@ -132,16 +135,10 @@ export const ProfileEdit: React.FC = () =>  {
 				type: `image/${fileType}`,
 			});
 		}
-
 		await axios
 			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/update`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
 				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				},
 			)
 			.then((response) => {
 				console.log('updateProfile', response.data);

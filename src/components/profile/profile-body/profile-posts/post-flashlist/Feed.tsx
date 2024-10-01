@@ -31,7 +31,7 @@ import { useIsFocused } from '@react-navigation/native'
 export default function FeedScreen() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [refreshing, setRefreshing] = useState(false);
-    const { username } = useMyUserInfo();
+    const { username} = useMyUserInfo();
     const { userToken } = useAuth();
     const { refreshNotifications } = useNotifications();
     const feedRef = useRef<FlashList<Post>>(null);
@@ -110,7 +110,7 @@ export default function FeedScreen() {
             <PostTile
                 isEmbeddedFeed={false}
                 post={item}
-                myUsername={myUsername ?? ''}
+                myUsername={username ?? ''}
                 ref={postTileRefs.current[item.filename]}
             />
         </View>

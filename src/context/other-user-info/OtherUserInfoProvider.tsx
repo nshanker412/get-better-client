@@ -1,4 +1,5 @@
 import { ApiLoadingState, UserData } from '../../types';
+import { useAuth } from '@context/auth/useAuth';
 
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { NotificationType, PushNotificationInfoPacket } from '@context/notifications/Notifications.types';
@@ -88,6 +89,8 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 
 	const { sendOutPushNotification } = useNotifications();
 	const { username: myUsername, refreshMyUserInfo, setRelationship } = useMyUserInfo();
+	const {userToken} =useAuth();
+
 
 	const [state, dispatch] = useReducer(otherUserInfoReducer, {
 		...initialOtherUserInfoState,
@@ -116,11 +119,12 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		try {
 			console.log('fetching user info:', otherProfileUsername, myUsername);
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${otherProfileUsername}/${myUsername}/False`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${otherProfileUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+				
 
 			);
-			console.log('userDataResponse', userDataResponse.data)
-			const otherUserData: UserData = userDataResponse.data;
+			console.log('userDataResponse', userDataResponse.data["results"][0])
+			const otherUserData: UserData = userDataResponse.data["results"][0];
 
 
 			// // Dispatch SET_USER_INFO action with fetched data

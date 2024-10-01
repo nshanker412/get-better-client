@@ -290,7 +290,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 		try {
 			const userDataResponse = await axios.get<UserData>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/${state.username}/${state.username}/False`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
 			);
 			const myData: UserData = userDataResponse.data;
 
@@ -365,12 +365,12 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 		try {
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${state.username}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
 			);
 
 			// only set state if there are new posts
 
-			const newPosts = response?.data?.posts;
+			const newPosts = response?.data?.results;
 			// compare the lists and only set state if there are new posts
 			if (newPosts.length !== state.posts?.length) {
 				dispatch({
