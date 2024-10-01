@@ -66,7 +66,7 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 				);
 				setFollowers(response.data.followers_list);
-				console.log('profile followerss', response.data.followers_list);
+				console.log('profile followers', response.data.followers_list);
 			} catch (error) {
 				console.log('ERROR: onFetchFollowers ', error);
 			}

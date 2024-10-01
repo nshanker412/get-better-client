@@ -129,40 +129,66 @@ export const ProfileEdit: React.FC = () =>  {
 			let fileName = newProfileImage.split('/').pop();
 			let fileType = newProfileImage.split('.').pop();
 
-			formData.append('profileImage', {
+			formData.append('profile_picture', {
 				uri: newProfileImage,
 				name: `photo.${fileName}`,
 				type: `image/${fileType}`,
 			});
 		}
-		await axios
-			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
-				formData,
-			)
-			.then((response) => {
-				console.log('updateProfile', response.data);
-				if (newProfileImage) {
-					setStorageProfilePicture(newProfileImageB64);
-				}
-			})
-			.catch((error) => {
-				console.log('errorMessage', error.response.data);
-				setErrorMessage(error.response.data);
-			})
-			.finally(() => {
-				refreshMyUserInfo()
-					.then(() => {
-						setUpdateLoading(false);
-						navigate.goBack();
-					})
-					.catch((error) => {
-						console.log('refreshMyUserInfoError', error);
-					})
-					.finally(() => {
-						setLoading(false);
-					});
-			});
+		let profile_id = ""
+		await axios({
+			method: "PATCH",
+			url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,
+			data: formData,
+			headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+		  }).then((response) => {
+			profile_id = response.data.profile_id;
+			console.log('updateProfile', response.data);
+			if (newProfileImage) {
+				setStorageProfilePicture(newProfileImageB64);
+			}
+		}).catch((error) => {
+			console.log('errorMessage', error.response.data);
+			setErrorMessage(error.response.data);
+		}).finally(() => {
+			refreshMyUserInfo()
+				.then(() => {
+					setUpdateLoading(false);
+					navigate.goBack();
+				})
+				.catch((error) => {
+					console.log('refreshMyUserInfoError', error);
+				})
+				.finally(() => {
+					setLoading(false);
+				});
+		});
+		await axios({
+			method: "PATCH",
+			url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/profile/${profile_id}`,
+			data: formData,
+			headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+		  }).then((response) => {
+			console.log('updateProfile', response.data);
+			if (newProfileImage) {
+				setStorageProfilePicture(newProfileImageB64);
+			}
+		}).catch((error) => {
+			console.log('errorMessage', error.response.data);
+			setErrorMessage(error.response.data);
+		}).finally(() => {
+			refreshMyUserInfo()
+				.then(() => {
+					setUpdateLoading(false);
+					navigate.goBack();
+				})
+				.catch((error) => {
+					console.log('refreshMyUserInfoError', error);
+				})
+				.finally(() => {
+					setLoading(false);
+				});
+		});
 	};
 
 	// upload a profile picture from camera roll

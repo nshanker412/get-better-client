@@ -299,7 +299,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			const hasPostedDailyResponse = await axios.get<{
 				hasPosted: boolean;
 			}>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/hasPosted/${state.username}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			);
 			const hasPostedDaily = hasPostedDailyResponse.data.hasPosted;
 
