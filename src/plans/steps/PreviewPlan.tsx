@@ -20,8 +20,10 @@ import {
 } from '../plan.types';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '@context/auth/useAuth';
 
-const submitPlan = async (username: string | null, planState: PlanBuilderState): Promise<void> => {
+
+const submitPlan = async (username: string | null, planState: PlanBuilderState,userToken:string): Promise<void> => {
     // Check if the plan is valid
     if (!username || !planState.name || !planState.init.planCategory) {
         console.error('Invalid plan:', planState);
@@ -33,17 +35,18 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
     const planId = `${username}-plan-${unixTimestamp}`;
 
      // Use FormData to construct the payload
+    const resp = await axios.get(
+      `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+      
+
+    );
     const formData = new FormData();
-    formData.append('id', planId);
-    formData.append('username', username);
+    formData.append('user', resp.data["results"][0]["id"]);
     formData.append('userId', ''); // Adjust according to your needs
-    formData.append('planName', planState.name);
-    formData.append('planType', planState.init.planCategory || '');
-    formData.append('description', planState.description || "");
-    formData.append('createdAt', unixTimestamp.toString());
-    formData.append('updatedAt', '');
-    formData.append('deletedAt', '');
-    formData.append('icon', '');
+    formData.append('name', planState.name);
+    formData.append('workout_type', planState.init.planCategory || '');
+    formData.append('descriptions', planState.description || "");
+    formData.append('media', '');
   
     const dataObject = {
       planCategory: planState.init?.planCategory ?? "",
@@ -55,10 +58,10 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
       routine: planState?.routine ?? [],
     };
   
-    formData.append('data', JSON.stringify(dataObject));
+    formData.append('exercises_details', JSON.stringify(dataObject));
 
-    const metadata = {}; // Construct your metadata object here
-    formData.append('metadata', JSON.stringify(metadata));
+    // const metadata = {}; // Construct your metadata object here
+    // formData.append('metadata', JSON.stringify(metadata));
     
      if (planState.media && planState.media.length) {
         planState.media.forEach((media, index) => {
@@ -72,20 +75,27 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
         });
      }
   
-     console.log("Form data", formData)
-  
+    //  console.log("Form data", formData)
+    //  formData
     // Perform the POST request
-    try {
-        const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/save`,
-            formData, 
-        );
-        console.log("Plan saved successfully", response.data);
-    } catch (error) {
-        console.error("Error saving plan", error, error?.response);
-    }
+    await axios({
+      method: "post",
+      url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,
+      data: formData,
+      headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+    })
+    // try {
+    //     const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
+    //         formData, 
+    //     );
+    //     console.log("Plan saved successfully", response.data);
+    // } catch (error) {
+    //     console.error("Error saving plan", error, error?.response);
+    // }
 };
   
   export const PreviewPlan: React.FC = () => {
+    const { userToken } = useAuth();
     const { state: planState, dispatch: planDispatch } = usePlanBuilder();
       const { dispatch: screenDispatch } = usePlanScreen();
       const { username } = useMyUserInfo();
@@ -96,7 +106,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState):
       const onSubmit = async (): Promise<void> => {
           setLoading(true);
           try {
-            await submitPlan(username, planState);
+            await submitPlan(username, planState,userToken);
             planDispatch({ type: ActionType.Reset });
             screenDispatch({ type: ActionType.Reset });
             navigation.goBack();

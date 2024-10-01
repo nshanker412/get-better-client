@@ -178,8 +178,10 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	const fetchMyPlans = async () => {
 		try {
 
-			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${state.username}`);
-			const plans = response.data?.plans;
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+			);;
+			const plans = response.data?.results;
 			// only set state if there are new plans
 			if (plans.length !== state.plans?.length) {
 				dispatch({

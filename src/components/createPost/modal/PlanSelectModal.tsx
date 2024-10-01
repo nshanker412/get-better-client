@@ -19,6 +19,7 @@ import {
 import { Modal } from '../../primitives/action-modal/ActionModal';
 import { useProfileBodyStyles } from '../../profile/profile-body/ProfileBody.styles';
 import { ConnectedPlanItem } from '../../profile/profile-body/plan-list/plan-item/ConnectedPlanItem';
+import { useAuth } from '@context/auth/useAuth';
 
 
 
@@ -76,12 +77,16 @@ export  const PlanSelectModal: React.FC<PlanModalProps> = ({ isVisible, onPlanMo
 	  const profileBodyStyles = useProfileBodyStyles();
 	  const chosenPlansRef = useRef<string[] | []>([]);
 	  const [numSelected, setNumSelected] = useState(0);
+	const {userToken} =useAuth();
+
   
 	useEffect(() => {
 	  const fetchPlans = async () => {
 		try {
-		  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${username}`);
-			const planList: PlanItemProps[] = response.data?.plans?.map((plan) => ({
+		  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+		  );
+			const planList: PlanItemProps[] = response.data?.results?.map((plan) => ({
 				id: plan?.id,
 				planType: plan?.data?.planCategory,
 				title: plan?.planName,

@@ -25,10 +25,11 @@ import {
   FoodGroupsMainCategory, Foods, NutritionRoutine,
   PlanCategory
 } from '../plan.types';
-
+import { useAuth } from '@context/auth/useAuth';
 export const PreviewUserPlan: React.FC = ( {navigation}) => {
     const route = useRoute();
   const planID = route?.params?.planID;
+  const {userToken} = useAuth();
   const user = route?.params?.profileUsername;
     console.log("planID", planID) 
     const [loading, setLoading] = useState<boolean>(false);
@@ -55,9 +56,11 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
     useEffect(() => {
         const getPlan = async (planID: string) => {
             setLoading(true);
-              try {
-                const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${planID}`);
-                  const plan = response.data.plan; 
+                try {
+                  const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan/${planID}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+    
+                  );
+                  const plan = response.data; 
                   console.log("plan", plan)
                   setPlan(plan);
                 

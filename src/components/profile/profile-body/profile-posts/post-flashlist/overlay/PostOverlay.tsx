@@ -26,7 +26,7 @@ import { timeAgo } from '../../../../../../utils/timeAgo';
 import { setPostLiked, setFlagged } from "../service/post";
 import { FlagFilled } from '@assets/darkSvg/FlagFilled';
 import { FlagBlank } from '@assets/darkSvg/Flag';
-
+import { useAuth } from '@context/auth/useAuth';
 interface PostOverlayProps {
   user: string;
   filename: string;
@@ -82,6 +82,7 @@ const genPlanIconList = (linkedPlans: PlanTileType[]) => {
  */
 const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   const { sendOutPushNotification } = useNotifications(); 
+  const {userToken} =useAuth();
   const animationRef = useRef<StarIconViewHandles>(null);
   // console.log("currentpostdata", postData)
   const [currentLikeState, setCurrentLikeState] = useState({
@@ -192,12 +193,13 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
 
           const fetchPromises = postData?.linkedPlans?.map(async (plan, index) => {
             try {
+              const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan/${plan}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
-              const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plan/fetch/${plan}`);
+              );
               const data: PlanTileType = {
-                id: resp.data.plan.id,
-                planType: resp.data.plan.data.planCategory,
-                title: resp.data.plan.planName,
+                id: resp.data.id,
+                planType: resp.data.data.planCategory,
+                title: resp.data.planName,
               };
               console.log('data', data)
               return data;

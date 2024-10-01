@@ -156,12 +156,12 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 				type: SET_LOAD_USER_PLANS_STATE,
 				payload: { loadUserPlansState: ApiLoadingState.Loading },
 			});
-			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/plans/fetch/${state.username}`,
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 			);
 			dispatch({
 				type: SET_USER_PLANS,
-				payload: { plans: response?.data?.plans },
+				payload: { plans: response?.data?.results },
 			});
 			dispatch({
 				type: SET_LOAD_USER_PLANS_STATE,
