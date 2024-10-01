@@ -18,7 +18,7 @@ import {
 import { sanitize } from '../../utils/sanitize';
 import { timeAgo } from '../../utils/timeAgo';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
-
+import {useAuth} from "@context/auth/useAuth";
 export const  ProfilePost: React.FC = (props) => {
 	const {
 		index,
@@ -45,6 +45,7 @@ export const  ProfilePost: React.FC = (props) => {
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [preview] = useState(true);
 	const isFocused  = useIsFocused();
+	const {userToken} = useAuth();
 
 	const { username: myUsername } = useMyUserInfo();
 	const doubleTapRef = useRef();
@@ -371,10 +372,10 @@ export const  ProfilePost: React.FC = (props) => {
 			} else {
 				axios
 					.get(
-						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/${profileUsername}/profile/300/300`,
+						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 					)
 					.then(async (response) => {
-						setProfileImage(response.data.image);
+						setProfileImage(response.data.profile_picture);
 
 						// write to file system
 						await FileSystem.writeAsStringAsync(

@@ -11,6 +11,7 @@ import { NotificationsDrawer } from './NotificationsDrawer';
 import {
 	ConnectedNotificationsDrawerProps
 } from './NotificationsDrawer.types';
+import {useAuth} from "@context/auth/useAuth";
 
 
 
@@ -91,6 +92,7 @@ export const ConntectedNotificationsDrawer: React.FC<ConnectedNotificationsDrawe
 	const [profileImages, setProfileImages] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [notificationPermissions, setNotificationPermissions] = useState('');
+	const { userToken } = useAuth();
 
 	// const notificationStyles = useNotificationsStyles();
 	// const { theme } = useThemeContext();
@@ -132,7 +134,7 @@ export const ConntectedNotificationsDrawer: React.FC<ConnectedNotificationsDrawe
 					} else {
 						axios
 							.get(
-								`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/${itemUsername}/profile/300/300`,
+								`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 							)
 							.then(async (response) => {
 								console.log(
@@ -142,7 +144,7 @@ export const ConntectedNotificationsDrawer: React.FC<ConnectedNotificationsDrawe
 								setProfileImages((prevProfileImages) => {
 									let updatedProfileImages = {
 										...prevProfileImages,
-										[itemUsername]: response.data.image,
+										[itemUsername]: response.data.profile_picture,
 									};
 									return updatedProfileImages;
 								});

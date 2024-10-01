@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-
+import { useAuth } from '@context/auth/useAuth';
 interface ImageSource {
   uri: string;
 }
@@ -20,7 +20,7 @@ const useProfileImage = (username: string, fetchSize: number): ProfilePicHookRet
   const cacheKey = `${username}-${fetchSize}`;
   const [profileImage, setProfileImage] = useState<ImageSource | null>(profileImageCache[cacheKey]);
   const [hasProfileImage, setHasProfileImage] = useState<boolean>(!!profileImage);
-
+  const {userToken} = useAuth();
   useEffect(() => {
     const fetchProfileImage = async () => {
       if (profileImageCache[cacheKey]) {
@@ -29,8 +29,10 @@ const useProfileImage = (username: string, fetchSize: number): ProfilePicHookRet
       }
 
       try {
-        const response = await axios.get<ApiResponse>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/${username}/profile/${fetchSize}/${fetchSize}`);
-        const imageSource: ImageSource = { uri: `data:image/jpeg;base64,${response.data.image}` };
+        const response = await axios.get<ApiResponse>(
+          `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+        );
+        const imageSource: ImageSource = { uri: `data:image/jpeg;base64,${response.data["profile_image"]}` };
         setProfileImage(imageSource);
         profileImageCache[cacheKey] = imageSource;
         setHasProfileImage(true);

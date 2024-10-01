@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
 import * as ExpoNotifications from 'expo-notifications';
+import {useAuth} from '@context/auth/useAuth';
 
 /**
  * This function is used to register for push notifications
@@ -11,6 +12,7 @@ export const registerPushToken = async (username: string): Promise<string | unde
 		const { status: existingStatus } =
 			await ExpoNotifications.getPermissionsAsync();
 		let finalStatus = existingStatus;
+		const {userToken}=useAuth();
 
 		if (existingStatus !== 'granted') {
 			const { status } =
@@ -31,13 +33,23 @@ export const registerPushToken = async (username: string): Promise<string | unde
 	const token = (await ExpoNotifications.getExpoPushTokenAsync({ projectId: projectId })).data;
 
 	// should be non-blocking and not throw error
+	const me = axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`, {
+		headers: {
+			Authorization: `Bearer ${userToken}`,
+		},
+	})
 	axios
 		.post(
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/save`,
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token`,
 			{
-				username: username,
+				user: me["id"],
 				token: token,
 			},
+			{
+				headers: {
+					Authorization: `Bearer ${userToken}`,
+				},
+			}
 		)
 		.then((response) => {
 			console.log('saveNotificationToken', response.data);
