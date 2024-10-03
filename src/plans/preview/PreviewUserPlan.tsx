@@ -422,7 +422,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
       const [isFullscreen, setIsFullscreen] = useState(false);
       const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
 
-      const mediaUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${media.url}`
+      const mediaUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${media.url}`
     
       return (
         <View style={stylesD.container}>

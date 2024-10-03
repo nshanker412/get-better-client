@@ -151,7 +151,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
         throttle((currentFlagStateInt) => {
           console.log(currentFlagStateInt)
           try {
-            const postID = `${postData.timestamp}`;
+            const postID = `${postData["id"]}`;
             const newFlagState = !currentFlagStateInt.state;
             setCurrentFlagState({
               state: newFlagState,
@@ -235,7 +235,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
     }
   
     fetchLinkedPlans();
-  }, [user, postData?.timestamp, postData?.linkedPlans]);
+  }, [user, postData?.id, postData?.linkedPlans]);
   
   
 
@@ -245,9 +245,9 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
   const { onPostChange, openDrawer } = useCommentDrawer();
   
   const handleOpenCommentDrawer = useCallback(() => {
-    onPostChange(`${user}_${postData.timestamp}`);
+    onPostChange(`${user}_${postData["id"]}`);
     openDrawer();
-  }, [onPostChange, openDrawer, user, postData.timestamp]);
+  }, [onPostChange, openDrawer, user, postData["id"]]);
 
 
 

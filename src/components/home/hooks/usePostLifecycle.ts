@@ -4,7 +4,7 @@ import { PostMetadata } from "@models/posts";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import { useEffect, useState } from "react";
-
+import { useAuth } from "@context/auth/useAuth";
 
 /**
  * Lifecycle maintainer for a single post
@@ -44,7 +44,7 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
     const [postMedia, setPostMedia] = useState<string | null>(null);
     const [posterName, setPosterName] = useState<string>('');
     const [liked, setLiked] = useState<boolean| undefined>();
-
+    const {userToken} = useAuth()
     // flow control
     const [error, setError] = useState<string>('');
     const [loadingMedia, setLoadingMedia] = useState<boolean>(true);
@@ -207,18 +207,13 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
     }
 
     const fetchPostComments = async () => {
-         await axios
-            .post(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
-                {
-                    profileUsername: posterName,
-                    postID: postID,
-                },
-            )
-            .then((response) => {
-                const newCommentCount = response.data.comments.length;
+        await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment?search=${postID}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+		).then((response) => {
+                const newCommentCount = response.data["results"].length;
                 if (newCommentCount !== commentsCount) {
-                    setCommentsCount(response.data.comments.length);
+                    setCommentsCount(response.data["results"].length);
                 }
             })
 			.catch((error) => {

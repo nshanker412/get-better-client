@@ -153,16 +153,23 @@ export const  ProfilePost: React.FC = (props) => {
 
 	function addComment() {
 		setCommentsLoading(true);
-		axios
-			.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/comment`, {
-				profileUsername: profileUsername,
-				postID: postID,
-				myUsername: myUsername,
-				content: currentComment,
-			})
-			.then((response) => {
+		const resp = axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			
+	  
+		  );
+        axios.post(
+            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment`,
+            {
+                created_by: resp.data["results"][0]["id"],
+                post: postID,
+                comment: currentComment,
+            },
+			{ headers: {"Authorization" : `Bearer ${userToken}`}}
+        ).then((response) => {
 				console.log('addComment', response.data);
-				setComments(response.data.comments);
+				setComments([response.data , ...comments]);
+				
 				axios
 					.get(
 						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
@@ -252,16 +259,12 @@ export const  ProfilePost: React.FC = (props) => {
 
 	function fetchPostComments() {
 		setCommentsLoading(true);
-		axios
-			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
-				{
-					profileUsername: profileUsername,
-					postID: postID,
-				},
-			)
-			.then((response) => {
-				setComments(response.data.comments);
+		console.log("ds")
+		axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment?search=${postID}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+		).then((response) => {
+				setComments(response.data["results"]);
 				setCommentsLoading(false);
 			})
 			.catch((error) => {

@@ -7,21 +7,19 @@ import axios from 'axios';
  * 
  * @returns comments
  */
-export const fetchPostComments = async (origionalPoster: string, postID: string): Promise<Comment[] | void> => {
+export const fetchPostComments = async (origionalPoster: string, postID: string,userToken:string): Promise<Comment[] | void> => {
     
     if (!postID) {
         console.log('Error fetching comments: Invalid parameters');
     }
     
     try {
-        const response = await axios.post(
-            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
-            {
-                profileUsername: origionalPoster,
-                postID: postID,
-            },
-        );
-        return response.data.comments;
+
+        const response = await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment?search=${postID}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+		);
+        return response.data["results"];
     }
     catch (error) {
         console.log('fetchPostCommentsError', error);

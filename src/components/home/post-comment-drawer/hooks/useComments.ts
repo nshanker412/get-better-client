@@ -4,7 +4,7 @@ import { Comment } from '@models/posts';
 import { useEffect, useState } from 'react';
 import { addCommentToPost } from '../utils/addCommentToPost';
 import { fetchPostComments } from '../utils/fetchPostComments';
-
+import {useAuth} from "@context/auth/useAuth";
 
 export interface UseCommentsReturnType {
     loadingFetchComments: boolean;
@@ -22,6 +22,7 @@ export interface UseCommentsReturnType {
 export const useComments = (postID: string, originalPoster: string): UseCommentsReturnType => {
     const [comments, setComments] = useState<Comment[]>([]);
     const { username: myUsername } = useMyUserInfo();
+    const {userToken} = useAuth();
 
     const [loadingAddComment, setLoadingAddComment] = useState(false);
     const [loadingFetchComments, setLoadingFetchComments] = useState(false);
@@ -30,7 +31,7 @@ export const useComments = (postID: string, originalPoster: string): UseComments
     const fetchComments = async () => {
         setLoadingFetchComments(true);
         try {
-            const newComments = await fetchPostComments(originalPoster, postID);
+            const newComments = await fetchPostComments(originalPoster, postID, userToken);
             if (newComments) {
                 setComments(newComments);
             }
@@ -45,7 +46,7 @@ export const useComments = (postID: string, originalPoster: string): UseComments
         setLoadingAddComment(true);
         // 1. try adding comment to post
         try {
-            await addCommentToPost(originalPoster, postID, myUsername!, comment);
+            await addCommentToPost(originalPoster, postID, myUsername!, comment,userToken);
         } catch (e) {
             console.log('Error adding comment', e);
         } 

@@ -319,7 +319,7 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
 
 
     const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
-    const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/image/${post.filename}`
+    const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/${post.filename}`
 
 
     return (

@@ -4,8 +4,7 @@ import { useNotifications } from '@context/notifications/useNotifications';
 import { Comment } from '@models/posts';
 import axios from 'axios';
 import React, { createContext, useContext, useMemo, useState } from 'react';
-
-
+import {useAuth} from "@context/auth/useAuth";
 // Define the context shape
 interface CommentDrawerContextType {
     isOpen: boolean;
@@ -37,6 +36,7 @@ export const CommentDrawerProvider= ({ children }) => {
     const [currentPostID, setCurrentPostId] = useState<string | null>(null);    
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(false);
+    const {userToken} = useAuth();
 
     const {sendOutPushNotification} = useNotifications();
 
@@ -49,15 +49,13 @@ export const CommentDrawerProvider= ({ children }) => {
         const id = postID.split('_')[1];
 
         try {
-            const response = await axios.post(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/fetch/comments`,
-                {
-                    profileUsername: user,
-                    postID: id,
-                },
+            console.log('fetching comments', user, id);
+            const response = await axios.get(
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment?search=${id}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+    
             );
-            console.log('response', response.data.comments);
-            setComments(response.data.comments);
+            console.log('response', response.data["results"]);
+            setComments(response.data["results"]);
             
 
         } catch (error) {
@@ -95,17 +93,23 @@ export const CommentDrawerProvider= ({ children }) => {
 
 
         try {
-            const response = await axios.post(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/comment`,
+            const resp = await axios.get(
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+                
+          
+              );
+            await axios.post(
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment`,
                 {
-                    profileUsername: poster,
-                    postID: id,
-                    myUsername: myUsername,
-                    content: comment,
+                    created_by: resp.data["results"][0]["id"],
+                    post: id,
+                    comment: comment,
                 },
-            );
-            console.log('response', response.data.comments);
-            setComments(response.data.comments);
+                { headers: {"Authorization" : `Bearer ${userToken}`}}
+            ).then((response) => {
+                setComments([response.data, ...comments]);
+            })
+
       
             const pushNotifInfo: PushNotificationInfoPacket = {
                 title:  `${myUsername} commented on your post.`,
@@ -127,6 +131,7 @@ export const CommentDrawerProvider= ({ children }) => {
             console.error('Adding comment failed:', error);
             console.log(error);
         }
+        
     }
 
 
