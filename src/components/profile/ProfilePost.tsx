@@ -55,10 +55,9 @@ export const  ProfilePost: React.FC = (props) => {
 	function updatePostLiked(status) {
 		axios
 			.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
-				profileUsername: profileUsername,
-				postID: postID,
-				myUsername: myUsername,
-				status: status,
+					postID: postData["id"],
+					liked_by: myUsername,
+					status: status,
 			})
 			.then((response) => {
 				console.log('updatePostLiked', response.data);

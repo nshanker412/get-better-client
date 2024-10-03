@@ -26,6 +26,7 @@ import { Header } from '../header/Header';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { useCreatePostStyles } from './createPost.styles';
 import { PlanSelectModal } from "./modal/PlanSelectModal";
+import { useAuth } from '@context/auth/useAuth';
 
 const actions: IActionProps[] = [
 	{
@@ -53,6 +54,7 @@ const MAX_CAPTION_LENGTH = 200;
 export default function CreatePost() {
 	const route = useRoute();
 	const { theme } = useThemeContext();
+	const { userToken } = useAuth();
 	const challengeUsername = route?.params?.challengeUsername;
 	const challengeID = route?.params?.challengeID;
 	const challenge = route?.params?.challenge;
@@ -276,39 +278,40 @@ export default function CreatePost() {
 
 	const sendPost = async () => {
 		setLoading(true);
+		const resp = await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			
+	  
+		  );
 		const formData = new FormData();
-		formData.append('user', myUsername);
+		formData.append('published_by', resp.data["results"][0]["id"]);
 		formData.append('caption', caption);
 		formData.append('challenge', challenge ? true : false);
+		formData.append('location', null);
 		if (linkedPlans) {
-			formData.append('linkedPlans', JSON.stringify(linkedPlans));
+			formData.append('plan', linkedPlans[0]);
 		}
 
 		if (photo) {
-			formData.append('postMedia', {
+			formData.append('media', {
 				uri: photo,
 				type: 'image/jpeg', // Adjust based on your image format
 				name: `${Math.floor(Date.now() / 1000)}.jpeg`,
 			});
 		} else if (video) {
-			formData.append('postMedia', {
+			formData.append('media', {
 				uri: video,
 				type: 'video/mp4', // Adjust based on your video format
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
 		}
 
-		await axios
-			.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/post/save`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				},
-			)
-			.then((response) => {
+			await axios({
+				method: "post",
+				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,
+				data: formData,
+				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+			}).then((response) => {
 				console.log('sendPost', response.data);
 				onSendSuccessToast();
 				setLoading(false);

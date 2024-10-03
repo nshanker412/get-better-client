@@ -1,18 +1,26 @@
 
 import axios from 'axios';
 
-export const setPostLiked = async (user: string, id: string, myUsername: string, isLiked: boolean): Promise<void> => {
+
+export const setPostLiked = async (user: string, id: string, myUsername: string, isLiked: boolean,userToken:string): Promise<void> => {
     console.log(`sending out liked notification ${user}_${id}`)
     
     try {
-      await axios
-            .post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
-                profileUsername: user,
-                postID: id,
-                myUsername,
+        const resp = await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${user}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			
+	  
+		  );
+        await axios({
+            method: "post",
+            url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/like-post`,
+            data: {
+                post: id,
+                liked_by: resp.data["results"][0]["id"],
                 status: isLiked,
-            })
-
+            },
+            headers: {"Authorization" : `Bearer ${userToken}`},
+        })
     } catch (error) {
         console.log('setPostLikedError', error);
     }

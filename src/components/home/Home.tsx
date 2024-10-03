@@ -70,7 +70,7 @@ export const Home: React.FC = () => {
 			)
 			.then((response) => {
 				console.log('fetchFriendsPosts', response.data);
-				const posts: Post[] = response.data.posts;
+				const posts: Post[] = response.data["results"];
 				setPosts(posts);
 
 			})
@@ -94,7 +94,7 @@ export const Home: React.FC = () => {
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			)
 			.then((response) => {
-				setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
+				setPosts((prevPosts) => [...prevPosts, ...response.data["results"]]);
 				setLoadingPosts(false);
 				setPublicPostsFetched(true);
 			})
@@ -223,7 +223,7 @@ export const Home: React.FC = () => {
 										}
 										filename={post.filename}
 										profileUsername={post.metadata.user}
-										postID={`${post.metadata.timestamp}`}
+										postID={`${post.metadata["id"]}`}
 										postData={post.metadata}
 										myUsername={myUsername!}
 										pauseVideo={

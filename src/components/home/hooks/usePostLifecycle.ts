@@ -146,10 +146,9 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
         try {
             const resp = await axios
                 .post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/like`, {
-                    profileUsername: posterName,
-                    postID: postID,
-                    myUsername: myUsername,
-                    status: isLiked,
+                    postID: postData["id"],
+					liked_by: myUsername,
+					status: isLiked,
                 })
             setLikesCount(resp.data.likes.length);
             setLiked(isLiked);
