@@ -13,6 +13,7 @@ import { sendPushNotification } from './utils/sendPushNotification';
 import { setNotificationsSeen as _setNotificationsSeen } from './utils/setNotificationsSeen';
 
 import { Notification as NotificationModel } from '@models/notifications';
+import { useAuth } from '@context/auth/useAuth';
 
 /**
  *  Notifications Provider 
@@ -30,7 +31,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const [unreadNum, setUnreadNum] = useState<number | undefined>(undefined);
     const [notifications, setNotifications] = useState<NotificationModel[] | []>([])
     const [lastReadTime, setLastReadTime] = useState<number | undefined>(undefined);
-
+    const {userToken} = useAuth();
     /** EXPO  */
     const notificationListener = useRef<ExpoNotifications.Subscription>(null);
     const responseListener = useRef<ExpoNotifications.Subscription>(null);
@@ -245,7 +246,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
         // 4. (GB) Fetch notifications
         try {
-            const notifs = await fetchNotifications(myUsername);
+            const notifs = await fetchNotifications(myUsername,userToken);
             if (notifs) {
                 setNotificationsResponse(notifs);
             }
@@ -265,7 +266,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         if (myUsername) {
             try {
                 // (GB) Set notifications seen
-                await _setNotificationsSeen(myUsername)
+                await _setNotificationsSeen(myUsername,userToken)
                 await refreshNotifications();
             } catch (e) {
                 console.log('Error setting notifications seen', e);
@@ -280,7 +281,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
     const refreshNotifications = async () => {
         if (myUsername) {
             try {
-                const newNotifications = await fetchNotifications(myUsername);
+                const newNotifications = await fetchNotifications(myUsername,userToken);
                 if (newNotifications) {
                     setNotificationsResponse(newNotifications)
                 }

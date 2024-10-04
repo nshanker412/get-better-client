@@ -3,14 +3,13 @@ import axios from 'axios';
 
 
 export const fetchNotifications = async (
-	myUsername: string,
+	myUsername: string,userToken: string
 ): Promise<NotificationsResponseV2 | void> => {
 
   console.log('fetchNotifications', myUsername);  
-  console.log('process.env.EXPO_PUBLIC_SERVER_BASE_URL',  `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/v2/fetch/${myUsername}`);
   try {
     const response = await axios.get<NotificationsResponseV2>(
-      `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/v2/fetch/${myUsername}`,
+      `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notifications/all`,{headers:{"Authorization":`Bearer ${userToken}`}},
     );
     return response.data;
   } catch (error) {
