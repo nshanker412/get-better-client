@@ -78,8 +78,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 				password,
 			);
 			const user = userCred.data;
-			console.log('user', user, user.email);
-			if (user?.email) {
+			console.log('user', user, user.auth_token);
+			if (user?.auth_token) {
 				const uname = await fetch(
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${user.auth_token}`} }
 				).then((res) => res.json()).catch((err)=>console.log(err));
@@ -87,6 +87,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 				console.log('uname', uname['username']);
 
 				dispatch({ type: 'SIGN_IN', token: user.auth_token });
+				// username: string | null;
+				// email: string | null;
+				// hasPostedDaily: boolean | null;
+				// myData: UserData;
+				
+				dispatch({
+					type: 'RESTORE_SESSION',
+					token: user.auth_token,
+				});
 				
 			}
 		} catch (err) {

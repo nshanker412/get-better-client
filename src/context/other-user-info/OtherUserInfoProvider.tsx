@@ -123,7 +123,6 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 				
 
 			);
-			console.log('userDataResponse', userDataResponse.data["results"][0])
 			const otherUserData: UserData = userDataResponse.data["results"][0];
 
 
@@ -354,11 +353,11 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 
 		try {
-			const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/fetch/posts/${state.username}`);
+			const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}});
 
-			const newPosts = resp?.data?.posts;
+			const newPosts = resp?.data?.results;
 			// compare the lists and only set state if there are new posts
-			if (newPosts.length !== state.posts?.length) {
+			if (newPosts.length !== state.results?.length) {
 				dispatch({
 					type: SET_POSTS	,
 					payload: {

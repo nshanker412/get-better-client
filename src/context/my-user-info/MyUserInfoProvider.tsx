@@ -113,15 +113,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			if (!auth_token) {
 				console.log('No email provided');
 			}
-			// {
-			// 	"bio": "",
-			// 	"challengesComplete": 0,
-			// 	"consistency": 2,
-			// 	"followers": 0,
-			// 	"following": 0,
-			// 	"isFollowing": false,
-			// 	"name": "Kunal"
-			// 	}
+
 			// Initialize and register notifications
 			// await registerForPushNotificationsAsync(username);
 			// await scheduleDailyNotification();
@@ -176,9 +168,10 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 	};
 
 	const fetchMyPlans = async () => {
+		
 		try {
 
-			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan?search=${state["username"]}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
 			);;
 			const plans = response.data?.results;
@@ -407,12 +400,12 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 			return false;
 		}
 
-		console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isfollowing/${state.username}/${amIFollowingThisPerson}`)
 
 
 		try {
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/v2/user/isfollowing/${state.username}/${amIFollowingThisPerson}`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/isfollowing?user=${amIFollowingThisPerson}`,
+				{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}}
 			);
 			return response.data.isFollowing;
 		} catch (error) {

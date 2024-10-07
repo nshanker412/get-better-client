@@ -18,7 +18,7 @@ export type MyUserInfoState = {
 };
 
 export interface MyUserInfoContextProps extends MyUserInfoState {
-	setMyUserInfo: (email: string) => Promise<string>;
+	setMyUserInfo: (auth_token: string) => Promise<string>;
 	fetchMyPlans: () => Promise<void>;
 	onLogout: () => Promise<void>;
 	setShownIntroPage: () => void;

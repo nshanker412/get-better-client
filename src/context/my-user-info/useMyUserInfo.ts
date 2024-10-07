@@ -8,7 +8,6 @@ export const useMyUserInfo = () => {
 			'useMyUserInfo must be used within a MyUserInfoProvider',
 		);
 	}
-	console.log("dsd",context)
 	const memoizedContext = useMemo(() => context, [context]);
 
 	return memoizedContext;

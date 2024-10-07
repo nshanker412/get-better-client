@@ -221,7 +221,7 @@ export const Home: React.FC = () => {
 											index === currentScrollIndex ||
 											index === currentScrollIndex + 1
 										}
-										filename={post.filename}
+										filename={`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${post.filename}`}
 										profileUsername={post.metadata.user}
 										postID={`${post.metadata["id"]}`}
 										postData={post.metadata}

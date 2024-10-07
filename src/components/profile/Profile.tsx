@@ -9,7 +9,7 @@ import { OtherProfile } from './OtherProfile';
 
 export const Profile: React.FC = ({route}) => {
 	const { username: myUsername } = useMyUserInfo();
-
+	
 
 	useEffect(() => {
 		console.log("in Profile: ", route?.params?.profileUsername);

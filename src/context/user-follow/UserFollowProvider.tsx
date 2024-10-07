@@ -66,7 +66,8 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 				);
 				setFollowers(response.data.followers_list);
-				console.log('profile followers', response.data.followers_list);
+				console.log('profile followers', followers);
+				return response.data.followers_list
 			} catch (error) {
 				console.log('ERROR: onFetchFollowers ', error);
 			}
@@ -99,9 +100,6 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 
 	const onFollowUser = async (me: string, userToFollow: string): Promise<void> => {
 		console.log('onFetchFollowing pre shit')
-		console.log("onFetchFollow3rs",
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/users/follow`)	
-
 
 		// Implement the fetch logic her
 		if (username) {
@@ -137,8 +135,10 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 		followers: followers,
 		following: following,
 	};
+	
 
   return (
+	
 	  <UserFollowContext.Provider value={value}>
 
       { children }
