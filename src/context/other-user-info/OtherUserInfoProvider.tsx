@@ -187,15 +187,21 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 
 		const previouslyFollowing = state.otherUserData?.isFollowing;
 	
-
+		console.log({
+			following: !previouslyFollowing,
+			recievingUser: state.username, 
+			followed_by: myUsername, 
+		});
+		
 		try {
 			const resp = await axios.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/follow`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/update_follower_following`,
 				{
-					following: !previouslyFollowing,
-					recievingUser: state.username, 
-					sendingUser: myUsername, 
+					is_following: !previouslyFollowing,
+					followering_user_name: state.username, 
+					follower_user_name: myUsername, 
 				},
+				{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			);
 
 
