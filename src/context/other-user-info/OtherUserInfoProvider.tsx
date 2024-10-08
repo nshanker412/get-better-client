@@ -307,13 +307,24 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		try {
 			// 2. Submit the challenge to the server
 			console.log('pre 2');
+			const resp1 = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+				
+		  
+			  );
+			const resp2 = await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			
+		
+			);
 			const resp = await axios.post(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notifications/addChallenge`,
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/challenge`,
 				{
-					recievingUser: state.username,
-					sendingUser: myUsername,
-					challenge: challengeText,
+					challenged_to: resp1.data["results"][0]["profile_id"],
+					challenged_by: resp2.data["results"][0]["profile_id"],
+					content: challengeText,
 				},
+				{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			);
 			console.log('post 2', resp.data);
 		} catch (error) {
