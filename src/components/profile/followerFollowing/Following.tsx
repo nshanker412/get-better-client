@@ -4,11 +4,12 @@ import { useUserFollowContext } from '@context/user-follow/UserFollowProvider';
 import { TabActions, useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAvatar';
 import { useSearchStyles } from './search.styles';
-
+import { useAuth } from '@context/auth/useAuth';
+import axios from 'axios';
 
 
 
@@ -16,18 +17,36 @@ export const Following = () => {
 	const navigation = useNavigation();
 	const route = useRoute();
 	const { username: myUsername } = useMyUserInfo();
+	const { userToken } = useAuth();
 	const { theme } = useThemeContext();
 
-	const { following: flist, onFetchFollowing} = useUserFollowContext();
+	const { onFetchFollowing} = useUserFollowContext();
+	const [following, setFollowing] = useState([]);
 
 	const profileUsername = route.params?.profileUsername;
-	const followers = route.params?.followers;
-	const following = route.params?.following;
+	
+	
+
 
 	const searchStyles = useSearchStyles();
 	const [refreshing, setRefreshing] = useState(false);
 
-
+	
+	useEffect(() => {
+		const fetchFollowers = async () => {
+			try {
+				const response = await axios.get(
+					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+	
+				);
+				console.log('profile Following', response.data.following_list);
+				setFollowing(response.data.following_list);
+			} catch (error) {
+				console.log('ERROR: onFetchFollowing ', error);
+			}
+		}
+		fetchFollowers();
+	}, []);
 
 	const onRefreshCallback = async () => {
 		setRefreshing(true);
@@ -50,6 +69,7 @@ export const Following = () => {
 	};
 
 	const renderItem = ({ item }) => (
+		
 		<TouchableOpacity
 			onPressIn={() => {
 				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -71,7 +91,7 @@ export const Following = () => {
 	return (
 		<View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
 			<FlashList
-				data={flist ??[]}
+				data={following ??[]}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.username}
 				estimatedItemSize={100}

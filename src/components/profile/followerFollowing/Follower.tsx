@@ -22,27 +22,27 @@ export const Follower = () => {
 	const { theme } = useThemeContext();
 	const searchStyles = useSearchStyles();
 	const [refreshing, setRefreshing] = useState(false);
-
-	
-
-	const onRefreshCallback = async () => {		
-		setRefreshing(true);
-		await onFetchFollowers();
-		setRefreshing(false);
-	};
-	const onFetchFollowers = async () => {
-	// Implement the fetch logic her
+	const fetchFollowers = async () => {
 		try {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
 			);
-			
-			setFollowerList(response.data.followers_list)
-			setCurrentUsername(response.data.username)
+			setFollowerList(response.data.followers_list);
 		} catch (error) {
-			console.log('ERROR: onFetchFollowers ', error);
+			console.log('ERROR: onFetchFollowing ', error);
 		}
-	}	
+	}
+	useEffect(() => {
+		fetchFollowers();
+	}, []);
+
+	const onRefreshCallback = async () => {		
+		setRefreshing(true);
+		await fetchFollowers();
+		setRefreshing(false);
+	};
+	
 
 
 	const onPressProfile = (username: string) => {
@@ -62,7 +62,7 @@ export const Follower = () => {
 			onPressIn={() => {
 				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			}}
-			onPress={() => {onPressProfile(item.username);onFetchFollowers()}}>
+			onPress={() => {onPressProfile(item.username);fetchFollowers()}}>
 			<View style={searchStyles.profile}>
 				<ConnectedProfileAvatar
 					username={item.username}
@@ -76,13 +76,7 @@ export const Follower = () => {
 		</TouchableOpacity>
 	);
 
-	useEffect(() => {
-		// if(!followerList){
-		// 	onFetchFollowers()
-		// }
-		console.log('Follower: profileUsername', followerList);
-		console.log('Follower: profileUsername', currentUsername);
-	}, [followerList, currentUsername]);
+
 
 	return (
 		<View
