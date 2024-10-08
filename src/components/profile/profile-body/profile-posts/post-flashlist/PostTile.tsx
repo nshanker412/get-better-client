@@ -318,8 +318,8 @@ export const PostTile = forwardRef<PostTileRef, PostTileProps>(({ handlePostPres
     // localRef.current?.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
 
 
-    const videoUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/video/${post.filename}`;
-    const imageUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/${post.filename}`
+    const videoUri = `${post.filename}`;
+    const imageUri = `${post.filename}`
 
 
     return (

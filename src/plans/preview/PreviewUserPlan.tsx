@@ -422,7 +422,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
       const [isFullscreen, setIsFullscreen] = useState(false);
       const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
 
-      const mediaUri = `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${media.url}`
+      const mediaUri = `${media.url}`
     
       return (
         <View style={stylesD.container}>
@@ -437,7 +437,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
               />
             ) : (
               <Video
-                source={{ uri: media.url }}
+                source={{ uri: mediaUri }}
                 style={stylesD.media}
                 resizeMode={ResizeMode.COVER}
                 shouldPlay={false}
@@ -455,12 +455,12 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
             >
               {media.type === 'image' ? (
                 <Image
-                  source={ media.url }
+                  source={{ uri: mediaUri }}
                   style={stylesD.fullscreenMedia}
                 />
               ) : (
                 <Video
-                  source={{ uri: media.url }}
+                  source={{ uri: mediaUri }}
                   style={stylesD.fullscreenMedia}
                   resizeMode={ResizeMode.CONTAIN}
                   shouldPlay

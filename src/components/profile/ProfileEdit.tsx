@@ -63,8 +63,8 @@ export const ProfileEdit: React.FC = () =>  {
 					console.log('fetchUser', response.data.name);
 					setName(response.data.name);
 					setBio(response.data.bio);
-					if (response.data.profileImage) {
-						setOldProfileImage(response.data.profileImage);
+					if (response.data.profile_picture) {
+						setOldProfileImage(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}`);
 					}
 					setLoading(false);
 				})

@@ -61,7 +61,7 @@ export const NotificationsDrawer: React.FC<NotificationDrawerProps> = ({
 												borderRadius: 20,
 											}}
 											source={{
-												uri: `data:image/jpeg;base64,${
+												uri: `${
 													commentProfileImages[
 														item.username
 													]

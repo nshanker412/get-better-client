@@ -1,7 +1,7 @@
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 import { useOtherUserInfo } from '@context/other-user-info';
 import { UserFollowProvider } from '@context/user-follow/UserFollowProvider';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ApiLoadingState } from '../../../types/types';
 import { MyProfileHeader } from './MyProfileHeader';
 import { OtherProfileHeader } from './OtherProfileHeader';
@@ -10,7 +10,7 @@ import {
 	MyProfileHeaderConnectedProps,
 	OtherProfileHeaderConnectedProps
 } from './ProfileHeader.types';
-
+import { useAuth } from '@context/auth/useAuth';
 /**
  * Connected ProfileHeader Component
  * Details:
@@ -18,7 +18,23 @@ import {
 const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 	onOpenLogoutModal,
 }) => {
-	const { loadUserInfoState, username: myUsername, myData } = useMyUserInfo();
+	const { loadUserInfoState, username: myUsername } = useMyUserInfo();
+	const {userToken} = useAuth();
+	const [myData,setMyData] = useState(null);
+	useEffect(()=>{
+		if(userToken){
+			fetch(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{
+				headers:{
+					Authorization:`Bearer ${userToken}`
+				}
+			}).then(res=>res.json()).then(data=>{
+				setMyData(data);
+			})
+		}
+	},[userToken])
+	console.log(myData);
+	
+	
 
 	return (
 		<UserFollowProvider key="username-Provider" username={ myUsername ?? undefined}>
@@ -33,7 +49,7 @@ const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 			onMotivatePress={null}
 			following={myData?.following}
 			followers={myData?.followers}
-			profileImage={myData?.profileImage}
+			profileImage={myData?.profile_picture}
 			myUsername={myUsername}
 			amIFollowing={false}
 			onLogout={onOpenLogoutModal}

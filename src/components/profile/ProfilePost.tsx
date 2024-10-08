@@ -322,7 +322,7 @@ export const  ProfilePost: React.FC = (props) => {
 								// write to file system
 								await FileSystem.writeAsStringAsync(
 									fileUri,
-									response.data.media,
+									response.data.profile_picture,
 									{
 										encoding:
 											FileSystem.EncodingType.Base64,
@@ -377,12 +377,12 @@ export const  ProfilePost: React.FC = (props) => {
 						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 					)
 					.then(async (response) => {
-						setProfileImage(response.data.profile_picture);
+						setProfileImage(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}`);
 
 						// write to file system
 						await FileSystem.writeAsStringAsync(
 							fileUri,
-							response.data.image,
+							response.data.profile_picture,
 							{
 								encoding: FileSystem.EncodingType.Base64,
 							},
@@ -442,6 +442,8 @@ export const  ProfilePost: React.FC = (props) => {
 	}
 
 	useEffect(() => {
+		console.log("ds",profileImage);
+		
 		if (commentsOpen && comments) {
 			comments.forEach((comment) => {
 				console.log(comment);
@@ -527,12 +529,13 @@ export const  ProfilePost: React.FC = (props) => {
 								screen: 'profile',
 								params: { profileUsername: profileUsername },
 							}}>
+								
 							<Image
 								style={styles.profileImage}
 								transition={500}
 								placeholder={BLUR_HASH}
 								source={{
-									uri: `data:image/jpeg;base64,${profileImage}`,
+									uri: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${profileImage}`,
 								}}
 							/>
 						</Link>
