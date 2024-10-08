@@ -186,7 +186,8 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 
 		const previouslyFollowing = state.otherUserData?.isFollowing;
-	
+		console.log(state.otherUserData);
+		
 		console.log({
 			following: !previouslyFollowing,
 			recievingUser: state.username, 
