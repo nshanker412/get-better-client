@@ -19,6 +19,7 @@ import {
 	RESET_USER_INFO,
 	SET_FOLLOW_STATUS,
 	SET_LOAD_CHALLENGE_USER_STATE,
+	SET_LOAD_REPORT_POST_STATE,
 	SET_LOAD_USER_INFO_STATE,
 	SET_LOAD_USER_PLANS_STATE,
 	SET_POSTS,
@@ -361,6 +362,110 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		}
 	};
 
+/**
+	 * Send a reportPost to the user and notify them
+	 * Heuristic:
+	 * 1. Make sure we have the necessary data to send the reportPost
+	 * 2. Submit the reportPost to the server
+	 * 3. Send notification to user
+	 *  a. Fetch user notification tokens
+	 *  b. Send the reportPost notification to the user across all devices
+	 * Note: Should return failure only for 1 or 2
+	 *
+	 * @param reportPostText
+	 * @param myUsername
+	 * @returns
+	 */
+const reportPost = async (reportPostText: string, myUsername: string) => {
+	console.log(
+		'in reportPost',
+		reportPostText,
+		myUsername,
+		state.username,
+	);
+
+	// 1. Make sure we have the necessary data to send the challenge
+	if (!state.username || !myUsername) {
+		console.log(
+			'ERROR report user: no profile username or myUsername provided',
+			state.username,
+			myUsername,
+		);
+		console.log(
+			'ERROR report user: no profile username or myUsername provided',
+		);
+		dispatch({
+			type: SET_LOAD_REPORT_POST_STATE,
+			payload: { loadReportPostState: ApiLoadingState.Error },
+		});
+		return;
+	}
+	if (reportPostText == '') {
+		console.log('ERROR: Input instructions for the report.');
+		dispatch({
+			type: SET_LOAD_REPORT_POST_STATE,
+			payload: { loadReportPostState: ApiLoadingState.Error },
+		});
+		return;
+	}
+
+	try {
+		// 2. Submit the challenge to the server
+		console.log('pre 2');
+		const resp1 = await axios.get(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			
+	  
+		  );
+		const resp2 = await axios.get(
+		`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+		
+	
+		);
+		const resp = await axios.post(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/report`,
+			{
+				challenged_to: resp1.data["results"][0]["profile_id"],
+				challenged_by: resp2.data["results"][0]["profile_id"],
+				content: reportPostText,
+			},
+			{ headers: {"Authorization" : `Bearer ${userToken}`}}
+		);
+		console.log('post 2', resp.data);
+	} catch (error) {
+		console.error('reportPostError', error, error?.message);
+		return Promise.reject(error);
+	}
+
+	console.log("sending notificaiton to the user's devices");
+	
+	// 3. Send notification to user
+
+	try {
+
+	const notifPacket: PushNotificationInfoPacket = {
+		title: `${myUsername} challenged you!`,
+		body: 'You have 1 week. Tap here to see the challenge!',
+		data: {
+			type: NotificationType.CHALLENGED,
+			path: 'notifications',
+			params: {
+				profileUsername: state.username,
+				challenge: reportPostText,
+			},
+		},
+	};
+
+		sendOutPushNotification(state.username, notifPacket);
+		
+
+
+		return Promise.resolve();
+	} catch (error) {
+		console.error('setFollowStatusError', error);
+	}
+};
+
 
 	const fetchUserPosts = async (): Promise<void> => {
 		console.log("IN OTHER USER FETCHING PLANS")
@@ -403,6 +508,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		fetchUserPosts,
 		setFollowStatus,
 		challengeUser,
+		reportPost,
 	};
 
 	return (

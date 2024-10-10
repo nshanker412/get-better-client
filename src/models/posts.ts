@@ -5,6 +5,11 @@ export interface Comment {
 	username: string;
   }
   
+  export interface Report {
+	content: string;
+	timestamp: number;
+	username: string;
+  }
   export interface  PostMetadata {
 	caption: string;
 	challenge: string | boolean; 
@@ -14,6 +19,7 @@ export interface Comment {
 	type: 'image' | 'video'; 
 	  user: string;
 	linkedPlans?: string[];
+	reports: Report[];
   }
   
   export interface Post {

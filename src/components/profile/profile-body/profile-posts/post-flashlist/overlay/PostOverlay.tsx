@@ -27,6 +27,9 @@ import { setPostLiked, setFlagged } from "../service/post";
 import { FlagFilled } from '@assets/darkSvg/FlagFilled';
 import { FlagBlank } from '@assets/darkSvg/Flag';
 import { useAuth } from '@context/auth/useAuth';
+import { ReportModal } from '@components/reports/ReportModal';
+
+
 interface PostOverlayProps {
   user: string;
   filename: string;
@@ -80,7 +83,7 @@ const genPlanIconList = (linkedPlans: PlanTileType[]) => {
  * @param {Object} user that created the post
  * @param {Object} post object
  */
-const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
+const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, myUsername, handlePostPress, onToggleVideoState, isEmbeddedFeed }) => {
   const { sendOutPushNotification } = useNotifications(); 
   const {userToken} =useAuth();
   const animationRef = useRef<StarIconViewHandles>(null);
@@ -96,6 +99,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
 
   const [linkedActionFab, setLinkedActionFab] = useState([]);
   const navigation = useNavigation();
+  const [isChallengeModalOpen,setIsChallengeModalOpen] = useState(false)
+
 
 
 
@@ -237,7 +242,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
     fetchLinkedPlans();
   }, [user, postData?.id, postData?.linkedPlans]);
   
-  
+
+
 
   const styles = usePostOverlayStyles(isEmbeddedFeed);
   
@@ -249,6 +255,13 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
     openDrawer();
   }, [onPostChange, openDrawer, user, postData["id"]]);
 
+  const onCloseModalPress = () => {
+    setIsChallengeModalOpen(false);
+  };
+  
+  const onReportPress = () => {
+    setIsChallengeModalOpen(true);
+  };
 
 
   const onDoubleTapEvent = async (event): Promise<void> => {
@@ -359,12 +372,15 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({ user, filename, postData, my
               onLikePress={() => handleUpdateLike(currentLikeState)}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
-            <FlagIconView 
-            ref={animationRef}
-            flags={currentFlagState.counter}
-            isFlagged={currentFlagState.state}
-            onFlagPress={() => handleUpdateFlag(currentFlagState)}
-            isEmbeddedFeed={!!isEmbeddedFeed}
+            <ReportIcon
+              openReport={onReportPress}
+              isEmbeddedFeed={!!isEmbeddedFeed}
+            />
+            <ReportModal
+              isVisible={isChallengeModalOpen}
+              postTitle={postData.caption!}
+              postID={postData.id!}
+              onClosePress={onCloseModalPress}
             />
 
             <CommentIcon
@@ -508,6 +524,54 @@ const styles = useMemo(() => StyleSheet.create({
   
 return styles;
 }
+
+
+const ReportIcon: React.FC<{ openReport: () => void; isEmbeddedFeed: boolean}> = ({ openReport, isEmbeddedFeed }) => {
+
+  const styles = StyleSheet.create({
+    iconShadow: {
+      shadowColor: '#000000',
+      shadowOffset: { width: -3, height: 3 },
+      shadowOpacity: 0.65,
+      shadowRadius: 3,
+      backgroundColor: 'transparent',
+      zIndex: 2,
+    },
+    actionButtonText: {
+      textShadowColor: 'rgba(0, 0, 0, 0.55)',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 3,
+      fontFamily: fonts.inter.bold,
+      color: 'white',
+      textAlign: 'center',
+      marginTop: isEmbeddedFeed ? 2:4,
+      fontSize: isEmbeddedFeed ? 12 : 16,
+      backgroundColor: 'transparent',
+
+},
+  });
+
+  const size = isEmbeddedFeed ? 20 : 45;
+
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        openReport();
+      }}>
+      <SvgXml
+        style={styles.iconShadow}
+        width={size}
+        height={size}
+        strokeWidth={1}
+        xml={FlagBlank}
+      />
+
+     
+    </TouchableOpacity>
+  );
+};
+
 
 const CommentIcon: React.FC<{ commentCount: number; openCommentDrawer: () => void; isEmbeddedFeed: boolean}> = ({ commentCount, openCommentDrawer, isEmbeddedFeed }) => {
 

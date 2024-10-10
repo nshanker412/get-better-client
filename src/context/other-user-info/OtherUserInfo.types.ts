@@ -24,6 +24,7 @@ export interface OtherUserInfoContextProps extends OtherUserInfoState {
 	fetchUserPlans: () => Promise<void>;
 	setFollowStatus: () => Promise<void>;
 	challengeUser: (challengeText: string, myUsername: string) => Promise<void>;
+	reportPost: (reportPostText: string, myUsername: string) => Promise<void>;
 	fetchUserPosts: () => Promise<void>;
 }
 
@@ -36,6 +37,7 @@ export const SET_LOAD_USER_PLANS_STATE = 'SET_LOAD_USER_PLANS_STATE';
 export const SET_FOLLOW_STATUS = 'SET_FOLLOW_STATUS';
 export const SET_LOAD_FOLLOW_STATUS_STATE = 'SET_LOAD_FOLLOW_STATUS_STATE';
 export const SET_LOAD_CHALLENGE_USER_STATE = 'SET_LOAD_CHALLENGE_USER_STATE';
+export const SET_LOAD_REPORT_POST_STATE = 'SET_LOAD_REPORT_POST_STATE';
 export const SET_POSTS = 'SET_POSTS';
 
 // Define action interfaces
@@ -76,6 +78,10 @@ export interface SetLoadChallengeUserState {
 	type: typeof SET_LOAD_CHALLENGE_USER_STATE;
 	payload: { loadChallengeUserState: ApiLoadingState };
 }
+export interface SetLoadReportPostState {
+	type: typeof SET_LOAD_REPORT_POST_STATE;
+	payload: { loadReportPostState: ApiLoadingState };
+}
 export interface SetPostsAction {
 	type: typeof SET_POSTS;
 	payload: { posts: Post[] | [] };
@@ -89,6 +95,7 @@ export type OtherUserInfoAction =
 	| SetLoadUserPlansStateAction
 	| SetFollowStatusAction
 	| SetLoadChallengeUserState
+	| SetLoadReportPostState
 	| SetPostsAction;
 
 export const initialOtherUserInfoState: OtherUserInfoState = {
@@ -107,4 +114,5 @@ export const defaultContextValue: OtherUserInfoContextProps = {
 	setFollowStatus: () => Promise.resolve(),
 	challengeUser: () => Promise.resolve(),
 	fetchUserPosts: () => Promise.resolve(),
+	reportPost:() => Promise.resolve(),
 };
