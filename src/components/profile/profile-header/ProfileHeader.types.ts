@@ -5,6 +5,7 @@ export interface ConnectedProfileHeaderProps {
 }
 
 export interface OtherProfileHeaderProps {
+	id: string;
 	isLoading: boolean;
 	userHandle: string | null;
 	username: string | null;
@@ -14,6 +15,7 @@ export interface OtherProfileHeaderProps {
 	followers: number | null;
 	following: number | null;
 	myUsername: string | null;
+	myId: string | null;
 	amIFollowing: boolean |undefined;
 }
 

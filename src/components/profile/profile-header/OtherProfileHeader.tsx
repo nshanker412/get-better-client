@@ -4,7 +4,7 @@ import { fonts } from '@context/theme/fonts';
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React,{useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -12,6 +12,9 @@ import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAva
 import { useProfileHeaderStyles } from './ProfileHeader.styles';
 import { OtherProfileHeaderProps } from './ProfileHeader.types';
 import { handleSocialPress } from './utils/handleSocialPress';
+import { useAuth } from '@context/auth/useAuth';
+import axios from 'axios';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 
 
 const s = StyleSheet.create({
@@ -33,6 +36,7 @@ const s = StyleSheet.create({
 );
 
 export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
+	id,
 	isLoading,
 	consistency,
 	userHandle,
@@ -40,6 +44,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	bio,
 	followers, 
 	following,
+	myUsername,
+	myId,
 	onOpenChallengeModal,
 	onMotivatePress,
 
@@ -48,8 +54,20 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	const profileHeaderStyles = useProfileHeaderStyles();
 	const navigation = useNavigation();
 	const { theme } = useThemeContext();
+	const { userToken } = useAuth();
+	const [isBlocked,setIsBlocked] = useState(false)
 
-
+	const BlockUser = async() =>{		
+		await axios.post(
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/block-user`,
+			{	user: id,
+				blocked_user: id
+			},
+			{ headers: {"Authorization" : `Bearer ${userToken}`}}
+		  ).then(resp=>{resp;setIsBlocked(true)}).catch(er=>{console.log(er);
+		  });
+		  
+	}
     const onSocialPress = async (screen: 'Followers' | 'Following') => {
         handleSocialPress(
             username!,
@@ -188,6 +206,20 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  title={'Challenge'}
 			  size='lg'
 			  onPress={onOpenChallengeModal}
+			/>
+		  </View>
+		  <View>
+		  <ButtonAsync
+			  containerStyle={{ width: 100, height: 35 }}
+			  buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
+			  id={'challenge-button'}
+			  loading={false}
+			  gradientColor='gray'
+			  isPrimary={true}
+			  type={isBlocked ? 'outline' : 'solid'}
+			  title={isBlocked?'Block':'Blocked'}
+			  size='lg'
+			  onPress={BlockUser}
 			/>
 		  </View>
 		  <View style={{ flex: 1, alignItems: "center" }}>

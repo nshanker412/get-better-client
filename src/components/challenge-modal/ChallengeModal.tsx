@@ -141,6 +141,7 @@ export const ChallengeModal: React.FC<{
               title='Challenge'
               onPress={onSubmitChallengeCb}
             />
+            
           </Modal.Footer>
         </Modal.Container>
 		        </View>

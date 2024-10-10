@@ -38,6 +38,7 @@ export type Notification = {
 };
 
 export interface UserData {
+	id: string | null;
 	bio: string | null | undefined;
 	challengesComplete: number | null;
 	consistency: number | null;
@@ -49,6 +50,7 @@ export interface UserData {
 }
 
 export interface MyUserInfo extends UserData {
+	id: string | null;
 	loading: boolean;
 	username: string | null;
 	email: string | null;

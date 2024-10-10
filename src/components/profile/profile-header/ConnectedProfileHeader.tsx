@@ -45,6 +45,8 @@ const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 			userHandle={`@${myUsername}`}
 			username={myUsername}
 			bio={myData?.bio}
+			id={myData?.id}
+			profile_id={myData?.profile_id}
 			onChallengePress={null}
 			onMotivatePress={null}
 			following={myData?.following}
@@ -117,6 +119,7 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 			userHandle={`@${otherUsername}`}
 			username={otherUsername}
 			bio={otherUserData?.bio}
+			id={otherUserData?.id}
 				onOpenChallengeModal={onOpenChallengeModal}
 				consistency={otherUserData?.consistency}
 			onMotivatePress={onMotivatePressCb}
@@ -124,6 +127,7 @@ const OtherUserProfileHeaderConnected: React.FC<OtherProfileHeaderConnectedProps
 			followers={otherUserData?.followers}
 			profileImage={otherUserData?.profileImage}
 			myUsername={otherUsername}
+			myId={""}
 			amIFollowing={otherUserData?.isFollowing}
 			onLogout={null}
 			/>
