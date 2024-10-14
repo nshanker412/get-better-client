@@ -20,6 +20,7 @@ import {
   View
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import axios from 'axios';
 
 const PRIVACY_POLICY_URL = 'https://getbetterbrand.com/privacy-policy';
 const EULA = 'https://getbetterbrand.com/eula';
@@ -85,20 +86,23 @@ export const SettingsScreen = ({ navigation }) => {
 		}
   };
 
-  const onConfirmPasswordReset = async () => {
+  const onConfirmPasswordReset = async (email : string) => {
     setSendPasswordResetLoading(true);
     try {
       console.log('onConfirmPasswordReset');
-      await sendPasswordResetEmail(userToken);
+      await sendPasswordResetEmail(email);
     } catch (error) {
       console.error('Error sending password reset email:', error);
     }
   }
   
-  const resetPasswordAlert = () => {
+  const resetPasswordAlert = async() => {
+    const response = await axios.get(
+      `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+    );
     Alert.alert(
       'Reset Password', // Alert Title',
-      `This action will send a reset password link to ${userToken}.`, // Alert Message
+      `This action will send a reset password link to ${response.data.email}.`, // Alert Message
       [
         {
           text: 'Cancel',
@@ -109,7 +113,7 @@ export const SettingsScreen = ({ navigation }) => {
           text: 'Send',
           onPress: () => {
             console.log('Send Pressed');
-            onConfirmPasswordReset();
+            onConfirmPasswordReset(response.data.email);
 
           },
           style: 'destructive', // This will make the text color red on iOS
@@ -316,16 +320,16 @@ export const SettingsScreen = ({ navigation }) => {
       
               <View style={styles.row}>
 
-                  <Text style={[styles.rowLabel, {color: red.red6}]}>Delete Account</Text>
+                  {/* <Text style={[styles.rowLabel, {color: red.red6}]}>Delete Account</Text> */}
 
                   <View style={styles.rowSpacer} />
 
                   {/* <Text style={styles.rowValue}>Los Angeles, CA</Text> */}
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={() => { deleteAccountAlert() }}>
                   <MaterialIcons name="delete" size={24} color={red.red6} />
               
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 </View>
                 </View> 
             </View>

@@ -49,6 +49,8 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
   }
 
   const onDeleteModalOpen = (planId: string) => {
+    console.log(planId);
+    
     setDeletePlanId(planId);
     setOpenDeleteModal(true);
   }
@@ -92,7 +94,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                 wrapperStyle={styles.cardWrapper}
               >
             <LinearGradient colors={[grayDark.gray3, grayDark.gray2, grayDark.gray1]}  style={{ borderRadius: 8, width: '100%' , height: "100%" }}>
-              {user === myUsername && ( 
+              {/* {user === myUsername && ( 
               <TouchableOpacity 
                 style={{position: "absolute",
                   top: 0,
@@ -105,7 +107,7 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                 >
                     <MaterialCommunityIcons name="delete" size={24} color={redDark.red12} style={{ position: "absolute", top: 0, right: 0 }} />
                   </TouchableOpacity>
-              )}
+              )} */}
 
                     <Card.Title style={styles.cardTitle }>{planState.planName}</Card.Title>
                     <Card.FeaturedSubtitle style={ styles.cardFeaturedSubtitle}>{planState.data.planCategory}</Card.FeaturedSubtitle>

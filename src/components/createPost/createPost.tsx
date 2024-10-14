@@ -36,15 +36,16 @@ const actions: IActionProps[] = [
 		icon: <FontAwesome5 name="link" size={24} color="white" />,
 		color: "gray"
 
-	},
-	{
-		text: "Location",
-		icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
-		name: "bt_room",
-		// color: "rgba(137, 133, 133, 0.9)",
-		color: "gray"
+	}
+	// ,
+	// {
+	// 	text: "Location",
+	// 	icon: <FontAwesome5 name="map-marked-alt" size={24} color="white" />,
+	// 	name: "bt_room",
+	// 	// color: "rgba(137, 133, 133, 0.9)",
+	// 	color: "gray"
 		
-	},
+	// },
   ];
 
 
@@ -95,6 +96,7 @@ export default function CreatePost() {
 	}
 
 	const onPlanModalClose = (plans: string[] | []) => {
+		setLoading(false);
 		console.log('onPlanModalClose', plans);
 		setLinkedPlans(plans)
 		setIsVisible(false);
@@ -125,6 +127,13 @@ export default function CreatePost() {
 		})();
 	}, []);
 
+	const onErrorSuccessToast = () => {
+		Toast.show({
+			type: 'error',
+			text1: 'Some Issue in User Input. please check!',
+			topOffset: 100,
+		});
+	};
 	const onSendSuccessToast = () => {
 		Toast.show({
 			type: 'success',
@@ -288,10 +297,12 @@ export default function CreatePost() {
 		formData.append('caption', caption);
 		formData.append('challenge', challenge ? true : false);
 		formData.append('location', null);
+		console.log(linkedPlans);
+		
 		if (linkedPlans) {
 			formData.append('plan', linkedPlans[0]);
 		}
-
+		
 		if (photo) {
 			formData.append('media', {
 				uri: photo,
@@ -305,7 +316,8 @@ export default function CreatePost() {
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
 		}
-
+			console.log("dasdas",formData);
+			
 			await axios({
 				method: "post",
 				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,
@@ -338,16 +350,22 @@ export default function CreatePost() {
 			.catch((error) => {
 				console.log('sendPostError', error);
 				console.log(error);
+				setLoading(false);
+				onErrorSuccessToast()
+
 			})
 			.finally(() => {
 				setPhoto(null);
 				setVideo(null);
 				setCaption('');
+				
+
 
 				navigate.goBack();
 				() => refreshMyUserInfo() 		
 
 			});
+		setLoading(false);
 	};
 
 	const onPressCloseMediaSelection = () => {
@@ -355,11 +373,13 @@ export default function CreatePost() {
 		setPhoto(null);
 		setVideo(null);
 		setMediaScr(undefined);
+		setLoading(false)
 	}
 
 
 	useEffect(() => {
 		console.log('permission', permission);
+		setLoading(false)
 		if (permission?.granted === false) {
 			requestPermission();
 		}
