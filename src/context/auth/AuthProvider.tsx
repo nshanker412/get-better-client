@@ -15,6 +15,7 @@ import { firebaseErrorToMessage } from './firebaseErrorToMessage';
 import { signInWithEmailAndPasswordAPI } from './WithDjangoAPI';
 
 import { useNavigationContainerRef } from '@react-navigation/native';
+import axios from 'axios';
 interface AuthProviderProps {
 	routingInstrumentation: any;
 }
@@ -117,7 +118,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 
 	const sendPasswordResetEmail = async (email: string) => {
 		try {
-			await firebaseService.sendPasswordResetEmailFb(email);
+			await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/auth/password_reset`, { email: email.replaceAll(/\s/g,'') }).then(res=>{
+				console.log(res.data);
+			}).catch(err=> {
+				console.log(err.response.data);
+			});
+
 		} catch (err) {
 			if (err instanceof FirebaseError) {
 				const error = firebaseErrorToMessage(err);
