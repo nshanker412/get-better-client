@@ -19,7 +19,7 @@ import {
 import { ShimmerTile } from './skeleton/ShimmerTile';
 import { mapChallengesApiResponse } from './utils/mapChallengesApiResponse';
 import { mapConsistencyApiResponse } from './utils/mapConsistencyApiResponse';
-
+import { useAuth } from '@context/auth/useAuth';
 const LBPlaceholder = () => {
 	return (
 		<View style={{ flex: 1 }}>
@@ -43,15 +43,17 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 	const { theme } = useThemeContext();
 	const leaderboardStyles = useLeaderboardStyles();
 	const { username: myUsername } = useMyUserInfo();
+	const { userToken } = useAuth();
 
 
 	const fetchLeaderboardConsistency = async (): Promise<LeaderboardProfileConsistency[]> => {
 		try {
-			const response = await axios.post<LeaderboardConsistencyApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/consistency`, {
+			const response = await axios.post<LeaderboardConsistencyApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/profile/leaderboard_consistency`, {
 				username: myUsername,
 				feedType: isFriendsFeed ? 'friends' : 'public',
 				limit: limit,
-			});
+			},{headers: {"Authorization" : `Bearer ${userToken}`}}
+		);
 		
 			// Use the updated mapApiResponse function to filter and map the response data
 			return mapConsistencyApiResponse(response.data?.leaderboard);
