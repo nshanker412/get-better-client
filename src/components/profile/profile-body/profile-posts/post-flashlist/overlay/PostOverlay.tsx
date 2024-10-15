@@ -190,7 +190,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
   useEffect(() => {
     const fetchLinkedPlans = async () => {
       if (postData.linkedPlans) {
-      
+        
         try {
 
           // filter out plans that dont have a character at the first position

@@ -122,7 +122,7 @@ export const Notifications = ({route}) => {
                 screen: 'post',
                 params: {
                     challengeUsername: itemUsername,
-                    challengeID: `${item.timestamp}`,
+                    challengeID: `${item.id}`,
                     challenge: item.challenge,
                 },
             };

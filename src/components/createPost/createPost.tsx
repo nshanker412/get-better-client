@@ -289,19 +289,15 @@ export default function CreatePost() {
 		setLoading(true);
 		const resp = await axios.get(
 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
-			
-	  
 		  );
 		const formData = new FormData();
 		formData.append('published_by', resp.data["results"][0]["id"]);
 		formData.append('caption', caption);
-		formData.append('challenge', challenge ? true : false);
+		formData.append('challenge', challengeUsername ? true : false);
 		formData.append('location', null);
 		console.log(linkedPlans);
-		
-		if (linkedPlans) {
-			formData.append('plan', linkedPlans[0]);
-		}
+		linkedPlans.map((plan) => {formData.append('plan', plan);})
+
 		
 		if (photo) {
 			formData.append('media', {
@@ -325,27 +321,28 @@ export default function CreatePost() {
 				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
 			}).then((response) => {
 				console.log('sendPost', response.data);
+				
 				onSendSuccessToast();
 				setLoading(false);
 		
 
-				if (challengeUsername) {
-					axios
-						.post(
-							`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/challenge/complete`,
-							{
-								recievingUser: myUsername,
-								sendingUser: challengeUsername,
-								challengeID: challengeID,
-							},
-						)
-						.then((response) => {
-							console.log('completeChallenge', response.data);
-						})
-						.catch((error) => {
-							console.log('completeChallengeError', error);
-						});
-				}
+				// if (challengeUsername) {
+				// 	axios
+				// 		.post(
+				// 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/challenge`,
+				// 			{
+				// 				recievingUser: resp.data["results"][0]["id"],
+				// 				sendingUser: challengeUsername,
+				// 				challengeID: challengeID,
+				// 			},
+				// 		)
+				// 		.then((response) => {
+				// 			console.log('completeChallenge', response.data);
+				// 		})
+				// 		.catch((error) => {
+				// 			console.log('completeChallengeError', error);
+				// 		});
+				// }
 			})
 			.catch((error) => {
 				console.log('sendPostError', error);
@@ -358,6 +355,7 @@ export default function CreatePost() {
 				setPhoto(null);
 				setVideo(null);
 				setCaption('');
+				setLinkedPlans([])
 				
 
 
