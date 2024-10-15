@@ -196,12 +196,12 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
             <AntDesign name='closecircle' size={24} color='black' />
           </TouchableOpacity>
             </View>
-
+{/* 
             {isMyFeed && (
             <TouchableOpacity onLongPress={onDeletePressCb} style={{ position: "absolute" , zIndex: 100, right: 10, top: 140}}>
               <AntDesign name='delete' size={24} color='white' />
             </TouchableOpacity>
-        )}
+        )} */}
 
             <View style={fullViewStyle} >
               <FlashList
@@ -237,10 +237,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
             
-              {isMyFeed && (<Portal>
+              {/* {isMyFeed && (<Portal>
                 <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={currentPostFilenameRef.current} />
 
-              </Portal>)}
+              </Portal>)} */}
             </View>
             </Host>
             </Portal>
@@ -315,10 +315,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
           
-              {isMyFeed && (<Portal>
+              {/* {isMyFeed && (<Portal>
                 <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${currentPostFilenameRef.current}`} />
 
-              </Portal>)}
+              </Portal>)} */}
             </View>
            </Host>
 

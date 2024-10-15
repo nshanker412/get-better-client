@@ -188,6 +188,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
         []
       );
   useEffect(() => {
+    
     const fetchLinkedPlans = async () => {
       if (postData.linkedPlans) {
         
@@ -335,7 +336,21 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
               </Text>
 
             </View>
+            <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 50 : 200 , paddingRight: 4 }}>
+              
+              <ReportIcon
+                openReport={onReportPress}
+                isEmbeddedFeed={!!isEmbeddedFeed}
+              />
+              <ReportModal
+                isVisible={isChallengeModalOpen}
+                postTitle={postData.caption!}
+                postID={postData.id!}
+                onClosePress={onCloseModalPress}
+              />
+            </View>
           </View>
+          
           <BlurView
             intensity={50}
             blurReductionFactor={0.5}
@@ -372,16 +387,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
               onLikePress={() => handleUpdateLike(currentLikeState)}
               isEmbeddedFeed={!!isEmbeddedFeed}
             />
-            <ReportIcon
-              openReport={onReportPress}
-              isEmbeddedFeed={!!isEmbeddedFeed}
-            />
-            <ReportModal
-              isVisible={isChallengeModalOpen}
-              postTitle={postData.caption!}
-              postID={postData.id!}
-              onClosePress={onCloseModalPress}
-            />
+            
 
             <CommentIcon
               commentCount={postData?.comments?.length ?? 0}
@@ -551,7 +557,7 @@ const ReportIcon: React.FC<{ openReport: () => void; isEmbeddedFeed: boolean}> =
 },
   });
 
-  const size = isEmbeddedFeed ? 20 : 45;
+  const size = isEmbeddedFeed ? 20 : 30;
 
   return (
     <TouchableOpacity

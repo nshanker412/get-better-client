@@ -216,8 +216,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  loading={false}
 			  gradientColor='gray'
 			  isPrimary={true}
-			  type={isBlocked ? 'outline' : 'solid'}
-			  title={isBlocked?'Block':'Blocked'}
+			  type={isBlocked ? 'solid' : 'outline'}
+			  title={isBlocked?'Blocked':'Block'}
 			  size='lg'
 			  onPress={BlockUser}
 			/>

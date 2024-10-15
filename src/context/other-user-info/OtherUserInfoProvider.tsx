@@ -308,6 +308,9 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 		try {
 			// 2. Submit the challenge to the server
 			console.log('pre 2');
+			console.log("sd",state.username);
+			console.log("myUsername",myUsername);
+			
 			const resp1 = await axios.get(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 				

@@ -41,7 +41,7 @@ export interface UserData {
 	id: string | null;
 	bio: string | null | undefined;
 	challengesComplete: number | null;
-	consistency: number | null;
+	consistency: string;
 	followers: number | null;
 	following: number | null;
 	isFollowing: boolean | null;
