@@ -70,13 +70,14 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 	const fetchLeaderboardChallenges =    async ():  Promise<LeaderboardProfileChallenges[]> =>  {
 
 		try {
-			const response = await axios.post<LeaderboardChallengesApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/leaderboard/challenges`, {
+			const response = await axios.post<LeaderboardChallengesApiModel[]>(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/profile/leaderboard_challenges`, {
 				username: myUsername,
 				feedType: isFriendsFeed ? 'friends' : 'public',
 				limit: limit,
-			});
+			},{headers: {"Authorization" : `Bearer ${userToken}`}}
+			);
 		
-			return mapChallengesApiResponse(response.data.leaderboard);
+			return mapChallengesApiResponse(response.data?.leaderboard);
 		} catch (error) {
 			console.log('error', error);	
 			setProfiles([]);
