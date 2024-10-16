@@ -13,6 +13,7 @@ import { AuthContext } from './AuthContext';
 import { authenticationReducer, initialState } from './authReducer';
 import { firebaseErrorToMessage } from './firebaseErrorToMessage';
 import { signInWithEmailAndPasswordAPI } from './WithDjangoAPI';
+import Toast from 'react-native-toast-message';
 
 import { useNavigationContainerRef } from '@react-navigation/native';
 import axios from 'axios';
@@ -121,7 +122,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/auth/password_reset`, { email: email.replaceAll(/\s/g,'') }).then(res=>{
 				console.log(res.data);
 			}).catch(err=> {
-				console.log(err.response.data);
+				Toast.show({
+					text1: `Password Reset Failed, Please Check Email`,
+					type: 'error',
+				  });
 			});
 
 		} catch (err) {
