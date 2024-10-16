@@ -32,10 +32,18 @@ const useProfileImage = (username: string, fetchSize: number): ProfilePicHookRet
         const response = await axios.get<ApiResponse>(
           `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
         );
-        const imageSource: ImageSource = { uri: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}` };
-        setProfileImage(imageSource);
-        profileImageCache[cacheKey] = imageSource;
-        setHasProfileImage(true);
+        if (response.data.profile_picture.includes("s3.amazonaws.com")){
+          const imageSource: ImageSource = { uri: `${response.data.profile_picture}` };
+          setProfileImage(imageSource);
+          profileImageCache[cacheKey] = imageSource;
+          setHasProfileImage(true);
+        }
+        else{
+          const imageSource: ImageSource = { uri: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}` };
+          setProfileImage(imageSource);
+          profileImageCache[cacheKey] = imageSource;
+          setHasProfileImage(true);
+        }
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
         if (axiosError.response?.status === 404) {

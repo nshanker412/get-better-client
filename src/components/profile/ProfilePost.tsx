@@ -377,12 +377,17 @@ export const  ProfilePost: React.FC = (props) => {
 						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 					)
 					.then(async (response) => {
-						setProfileImage(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}`);
+						if (response.data.profile_picture.includes("s3.amazonaws.com")){
+							setProfileImage(`${response.data.profile_picture}`);
+						}
+						else{
+							setProfileImage(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data.profile_picture}`);
+						}
 
 						// write to file system
 						await FileSystem.writeAsStringAsync(
 							fileUri,
-							response.data.profile_picture,
+							profileImage,
 							{
 								encoding: FileSystem.EncodingType.Base64,
 							},
