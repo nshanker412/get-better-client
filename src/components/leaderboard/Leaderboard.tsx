@@ -180,7 +180,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 												: leaderboardStyles.feedTypeText
 										}
 									>
-										Motivating
+										Public
 									</Text>
 								</View>
 							</TouchableOpacity>
@@ -206,7 +206,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 												: leaderboardStyles.feedTypeTextSelected
 										}
 									>
-										Public
+										Motivating
 									</Text>
 								</View>
 							</TouchableOpacity>
