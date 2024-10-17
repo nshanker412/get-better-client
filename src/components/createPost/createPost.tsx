@@ -622,7 +622,7 @@ export default function CreatePost() {
 								<TextInput
 									style={createPostStyles.input}
 									maxLength={MAX_CAPTION_LENGTH}
-									placeholder='Write a caption...'
+									placeholder='Write a caption...*'
 									placeholderTextColor={
 										theme.grayShades.gray500
 									}

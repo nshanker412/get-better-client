@@ -169,9 +169,9 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 					<View style={{ flex: 1, alignItems: "center", justifyContent: "center" ,  borderRadius: 20,}}>
 						<ButtonAsync
 							containerStyle={{ width: 80, height: 25, }}
-							buttonStyle={{ width: 80, height: 25, gap: 5, paddingHorizontal: 2, paddingVertical: 2, alignItems: "center", justifyContent: "center" , borderRadius: 20, borderWidth: 1, borderColor: blue.blue5,}}
+							buttonStyle={{ width: 80, height: 25, gap: 5, paddingHorizontal: 2, paddingVertical: 2, alignItems: "center", justifyContent: "center" , borderRadius: 20, borderWidth: 1, borderColor: blue.blue1,}}
 							textStyle={{
-								color: blue.blue5,
+								color: blue.blue1,
 								fontSize: 12,
 								fontFamily: fonts.inter.bold,
 								fontWeight: 'bold',
@@ -180,7 +180,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							title='edit'
 							size='sm'
 							type='outline'
-							icon={<AntDesign name="edit" size={15} color={blue.blue5} />}
+							icon={<AntDesign name="edit" size={15} color={blue.blue1} />}
 							loading={false}
 							loadingSize='small'
 							loadingStyle={{ marginRight: 0 }}

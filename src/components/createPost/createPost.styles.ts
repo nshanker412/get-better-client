@@ -183,6 +183,7 @@ export const useCreatePostStyles = () => {
 			borderRadius: 25,
 			fontSize: 16,
 			textAlign: 'center',
+			
 			// overflow: 'hidden',
 		},
 
