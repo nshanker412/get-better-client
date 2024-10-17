@@ -84,6 +84,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState,u
       data: formData,
       headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
     })
+    
     // try {
     //     const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
     //         formData, 
@@ -100,7 +101,10 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState,u
       const { dispatch: screenDispatch } = usePlanScreen();
       const { username } = useMyUserInfo();
       const navigation = useNavigation();
-
+      const {
+        fetchMyPlans,
+      } = useMyUserInfo();
+    
       const [loading, setLoading] = useState<boolean>(false);
       
       const onSubmit = async (): Promise<void> => {
@@ -109,6 +113,7 @@ const submitPlan = async (username: string | null, planState: PlanBuilderState,u
             await submitPlan(username, planState,userToken);
             planDispatch({ type: ActionType.Reset });
             screenDispatch({ type: ActionType.Reset });
+            fetchMyPlans();
             navigation.goBack();
           } catch (error) {
                 console.error('Error submitting plan:', error);
