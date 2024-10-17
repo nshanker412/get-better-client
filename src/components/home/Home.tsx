@@ -173,7 +173,7 @@ export const Home: React.FC = () => {
 	const [refreshing, setRefreshing] = React.useState(false);
 
 	const onRefresh = async () => {
-		setRefreshing(true);
+		setRefreshing(true);		
 		await fetchFriendsPosts();
 		setRefreshing(false);
 	};

@@ -34,6 +34,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 			onNavigateToProfile();
 		} else {
 			navigation.navigate('profile', { profileUsername: username });
+			
 		}
 	};
 

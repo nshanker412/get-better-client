@@ -77,7 +77,7 @@ export const Notifications = ({route}) => {
 
     const renderItem = ({ item, index }) => {
 
-        console.log("notification packet=>>>> ", item);
+        // console.log("notification packet=>>>> ", item);
         const itemUsername = item.content.split(' ')[0];
         const itemContent = item.content.split(' ').slice(1).join(' ');
 
@@ -98,21 +98,23 @@ export const Notifications = ({route}) => {
             type = 'motivate';
         }
         else if (itemContent.includes('liked')) {
+            
             itemLink = {
                 screen: 'profile',
                 params: {
                     profileUsername: myUsername,
-                    linkPostID: item.postID,
+                    linkPostID: item.post,
                 },
             };
             type = 'like';
         }
         else if (itemContent.includes('commented')) {
+
             itemLink = {
                 screen: 'profile',
                 params: {
                     profileUsername: myUsername,
-                    linkPostID: item.postID,
+                    linkPostID: item.post,
                 },
             };
             type = 'comment';

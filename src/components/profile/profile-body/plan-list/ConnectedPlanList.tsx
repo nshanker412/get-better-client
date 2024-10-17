@@ -27,6 +27,7 @@ const _ConnectedPlanList: React.FC<ConnectedPlanListProps> = ({
 	 * Todo: Add loading shimmer
 	 */
 
+
 	return (
 		<>
 			{isLoading ? (

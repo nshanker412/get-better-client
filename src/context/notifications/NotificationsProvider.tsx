@@ -49,7 +49,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                     params: {
                         screen: "post",
                         params: {
-                            linkPostID: params.postID,
+                            linkPostID: params.post,
                             profileUsername: params.profileUsername,
                         }
                     }
@@ -60,7 +60,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                     params: {
                         screen: "post",
                         params: {
-                            linkPostID: params.postID,
+                            linkPostID: params.post,
                             profileUsername: params.profileUsername,
                         }
                     }
@@ -102,7 +102,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                     params: {
                         screen: "post",
                         params: {
-                            linkPostID: params?.postID,
+                            linkPostID: params?.post,
                             profileUsername: params?.profileUsername,
                         }
                     }

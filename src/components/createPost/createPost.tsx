@@ -360,6 +360,7 @@ export default function CreatePost() {
 
 
 				navigate.goBack();
+				
 				() => refreshMyUserInfo() 		
 
 			});

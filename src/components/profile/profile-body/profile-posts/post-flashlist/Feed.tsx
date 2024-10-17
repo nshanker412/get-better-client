@@ -6,7 +6,7 @@ import { Post } from '@models/posts'
 import { useScrollToTop } from '@react-navigation/native'
 import { FlashList } from '@shopify/flash-list'
 import * as Haptics from 'expo-haptics'
-import React, { createRef, useCallback, useEffect, useRef, useState } from 'react'
+import React, { createRef, useCallback, useEffect,useFocusEffect, useRef, useState } from 'react'
 import { Dimensions, View, ViewToken } from 'react-native'
 import { RefreshControl } from 'react-native-gesture-handler'
 import { Host, Portal } from 'react-native-portalize'
@@ -57,6 +57,7 @@ export default function FeedScreen() {
     useScrollToTop(feedRef);
 
     useEffect(() => {
+        
         const fetchFeed = async () => {
             const newPosts = await getFeed(userToken);
             setPosts(newPosts);
@@ -79,6 +80,8 @@ export default function FeedScreen() {
         }, {} as { [filename: string]: React.RefObject<PostTileRef> });
     
         postTileRefs.current = newRefs;
+        // onRefresh()
+
     }, [posts]);
 
     const onViewableItemsChanged = ({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
