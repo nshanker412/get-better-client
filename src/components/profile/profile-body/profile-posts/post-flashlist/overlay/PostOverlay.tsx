@@ -336,7 +336,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
               </Text>
 
             </View>
-            <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 50 : 200 , paddingRight: 4 }}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 80 : 215 , paddingRight: isEmbeddedFeed ? 2 : 4 }}>
               
               <ReportIcon
                 openReport={onReportPress}
@@ -357,7 +357,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
             style={{ width: "100%", borderRadius: 20, overflow: 'hidden' }}
             tint='dark'
           />
-          <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10 : 100, paddingLeft: isEmbeddedFeed ? 5 : 10, paddingRight: 10, gap: 5 }}>
+          <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "100%", paddingBottom: isEmbeddedFeed ? 10 : 100, paddingLeft: isEmbeddedFeed ? 5 : 10, paddingRight:  isEmbeddedFeed ? 2 : 4, gap: 5 }}>
             {eval(postData?.challenge) && (<ChallengeMedalIcon isEmbeddedFeed={!!isEmbeddedFeed} />)}
             <View style={{ position: "absolute", bottom: 80, right: 0, width: Dimensions.get("window").width }}>
               {linkedActionFab?.length > 0 &&
