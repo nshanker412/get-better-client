@@ -169,6 +169,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 						<ConnectedProfileAvatar
 							key={profileUsername}
 							username={profileUsername}
+							
 							fetchSize={300}
 							size={40}
 						/>

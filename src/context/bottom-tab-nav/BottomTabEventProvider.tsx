@@ -18,7 +18,6 @@ export const BottomTabEventProvider: React.FC<BottomTabNavContextProps> = ({
 
 	useEffect(() => {
 		const unsubscribeFocus = tabnav.addListener('focus', (e) => {
-			console.log('focusChange', e);
 			focusedRef.current = true;
 		});
 
@@ -36,8 +35,8 @@ export const BottomTabEventProvider: React.FC<BottomTabNavContextProps> = ({
 	useEffect(() => {
 		console.log('registering cbn', homeTabPressCallback);
 		const unsubscribeTabPress = tabnav.addListener('tabPress', (e) => {
-			console.log('tabPress', e);
-
+			// console.log('tabPress', e.target);
+			
 			if (focusedRef.current) {
 				homeTabPressCallback && homeTabPressCallback();
 			}

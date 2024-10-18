@@ -17,6 +17,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 	fetchSize = 200,
 	size = 40,
 	priority = 'normal',
+	profile_picture,
 	onNavigateToProfile,
 }) => {
 	const {hasProfileImage, profileImage } = useProfileImage(username, fetchSize);
@@ -52,6 +53,7 @@ export const ConnectedProfileAvatar: React.FC<ConnectedProfileAvatarProps> = ({
 			<ProfileAvatar
 				key={username}
 				username={username}
+				profile_picture={profile_picture}
 				size={size}
 				onError={onErrorCallback}
 				imgSrc={overrideImage??profileImage}

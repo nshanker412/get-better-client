@@ -16,6 +16,7 @@ export const SearchItemContent: React.FC<SearchItemCellProps> = ({ user}) => {
             <ConnectedProfileAvatar
                 key={user.username}
                 username={user.username}
+                profile_picture={user.profile_picture}
                 size={50}
             />
             <View style={searchStyles.profileInfoContainer}>

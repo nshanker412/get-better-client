@@ -8,6 +8,7 @@ export interface ConnectedProfileAvatarProps {
 	onNavigateToProfile?: null | (() => void);
 	priority?: 'low' | 'normal' | 'high';
 	disableLink?: boolean;
+	profile_picture: string | ImageSource |  null;
 }
 
 export interface ProfileAvatarProps {
@@ -17,4 +18,6 @@ export interface ProfileAvatarProps {
 	hasProfileImage: boolean;
 	onError: (event: ImageErrorEventData) => void;
 	priority: 'low' | 'normal' | 'high';
+	profile_picture:string | null;
+
 }

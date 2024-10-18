@@ -14,12 +14,13 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { SvgXml } from 'react-native-svg';
 import { useProfileAvatarStyles } from './ProfileAvatar.styles';
 import { ProfileAvatarProps } from './ProfileAvatar.types';
-
+import { ImageSource } from 'expo-image';
 export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 	username,
 	size,
 	imgSrc,
 	hasProfileImage,
+	profile_picture,
 	priority,
 	onError,
 }) => {
@@ -47,6 +48,20 @@ export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 	}));
 
 	const profileAvatarStyles = useProfileAvatarStyles();
+	const getProfilePicture = ()=>{
+		
+		if (typeof(profile_picture) === 'string' && (profile_picture.includes("s3"))){
+			const data: ImageSource = { uri: `${profile_picture}` };
+			return data
+		}
+		else if(typeof(profile_picture) === 'string'){
+			const data: ImageSource = { uri: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${profile_picture}`}
+			return data
+		}
+		else{
+			return imgSrc
+		}
+	}
 
 	return (
 		<View
@@ -104,7 +119,7 @@ export const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 									width: size,
 									height: size,
 								}}
-								source={imgSrc}
+								source={getProfilePicture()}
 								priority={priority}
 								allowDownscaling={false}
 							/>

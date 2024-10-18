@@ -81,7 +81,7 @@ export const Search: React.FC = () => {
 		);
 	  };
 
-	const fetchData = async (keyword: string) => {
+	const fetchData = async (keyword: string | null) => {
 		setLoading(true);
 		try {
 			let url = '';
@@ -107,7 +107,7 @@ export const Search: React.FC = () => {
 		async (text: string | undefined) => {
 			setKeyword(text ?? '');
 			if (!text) {
-				return;
+				fetchData();
 			}
 			return fetchData(text.trim());
 		},
@@ -116,7 +116,13 @@ export const Search: React.FC = () => {
 
 	const onRefreshCallback = useCallback(() => {
 		setRefreshing(true);
-		fetchData(keyword);
+		if (keyword!==''){
+			fetchData();
+		}
+		else{
+			fetchData(keyword);
+		}
+		
 	}, [fetchData, keyword]);
 
 

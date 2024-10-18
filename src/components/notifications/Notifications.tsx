@@ -12,12 +12,15 @@ import { Header } from '../header/Header';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
 import { useNotificationsStyles } from './Notifications.styles';
 import { ShimmerTile } from './skeleton/ShimmerTile';
-
+import axios from 'axios';
+import { useAuth } from '@context/auth/useAuth';
 // helper to remove preceding " {username} commented " text from comment notifications
 const removeCommented = (content: string) => {
     return content.split(' ').slice(1).join(' ');
 };
-
+interface ImageSource {
+    uri: string;
+  }
 const CommentLoadingShimmer = () => {
 	return (
 		<View style={{ flex: 1 }}>
@@ -42,6 +45,7 @@ enum NotificationType {
 export const Notifications = ({route}) => {
     const { theme } = useThemeContext();
     const {goBack, dispatch} = useNavigation();
+    const {userToken} = useAuth();
     const notificationStyles = useNotificationsStyles();
     const {
         unreadNum,
@@ -53,7 +57,28 @@ export const Notifications = ({route}) => {
 
     const [refreshing, setRefreshing] = useState(false);
     const { username: myUsername } = useMyUserInfo();
-
+    
+    const profileImage = async (myuser: string)=>{
+        const response = await axios.get(
+            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?username=${myuser}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+        ); 
+        
+        if (response.data["results"][0].profile_picture.includes("s3.amazonaws.com")){
+            const imageSource: ImageSource = { uri: `${response.data["results"][0].profile_picture}` };
+            return imageSource
+            
+          }
+          else{
+            const imageSource: ImageSource = { uri: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${response.data["results"][0].profile_picture}` };
+            return imageSource
+  
+          }
+        
+    }
+    const getProfileImage = async (myuser: string) => {
+        // const imageSource = await profileImage(myuser);
+        return "imageSource";
+    }
 
     useEffect(() => {
         // if routed from deep link, refresh
@@ -78,12 +103,13 @@ export const Notifications = ({route}) => {
     const renderItem = ({ item, index }) => {
 
         // console.log("notification packet=>>>> ", item);
-        const itemUsername = item.content.split(' ')[0];
+        const itemUsername = item.linkUsername
+        const itemUsername2 = item.linkUsername
         const itemContent = item.content.split(' ').slice(1).join(' ');
 
         let itemLink = {
             screen: 'profile',
-            params: { profileUsername: itemUsername },
+            params: { profileUsername: itemUsername2 },
         };
         let type: 'motivate' | 'like' | 'comment' | 'challenge' = 'motivate';
 
@@ -91,7 +117,7 @@ export const Notifications = ({route}) => {
             itemLink = {
                 screen: 'profile',
                 params: {
-                    profileUsername: itemUsername,
+                    profileUsername: itemUsername2,
                     linkPostID: undefined,
                 },
             };
@@ -102,7 +128,7 @@ export const Notifications = ({route}) => {
             itemLink = {
                 screen: 'profile',
                 params: {
-                    profileUsername: myUsername,
+                    profileUsername: itemUsername2,
                     linkPostID: item.post,
                 },
             };
@@ -113,7 +139,7 @@ export const Notifications = ({route}) => {
             itemLink = {
                 screen: 'profile',
                 params: {
-                    profileUsername: myUsername,
+                    profileUsername: itemUsername2,
                     linkPostID: item.post,
                 },
             };
@@ -123,7 +149,7 @@ export const Notifications = ({route}) => {
             itemLink = {
                 screen: 'post',
                 params: {
-                    challengeUsername: itemUsername,
+                    challengeUsername: itemUsername2,
                     challengeID: `${item.id}`,
                     challenge: item.challenge,
                 },
@@ -159,6 +185,7 @@ export const Notifications = ({route}) => {
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
+                            profile_picture={getProfileImage(itemUsername2)}
                             fetchSize={300}
                             size={40}
                         />
@@ -179,6 +206,7 @@ export const Notifications = ({route}) => {
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
+                            profile_picture={getProfileImage(itemUsername2)}
                             fetchSize={300}
                             size={40}
                         />
@@ -200,6 +228,7 @@ export const Notifications = ({route}) => {
                         <ConnectedProfileAvatar
                             key={itemUsername}
                             username={itemUsername}
+                            profile_picture={getProfileImage(itemUsername2)}
                             fetchSize={300}
                             size={40}
                         />
@@ -219,6 +248,7 @@ export const Notifications = ({route}) => {
                         style={[notifStyle, {flexShrink: 1, maxHeight: 200, height: "auto", justifyContent: "flex-start", alignItems: "flex-start"} ] }>
                         <ConnectedProfileAvatar
                             key={itemUsername}
+                            profile_picture={getProfileImage(itemUsername2)}
                             username={itemUsername}
                             fetchSize={300}
                             size={40}
@@ -258,6 +288,7 @@ export const Notifications = ({route}) => {
                         style={notifStyle}>
                         <ConnectedProfileAvatar
                             key={itemUsername}
+                            profile_picture={getProfileImage(itemUsername2)}
                             username={itemUsername}
                             fetchSize={300}
                             size={40}

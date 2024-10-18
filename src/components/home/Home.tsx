@@ -34,12 +34,13 @@ export const Home: React.FC = () => {
 	const { username: myUsername } = useMyUserInfo();
 	const { theme } = useThemeContext();
 	const isFocused = useIsFocused();
-	const { onHomeTabPressWhenFocused } = useBottomTabEvent();
+	const { onHomeTabPressWhenFocused, isHomeTabPressed } = useBottomTabEvent();
 
 	const currentScrollIndexRef = useRef(currentScrollIndex);
 
 	// can only pass refs in closure
 	const onTabPressCb = useCallback(() => {
+		
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
 		if (scrollViewRef.current == null) return;
@@ -52,10 +53,14 @@ export const Home: React.FC = () => {
 		} else {
 			scrollViewRef.current?.scrollTo({ y: 0, animated: true });
 		}
+		
 	}, []);
 
 	useEffect(() => {
 		onHomeTabPressWhenFocused(onTabPressCb);
+		console.log("dasd",isHomeTabPressed);
+
+
 	}, []);
 
 
@@ -163,7 +168,7 @@ export const Home: React.FC = () => {
 
 	useEffect(() => {
 		clearOldFiles();
-
+		
 		return () => clearOldFiles();
 	}, []);
 
