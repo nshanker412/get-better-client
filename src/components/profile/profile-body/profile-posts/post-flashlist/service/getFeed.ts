@@ -9,10 +9,9 @@ import axios from 'axios';
 export const getFeed = async (myUsername: string | undefined | null): Promise<Post[] | []> => {
     if (!myUsername) return [];
     try {
-        const friendsFeed: Post[] | [] = await fetchFriendsPosts(myUsername);
         const publicFeed: Post[] | [] = await fetchPublicPosts(myUsername);
 
-        const feed = [...friendsFeed, ...publicFeed];
+        const feed = [...publicFeed];
 
 
         // Remove duplicates
