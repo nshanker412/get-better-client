@@ -16,6 +16,11 @@ import { signInWithEmailAndPasswordAPI } from './WithDjangoAPI';
 import Toast from 'react-native-toast-message';
 
 import { useNavigationContainerRef } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
+
 import axios from 'axios';
 interface AuthProviderProps {
 	routingInstrumentation: any;
@@ -60,62 +65,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 		dispatch({ type: 'SIGN_OUT' });
 	};
 
-	// Subscribe to the firebase auth state change
-	useEffect(() => {
-		// Set up Firebase auth state listener
-		const unsubscribe = firebaseService.onAuthStateChangedFb(
-			onAuthStateChangeCb,
-			(error) => {
-				console.log('Auth state change error:', error);
-			},
-		);
-		// Cleanup function
-		return unsubscribe;
-	}, [firebaseService]);
 
 	const signIn = async (email: string, password: string) => {
-		try {
-			const userCred = await signInWithEmailAndPasswordAPI(
-				email,
-				password,
-			);
-			const user = userCred.data;
-			console.log('user', user, user.auth_token);
-			if (user?.auth_token) {
-				const uname = await fetch(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${user.auth_token}`} }
-				).then((res) => res.json()).catch((err)=>console.log(err));
+		const userCred = await signInWithEmailAndPasswordAPI(
+			email,
+			password,
+		);
+		const user = userCred.data;
+		console.log('user', user, user.auth_token);
+		if (user?.auth_token) {
+			const uname = await fetch(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${user.auth_token}`} }
+			).then((res) => res.json()).catch((err)=>console.log(err));
 
-				console.log('uname', uname['username']);
+			console.log('uname', uname['username']);
 
-				dispatch({ type: 'SIGN_IN', token: user.auth_token });
-				// username: string | null;
-				// email: string | null;
-				// hasPostedDaily: boolean | null;
-				// myData: UserData;
-				
-				dispatch({
-					type: 'RESTORE_SESSION',
-					token: user.auth_token,
-				});
-				
-			}
-		} catch (err) {
-			if (err instanceof FirebaseError) {
-				const error = firebaseErrorToMessage(err);
-				console.log('firebase error handle', error);	
-				throw new Error(error);
-
-		
-			} else {
-				console.log('Non firebas error', err);
-			}
+			dispatch({ type: 'SIGN_IN', token: user.auth_token });
+			await AsyncStorage.setItem('accessToken',  user.auth_token);
+			// username: string | null;
+			// email: string | null;
+			// hasPostedDaily: boolean | null;
+			// myData: UserData;
+			
+			dispatch({
+				type: 'RESTORE_SESSION',
+				token: user.auth_token,
+			});
+			
 		}
+		
 	};
 
 	useEffect(() => {
-		console.log('AuthStack: useEffect, userToken change', state.userToken);
-	}, [state.userToken]);
+
+		const getToken = async()=>{
+			const value =  await AsyncStorage.getItem('accessToken')
+			console.log("value",value);
+			
+			if (value != null){
+				dispatch({
+					type: 'RESTORE_SESSION',
+					token: value,
+				});
+				dispatch({ type: 'SIGN_IN', token: value })
+			}
+			
+		}
+		getToken()
+		
+	}, []);
 
 	const sendPasswordResetEmail = async (email: string) => {
 		try {
@@ -141,6 +139,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 	};
 
 	const signUp = async (email: string, password: string) => {
+		// not in use
 		console.log('signUp', email, password);
 		if (!email || !password) {
 			return Promise.reject(new Error('Email and password are required'));
@@ -164,19 +163,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 	};
 
 	const signOut = async () => {
-		try {
-			await firebaseService.signOutFb();
-			dispatch({ type: 'SIGN_OUT' });
-		} catch (err) {
-			if (err instanceof FirebaseError) {
-				const error = firebaseErrorToMessage(err);
-				console.log('firebase error handle', error);	
-				// throw new Error(error);
-			} else {
-				console.log('Non firebas error', err);
-			}
-	
-		}
+
+		await axios.post(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/auth/logout`,{ headers: {"Authorization" : `Bearer ${state.userToken}`} }).catch(err=>{console.log(`${err} in logout`);
+		});
+		await AsyncStorage.removeItem('accessToken')
+		dispatch({ type: 'SIGN_OUT' });
+
+
 	};
 
 	const contextValue: AuthContextProps = {
