@@ -125,7 +125,7 @@ export const PostCommentDrawer: React.FC<PostCommentDrawerProps> = ({
 			}>
 			{!commentsLoading ? (
 				comments?.length > 0 ? (
-					<ScrollView scrollEnabled={true}>{genCommentsList()}</ScrollView>
+					<ScrollView style={postCommentDrawerStyles.commentStyle}>{genCommentsList()}</ScrollView>
 				) : (
 					<View style={postCommentDrawerStyles.noCommentsContainer}>
 						<Text style={postCommentDrawerStyles.noCommentsText}>

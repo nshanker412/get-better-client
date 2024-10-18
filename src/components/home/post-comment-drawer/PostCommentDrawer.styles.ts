@@ -86,7 +86,10 @@ export const usePostCommentDrawerStyles = () => {
 			alignItems: 'center',
 			width: '87.5%',
 		},
-
+		commentStyle:{
+			overflow:"scroll",
+			maxHeight:500,
+		},
 		commentUser: {
 			...theme.text.body.large,
 			fontFamily: theme.fontFamily,
@@ -245,6 +248,7 @@ export const usePostCommentDrawerStyles = () => {
 			flexDirection: 'row',
 			justifyContent: 'center',
 			alignItems: 'flex-start',
+
 		},
 
 		commentInnerContainer: {
@@ -258,6 +262,7 @@ export const usePostCommentDrawerStyles = () => {
 			flexDirection: 'row',
 			justifyContent: 'flex-start',
 			alignItems: 'flex-start',
+			
 		},
 		ellipse: {
 			color: theme.textColorThird,
