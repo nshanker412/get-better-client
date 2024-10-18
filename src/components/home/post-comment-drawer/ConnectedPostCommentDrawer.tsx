@@ -202,7 +202,10 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 							/>
 							<TouchableOpacity
 								style={
-									postCommentDrawerStyles.submitCommentButton
+									writingComment
+									? postCommentDrawerStyles.submitCommentButtonGrow
+									: postCommentDrawerStyles.submitCommentButton
+									
 								}
 								onPress={onSubmitComment}
 								disabled={submittingComment}>

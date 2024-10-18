@@ -179,11 +179,14 @@ export const usePostCommentDrawerStyles = () => {
 			backgroundColor: theme.innerBorderColor,
 			borderRadius: 10,
 			flexDirection: 'row',
-			width: '60%',
-			// padding: 10,
+			width: '80%',
+			maxWidth: '80%',
+			// padding: 30,
 			paddingTop: 10,
 			paddingBottom: 10,
 			paddingLeft: 20,
+			paddingRight: 50,
+
 			alignSelf: 'center',
 			alignItems: 'center',
 			justifyContent: 'space-between',
@@ -195,10 +198,12 @@ export const usePostCommentDrawerStyles = () => {
 			borderColor: theme.grayShades.gray600,
 			borderRadius: 10,
 			flexDirection: 'row',
-			width: '90%',
+			width: '80%',
+			maxWidth: '80%',
 			paddingLeft: 10,
 			paddingTop: 10,
 			paddingBottom: 10,
+			paddingRight: 50,
 
 			// padding: 20,
 			alignSelf: 'center',
@@ -208,9 +213,12 @@ export const usePostCommentDrawerStyles = () => {
 		commentInputInnerContainer: {
 			width: '100%',
 			display: 'flex',
+			flex: 1,
 			flexDirection: 'row',
-			justifyContent: 'space-around',
+			justifyContent: 'center',
 			alignItems: 'center',
+			alignSelf: 'center',
+			
 		},
 
 		commentInputContainer: {
@@ -288,6 +296,22 @@ export const usePostCommentDrawerStyles = () => {
 			// flexShrink: 1,
 			height: '100%',
 			width: 50,
+			marginLeft: 225,
+			position: 'absolute',
+
+			// paddingLeft:10
+		},
+		submitCommentButtonGrow: {
+			flexDirection: 'row', // Arrange children in a row
+			justifyContent: 'center', // Space between children
+			alignItems: 'center', // Center children vertically
+			// backgroundColor: 'red',
+			// flexShrink: 1,
+			height: '100%',
+			width: 50,
+			marginLeft: 225,
+			textAlign:"right",
+			position: 'absolute',
 		},
 		submitCommentButtonInnerContainer: {
 			// flexDirection: 'row', // Align icon and text in a row
