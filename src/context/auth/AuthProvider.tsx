@@ -108,6 +108,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 					token: value,
 				});
 				dispatch({ type: 'SIGN_IN', token: value })
+			}else{
+				dispatch({ type: 'SIGN_OUT' });
 			}
 			
 		}

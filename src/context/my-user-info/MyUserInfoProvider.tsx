@@ -65,7 +65,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		initialMyUserInfoState,
 	);
 
-	const { userToken } = useAuth();
+	const { userToken,signOut } = useAuth();
 
 	useEffect(() => {
 		const fetchUserInfo = async (token: string | null) => {
@@ -82,9 +82,11 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 					});
 					Toast.show({
 						type: 'error',
-						text1: `Hmm.. There seems to be an issue: ${userToken}`,
+						text1: `Hmm.. There seems to be an issue.`,
 						text2: 'Please try logging in again',
 					});
+					signOut()
+
 					
 				}
 			
