@@ -42,14 +42,18 @@ export default function FeedScreen() {
 
     // if not focused, stop all videos
     useEffect(() => {
+        
         if (!isFocused) {
             Object.values(postTileRefs.current).forEach(ref => {
                 ref.current?.mute();
             });
         } else {
+            console.log(isFocused);
+            
             Object.values(postTileRefs.current).forEach(ref => {
                 ref.current?.unMute();
             });
+            onRefresh()
         }
 
     }, [isFocused]);
@@ -57,6 +61,7 @@ export default function FeedScreen() {
     useScrollToTop(feedRef);
 
     useEffect(() => {
+
         
         const fetchFeed = async () => {
             const newPosts = await getFeed(userToken);
