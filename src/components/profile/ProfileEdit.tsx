@@ -60,10 +60,13 @@ export const ProfileEdit: React.FC = () =>  {
 
 				)
 				.then((response) => {
-					console.log('fetchUser', response.data.name);
 					setName(response.data.name);
 					setBio(response.data.bio);
-					if (response.data.profile_picture.includes("s3.amazonaws.com")){
+					console.log(response.data.profile_picture);
+					if(response.data.profile_picture==null){
+						setOldProfileImage(" ");
+					}
+					else if (response.data.profile_picture.includes("s3.amazonaws.com")){
 						setOldProfileImage(`${response.data.profile_picture}`);
 					}
 					else{
