@@ -34,7 +34,7 @@ const LBPlaceholder = () => {
 
 export const Leaderboard: React.FC = ({ navigation }) => {
 	const [profiles, setProfiles] = useState<LeaderboardProfile[]>([]);
-	const [isFriendsFeed, setIsFriendsFeed] = useState(true);
+	const [isFriendsFeed, setIsFriendsFeed] = useState(false);
 	const [leaderboardMetric, setLeaderboardMetric] = useState('consistency');
 	const [leaderboardType, setLeaderboardType] = useState<LeaderboardProfileType>(LeaderboardProfileType.CONSISTENCY);
 	const [loading, setLoading] = useState(true);
