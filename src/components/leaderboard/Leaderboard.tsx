@@ -164,32 +164,6 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 							<TouchableOpacity
 								onPress={() => {
 									Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-									setIsFriendsFeed(true);
-								}}
-							>
-								<View
-									style={
-										isFriendsFeed
-											? leaderboardStyles.activeFeedToggleContainer
-											: leaderboardStyles.inactiveFeedToggleContainer
-									}
-								>
-									<Text
-										style={
-											isFriendsFeed
-												? leaderboardStyles.feedTypeTextSelected
-												: leaderboardStyles.feedTypeText
-										}
-									>
-										Public
-									</Text>
-								</View>
-							</TouchableOpacity>
-						</View>
-						<View style={{ flex: 1, width: "100%" }}>
-							<TouchableOpacity
-								onPress={() => {
-									Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 									setIsFriendsFeed(false);
 								}}
 							>
@@ -205,6 +179,32 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 											isFriendsFeed
 												? leaderboardStyles.feedTypeText
 												: leaderboardStyles.feedTypeTextSelected
+										}
+									>
+										Public
+									</Text>
+								</View>
+							</TouchableOpacity>
+						</View>
+						<View style={{ flex: 1, width: "100%" }}>
+							<TouchableOpacity
+								onPress={() => {
+									Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+									setIsFriendsFeed(true);
+								}}
+							>
+								<View
+									style={
+										isFriendsFeed
+											? leaderboardStyles.activeFeedToggleContainer
+											: leaderboardStyles.inactiveFeedToggleContainer
+									}
+								>
+									<Text
+										style={
+											isFriendsFeed
+												? leaderboardStyles.feedTypeTextSelected
+												: leaderboardStyles.feedTypeText
 										}
 									>
 										Motivating
