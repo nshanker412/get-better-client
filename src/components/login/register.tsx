@@ -64,51 +64,20 @@ export const Register: React.FC = () => {
 
 
 	const registerUser = async (data: RegisterData): Promise<any> => {
-		try {
 			await axios.post(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/auth/register`,
 				data,
 			).then((response)=>{
-				console.log(response)
 				Toast.show({
 					type: 'success',
 					text1: 'you are successfully Registered, Please Verify the Email Before Login',
 					});
 				navigate.navigate('SignIn');
 			}).catch((err)=>{
-				console.log(err)
-				showErrorToast('Unsuccessful register,Try again');
+				showErrorToast(`${err.response.data.errors[0].message},Try again`);
+				setLoading(false);
 			})
-		} catch (error) {
-			const axiosError = error as AxiosError;
-			if (axiosError && axiosError.response) {
-				// The request was made and the server responded with a status code
-				// that falls out of the range of 2xx
-				// console.error('Error Data:', axiosError.response.data);
-				// console.error('Status:', axiosError.response.status);
-				console.log(
-					axiosError.response.data.message ||
-						'An error occurred during the registration process.',
-				);
-			} else if (axiosError.request) {
-				// The request was made but no response was received
-				// console.error('Request:', axiosError.request);
-				// console.error('Error Message:', axiosError.message);
-				console.log(
-					'No response received during the registration process.',
-				);
-				console.log(
-					'No response received during the registration process.',
-				);
-			} else {
-				// Something happened in setting up the request
-				// console.error('Error message:', axiosError.message);
-				console.log(
-					'An error occurred setting up the registration request.',
-				);
-			}
-		}
-	};
+		};
 
 	const attemptFbSignUp = async (email: string, password: string) => {
 		try {
@@ -142,7 +111,7 @@ export const Register: React.FC = () => {
 
 		}
 
-		if (password.length > 6) {
+		if (password.length < 6) {
 			console.log('Password must be at least 6 characters');
 			showErrorToast('Please fill out all fields!');
 
@@ -161,66 +130,20 @@ export const Register: React.FC = () => {
 	};
 
 	const trySignUp = useCallback(async () => {
-		try {
-			inputValidation(email, name, username, password);
-			setLoading(true);
-			const input: RegisterData = {
-				email,
-				name,
-				username,
-				password,
-				is_eula: isSelected,
-			};
-			const resp = await registerUser(input);
-			
-			
-			
-
-			// await attemptFbSignUp(email, password);
-	
-			// 	// console.log('Unsuccessful register');
-			// 	// showErrorToast('Unsuccessful register');
-			// 	//delete user from server
-			// 	try {
-
-			// 		const form = new FormData();
-			// 		form.append('email', email);
-			// 		form.append('username', username);
-			// 		form.append('name', name);
-			// 		form.append('password', password);
-
-			// 		// const response = await axios.post(
-			// 		// 	`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/user/deleteUser`,
-			// 		// 	form,
-			// 		// );
-			// 		// console.log('delete user resp', response);
-			// 	} catch (err) {
-			// 		console.log('error deleting user', err);	
-
-			// 		Toast.show({
-			// 			text1: "Woah there...",
-			// 			text2: "Your having some back luck, try again later.",
-			// 			type: 'error',
-			// 			visibilityTime: 5000,
-			// 			topOffset: 150,
-			// 			autoHide: true,
-			// 		});
-			// 	}
-			
-			// console.log('Successful register');
-
-			// navigate.navigate('SignIn');
-		} catch (error) {
-			if (error instanceof Error) {
-				console.log('Error:', error.message);
-				showErrorToast(error.message);
-			}
-			 else {
-				showErrorToast('something went wrong, please try again');
-			}
-		} finally {
-			setLoading(false);
+		// inputValidation(email, name, username, password);
+		setLoading(true);
+		const input: RegisterData = {
+			email,
+			name,
+			username,
+			password,
+			is_eula: isSelected,
+		};
+		const resp = await registerUser(input);
+		if(resp){
+				setLoading(false);
 		}
+		
 	}, [email, name, username, password]);
 
 	return (
