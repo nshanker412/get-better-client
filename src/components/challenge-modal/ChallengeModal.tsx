@@ -136,7 +136,7 @@ export const ChallengeModal: React.FC<{
             <ActionButton
               loading={loading}
               isPrimary={true}
-              styles={{ container: { padding: 5 } }}
+              styles={{ container: { padding: 5,top:-14 } }}
               defaultPressed={false}
               title='Challenge'
               onPress={onSubmitChallengeCb}

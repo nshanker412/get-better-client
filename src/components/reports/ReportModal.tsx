@@ -111,7 +111,7 @@ export const ReportModal: React.FC<{
           </TouchableOpacity>
           <Modal.Header
 
-            title={`Do you want to report ${postTitle}?`}
+            title={`Do you want to report?`}
             headerStyle={{
               container: {
                 alignSelf: 'center',
