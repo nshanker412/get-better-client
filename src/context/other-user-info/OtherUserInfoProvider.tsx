@@ -479,7 +479,7 @@ const reportPost = async (reportPostText: string, myUsername: string) => {
 		}
 
 		try {
-			const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}});
+			const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?published_by__username=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}});
 
 			const newPosts = resp?.data?.results;
 			// compare the lists and only set state if there are new posts
