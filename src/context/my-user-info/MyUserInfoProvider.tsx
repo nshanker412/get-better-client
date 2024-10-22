@@ -362,7 +362,7 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 		}
 		try {
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?search=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?published_by__username=${state.username}`,{ headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'}},
 			);
 
 			// only set state if there are new posts
