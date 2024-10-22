@@ -57,7 +57,7 @@ export default function CreatePost() {
 	const { theme } = useThemeContext();
 	const { userToken } = useAuth();
 	const challengeUsername = route?.params?.challengeUsername;
-	const challengeID = route?.params?.challengeID;
+	const is_challenged = route?.params?.is_challenged;
 	const challenge = route?.params?.challenge;
 
 	const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -66,7 +66,7 @@ export default function CreatePost() {
 
 	const [photo, setPhoto] = useState(null);
 	const [caption, setCaption] = useState(
-		challenge
+		is_challenged
 			? `I completed @${challengeUsername}'s challenge: ${challenge}`
 			: '',
 	);

@@ -18,6 +18,9 @@ import { useAuth } from '@context/auth/useAuth';
 const removeCommented = (content: string) => {    
     return content.split('commented').slice(1).join(' ');
 };
+const removeUsername = (content: string,split:string) => {    
+    return content.split(split).slice(0)[0].replace(/\s/g,'');
+};
 interface ImageSource {
     uri: string;
   }
@@ -106,7 +109,7 @@ export const Notifications = ({route}) => {
         const itemUsername = item.linkUsername
         const itemUsername2 = item.linkUsername
         const itemContent = item.content.split(' ').slice(1).join(' ');
-        const itemContent0 = item.content.split('commented').slice(0)[0].replace(/\s/g,'');
+        const itemContent0 = item.content
         
 
         let itemLink = {
@@ -147,13 +150,13 @@ export const Notifications = ({route}) => {
             };
             type = 'comment';
         }
-        else if (itemContent.includes('challenged')) {
+        else if (itemContent.includes('challenged')) {   
             itemLink = {
                 screen: 'post',
                 params: {
                     challengeUsername: itemUsername2,
-                    challengeID: `${item.id}`,
-                    challenge: item.challenge,
+                    is_challenged:true,
+                    challenge: `${itemContent.split(",")[1]}`
                 },
             };
             type = 'challenge';
@@ -168,13 +171,16 @@ export const Notifications = ({route}) => {
 
         const onNav = () => {
             if (itemLink) {
-                
+
                 dispatch(
+                    
                     CommonActions.navigate({
                         name: itemLink.screen,
                         params: itemLink.params,
                     })
                 );
+
+                
             }
         }
 
@@ -185,15 +191,15 @@ export const Notifications = ({route}) => {
                         onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
-                            key={itemUsername}
-                            username={itemUsername}
-                            profile_picture={getProfileImage(itemUsername2)}
+                            key={`${removeUsername(itemContent0,"liked")}`}
+                            username={`${removeUsername(itemContent0,"liked")}`}
+                            profile_picture={getProfileImage(`${removeUsername(itemContent0,"liked")}`)}
                             fetchSize={300}
                             size={40}
                         />
                         <View style={notificationStyles.notificationInfoContainer}>
                             <View style={{ flexDirection: 'row'  }}>
-                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationUser}>{`${removeUsername(itemContent0,"liked")}`}</Text>
                                 <Text style={notificationStyles.notificationTypeContent}>{" liked your post"}</Text>
                             </View>
                             <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
@@ -206,15 +212,15 @@ export const Notifications = ({route}) => {
                         onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
-                            key={itemContent0}
-                            username={itemContent0}
-                            profile_picture={getProfileImage(itemContent0)}
+                            key={`${removeUsername(itemContent0,"commented")}`}
+                            username={`${removeUsername(itemContent0,"commented")}`}
+                            profile_picture={getProfileImage(`${removeUsername(itemContent0,"commented")}`)}
                             fetchSize={300}
                             size={40}
                         />
                         <View style={notificationStyles.notificationInfoContainer}>
                             <View style={{ flexDirection: 'row', alignItems: 'baseline'}}>
-                                <Text style={notificationStyles.notificationUser}>{`${itemContent0}`}</Text>
+                                <Text style={notificationStyles.notificationUser}>{`${removeUsername(itemContent0,"commented")}`}</Text>
                                 <Text style={notificationStyles.notificationTypeContent}>{" commented"}</Text>
                             </View>
                             <Text style={notificationStyles.subcontentText}>{`"${removeCommented(itemContent)}"`}</Text>
@@ -228,15 +234,15 @@ export const Notifications = ({route}) => {
                         onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
-                            key={itemUsername}
-                            username={itemUsername}
-                            profile_picture={getProfileImage(itemUsername2)}
+                            key={`${removeUsername(itemContent0,"follows you")}`}
+                            username={`${removeUsername(itemContent0,"follows you")}`}
+                            profile_picture={getProfileImage(`${removeUsername(itemContent0,"follows you")}`)}
                             fetchSize={300}
                             size={40}
                         />
                         <View style={notificationStyles.notificationInfoContainer}>
                             <View style={{ flexDirection: 'row', gap: 5 }}>
-                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
+                                <Text style={notificationStyles.notificationUser}>{`${removeUsername(itemContent0,"follows you")}`}</Text>
                                 <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
                             </View>
                             <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
@@ -249,16 +255,16 @@ export const Notifications = ({route}) => {
                         onPress={onNav}
                         style={[notifStyle, {flexShrink: 1, maxHeight: 200, height: "auto", justifyContent: "flex-start", alignItems: "flex-start"} ] }>
                         <ConnectedProfileAvatar
-                            key={itemUsername}
-                            profile_picture={getProfileImage(itemUsername2)}
-                            username={itemUsername}
+                            key={`${removeUsername(itemContent0,"challenged you")}`}
+                            username={`${removeUsername(itemContent0,"challenged you")}`}
+                            profile_picture={getProfileImage(`${removeUsername(itemContent0,"challenged you")}`)}
                             fetchSize={300}
                             size={40}
                         />
                         <View style={[notificationStyles.notificationInfoContainer, {gap: 10}]}>
                             <View style={{ flexDirection: 'row', gap: 5 }}>
-                                <Text style={notificationStyles.notificationUser}>{itemUsername}</Text>
-                                <Text style={notificationStyles.notificationContent}>{itemContent}</Text>
+                                <Text style={notificationStyles.notificationUser}>{`${removeUsername(itemContent0,"challenged you")}`}</Text>
+                                <Text style={notificationStyles.notificationContent}>{itemContent.split(",")[0]}</Text>
                             </View>
                    
 
