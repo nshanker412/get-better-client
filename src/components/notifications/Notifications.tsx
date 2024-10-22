@@ -15,8 +15,8 @@ import { ShimmerTile } from './skeleton/ShimmerTile';
 import axios from 'axios';
 import { useAuth } from '@context/auth/useAuth';
 // helper to remove preceding " {username} commented " text from comment notifications
-const removeCommented = (content: string) => {
-    return content.split(' ').slice(1).join(' ');
+const removeCommented = (content: string) => {    
+    return content.split('commented').slice(1).join(' ');
 };
 interface ImageSource {
     uri: string;
@@ -106,6 +106,8 @@ export const Notifications = ({route}) => {
         const itemUsername = item.linkUsername
         const itemUsername2 = item.linkUsername
         const itemContent = item.content.split(' ').slice(1).join(' ');
+        const itemContent0 = item.content.split('commented').slice(0)[0].replace(/\s/g,'');
+        
 
         let itemLink = {
             screen: 'profile',
@@ -204,16 +206,16 @@ export const Notifications = ({route}) => {
                         onPress={onNav}
                         style={notifStyle}>
                         <ConnectedProfileAvatar
-                            key={itemUsername}
-                            username={itemUsername}
-                            profile_picture={getProfileImage(itemUsername2)}
+                            key={itemContent0}
+                            username={itemContent0}
+                            profile_picture={getProfileImage(itemContent0)}
                             fetchSize={300}
                             size={40}
                         />
                         <View style={notificationStyles.notificationInfoContainer}>
                             <View style={{ flexDirection: 'row', alignItems: 'baseline'}}>
-                                <Text style={notificationStyles.notificationUser}>{`${itemUsername} `}</Text>
-                                <Text style={notificationStyles.notificationTypeContent}>{"commented"}</Text>
+                                <Text style={notificationStyles.notificationUser}>{`${itemContent0}`}</Text>
+                                <Text style={notificationStyles.notificationTypeContent}>{" commented"}</Text>
                             </View>
                             <Text style={notificationStyles.subcontentText}>{`"${removeCommented(itemContent)}"`}</Text>
                             <Text style={notificationStyles.timestamp}>{timeAgo(item.timestamp)}</Text>
