@@ -18,22 +18,22 @@ import { useAuth } from '@context/auth/useAuth';
 const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 	onOpenLogoutModal,
 }) => {
-	const { loadUserInfoState, username: myUsername } = useMyUserInfo();
+	const { loadUserInfoState, username: myUsername,myData } = useMyUserInfo();
 	const {userToken} = useAuth();
-	const [myData,setMyData] = useState(null);
+	const [myDataLocal,setMyData] = useState(myData);
 	useEffect(()=>{
-		if(userToken){
-			fetch(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{
-				headers:{
-					Authorization:`Bearer ${userToken}`
-				}
-			}).then(res=>res.json()).then(data=>{
-				setMyData(data);
-			})
+		if(myData==undefined){
+			if(userToken){
+				fetch(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{
+					headers:{
+						Authorization:`Bearer ${userToken}`
+					}
+				}).then(res=>res.json()).then(data=>{
+					setMyData(data);
+				})
+			}
 		}
 	},[userToken])
-	console.log(myData);
-	
 	
 
 	return (
@@ -44,16 +44,17 @@ const MyProfileHeaderConnected: React.FC<MyProfileHeaderConnectedProps> = ({
 			isLoading={loadUserInfoState === ApiLoadingState.Loading}
 			userHandle={`@${myUsername}`}
 			username={myUsername}
-			bio={myData?.bio}
-			id={myData?.id}
-			profile_id={myData?.profile_id}
+			bio={myDataLocal?.bio}
+			id={myDataLocal?.id}
+			profile_id={myDataLocal?.profile_id}
 			onChallengePress={null}
 			onMotivatePress={null}
-			following={myData?.following}
-			followers={myData?.followers}
-			profileImage={myData?.profile_picture}
+			following={myDataLocal?.following}
+			followers={myDataLocal?.followers}
+			profileImage={myDataLocal?.profile_picture}
 			myUsername={myUsername}
 			amIFollowing={false}
+			consistency={myDataLocal?.consistency}
 			onLogout={onOpenLogoutModal}
 			/>
 		</UserFollowProvider>

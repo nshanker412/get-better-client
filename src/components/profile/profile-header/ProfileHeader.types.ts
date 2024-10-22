@@ -31,6 +31,7 @@ export interface MyProfileHeaderProps {
 	profileImage: string | null;
 	myUsername: string | null;
 	amIFollowing: boolean |undefined;
+	consistency: string | null;
 	onLogout: null | (() => void);
 }
 

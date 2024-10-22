@@ -44,7 +44,7 @@ export const ConnectedPostCommentDrawer: React.FC = () => {
 		} else {
 			modalizeRef.current?.close();
 		
-		}
+		}		
 	}, [isOpen]);
 
 

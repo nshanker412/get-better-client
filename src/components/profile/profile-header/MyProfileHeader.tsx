@@ -25,6 +25,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	bio,
 	following,
 	followers,
+	consistency
 }) => {
 
 	const navigation = useNavigation();
@@ -52,7 +53,6 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 	const onSettingsPress = () => {
 		navigation.navigate('settings');
 	}
-	
 	useEffect(() => {
 		// Use `setOptions` to update the button that we previously specified
 		// Now the button includes an `onPress` handler to update the count
@@ -61,8 +61,8 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 				<MaterialIcons name="settings" size={24} color={ grayDark.gray12} onPress={onSettingsPress} />
 		  ),
 		});
-	  }, [navigation]);
 
+	  }, [navigation]);
 
 		return (
 			<View style={[profileHeaderStyles.headerOuterContainer, { flexBasis: "auto", flexGrow:1, flexShrink: 0 }]}>
@@ -112,7 +112,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							  <View style={{ alignItems: "center", justifyContent: "center" }}>
 								<View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
 								  <Text style={[profileHeaderStyles.userNameStyle, { fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin }]}>
-									{myData?.consistency}%
+									{consistency}%
 								  </Text>
 								</View>
 							  </View>

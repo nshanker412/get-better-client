@@ -56,7 +56,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 	const { theme } = useThemeContext();
 	const { userToken } = useAuth();
 	const [isBlocked,setIsBlocked] = useState(false)
-
+	
 	const BlockUser = async() =>{		
 		await axios.post(
 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/block-user`,
@@ -230,10 +230,10 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  loading={isLoading}
 			  gradientColor={'gray'}
 			  disabled={isLoading}
-			  isPrimary={!amIFollowing}
+			  isPrimary={true}
 			  size='lg'
-			  type={amIFollowing ? 'outline' : 'solid'}
-			  title={amIFollowing ? 'Motivating' : 'Motivate'}
+			  type={amIFollowing ? 'solid':'outline'}
+			  title={amIFollowing ?  'Motivate':'Motivating'}
 			  onPress={onMotivatePress}
 			/>
 		  </View>
