@@ -377,7 +377,7 @@ export const  ProfilePost: React.FC = (props) => {
 						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 					)
 					.then(async (response) => {
-						if (response.data.profile_picture.includes("s3.amazonaws.com")){
+						if (response.data.profile_picture.includes("amazonaws.com")){
 							setProfileImage(`${response.data.profile_picture}`);
 						}
 						else{

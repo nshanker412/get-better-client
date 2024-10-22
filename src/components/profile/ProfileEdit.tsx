@@ -66,7 +66,7 @@ export const ProfileEdit: React.FC = () =>  {
 					if(response.data.profile_picture==null){
 						setOldProfileImage(" ");
 					}
-					else if (response.data.profile_picture.includes("s3.amazonaws.com")){
+					else if (response.data.profile_picture.includes("amazonaws.com")){
 						setOldProfileImage(`${response.data.profile_picture}`);
 					}
 					else{

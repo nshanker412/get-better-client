@@ -32,7 +32,7 @@ const useProfileImage = (username: string, fetchSize: number): ProfilePicHookRet
         const response = await axios.get<ApiResponse>(
           `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${username}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
         );
-        if (response.data["results"][0].profile_picture.includes("s3.amazonaws.com")){
+        if (response.data["results"][0].profile_picture.includes("amazonaws.com")){
           const imageSource: ImageSource = { uri: `${response.data["results"][0].profile_picture}` };
           setProfileImage(imageSource);
           profileImageCache[cacheKey] = imageSource;
