@@ -21,10 +21,11 @@ import { DeletePostModal } from './DeletePostModal';
  * to display/control the posts.
  */
 export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts }: { isMyFeed: boolean; posts: Post[]; currentPost: number | undefined; onClosePress: (close: boolean) => void, onFetchPosts: () => Promise<void>, isFullscreen: boolean }) {
+  
   const mediaRefs = useRef([]);
   const { username: myUsername } = useMyUserInfo()
   const profileFeedRef = useRef(null)
-  const currentPostFilenameRef = useRef<string>(currentPost !== undefined ? posts[currentPost]?.filename : '')
+  const currentPostFilenameRef = useRef<string>(currentPost !== undefined ? posts[currentPost]?.metadata?.id : '')
   const { onPostChange } = useCommentDrawer()
   const [isFullscreenPreview, setFullscreenPreview] = useState( false);
   const [currentIndex, setCurrentIndex] = useState<number | undefined> ( undefined);
@@ -35,6 +36,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   const { navigate } = useNavigation();
 
   useScrollToTop(profileFeedRef);
+
 
   useEffect(() => {
     if (isFullscreen && currentPost !== undefined) {
@@ -58,7 +60,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
   }
 
 
-  const onDeletePressCb = async () => {
+  const onDeletePressCb = async () => {    
     setDeleteModalVisible(true);
   };
 
@@ -78,14 +80,19 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
      * the post that is viewable and stop all the others
      */
     const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
+      console.log("viewableItems",viewableItems);
+      
       changed.forEach(({ item, isViewable }) => {
+        
         if (!isFullscreenPreview) {
           mediaRefs.current[item?.filename]?.mute();
         } else {
           mediaRefs.current[item?.filename]?.unMute();
         }
+        
+        
           if (isViewable) {
-            currentPostFilenameRef.current = `${item?.metadata?.timestamp}`;
+            currentPostFilenameRef.current = `${item?.metadata?.id}`;
             
     
             if (mediaRefs?.current[item?.filename]) {
@@ -185,7 +192,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
       Haptics.ImpactFeedbackStyle.Medium,
     );
   }
-
+  
   return (
     <View style={{ width: "100%", height: "100%"}} >
         {isFullscreenPreview ? (
@@ -196,12 +203,12 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
             <AntDesign name='closecircle' size={24} color='black' />
           </TouchableOpacity>
             </View>
-{/* 
+
             {isMyFeed && (
             <TouchableOpacity onLongPress={onDeletePressCb} style={{ position: "absolute" , zIndex: 100, right: 10, top: 140}}>
               <AntDesign name='delete' size={24} color='white' />
             </TouchableOpacity>
-        )} */}
+        )}
 
             <View style={fullViewStyle} >
               <FlashList
@@ -222,7 +229,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 scrollEventThrottle={20}
                 snapToAlignment='start'
                 pagingEnabled={true}
-                keyExtractor={item => item.filename}
+                keyExtractor={item => {return item.filename}}
                 decelerationRate={'normal'}
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {
@@ -236,11 +243,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               <Portal>
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
-            
-              {/* {isMyFeed && (<Portal>
+              {isMyFeed && (<Portal>
                 <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={currentPostFilenameRef.current} />
 
-              </Portal>)} */}
+              </Portal>)}
             </View>
             </Host>
             </Portal>
@@ -315,10 +321,10 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
           
-              {/* {isMyFeed && (<Portal>
+              {isMyFeed && (<Portal>
                 <DeletePostModal isVisible={deleteModalVisible} onClosePress={onDeleteModalClose} deletePostId={`${currentPostFilenameRef.current}`} />
 
-              </Portal>)} */}
+              </Portal>)}
             </View>
            </Host>
 

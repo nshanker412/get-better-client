@@ -198,6 +198,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
         
 
           const fetchPromises = postData?.linkedPlans?.map(async (plan, index) => {
+            
             try {
               const resp = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan/${plan}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
@@ -336,7 +337,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
               </Text>
 
             </View>
-            <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 80 : 215 , paddingRight: isEmbeddedFeed ? 2 : 4 }}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 80 : 0 , paddingRight: isEmbeddedFeed ? 2 : 4 }}>
             {!isEmbeddedFeed && (
               <ReportIcon
               openReport={onReportPress}

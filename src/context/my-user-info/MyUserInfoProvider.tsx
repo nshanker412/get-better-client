@@ -330,10 +330,9 @@ export const MyUserInfoProvider: React.FC<MyUserInfoProviderProps> = ({
 
 
 		//2. delete the post
-		await axios
-			.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/post/delete/${state.username}/${postID}`,
-			)
+
+		await axios.delete(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post/${postID}`,{ headers: {"Authorization" : `Bearer ${userToken}`}})
+
 			.then(async (response) => {
 
 				// REMOVE POST FROM FILE STORAGE

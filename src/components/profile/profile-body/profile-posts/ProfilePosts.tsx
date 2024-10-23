@@ -11,7 +11,8 @@ import { PreviewFeedScreen } from './modals/PostPreviewModal';
 const findIdxByID = (postID: string, posts: Post[]) => {
     const postIDint = parseInt(postID);
 
-    const index = posts.findIndex((post) => (post.metadata.timestamp as number) === postIDint);
+    const index = posts.findIndex((post) => (post.metadata.timestamp as string) === postIDint);
+    
     return index;
 }
 
@@ -23,7 +24,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     const route = useRoute();
     const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
     const [linkPostID, setLinkPostID] = useState<string | undefined>(undefined);
-
+    
     useEffect(() => {
         setLinkPostID(route?.params?.linkPostID);
         console.log("ROUTE IN PROFILE POSTS", route);
@@ -37,6 +38,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
         if (linkPostID !== undefined) {
             console.log('it exists' , linkPostID);
             const idx = findIdxByID(linkPostID, posts);
+            
             console.log('idx', idx);
             if (idx < 0) {
                 Toast.show({
@@ -66,6 +68,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     const onFetchUserPosts = async () => {
         await fetchUserPosts();
     }
+
 
     return (
             <PreviewFeedScreen
