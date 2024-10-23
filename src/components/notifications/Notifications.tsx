@@ -272,7 +272,7 @@ export const Notifications = ({route}) => {
                             <View style={{ flexShrink: 1, alignSelf: "flex-start", borderColor: theme.innerBorderColor, borderWidth: 1,  borderRadius: 10, flexDirection: "column", justifyContent: "center", alignItems: "center",  width: "auto" , padding: 10 }}>
                                 <View style={{ width: "100%", alignSelf: "flex-start",  justifyContent: "flex-start", flexDirection: "row", alignItems: "center",   padding: 10 }}>
                                     <Text style={{ color: theme.textColorPrimary, fontSize: 14, fontFamily: fonts.inter.black}}>{"Challenge:  "}</Text>
-                                    <Text style={{ color: theme.textColorPrimary, fontSize: 14, fontFamily: fonts.inter.extra_light }}>{item.challenge}</Text>
+                                    <Text style={{ color: theme.textColorPrimary, fontSize: 14, fontFamily: fonts.inter.extra_light }}>{itemContent.split(",")[1]}</Text>
                                 </View>
                                 <Pressable
                                     style={{ padding: 10, borderRadius: 10, backgroundColor: 'black', borderColor: theme.textColorPrimary, borderWidth: 1, width: "auto" }}

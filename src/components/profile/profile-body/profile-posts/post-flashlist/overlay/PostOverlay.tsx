@@ -337,11 +337,12 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
 
             </View>
             <View style={{ flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", height: "10%", paddingBottom: isEmbeddedFeed ? 30 : 30, paddingLeft: isEmbeddedFeed ? 80 : 215 , paddingRight: isEmbeddedFeed ? 2 : 4 }}>
-              
+            {!isEmbeddedFeed && (
               <ReportIcon
-                openReport={onReportPress}
-                isEmbeddedFeed={!!isEmbeddedFeed}
-              />
+              openReport={onReportPress}
+              isEmbeddedFeed={!!isEmbeddedFeed}
+            />
+            )}
               <ReportModal
                 isVisible={isChallengeModalOpen}
                 postTitle={postData.caption!}

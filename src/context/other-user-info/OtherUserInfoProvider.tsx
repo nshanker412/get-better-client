@@ -156,7 +156,7 @@ export const OtherUserInfoProvider: React.FC<OtherUserInfoProviderProps> = ({
 				type: SET_LOAD_USER_PLANS_STATE,
 				payload: { loadUserPlansState: ApiLoadingState.Loading },
 			});
-			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/plan?search=${otherProfileUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
 			);
 			dispatch({
