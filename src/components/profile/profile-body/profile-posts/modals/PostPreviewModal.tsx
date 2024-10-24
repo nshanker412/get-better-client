@@ -80,7 +80,6 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
      * the post that is viewable and stop all the others
      */
     const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
-      console.log("viewableItems",viewableItems);
       
       changed.forEach(({ item, isViewable }) => {
         

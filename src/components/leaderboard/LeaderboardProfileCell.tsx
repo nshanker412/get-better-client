@@ -3,6 +3,7 @@ import React from 'react';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { LeaderboardItem } from './LeaderboardItem';
 import { LeaderboardProfile } from './models/LeaderboardProfile';
+import { ScrollView } from "react-native";
 
 interface LeaderboardProfileCell {
     item: LeaderboardProfile;
@@ -20,6 +21,7 @@ export const LeaderboardProfileCell: React.FC<LeaderboardProfileCell> = ({item, 
     }
 
     return (
+
         <TouchableOpacity
             onPress={onPressProfile}
         >

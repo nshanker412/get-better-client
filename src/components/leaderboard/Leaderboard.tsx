@@ -242,7 +242,8 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 						</RNPickerSelect>
 					</View>
 				</View>
-				<ScrollView style={{ flex: 1, width: "100%", height: 200 }}>
+				<ScrollView>
+				<View style={{ flex: 1, width: "100%", height: 180 }}>
 					<FlashList
 						data={profiles}
 						ListEmptyComponent={
@@ -267,6 +268,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 							/>
 						}
 					/>
+					</View>
 				</ScrollView>
 			</View>
 		</View>

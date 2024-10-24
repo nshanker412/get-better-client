@@ -11,7 +11,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, ScrollView, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { PlanModel } from 'src/plans/models/plan';
 import { useProfileBodyStyles } from './ProfileBody.styles';
@@ -45,9 +45,9 @@ const Feed: React.FC = () => {
 				<View style={[profileBodyStyles.statsCategoryColumn, { flex: 5 }]}>
 					<View style={[profileBodyStyles.postsColumn, { flex: 26 }]}>
 						<View style={profileBodyStyles.scrollInnerContainer}>
-							<View style={profileBodyStyles.scrollInnerContainer}>
+							<ScrollView style={profileBodyStyles.scrollInnerContainer}>
 								<ConnectedProfilePosts   />
-							</View>
+							</ScrollView>
 						</View>
 					</View>
 				</View>

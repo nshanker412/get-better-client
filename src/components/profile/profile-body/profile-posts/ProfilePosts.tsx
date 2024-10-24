@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PreviewFeedScreen } from './modals/PostPreviewModal';
+import { ScrollView } from 'react-native';
 
 //helper to take in a postID and check if it exists in the posts array
 // if it does, set the previewPostId to the index of the post
