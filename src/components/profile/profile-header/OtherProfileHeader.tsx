@@ -233,7 +233,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  isPrimary={true}
 			  size='lg'
 			  type={amIFollowing ? 'outline':'solid'}
-			  title={amIFollowing ?  'Demotivating':'Motivating'}
+			  title={amIFollowing ?  'Motivating':'Motivate'}
 			  onPress={onMotivatePress}
 			/>
 		  </View>

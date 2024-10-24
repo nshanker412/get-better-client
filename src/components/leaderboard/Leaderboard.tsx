@@ -243,7 +243,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 					</View>
 				</View>
 				<ScrollView>
-				<View style={{ flex: 1, width: "100%", height: 180 }}>
+				<View style={{ flex: 1, width: "100%", height: 480 }}>
 					<FlashList
 						data={profiles}
 						ListEmptyComponent={
