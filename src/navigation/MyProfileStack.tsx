@@ -111,7 +111,7 @@ export const MyProfileStack = ({navigation}) => {
 
 					options={{
 					
-					headerShown: false,
+					headerShown: true,
 					headerBackTitleVisible: false, 
 					title: '',
 					headerTintColor: 'white',

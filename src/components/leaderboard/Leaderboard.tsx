@@ -4,7 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useState } from 'react';
-import { Image, RefreshControl, Text, View } from 'react-native';
+import { Image, RefreshControl, Text,ScrollView, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import RNPickerSelect from 'react-native-picker-select';
 import { Header } from '../header/Header';
@@ -242,7 +242,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 						</RNPickerSelect>
 					</View>
 				</View>
-				<View style={{ flex: 1, width: "100%", height: 200 }}>
+				<ScrollView style={{ flex: 1, width: "100%", height: 200 }}>
 					<FlashList
 						data={profiles}
 						ListEmptyComponent={
@@ -267,7 +267,7 @@ export const Leaderboard: React.FC = ({ navigation }) => {
 							/>
 						}
 					/>
-				</View>
+				</ScrollView>
 			</View>
 		</View>
 	);

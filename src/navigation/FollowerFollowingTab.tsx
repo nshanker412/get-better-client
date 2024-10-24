@@ -29,7 +29,7 @@ export function FollowerFollowingTab({ route, navigation}) {
 
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor,paddingTop:-60 }}>
 			<>
 			<Tab.Navigator
 				

@@ -9,7 +9,7 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View,InputAccessoryView,Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
@@ -281,6 +281,13 @@ export const ProfileEdit: React.FC = () =>  {
 						maxLength={50}
 						keyboardAppearance='dark'
 					/>
+					<InputAccessoryView>
+						<View >
+							<Button
+								title="Done"
+							/>
+						</View>
+	  				</InputAccessoryView>
 				</View>
 		
 				<View style={[profileEditStyles.inputContainer]}>
