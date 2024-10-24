@@ -88,6 +88,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
   const {userToken} =useAuth();
   const animationRef = useRef<StarIconViewHandles>(null);
   // console.log("currentpostdata", postData)
+  
   const [currentLikeState, setCurrentLikeState] = useState({
     state: postData.likes?.includes(myUsername),
     counter: postData?.likes?.length,
@@ -122,6 +123,10 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
           try {
             const postID = `${postData["id"]}`;
             const newLikeState = !currentLikeStateInst.state;
+            console.log(
+              newLikeState
+            );
+            
             setCurrentLikeState({
               state: newLikeState,
               counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),

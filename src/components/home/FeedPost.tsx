@@ -139,9 +139,11 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 	};
 
 	const onLikePress = useCallback( (newLikedStatus:boolean) => {
+		console.log("dd");
+		
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-		if (!_likesCount &&newLikedStatus) {
+		if (!_likesCount && newLikedStatus) {
 			_setLikesCount(1);
 		}
 	
@@ -302,31 +304,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 									</Text>
 								)}
 							</View>
-							<View style={feedPostStyles.postDataInnerRow}>
-								<TouchableOpacity
-									onPress={() => onFlagPress(!_flagged)}>
-									<View style={feedPostStyles.icon}>
-										<SvgXml
-											width={40}
-											height={40}
-											xml={
-												_flagged
-													? FlagFilled
-													: FlagBlank
-											}
-										/>
-									</View>
-								</TouchableOpacity>
-								{(loadingMedia && loadingLikesCount) ?
-								(<Text style={feedPostStyles.username}>
-									<LoadingSpinner />
-								</Text>
-								) : (
-									<Text style={feedPostStyles.username}>
-										{_likesCount}
-									</Text>
-								)}
-							</View>
+							
 							<View style={feedPostStyles.postDataRow}>
 								<View style={feedPostStyles.postDataInnerRow}>
 									<TouchableOpacity

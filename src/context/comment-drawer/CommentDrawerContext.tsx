@@ -94,14 +94,14 @@ export const CommentDrawerProvider= ({ children }) => {
 
         try {
             const resp = await axios.get(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
                 
           
               );
             await axios.post(
                 `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post-comment`,
                 {
-                    created_by: resp.data["results"][0]["id"],
+                    created_by: resp.data["id"],
                     post: id,
                     comment: comment,
                 },

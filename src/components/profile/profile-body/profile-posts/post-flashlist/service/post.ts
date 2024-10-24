@@ -7,7 +7,7 @@ export const setPostLiked = async (user: string, id: string, myUsername: string,
     
     try {
         const resp = await axios.get(
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${user}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			
 	  
 		  );
@@ -16,7 +16,7 @@ export const setPostLiked = async (user: string, id: string, myUsername: string,
             url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/like-post`,
             data: {
                 post: id,
-                liked_by: resp.data["results"][0]["id"],
+                liked_by: resp.data["id"],
                 status: isLiked,
             },
             headers: {"Authorization" : `Bearer ${userToken}`},
