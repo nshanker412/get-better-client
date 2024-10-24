@@ -23,13 +23,14 @@ export const BlockedUsers: React.FC = () =>  {
 	const [loading, setLoading] = useState(true);
 	const [profileData, setProfileData] = useState(Object);
 	const {userToken} =useAuth();
-	const [refreshing, setRefreshing] = React.useState(false);
+	const [refreshing, setRefreshing] = React.useState(true);
 
 
 
 	const styles = useBlockedUsers();
 	const fetchUser = async () => {
 		setLoading(true);
+		setRefreshing(true)
 	
 			 await axios
 				.get(
@@ -42,6 +43,8 @@ export const BlockedUsers: React.FC = () =>  {
 					console.log(err);
 				});
 				setLoading(false);
+		setRefreshing(false)
+
 	}
 	// fetch user info
 	useEffect(() => {
@@ -75,7 +78,6 @@ export const BlockedUsers: React.FC = () =>  {
 
     const renderItem = ({ item, index }) => {
 		const UnBlockUser = (id:string) => {
-			console.log(id);
 			
 			axios.delete(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/block-user/${id}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}).catch((err) => {
 				console.log(err);
@@ -140,7 +142,7 @@ export const BlockedUsers: React.FC = () =>  {
 					keyExtractor={(item, index) => `un-block-${item.id}`}
 					estimatedItemSize={100}
 					refreshControl={
-						<RefreshControl refreshing={refreshing}/>
+						<RefreshControl refreshing={refreshing} onRefresh={fetchUser}/>
 					  }
 				/>
 				</View>

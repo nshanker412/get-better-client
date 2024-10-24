@@ -9,7 +9,7 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Text, View,InputAccessoryView,Button } from 'react-native';
+import { Text, View,InputAccessoryView,KeyboardAvoidingView,Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LoadingSpinner } from '../loading-spinner/LoadingSpinner';
 import { ConnectedProfileAvatar } from '../profile-avatar/ConnectedProfileAvatar';
@@ -226,6 +226,9 @@ export const ProfileEdit: React.FC = () =>  {
 					<LoadingSpinner />
 				</View>
 			)}
+				<KeyboardAvoidingView
+				behavior="position"
+				>
 			<View style={profileEditStyles.editProfileContainer}>
 				<TouchableOpacity onPress={uploadProfileImage}>
 					<View
@@ -289,7 +292,7 @@ export const ProfileEdit: React.FC = () =>  {
 						</View>
 	  				</InputAccessoryView>
 				</View>
-		
+
 				<View style={[profileEditStyles.inputContainer]}>
 					<Input
 						containerStyle={{
@@ -324,9 +327,6 @@ export const ProfileEdit: React.FC = () =>  {
 
 					/>
 				</View>
-
-
-
 				<Text>{errorMessage}</Text>
 				<TouchableOpacity
 					style={profileEditStyles.updateButton}
@@ -338,7 +338,12 @@ export const ProfileEdit: React.FC = () =>  {
 				<TouchableOpacity onPress={() => navigate.goBack()}>
 					<Text style={profileEditStyles.cancelText}>Cancel</Text>
 				</TouchableOpacity>
+
+
+				
 			</View>
+				</KeyboardAvoidingView>
+
 		</>
 	) : (
 		<View style={profileEditStyles.loadingContainer}>
