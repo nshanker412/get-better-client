@@ -45,7 +45,7 @@ enum NotificationType {
     CHALLENGE = 'challenge',
 }
 
-export const Notifications = ({route}) => {
+export const Notifications = ({route,navigation}) => {
     const { theme } = useThemeContext();
     const {goBack, dispatch} = useNavigation();
     const {userToken} = useAuth();
@@ -118,11 +118,12 @@ export const Notifications = ({route}) => {
         };
         let type: 'motivate' | 'like' | 'comment' | 'challenge' = 'motivate';
 
-        if (itemContent.includes('motivating')){
+        if (itemContent.includes('follows you')){
+            
             itemLink = {
                 screen: 'profile',
                 params: {
-                    profileUsername: itemUsername2,
+                    profileUsername: `${removeUsername(itemContent0,"follows you")}`,
                     linkPostID: undefined,
                 },
             };
@@ -140,7 +141,6 @@ export const Notifications = ({route}) => {
             type = 'like';
         }
         else if (itemContent.includes('commented')) {
-
             itemLink = {
                 screen: 'profile',
                 params: {
@@ -154,7 +154,7 @@ export const Notifications = ({route}) => {
             itemLink = {
                 screen: 'post',
                 params: {
-                    challengeUsername: itemUsername2,
+                    challengeUsername: `${removeUsername(itemContent0,"challenged you")}`,
                     is_challenged:true,
                     challenge: `${itemContent.split(",")[1]}`
                 },

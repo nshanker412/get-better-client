@@ -212,7 +212,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 		  <ButtonAsync
 			  containerStyle={{ width: 100, height: 35 }}
 			  buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
-			  id={'challenge-button'}
+			  id={'block-button'}
 			  loading={false}
 			  gradientColor='gray'
 			  isPrimary={true}

@@ -9,9 +9,7 @@ import { PreviewFeedScreen } from './modals/PostPreviewModal';
 // if it does, set the previewPostId to the index of the post
 // else return -1 
 const findIdxByID = (postID: string, posts: Post[]) => {
-    const postIDint = parseInt(postID);
-
-    const index = posts.findIndex((post) => (post.metadata.timestamp as string) === postIDint);
+    const index = posts.findIndex((post) => (post.metadata.id as string) === postID);
     
     return index;
 }
@@ -37,6 +35,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
 
         if (linkPostID !== undefined) {
             console.log('it exists' , linkPostID);
+            
             const idx = findIdxByID(linkPostID, posts);
             
             console.log('idx', idx);

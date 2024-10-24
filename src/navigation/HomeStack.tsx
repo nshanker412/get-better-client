@@ -7,6 +7,7 @@ import CreatePost from '../components/createPost/createPost';
 import { Notifications } from '../components/notifications/Notifications';
 import { Profile } from '../components/profile/Profile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
+import { BlockedUsers } from '../components/profile/BlockedUsers';
 import { ProfilePost } from '../components/profile/ProfilePost';
 
 export const HomeStack: React.FC = ({ navigation }) => {
@@ -64,6 +65,10 @@ export const HomeStack: React.FC = ({ navigation }) => {
 				<HomeStackNav.Screen
 					name='profileEdit'
 					component={ProfileEdit}
+				/>
+				<HomeStackNav.Screen
+					name='blockedUsers'
+					component={BlockedUsers}
 				/>
 			</HomeStackNav.Navigator>
 		</BottomTabEventProvider>

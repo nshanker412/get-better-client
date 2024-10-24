@@ -69,6 +69,9 @@ export const SettingsScreen = ({ navigation }) => {
   const onPressEditProfile = () => {
     navigation.navigate('profileEdit');
   }
+  const onBlockedUsersPage = () =>{
+    navigation.navigate('blockedUsers');
+  }
 
 
   const onLogoutPress = async (): Promise<void> => {
@@ -283,6 +286,22 @@ export const SettingsScreen = ({ navigation }) => {
                     color={blue.blue5}
                     name="chevron-right"
                     size={20} />
+                </TouchableOpacity>
+              </View>
+              <View style={[styles.rowWrapper, styles.rowFirst]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    onBlockedUsersPage();
+                  
+                  }}
+                  style={styles.row}>
+                  <Text style={styles.rowLabel}>Blocked Users</Text>
+                  <View style={styles.rowSpacer} />
+                  <FeatherIcon
+                    color="#C6C6C6"
+                    name="chevron-right"
+                    size={20} />
+                  
                 </TouchableOpacity>
               </View>
               <View style={[styles.rowWrapper, styles.rowFirst]}>
