@@ -216,7 +216,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  loading={false}
 			  gradientColor='gray'
 			  isPrimary={true}
-			  type={isBlocked ? 'solid' : 'outline'}
+			  type={isBlocked ? 'outline' : 'solid'}
 			  title={isBlocked?'Blocked':'Block'}
 			  size='lg'
 			  onPress={BlockUser}
@@ -232,8 +232,8 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  disabled={isLoading}
 			  isPrimary={true}
 			  size='lg'
-			  type={amIFollowing ? 'solid':'outline'}
-			  title={amIFollowing ?  'Motivate':'Motivating'}
+			  type={amIFollowing ? 'outline':'solid'}
+			  title={amIFollowing ?  'Demotivating':'Motivating'}
 			  onPress={onMotivatePress}
 			/>
 		  </View>

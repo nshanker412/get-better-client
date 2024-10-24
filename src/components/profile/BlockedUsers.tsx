@@ -101,7 +101,7 @@ export const BlockedUsers: React.FC = () =>  {
 						buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
 						id={`${item.id}-unblock-button`}
 						gradientColor='gray'
-						title='Un Block'
+						title='Unblock'
 						size='lg'
 						onPress={()=>UnBlockUser(item.id)}
 						
