@@ -5,6 +5,7 @@ import { useProfileContext } from '@context/profile-context/useProfileContext';
 import React, { useEffect } from 'react';
 import { MyProfile } from './MyProfile';
 import { OtherProfile } from './OtherProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export const Profile: React.FC = ({route}) => {
@@ -12,6 +13,10 @@ export const Profile: React.FC = ({route}) => {
 	
 
 	useEffect(() => {
+		const setAsyncStorage = async ()=>{
+			await AsyncStorage.setItem("InProfile",route?.params?.profileUsername)
+		}
+		setAsyncStorage()
 		console.log("in Profile: ", route?.params?.profileUsername);
 	}
 	, [route]);

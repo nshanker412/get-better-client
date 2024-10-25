@@ -1,7 +1,7 @@
-import { EvilIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
+import { EvilIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ActionButton } from '../primitives/action-button/ActionButton';
 import { useCreatePlanStyles } from './createPlan.styles';

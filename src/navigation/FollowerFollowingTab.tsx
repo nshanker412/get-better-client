@@ -1,11 +1,15 @@
 import { useThemeContext } from '@context/theme/useThemeContext';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Follower } from '../components/profile/followerFollowing/Follower';
 import { Following } from '../components/profile/followerFollowing/Following';
-
-
+import { useNavigation } from '@react-navigation/native';
+import React, { useState,useEffect } from 'react';
+import { SafeAreaView, Text, View } from 'react-native';
+import { EvilIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '@context/auth/useAuth';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -13,24 +17,59 @@ const Tab = createMaterialTopTabNavigator();
 export function FollowerFollowingTab({ route, navigation}) {
 	// const route = useRoute();
 	const { theme } = useThemeContext();
+	const { userToken } = useAuth();
+	const navigate = useNavigation();
 	
 	const username = route?.params?.profileUsername;
-	const followerCount = route?.params?.followers;
-	const followingCount = route?.params?.following;
+	const [followerCount,setFollowerCount]= useState(0);
+	const [followingCount,setFollowingCount]= useState(0);
+	const [followerList,setFollowerList]= useState([]);
+	const [followingList,setFollowingList]= useState([]);
+
 
 	console.log('FollowerFollowingTab: username', username);	
 	console.log('FollowerFollowingTab: followerCount', followerCount);
 	console.log('FollowerFollowingTab: followingCount', followingCount);
-
-	// useEffect(() => {
-	// 	navigation.setOptions({ title: `@${uname}`, headerShown: true, headerBackTitle: 'back'});
-	// }, [uname]);
-
+	useEffect(() => {
+		
+		const fetchFollowers = async () => {
+			const profileOf = await AsyncStorage.getItem("InProfile")
+			
+				try {
+					const response = await axios.get(
+						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${profileOf}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+		
+					);
+					setFollowingCount(response.data.results[0].following_list.length);
+					setFollowerCount(response.data.results[0].followers_list.length);
+					setFollowerList(response.data.results[0].followers_list)
+					setFollowingList(response.data.results[0].following_list)
+					console.log(followerList,followingList);
+					
+				} catch (error) {
+					console.log('ERROR: onFetchFollowing ', error);
+				}
+			}
+			
+			fetchFollowers();
+		
+	}, [username]);
 
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor,paddingTop:-60 }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+				<View>
+					<TouchableOpacity
+						onPress={() => navigate.navigate("profile", { profileUsername: username })}>
+						<EvilIcons
+							name='chevron-left'
+							size={50}
+							color='white'
+						/>
+					</TouchableOpacity>
+				</View>
 			<>
+			
 			<Tab.Navigator
 				
 					screenOptions={{
@@ -56,6 +95,7 @@ export function FollowerFollowingTab({ route, navigation}) {
 
 				swipeEnabled: true,
 			}}>
+
 				<Tab.Screen
 				name='Following'
 				component={Following}
@@ -66,7 +106,7 @@ export function FollowerFollowingTab({ route, navigation}) {
 						: 'Motivating',
 				}}
 			
-				initialParams={{ profileUsername: username }}
+				initialParams={{ profileUsername: username,followingList:followingList }}
 			/>
 			<Tab.Screen
 				name='Followers'
@@ -79,7 +119,7 @@ export function FollowerFollowingTab({ route, navigation}) {
 			
 				}}
 				
-				initialParams={{ profileUsername: username }}
+				initialParams={{ profileUsername: username,followerList:followerList }}
 				/>
 			</Tab.Navigator>
 				</>

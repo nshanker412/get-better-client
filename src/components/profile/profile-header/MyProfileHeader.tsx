@@ -111,7 +111,7 @@ export const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({
 							}}>
 							  <View style={{ alignItems: "center", justifyContent: "center" }}>
 								<View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-								  <Text style={[profileHeaderStyles.userNameStyle, { fontSize: 45, color: grayDark.gray12, fontFamily: fonts.inter.thin }]}>
+								  <Text style={[profileHeaderStyles.userNameStyle, { fontSize: 35, color: grayDark.gray12, fontFamily: fonts.inter.thin }]}>
 									{consistency}%
 								  </Text>
 								</View>

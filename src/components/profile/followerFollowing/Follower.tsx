@@ -10,36 +10,45 @@ import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAva
 import { useSearchStyles } from './search.styles';
 import axios from 'axios';
 import { useAuth } from '@context/auth/useAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const Follower = () => {
+export const Follower = (route) => {
 	const {  userToken } = useAuth();
 
 	const navigation = useNavigation();
 
 	const { username: myUsername} = useMyUserInfo();
-	const [followerList, setFollowerList] = useState([]);
+	const [followerList, setFollowerList] = useState(route.params?.followerList);
 	const [currentUsername, setCurrentUsername] = useState();
 	const { theme } = useThemeContext();
 	const searchStyles = useSearchStyles();
 	const [refreshing, setRefreshing] = useState(false);
+	
+	const profileUsername = route.params?.profileUsername;
+
 	const fetchFollowers = async () => {
+		const profileOf = await AsyncStorage.getItem("InProfile")
 		try {
 			const response = await axios.get(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${profileOf}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
 			);
-			setFollowerList(response.data.followers_list);
+			setFollowerList(response.data.results[0].followers_list);
+			console.log("followerList",followerList);
+			
 		} catch (error) {
 			console.log('ERROR: onFetchFollowing ', error);
 		}
+
 	}
+	
 	useEffect(() => {
 		fetchFollowers();
 	}, []);
 
 	const onRefreshCallback = async () => {		
 		setRefreshing(true);
-		await fetchFollowers();
+		fetchFollowers();
 		setRefreshing(false);
 	};
 	
@@ -62,7 +71,7 @@ export const Follower = () => {
 			onPressIn={() => {
 				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			}}
-			onPress={() => {onPressProfile(item.username);fetchFollowers()}}>
+			onPress={() => {onPressProfile(item.username)}}>
 			<View style={searchStyles.profile}>
 				<ConnectedProfileAvatar
 					username={item.username}

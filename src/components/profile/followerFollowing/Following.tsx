@@ -10,6 +10,7 @@ import { ConnectedProfileAvatar } from '../../profile-avatar/ConnectedProfileAva
 import { useSearchStyles } from './search.styles';
 import { useAuth } from '@context/auth/useAuth';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -21,9 +22,11 @@ export const Following = () => {
 	const { theme } = useThemeContext();
 
 	const { onFetchFollowing} = useUserFollowContext();
-	const [following, setFollowing] = useState([]);
+	const [following, setFollowing] = useState(route.params?.followingList);
 
 	const profileUsername = route.params?.profileUsername;
+
+	
 	
 	
 
@@ -31,26 +34,27 @@ export const Following = () => {
 	const searchStyles = useSearchStyles();
 	const [refreshing, setRefreshing] = useState(false);
 
-	
-	useEffect(() => {
-		const fetchFollowers = async () => {
-			try {
-				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
-	
-				);
-				console.log('profile Following', response.data.following_list);
-				setFollowing(response.data.following_list);
-			} catch (error) {
-				console.log('ERROR: onFetchFollowing ', error);
-			}
+	const fetchFollowing = async () => {
+		const profileOf = await AsyncStorage.getItem("InProfile")
+
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${profileOf}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+
+			);
+			setFollowing(response.data.results[0].following_list);
+		} catch (error) {
+			console.log('ERROR: onFetchFollowing ', error);
 		}
-		fetchFollowers();
+	}
+	useEffect(() => {
+
+		fetchFollowing();
 	}, []);
 
 	const onRefreshCallback = async () => {
 		setRefreshing(true);
-		await onFetchFollowing();
+		fetchFollowing();
 		setRefreshing(false);
 	};
 
@@ -91,7 +95,7 @@ export const Following = () => {
 	return (
 		<View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
 			<FlashList
-				data={following ??[]}
+				data={following}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.username}
 				estimatedItemSize={100}
