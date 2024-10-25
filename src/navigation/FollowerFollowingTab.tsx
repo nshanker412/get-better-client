@@ -57,17 +57,15 @@ export function FollowerFollowingTab({ route, navigation}) {
 
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
-				<View>
-					<TouchableOpacity
-						onPress={() => navigate.navigate("profile", { profileUsername: username })}>
-						<EvilIcons
-							name='chevron-left'
-							size={50}
-							color='white'
-						/>
-					</TouchableOpacity>
-				</View>
+		<SafeAreaView style={{ flex: 1 }}>
+				<TouchableOpacity
+					onPress={() => navigate.navigate("profile", { profileUsername: username })}>
+					<EvilIcons
+						name='chevron-left'
+						size={50}
+						color='white'
+					/>
+				</TouchableOpacity>
 			<>
 			
 			<Tab.Navigator
