@@ -2,9 +2,9 @@
 export const handleSocialPress = (username: string, navigation: any, numFollowers: number , numFollowing: number, screen: 'Followers' | 'Following') => {
 
     if (screen === 'Followers') {
-        navigation.navigate('profileTab',
+        navigation.navigate('followerFollowing',
         {
-            screen: 'followerFollowing',
+            
             params: {
                 screen: 'Followers',
                 profileUsername: username,
@@ -20,9 +20,8 @@ export const handleSocialPress = (username: string, navigation: any, numFollower
     }
 
     if (screen === 'Following') {
-        navigation.navigate('profileTab',
+        navigation.navigate('followerFollowing',
             {
-                screen: 'followerFollowing',
                 params: {
                     screen: 'Following',
                     profileUsername: username,

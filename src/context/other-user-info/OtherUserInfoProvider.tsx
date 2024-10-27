@@ -492,7 +492,6 @@ const reportPost = async (reportPostText: string, myUsername: string) => {
 					},
 				});
 			}
-			console.log('fetchUserPosts', resp.data);
 
 		} catch (error) {
 			console.log('fetchUserPostsError', error);

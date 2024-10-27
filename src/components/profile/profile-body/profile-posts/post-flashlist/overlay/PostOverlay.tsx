@@ -213,9 +213,8 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
                 planType: resp.data.data.planCategory,
                 title: resp.data.planName,
               };
-              console.log('data', data)
+              
               return data;
-        
             
             } catch (error) {
               console.log('Error fetching linked plan', error);

@@ -10,15 +10,16 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@context/auth/useAuth';
+import { HeaderBackButton } from '@react-navigation/elements';
 
 const Tab = createMaterialTopTabNavigator();
 
 
-export function FollowerFollowingTab({ route, navigation}) {
+export function FollowerFollowingTab({ route}) {
 	// const route = useRoute();
 	const { theme } = useThemeContext();
 	const { userToken } = useAuth();
-	const navigate = useNavigation();
+	const navigation = useNavigation();
 	
 	const username = route?.params?.profileUsername;
 	const [followerCount,setFollowerCount]= useState(0);
@@ -26,10 +27,18 @@ export function FollowerFollowingTab({ route, navigation}) {
 	const [followerList,setFollowerList]= useState([]);
 	const [followingList,setFollowingList]= useState([]);
 
-
-	console.log('FollowerFollowingTab: username', username);	
-	console.log('FollowerFollowingTab: followerCount', followerCount);
-	console.log('FollowerFollowingTab: followingCount', followingCount);
+	useEffect( () => {
+		navigation.setOptions({ headerShown: true,
+			headerLeft: (props) => (
+				<HeaderBackButton
+					{...props}
+					onPress={() => {
+						navigation.navigate("profile",{profileUsername:username});
+					}}
+				/>
+			)
+		});
+	} ); 
 	useEffect(() => {
 		
 		const fetchFollowers = async () => {
@@ -44,7 +53,6 @@ export function FollowerFollowingTab({ route, navigation}) {
 					setFollowerCount(response.data.results[0].followers_list.length);
 					setFollowerList(response.data.results[0].followers_list)
 					setFollowingList(response.data.results[0].following_list)
-					console.log(followerList,followingList);
 					
 				} catch (error) {
 					console.log('ERROR: onFetchFollowing ', error);
@@ -58,22 +66,15 @@ export function FollowerFollowingTab({ route, navigation}) {
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-				<TouchableOpacity
-					onPress={() => navigate.navigate("profile", { profileUsername: username })}>
-
-				</TouchableOpacity>
-			<>
 			
 			<Tab.Navigator
 				
 					screenOptions={{
-				
-
 					tabBarLabelStyle: {
 							fontSize: 15,
 							fontFamily: theme.fontFamily,
 							color: theme.textColorPrimary,
-							// backgroundColor: theme.backgroundColor
+							backgroundColor: theme.backgroundColor
 					},
 					tabBarItemStyle: {
 						flex: 1,
@@ -83,12 +84,13 @@ export function FollowerFollowingTab({ route, navigation}) {
 					tabBarStyle: {
 					backgroundColor: theme.backgroundColor,
 						},
+						
 					tabBarIndicatorStyle: {
 							backgroundColor: theme.textColorPrimary,
 						},
 
 				swipeEnabled: true,
-			}}>
+			}} >
 
 				<Tab.Screen
 				name='Following'
@@ -98,6 +100,7 @@ export function FollowerFollowingTab({ route, navigation}) {
 					tabBarLabel: followingCount
 						? `Motivating (${followingCount})`
 						: 'Motivating',
+					
 				}}
 			
 				initialParams={{ profileUsername: username,followingList:followingList }}
@@ -109,14 +112,13 @@ export function FollowerFollowingTab({ route, navigation}) {
 					tabBarLabel: followerCount
 						? `Motivators (${followerCount})`
 						: 'Motivators',
-
+						
 			
 				}}
 				
 				initialParams={{ profileUsername: username,followerList:followerList }}
 				/>
 			</Tab.Navigator>
-				</>
 </SafeAreaView>
 	);
 }

@@ -50,6 +50,7 @@ export const MyProfileStack = ({navigation}) => {
 				},
 				headerBackTitleVisible: false,
 				cardStyle: { backgroundColor: 'black' },
+				
 			}}>
 			<ProfileStackNav.Screen
 					options={{
@@ -106,22 +107,7 @@ export const MyProfileStack = ({navigation}) => {
 				name='search'
 				component={Search}
 			/>
-			<ProfileStackNav.Screen
-					name='followerFollowing'
 
-					options={{
-					
-					headerShown: true,
-					headerBackTitleVisible: false, 
-					title: '',
-					headerTintColor: 'white',
-
-
-
-					// headerTintColor: 'white',
-				 }}
-				component={FollowerFollowingTab}
-				/>
 				<ProfileStackNav.Screen
 
 					options={{

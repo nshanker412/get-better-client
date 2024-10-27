@@ -32,8 +32,10 @@ export const Follower = (route) => {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${profileOf}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
-			);
+			);			
 			setFollowerList(response.data.results[0].followers_list);
+			console.log(response);
+			
 			console.log("followerList",followerList);
 			
 		} catch (error) {
@@ -94,7 +96,7 @@ export const Follower = (route) => {
 				backgroundColor: theme.backgroundColor,
 			}}>
 			<FlashList
-				data={followerList}
+				data={followerList??[]}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.username}
 				estimatedItemSize={100}

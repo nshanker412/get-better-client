@@ -14,6 +14,7 @@ export const Profile: React.FC = ({route}) => {
 
 	useEffect(() => {
 		const setAsyncStorage = async ()=>{
+			await AsyncStorage.removeItem("InProfile")
 			await AsyncStorage.setItem("InProfile",route?.params?.profileUsername)
 		}
 		setAsyncStorage()

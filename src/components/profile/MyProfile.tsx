@@ -105,7 +105,7 @@ export const MyProfile: React.FC = () => {
 
 
 						<ConnectedProfileHeader
-							username={myUsername!}
+						username={myUsername!}
 						isMyProfile={true}
 						onOpenLogoutModal={onOpenLogoutModal}
 					/>
