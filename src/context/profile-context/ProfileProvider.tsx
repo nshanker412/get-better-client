@@ -42,7 +42,8 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMy
 
         if (profileUsername === "undefined") {
             setIsMine(true)
-        } else {
+        }
+         else {
             setIsMine(profileUsername === myUsername);
         } 
     }, [profileUsername])
@@ -52,7 +53,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMy
      */
 
     useEffect(() => {
-        console.log("ProfileProvider: ", isMine, myUsername, otherUsername)
+        console.log("ProfileProvider: ", isMine, myUsername,profileUsername, otherUsername)
         if (isMine) {
             fetchMyPlans();
             fetchMyPosts();

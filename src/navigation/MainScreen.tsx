@@ -215,6 +215,7 @@ export function MainScreen({navigation, route}) {
 				component={MyProfileStack}
 				options={{ tabBarIcon: ProfileTabIcon ,unmountOnBlur: true, headerShown: false, footerShown: false}}
 			/>
+			
 		</Tab.Navigator>
 		</CommentDrawerProvider>
 	);

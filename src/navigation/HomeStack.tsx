@@ -9,6 +9,7 @@ import { Profile } from '../components/profile/Profile';
 import { ProfileEdit } from '../components/profile/ProfileEdit';
 import { BlockedUsers } from '../components/profile/BlockedUsers';
 import { ProfilePost } from '../components/profile/ProfilePost';
+import { FollowerFollowingTab } from './FollowerFollowingTab';
 
 export const HomeStack: React.FC = ({ navigation }) => {
 	const HomeStackNav = createStackNavigator();
@@ -70,6 +71,16 @@ export const HomeStack: React.FC = ({ navigation }) => {
 					name='blockedUsers'
 					component={BlockedUsers}
 				/>
+				<HomeStackNav.Screen
+					name='followerFollowing'
+					component={FollowerFollowingTab}
+					options={{
+						headerShown: true,
+						// headerBackTitleVisible: true, 
+						title: '',
+						headerTintColor: 'white',
+					}}
+			/>
 			</HomeStackNav.Navigator>
 		</BottomTabEventProvider>
 	);

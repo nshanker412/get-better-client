@@ -18,7 +18,7 @@ export const Profile: React.FC = ({route}) => {
 			await AsyncStorage.setItem("InProfile",route?.params?.profileUsername)
 		}
 		setAsyncStorage()
-		console.log("in Profile: ", route?.params?.profileUsername);
+		
 	}
 	, [route]);
 

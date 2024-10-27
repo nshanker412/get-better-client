@@ -107,6 +107,16 @@ export const MyProfileStack = ({navigation}) => {
 				name='search'
 				component={Search}
 			/>
+			<ProfileStackNav.Screen
+					name='followerFollowing'
+					component={FollowerFollowingTab}
+					options={{
+						headerShown: true,
+						// headerBackTitleVisible: true, 
+						title: '',
+						headerTintColor: 'white',
+					}}
+			/>
 
 				<ProfileStackNav.Screen
 

@@ -11,6 +11,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@context/auth/useAuth';
 import { HeaderBackButton } from '@react-navigation/elements';
+import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -19,21 +20,30 @@ export function FollowerFollowingTab({ route}) {
 	// const route = useRoute();
 	const { theme } = useThemeContext();
 	const { userToken } = useAuth();
+	const { username: myUsername } = useMyUserInfo();
 	const navigation = useNavigation();
 	
-	const username = route?.params?.profileUsername;
+	const [username,setUsername] = useState(route?.params?.profileUsername);
 	const [followerCount,setFollowerCount]= useState(0);
 	const [followingCount,setFollowingCount]= useState(0);
 	const [followerList,setFollowerList]= useState([]);
 	const [followingList,setFollowingList]= useState([]);
 
+	
+
 	useEffect( () => {
+		
 		navigation.setOptions({ headerShown: true,
 			headerLeft: (props) => (
 				<HeaderBackButton
 					{...props}
 					onPress={() => {
-						navigation.navigate("profile",{profileUsername:username});
+						if (username===undefined){
+						navigation.goBack();
+						}
+						else{
+							navigation.navigate("home");
+						}
 					}}
 				/>
 			)
