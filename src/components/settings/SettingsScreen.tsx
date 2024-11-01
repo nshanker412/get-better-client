@@ -79,8 +79,8 @@ export const SettingsScreen = ({ navigation }) => {
 		try {
       await axios({
 				method: "post",
-				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/deactivate_user`,
-				data: {"deactivate":true},
+				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/delete_user`,
+				data: {"delete":true},
 				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
 			}).then(res=>{
         console.log("deactivate res",res);
@@ -146,8 +146,8 @@ export const SettingsScreen = ({ navigation }) => {
 
   const deleteAccountAlert = () => {
     Alert.alert(
-      'temporarily delete my account?', // Alert Title',
-      'This action will deactivate your account and associated data.', // Alert Message
+      'Permanently Delete my account?', // Alert Title',
+      'This action will delete your account and associated data. This cannot be undone.', // Alert Message
       [
         {
           text: 'Cancel',
@@ -169,7 +169,7 @@ export const SettingsScreen = ({ navigation }) => {
   const deleteAccountAlert2 = () => {
     Alert.alert(
       'Absolutely sure?', // Alert Title',
-      'If you want to recover your account after this Step, Please mail us with your Account emailID.', // Alert Message
+      'This action is non-recoverable', // Alert Message
       [
         {
           text: 'Cancel',
