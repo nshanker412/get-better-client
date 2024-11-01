@@ -146,8 +146,8 @@ export const SettingsScreen = ({ navigation }) => {
 
   const deleteAccountAlert = () => {
     Alert.alert(
-      'permanently delete my account?', // Alert Title',
-      'This action will delete your account and associated data. This cannot be undone.', // Alert Message
+      'temporarily delete my account?', // Alert Title',
+      'This action will deactivate your account and associated data.', // Alert Message
       [
         {
           text: 'Cancel',
@@ -169,7 +169,7 @@ export const SettingsScreen = ({ navigation }) => {
   const deleteAccountAlert2 = () => {
     Alert.alert(
       'Absolutely sure?', // Alert Title',
-      'This action is non-recoverable', // Alert Message
+      'If you want to recover your account after this Step, Please mail us with your Account emailID.', // Alert Message
       [
         {
           text: 'Cancel',
