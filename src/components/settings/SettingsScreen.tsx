@@ -57,7 +57,7 @@ export const SettingsScreen = ({ navigation }) => {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const styles = useSettingsScreenStyles();
   const { username: myUsername, myData, onLogout } = useMyUserInfo();
-  const { email } = useAuth();
+  
   
   const [form, setForm] = useState({
     darkMode: false,
@@ -77,13 +77,23 @@ export const SettingsScreen = ({ navigation }) => {
   const onLogoutPress = async (): Promise<void> => {
     setLogoutLoading(true);
 		try {
+      await axios({
+				method: "post",
+				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/deactivate_user`,
+				data: {"deactivate":true},
+				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+			}).then(res=>{
+        console.log("deactivate res",res);
+        
+      }).catch(err=>{
+        console.log("deactivate err",err);
+      })
 			await onLogout();
 			await removePushToken();
 			await signOut();
 		} catch (error) {
 			console.error('Error logging out:', error);
 		} finally {
-		
       setLogoutLoading(false);
 
 		}
@@ -137,7 +147,7 @@ export const SettingsScreen = ({ navigation }) => {
   const deleteAccountAlert = () => {
     Alert.alert(
       'permanently delete my account?', // Alert Title',
-      'This action will delete your accound and associated data. This cannot be undone.', // Alert Message
+      'This action will delete your account and associated data. This cannot be undone.', // Alert Message
       [
         {
           text: 'Cancel',
@@ -339,16 +349,16 @@ export const SettingsScreen = ({ navigation }) => {
       
               <View style={styles.row}>
 
-                  {/* <Text style={[styles.rowLabel, {color: red.red6}]}>Delete Account</Text> */}
+                  <Text style={[styles.rowLabel, {color: red.red6}]}>Delete Account</Text>
 
                   <View style={styles.rowSpacer} />
 
                   {/* <Text style={styles.rowValue}>Los Angeles, CA</Text> */}
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     onPress={() => { deleteAccountAlert() }}>
                   <MaterialIcons name="delete" size={24} color={red.red6} />
               
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 </View>
                 </View> 
             </View>
