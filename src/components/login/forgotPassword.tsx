@@ -98,7 +98,7 @@ export const ForgotPassword: React.FC = () => {
 					</TouchableOpacity>
 
 					<TouchableOpacity onPress={onClickSignUp}>
-						<Text style={loginStyles.transferText}>
+						<Text style={loginStyles.SignUp}>
 							New? Sign up here.
 						</Text>
 					</TouchableOpacity>

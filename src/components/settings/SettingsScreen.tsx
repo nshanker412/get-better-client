@@ -77,17 +77,6 @@ export const SettingsScreen = ({ navigation }) => {
   const onLogoutPress = async (): Promise<void> => {
     setLogoutLoading(true);
 		try {
-      await axios({
-				method: "post",
-				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/delete_user`,
-				data: {"delete":true},
-				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
-			}).then(res=>{
-        console.log("deactivate res",res);
-        
-      }).catch(err=>{
-        console.log("deactivate err",err);
-      })
 			await onLogout();
 			await removePushToken();
 			await signOut();
@@ -166,6 +155,23 @@ export const SettingsScreen = ({ navigation }) => {
       { cancelable: true }
     );
   };
+  const deleteAccountAPICall = async () => {
+    try {
+      await axios({
+				method: "post",
+				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me/delete_user`,
+				data: {"delete":true},
+				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
+			}).then(res=>{
+        console.log("deactivate res",res);
+        
+      }).catch(err=>{
+        console.log("deactivate err",err);
+      })
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
+  }
   const deleteAccountAlert2 = () => {
     Alert.alert(
       'Absolutely sure?', // Alert Title',
@@ -180,6 +186,7 @@ export const SettingsScreen = ({ navigation }) => {
           text: 'Delete',
           onPress: () => {
             console.log('Delete Pressed');
+            deleteAccountAPICall()
             onLogoutPress();
           },
           style: 'destructive', // This will make the text color red on iOS

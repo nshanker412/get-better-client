@@ -72,6 +72,15 @@ export const useLoginStyles = () => {
 			fontSize: 16,
 			textDecorationLine: 'underline',
 		},
+		SignUp: {
+			...theme.text.body.large,
+			...theme.text.subtext,
+
+			fontSize: 20,
+			fontWeight: "900",
+			color: "green",
+			textDecorationLine: 'underline',
+		},
 
 		forgotPasswordContainer: {
 			marginBottom: 15,
