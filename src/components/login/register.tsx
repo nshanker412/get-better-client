@@ -70,8 +70,8 @@ export const Register: React.FC = () => {
 			).then((response)=>{
 				Toast.show({
 					type: 'success',
-					text1: 'you are successfully Registered, Please Verify the Email Before Login',
-					});
+					text1: 'Thank you for signing up. Please verify your email before logging in.',
+					},Toast.LONG);
 				navigate.navigate('SignIn');
 			}).catch((err)=>{
 				showErrorToast(`${err.response.data.errors[0].message},Try again`);
