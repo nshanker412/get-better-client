@@ -11,7 +11,7 @@ import { removePushToken as _removePushToken } from './utils/removePushToken';
 import { scheduleDailyNotification } from './utils/scheduleDailyNotification';
 import { sendPushNotification } from './utils/sendPushNotification';
 import { setNotificationsSeen as _setNotificationsSeen } from './utils/setNotificationsSeen';
-
+import axios from 'axios';
 import { Notification as NotificationModel } from '@models/notifications';
 import { useAuth } from '@context/auth/useAuth';
 
@@ -211,7 +211,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                     console.log(`Notification permissions not granted: ${askStatus}`);
                     setPermissions(false);
                     setInitialized(true);
-
+                    
                     //set permissions to false
                     return;
                 } else {
@@ -228,7 +228,9 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
         // 2. (EXPO) Register for push notifications and get my push tokens
         try {
+            
             const token = await registerPushToken(myUsername);
+            pushTokenServer(myUsername,token,userToken)
             // setMyToken(token);
             console.log('myToken', token);
         } catch (e) {
@@ -258,7 +260,38 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
 
         setInitialized(true);
     }
+    async function pushTokenServer(myUsername:string,token: any,userToken: any){
 
+        // // should be non-blocking and not throw error
+        const me = await axios.get(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`, {
+            headers: {
+                Authorization: `Bearer ${userToken}`,
+            },
+        })
+
+        
+        
+        await axios.post(
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token`,
+                {
+                    user: me.data.results[0].id,
+                    token: token,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                }
+            )
+            .then((response) => {
+                console.log('saveNotificationToken', response.data);
+            })
+            .catch((error) => {
+                console.log('saveNotificationTokenError', error.message);
+                // console.log('Failed to save notification token');
+            });
+    
+    }
     /**
      * Set notifications seen
      */
@@ -314,15 +347,15 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
      * @returns
      */
     const sendOutPushNotification = async (recipient: string, pushPacket: PushNotificationInfoPacket) => {
-        if (!recipient) {
-            console.log('No recipient, not sending push notification!');
-            return;
-        };
+        // if (!recipient) {
+        //     console.log('No recipient, not sending push notification!');
+        //     return;
+        // };
 
-        if (recipient === myUsername) {
-            console.log('Recipient is me, not sending push notification!');
-            return;
-        }
+        // if (recipient === myUsername) {
+        //     console.log('Recipient is me, not sending push notification!');
+        //     return;
+        // }
 
         if (!pushPacket) {
             console.log('No push packet, not sending push notification!');
@@ -337,7 +370,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         // 1. Get recipient's tokens
         let recipientTokens: NotificationTokenApiResponse | undefined;
         try {
-             recipientTokens = await fetchTokens(recipient);
+             recipientTokens = await fetchTokens(recipient,userToken);
 
         } catch (e) {
             console.log('Error getting recipient token', e);
@@ -360,6 +393,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
                         params: pushPacket.data?.params
                     },
                 }
+                
                 await sendPushNotification(payload)
             
             } catch (e) {

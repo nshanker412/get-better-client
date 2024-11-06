@@ -10,15 +10,14 @@ import * as ExpoNotifications from 'expo-notifications';
  */
 export const removePushToken = async (myUsername: string) => {
     try {
-        const projectId = Constants.expoConfig.extra.eas.projectId;
+        const projectId = '6984b730-74db-4c70-a52b-28bbf178d5b8';
         const token = (await ExpoNotifications?.getExpoPushTokenAsync({ projectId: projectId }))
             ?.data;
-
+        
         await axios
-            .post(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationToken/remove`,
+            .delete(
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token`,
                 {
-                    username: myUsername,
                     token: token,
                 },
             )

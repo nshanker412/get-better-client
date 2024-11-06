@@ -6,6 +6,7 @@ import { PushNotificationPacket } from '../Notifications.types';
  * @returns 
  */
 export const  sendPushNotification = async (pushPacket: PushNotificationPacket)  => {
+    
     try {
   
         await fetch('https://exp.host/--/api/v2/push/send', {
