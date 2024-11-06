@@ -66,7 +66,11 @@ export const  ProfilePost: React.FC = (props) => {
 				if (status) {
 					axios
 						.get(
-							`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
+							`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token?search=${profileUsername}`,{
+								headers: {
+									Authorization: `Bearer ${userToken}`,
+								},
+							}
 						)
 						.then((response) => {
 							console.log(
@@ -172,7 +176,12 @@ export const  ProfilePost: React.FC = (props) => {
 				
 				axios
 					.get(
-						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/notificationTokens/fetch/${profileUsername}`,
+						`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token?search=${profileUsername}`,
+						{
+							headers: {
+								Authorization: `Bearer ${userToken}`,
+							},
+						}
 					)
 					.then((response) => {
 						console.log(
