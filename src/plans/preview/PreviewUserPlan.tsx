@@ -54,7 +54,13 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
     setDeletePlanId(planId);
     setOpenDeleteModal(true);
   }
-
+const getMedia = (media_url) => {
+  if (media_url.includes("amazonaws.com")){
+    return `${media_url}`
+  }else{
+    return `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}${media_url}`
+  }
+  };
     useEffect(() => {
         const getPlan = async (planID: string) => {
             setLoading(true);
@@ -119,8 +125,8 @@ export const PreviewUserPlan: React.FC = ( {navigation}) => {
                         
                           <MediaTile 
                               media={{
-                              id: planState.media[0]?.mediaId,
-                              url: planState.media[0]?.filename,
+                              id: planState.media,
+                              url: getMedia(planState.media),
                               type: 'image',
                             }}
                           />
