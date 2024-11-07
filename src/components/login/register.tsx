@@ -71,7 +71,11 @@ export const Register: React.FC = () => {
 				Toast.show({
 					type: 'success',
 					text1: 'Thank you for signing up. Please verify your email before logging in.',
-					},Toast.LONG);
+					visibilityTime: 12000,
+					position: 'bottom',
+					// topOffset: 60,
+					bottomOffset: 40
+					});
 				navigate.navigate('SignIn');
 			}).catch((err)=>{
 				showErrorToast(`${err.response.data.errors[0].message},Try again`);
