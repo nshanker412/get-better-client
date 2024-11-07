@@ -70,7 +70,7 @@ export const Home: React.FC = () => {
 		// console.log(`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/feed/fetch/friends/${myUsername}`)
 		await axios
 			.get<PostsApiResponse>(
-				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?is_motivater=true`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
 			)
 			.then((response) => {
@@ -111,6 +111,7 @@ export const Home: React.FC = () => {
 
 	useEffect(() => {
 			fetchFriendsPosts();
+			
 	}, [myUsername]);
 
 	const handleScroll = (event) => {

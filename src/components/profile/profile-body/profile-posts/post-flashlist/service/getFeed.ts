@@ -10,8 +10,9 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
     if (!myUsername) return [];
     try {
         const publicFeed: Post[] | [] = await fetchPublicPosts(myUsername);
+        const friendsFeed: Post[] | [] = await fetchFriendsPosts(myUsername);
 
-        const feed = [...publicFeed];
+        const feed = [...friendsFeed, ...publicFeed];
 
 
         // Remove duplicates
@@ -30,7 +31,7 @@ export const getFeed = async (myUsername: string | undefined | null): Promise<Po
 const fetchFriendsPosts = async (userToken: string): Promise<Post[] | []> => {
     try {
         const response = await axios.get<PostsApiResponse>(
-            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
+            `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post?is_motivate=true`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 
         );
 
