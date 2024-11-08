@@ -97,7 +97,6 @@ export default function CreatePost() {
 
 	const onPlanModalClose = (plans: string[] | []) => {
 		setLoading(false);
-		console.log('onPlanModalClose', plans);
 		setLinkedPlans(plans)
 		setIsVisible(false);
 	}
@@ -145,7 +144,6 @@ export default function CreatePost() {
 	// pick an image from camera roll
 	const pickMedia = async () => {
 
-		console.log("before picker")
 		if (isPhoto) {
 
 			const imageResult = await ImagePicker.launchImageLibraryAsync({
@@ -154,9 +152,6 @@ export default function CreatePost() {
 				quality: 1,
 			});
 
-			console.log("image after picker: ", imageResult)
-
-			// console.log('result', result);
 			if (imageResult == null || imageResult.assets == null || imageResult.assets[0] == null || imageResult.canceled) {
 				console.log('picked camera roll media is null');
 				return;
@@ -238,7 +233,6 @@ export default function CreatePost() {
 	const handleVideoRecording = async () => {
 		if (cameraRef && cameraRef.current) {
 			if (isRecording) {
-				console.log('recording stopped');
 				cameraRef.current.stopRecording();
 				clearInterval(timerId);
 				setTimer(10);
@@ -295,7 +289,6 @@ export default function CreatePost() {
 		formData.append('caption', caption);
 		formData.append('challenge', challengeUsername ? true : false);
 		formData.append('location', null);
-		console.log(linkedPlans);
 		linkedPlans.map((plan) => {formData.append('plan', plan);})
 
 		
@@ -312,7 +305,6 @@ export default function CreatePost() {
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
 		}
-			console.log("dasdas",formData);
 			
 			await axios({
 				method: "post",

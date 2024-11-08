@@ -58,7 +58,6 @@ export const Home: React.FC = () => {
 
 	useEffect(() => {
 		onHomeTabPressWhenFocused(onTabPressCb);
-		console.log("dasd",isHomeTabPressed);
 
 
 	}, []);
@@ -157,7 +156,6 @@ export const Home: React.FC = () => {
 						// Check if file is older than one week
 						if (fileDate < oneWeekAgo) {
 							await FileSystem.deleteAsync(fileUri);
-							console.log('Deleted old file:', fileName);
 						}
 					}
 				}
