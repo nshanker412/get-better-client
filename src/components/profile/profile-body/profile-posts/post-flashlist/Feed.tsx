@@ -100,7 +100,6 @@ export default function FeedScreen() {
     
         // Pause any previously viewable items that are no longer viewable
         visibleItemKeys.current.forEach((key) => {
-            console.log('checking', key)
             if (!newViewableSet.has(key)) {
                 console.log('pausing', key)
                 postTileRefs.current[key]?.current?.stop();

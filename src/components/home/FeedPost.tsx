@@ -72,6 +72,7 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 	const [isPlaying, setIsPlaying] = useState(true);
 	const [_liked, _setIsLiked] = useState(postData.likes.includes(myUsername));
 	const [_flagged, _setIsFlagged] = useState(postData.likes.includes(myUsername));
+	
 	const [_likesCount, _setLikesCount] = useState(postData.likes.length);
 	const doubleTapRef = useRef();
 	const commentDrawerRef = useRef(null);
@@ -139,7 +140,6 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 	};
 
 	const onLikePress = useCallback( (newLikedStatus:boolean) => {
-		console.log("dd");
 		
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 

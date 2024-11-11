@@ -53,7 +53,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMy
      */
 
     useEffect(() => {
-        console.log("ProfileProvider: ", isMine, myUsername,profileUsername, otherUsername)
         if (isMine) {
             fetchMyPlans();
             fetchMyPosts();

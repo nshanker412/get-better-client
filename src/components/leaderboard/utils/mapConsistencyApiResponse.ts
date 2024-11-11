@@ -7,7 +7,6 @@ import { LeaderboardProfileType } from '../models/LeaderboardProfile.type';
 
 export const mapConsistencyApiResponse = (data: LeaderboardConsistencyApiModel[]): LeaderboardProfileConsistency[] => {
     return data
-      .filter(user => user.username && user.name && user.consistency !== undefined) // Filter items based on conditions
       .map(user => ({
         // Since the filter guarantees that name and username are defined, the non-null assertion operator (!) can be used.
         // However, in TypeScript, it's safer to avoid it if your runtime environment might not guarantee these fields.

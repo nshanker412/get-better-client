@@ -48,8 +48,8 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
         setUsername(route?.params?.profileUsername);
     } , [route?.params?.profileUsername]);
 	
-    const [followers, setFollowers] = useState<UserFollow[] | undefined>();
-	const [following, setFollowing] = useState<UserFollow[] | undefined>();
+    const [followers, setFollowers] = useState<UserFollow[] | []>();
+	const [following, setFollowing] = useState<UserFollow[] | []>();
 
 	console.log('username', username);
 
@@ -65,7 +65,7 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
 				const response = await axios.get(
 					`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 				);
-				setFollowers(response.data.followers_list);
+				setFollowers(response?.data?.followers_list ?? []);
 				console.log('profile followers', followers);
 				return response.data.followers_list
 			} catch (error) {
