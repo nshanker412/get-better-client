@@ -123,9 +123,7 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
           try {
             const postID = `${postData["id"]}`;
             const newLikeState = !currentLikeStateInst.state;
-            console.log(
-              newLikeState
-            );
+
             
             setCurrentLikeState({
               state: newLikeState,
@@ -246,6 +244,10 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
     }
   
     fetchLinkedPlans();
+    setCurrentLikeState({
+      state: postData.likes?.includes(myUsername)??false,
+      counter: postData?.likes?.length,
+    })
   }, [user, postData?.id, postData?.linkedPlans]);
   
 
