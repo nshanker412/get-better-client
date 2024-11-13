@@ -23,6 +23,7 @@ import { ConnectedNotificationsBell } from './notifications-drawer/bell/Connecte
 import { useAuth } from '@context/auth/useAuth';
 
 const { userToken } = useAuth();
+
 export const Home: React.FC = () => {
 	const [posts, setPosts] = useState<Post[]| undefined>([]);
 	const [loadingPosts, setLoadingPosts] = useState(false);

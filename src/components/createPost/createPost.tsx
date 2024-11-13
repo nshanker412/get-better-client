@@ -368,6 +368,8 @@ export default function CreatePost() {
 	}
 
 
+
+
 	useEffect(() => {
 		console.log('permission', permission);
 		setLoading(false)

@@ -51,8 +51,6 @@ export const UserFollowProvider: React.FC<UserFollowProviderProps> = ({ children
     const [followers, setFollowers] = useState<UserFollow[] | []>();
 	const [following, setFollowing] = useState<UserFollow[] | []>();
 
-	console.log('username', username);
-
 
 
 	const onFetchFollowers = async () => {

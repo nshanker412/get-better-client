@@ -18,7 +18,7 @@ async function registerForPushNotificationsAsync() {
 		return;
 	  }
 	  token = await ExpoNotifications.getExpoPushTokenAsync({
-		projectId: '6fb0255c-e280-4c9f-b098-4bf5553a0523',
+		projectId: '6984b730-74db-4c70-a52b-28bbf178d5b8',
 	  });
 	  
 	return token.data;
