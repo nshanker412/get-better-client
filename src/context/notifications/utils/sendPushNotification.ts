@@ -17,7 +17,10 @@ export const  sendPushNotification = async (pushPacket: PushNotificationPacket) 
                 'Content-Type': 'application/json',
       },
       body: JSON.stringify(pushPacket),
-    });
+    }).then(res=>
+        console.log(res)
+        
+    );
     } catch (error) {   
         console.log('sendPushNotificationError', error);
         console.log('Failed to send push notification');

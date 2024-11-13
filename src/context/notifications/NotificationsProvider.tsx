@@ -332,7 +332,7 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         if (myUsername) {
             try {
                 // (GB) Remove push token
-                await _removePushToken(myUsername);
+                await _removePushToken(userToken);
             } catch (e) {
                 console.log('Error removing push token', e);
                 console.log('Failed to remove push token');

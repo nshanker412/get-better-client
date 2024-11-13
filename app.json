@@ -1,67 +1,67 @@
 {
-	"expo": {
-		"name": "GetBetter.",
-		"slug": "get-better",
-		"version": "1.0.9",
-		"owner": "nshanker4",
-		"platforms": ["ios"],
-		"orientation": "portrait",
-		"userInterfaceStyle": "dark",
-		"backgroundColor": "#000000",
-		"icon": "./assets/icon.png",
-		"extra": {
-			"eas": {
-		        "projectId": "6984b730-74db-4c70-a52b-28bbf178d5b8"
-			}
-		},
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#000000"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"userInterfaceStyle": "dark",
-			"backgroundColor": "#000000",
-			"supportsTablet": true,
-			"bundleIdentifier": "com.bensone146.getbetter",
-			"config": {
-				"usesNonExemptEncryption": false
-			}
-		},
-		"plugins": [
-			[
-			"expo-font",
-			{
-			  "fonts": [
-				"./assets/fonts/Inter-Black.ttf",
-				"./assets/fonts/Inter-Bold.ttf",
-				"./assets/fonts/Inter-ExtraBold.ttf",
-				"./assets/fonts/Inter-ExtraLight.ttf",
-				"./assets/fonts/Inter-Light.ttf",
-				"./assets/fonts/Inter-Medium.ttf",
-				"./assets/fonts/Inter-Regular.ttf",
-				"./assets/fonts/Inter-SemiBold.ttf",
-				"./assets/fonts/Inter-Thin.ttf"
-			  ]
-			}
-		],
-			[
-				"expo-camera",
-				{
-					"cameraPermission": "Allow GetBetter to access your camera.",
-					"microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
+    "expo": {
+        "name": "GetBetter.",
+        "slug": "get-better",
+        "version": "1.0.20",
+        "owner": "nshanker4",
+        "platforms": ["ios"],
+        "orientation": "portrait",
+        "userInterfaceStyle": "dark",
+        "backgroundColor": "#000000",
+        "icon": "./assets/icon.png",
+        "extra": {
+            "eas": {
+                "projectId": "6fb0255c-e280-4c9f-b098-4bf5553a0523"
+            }
+        },
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#000000"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "userInterfaceStyle": "dark",
+            "backgroundColor": "#000000",
+            "supportsTablet": true,
+            "bundleIdentifier": "com.bensone146.getbetter",
+            "config": {
+                "usesNonExemptEncryption": false
+            }
+        },
+        "plugins": [
+            [
+                "expo-font",
+                {
+                    "fonts": [
+                        "./assets/fonts/Inter-Black.ttf",
+                        "./assets/fonts/Inter-Bold.ttf",
+                        "./assets/fonts/Inter-ExtraBold.ttf",
+                        "./assets/fonts/Inter-ExtraLight.ttf",
+                        "./assets/fonts/Inter-Light.ttf",
+                        "./assets/fonts/Inter-Medium.ttf",
+                        "./assets/fonts/Inter-Regular.ttf",
+                        "./assets/fonts/Inter-SemiBold.ttf",
+                        "./assets/fonts/Inter-Thin.ttf"
+                    ]
+                }
+            ],
+            [
+                "expo-camera",
+                {
+                    "cameraPermission": "$(PRODUCT_NAME): We use your camera to help you capture and share photos of your daily activities with friends. For example, you can take photos of your workout, meals, or outdoor adventures to share them in your activity feed.",
+                    "microphonePermission": "$(PRODUCT_NAME): We use your microphone to let you record audio notes and voice messages to share with friends as part of your daily activity updates. For example, you can record quick voice updates about your workout progress or share verbal encouragement with friends."
 
-				}
-			],
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "The app accesses your photos to let you share them with your friends."
-				}
-			]
-	
-		]
-	}
-	
+                }
+            ],
+            [
+                "expo-image-picker",
+                {
+                    "photosPermission": "$(PRODUCT_NAME): We access your photo library to let you choose and share existing photos of your daily activities with friends. This allows you to share past moments, create activity collages, or upload multiple photos from your completed workouts and adventures."
+                }
+            ]
+
+        ]
+    }
+
 }

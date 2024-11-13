@@ -1,50 +1,50 @@
 {
-	"cli": {
-		"version": ">=1.0.0",
-		"appVersionSource": "remote"
-	},
-	"build": {
-		"base": {
-			"node": "18.16.0",
-			"yarn": "1.22.10",
-			"env": {
-				"EXPO_PUBLIC_SERVER_BASE_URL": "http://localhost:13131",
-				"EXPO_PUBLIC_ENVIRONMENT": "development"
-			},
-			"distribution": "internal"
-		},
-		"development": {
-			"extends": "base",
-			"developmentClient": true
-		},
-		"production": {
-			"extends": "base",
-			"distribution": "store",
-			"channel": "production",
+    "cli": {
+        "version": ">=1.0.0",
+        "appVersionSource": "remote"
+    },
+    "build": {
+        "base": {
+            "node": "18.16.0",
+            "yarn": "1.22.10",
+            "env": {
+                "EXPO_PUBLIC_SERVER_BASE_URL": "https://prod.getbetterserverbase.com",
+                "EXPO_PUBLIC_ENVIRONMENT": "development"
+            },
+            "distribution": "internal"
+        },
+        "development": {
+            "extends": "base",
+            "developmentClient": true
+        },
+        "production": {
+            "extends": "base",
+            "distribution": "store",
+            "channel": "production",
 
-			"autoIncrement": true,
-			"env": {
-				"EXPO_PUBLIC_ENVIRONMENT": "production",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
-			}
-		},
-		"preview": {
-			"extends": "production",
-			"channel": "staging",
-			"distribution": "internal",
-			"env": {
-				"EXPO_PUBLIC_ENVIRONMENT": "staging",
-				"EXPO_PUBLIC_SERVER_BASE_URL": "https://getbetterserviceprod.com:13131"
-			}
-		}
-	},
-	"submit": {
-		"production": {
-			"ios": {
-				"appleId": "erictbenson10@gmail.com",
-				"appleTeamId": "L6C35JVHVC",
-				"ascAppId": "6475650513"
-			}
-		}
-	}
+            "autoIncrement": true,
+            "env": {
+                "EXPO_PUBLIC_ENVIRONMENT": "production",
+                "EXPO_PUBLIC_SERVER_BASE_URL": "https://prod.getbetterserverbase.com"
+            }
+        },
+        "preview": {
+            "extends": "production",
+            "channel": "staging",
+            "distribution": "internal",
+            "env": {
+                "EXPO_PUBLIC_ENVIRONMENT": "staging",
+                "EXPO_PUBLIC_SERVER_BASE_URL": "https://prod.getbetterserverbase.com"
+            }
+        }
+    },
+    "submit": {
+        "production": {
+            "ios": {
+                "appleId": "erictbenson10@gmail.com",
+                "appleTeamId": "L6C35JVHVC",
+                "ascAppId": "6475650513"
+            }
+        }
+    }
 }

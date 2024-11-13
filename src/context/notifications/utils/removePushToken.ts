@@ -8,18 +8,17 @@ import * as ExpoNotifications from 'expo-notifications';
  * @param state 
  * @returns 
  */
-export const removePushToken = async (myUsername: string) => {
+export const removePushToken = async (userToken: string) => {
     try {
-        const projectId = '6984b730-74db-4c70-a52b-28bbf178d5b8';
-        const token = (await ExpoNotifications?.getExpoPushTokenAsync({ projectId: projectId }))
-            ?.data;
-        
         await axios
             .delete(
-                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token`,
+                `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/notification-token/delete_user_token`,
                 {
-                    token: token,
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
                 },
+                }
+
             )
             .then(async (response) => {
                 console.log('removeNotificationToken', response.data);
