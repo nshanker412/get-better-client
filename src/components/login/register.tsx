@@ -71,7 +71,7 @@ export const Register: React.FC = () => {
 				Toast.show({
 					type: 'success',
 					text1: 'Thank you for signing up. Please verify your email before logging in.',
-					visibilityTime: 12000,
+					visibilityTime: 180000,
 					position: 'bottom',
 					// topOffset: 60,
 					bottomOffset: 40
