@@ -115,6 +115,7 @@ const Plans: React.FC = () => {
 	}, [plans, isMyProfile, refreshing]);
 
 	useEffect(() => {
+		setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
 		onFetchPlans();
 	}, []);
 	
