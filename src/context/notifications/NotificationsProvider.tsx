@@ -352,10 +352,10 @@ export const NotificationsProvider: React.FC<NotificationsProviderProps> = ({myU
         //     return;
         // };
 
-        // if (recipient === myUsername) {
-        //     console.log('Recipient is me, not sending push notification!');
-        //     return;
-        // }
+        if (recipient === myUsername) {
+            console.log('Recipient is me, not sending push notification!');
+            return;
+        }
 
         if (!pushPacket) {
             console.log('No push packet, not sending push notification!');
