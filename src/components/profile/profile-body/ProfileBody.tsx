@@ -89,8 +89,6 @@ const Plans: React.FC = () => {
 					
 			if (isMyProfile) {
 				const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
-
-				// compare the lists and only set state if there are new plans
 				if (planList.length === plaV2.length) {
 					let isSame = true;
 					for (let i = 0; i < planList.length; i++) {
@@ -110,13 +108,12 @@ const Plans: React.FC = () => {
 			}
 		} else {
 			setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
-		
-	}
+		}
 	}, [plans, isMyProfile, refreshing]);
 
 	useEffect(() => {
-		setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
 		onFetchPlans();
+		setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
 	}, []);
 	
 
