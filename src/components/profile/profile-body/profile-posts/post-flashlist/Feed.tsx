@@ -148,7 +148,7 @@ export default function FeedScreen() {
                 id='home-feed-flash-list'
                 ref={feedRef}
                 data={posts}
-                estimatedItemSize={postSize}
+                // estimatedItemSize={postSize}
                 showsVerticalScrollIndicator={false}
                 viewabilityConfig={{
                         waitForInteraction: false,
