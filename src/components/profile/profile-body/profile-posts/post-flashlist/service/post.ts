@@ -4,7 +4,7 @@ import { NotificationType, PushNotificationInfoPacket,configureMyNotifications }
 import { useNotifications } from '@context/notifications/useNotifications';
 
 
-export const setPostLiked = async (user: string, id: string, myUsername: string, isLiked: boolean,userToken:string): Promise<void> => {
+export const setPostLiked = async (user: string, id: string, myUsername: string, isLiked: boolean,userToken:string): Promise<any> => {
     console.log(`sending out liked notification ${user}_${id}`)
     try {
         const resp = await axios.get(
@@ -12,7 +12,7 @@ export const setPostLiked = async (user: string, id: string, myUsername: string,
 			
 	  
 		  );
-        await axios({
+        const data = await axios({
             method: "post",
             url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/like-post`,
             data: {
@@ -22,6 +22,7 @@ export const setPostLiked = async (user: string, id: string, myUsername: string,
             },
             headers: {"Authorization" : `Bearer ${userToken}`},
         })
+        return data
         
     } catch (error) {
         console.log('setPostLikedError', error);

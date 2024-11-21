@@ -117,24 +117,24 @@ export const FeedPost: React.FC<FeedPostProps> = ({
 			console.log('setPostLikedError', error);
 		}
         
-		if (isLiked) {
+		// if (isLiked) {
 
-			const pushNotifInfo: PushNotificationInfoPacket = {
-				title: `${myUsername} liked your post.`,
-				body: `check it out!`,
-				data: {
-					type: NotificationType.LIKED_POST,
-					path: 'profile',
-					params:
-					{
-						profileUsername: postData.user,
-						postID: postID
-					}
-				},
-			};
+		// 	const pushNotifInfo: PushNotificationInfoPacket = {
+		// 		title: `${myUsername} liked your post.`,
+		// 		body: `check it out!`,
+		// 		data: {
+		// 			type: NotificationType.LIKED_POST,
+		// 			path: 'profile',
+		// 			params:
+		// 			{
+		// 				profileUsername: postData.user,
+		// 				postID: postID
+		// 			}
+		// 		},
+		// 	};
         
-			sendOutPushNotification(postData.user, pushNotifInfo);
-		}
+		// 	sendOutPushNotification(postData.user, pushNotifInfo);
+		// }
 		
 		refresh();
 	};

@@ -128,9 +128,9 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
             setCurrentLikeState({
               state: newLikeState,
               counter: currentLikeStateInst.counter + (newLikeState ? 1 : -1),
-            });
-            setPostLiked(user, postID, myUsername, newLikeState, userToken);
-            if (newLikeState) {
+            });            
+            const res = setPostLiked(user, postID, myUsername, newLikeState, userToken);
+            if (res) {
     
               const pushNotifInfo: PushNotificationInfoPacket = {
                 title: `${myUsername} liked your post.`,
@@ -144,7 +144,6 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
                   }
                 },
               };
-        
               sendOutPushNotification(postData?.user, pushNotifInfo);
             }
           } catch (error) {
@@ -157,7 +156,6 @@ const _PostOverlay: React.FC<PostOverlayProps> = ({  user, filename, postData, m
 
       const handleUpdateFlag = useCallback(
         throttle((currentFlagStateInt) => {
-          console.log(currentFlagStateInt)
           try {
             const postID = `${postData["id"]}`;
             const newFlagState = !currentFlagStateInt.state;

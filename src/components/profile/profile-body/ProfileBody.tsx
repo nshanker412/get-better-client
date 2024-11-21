@@ -87,8 +87,8 @@ const Plans: React.FC = () => {
 				planType: plan.data.planCategory,
 			}));
 					
+			const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
 			if (isMyProfile) {
-				const newPlan: PlanTileType[] = [{ title: "New Plan", planType: PlanType.NewPlan }];
 				if (planList.length === plaV2.length) {
 					let isSame = true;
 					for (let i = 0; i < planList.length; i++) {
@@ -113,7 +113,6 @@ const Plans: React.FC = () => {
 
 	useEffect(() => {
 		onFetchPlans();
-		setPlaV2([{ title: "New Plan", planType: PlanType.NewPlan }]);
 	}, []);
 	
 

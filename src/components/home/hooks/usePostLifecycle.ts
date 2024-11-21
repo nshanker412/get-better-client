@@ -156,24 +156,24 @@ export const usePostLifecycle = ({ filename, postID, metadata, myUsername  }: Us
             console.log('setPostLikedError', error);
         } 
         
-        if (isLiked) {
+        // if (isLiked) {
             
-            const pushNotifInfo: PushNotificationInfoPacket = {
-                title: `${myUsername} liked your post.`,
-                body: `check it out!`,
-                data: {
-                    type: NotificationType.LIKED_POST,
-                    path: 'profile',
-                    params:
-                    {
-                        profileUsername: posterName,
-                        postID: postID
-                    }
-                },
-            };
+        //     const pushNotifInfo: PushNotificationInfoPacket = {
+        //         title: `${myUsername} liked your post.`,
+        //         body: `check it out!`,
+        //         data: {
+        //             type: NotificationType.LIKED_POST,
+        //             path: 'profile',
+        //             params:
+        //             {
+        //                 profileUsername: posterName,
+        //                 postID: postID
+        //             }
+        //         },
+        //     };
         
-            sendOutPushNotification(posterName, pushNotifInfo);
-        }
+        //     sendOutPushNotification(posterName, pushNotifInfo);
+        // }
 	}
 
 
