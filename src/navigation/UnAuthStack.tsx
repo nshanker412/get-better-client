@@ -12,8 +12,8 @@ export const UnAuthStack = () => {
 
     return (
         <UnAuthStackNav.Navigator screenOptions={{ headerShown: false,  cardStyle: { backgroundColor: 'black'}  }} >
-            <UnAuthStackNav.Screen name="SignIn" component={SignIn} />
             <UnAuthStackNav.Screen name="Register" component={Register} />
+            <UnAuthStackNav.Screen name="SignIn" component={SignIn} />
             <UnAuthStackNav.Screen name="ForgotPassword" component={ForgotPassword} />
         </UnAuthStackNav.Navigator>
   );
