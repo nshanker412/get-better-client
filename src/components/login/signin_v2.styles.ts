@@ -194,7 +194,8 @@ export const useLoginStyles = () => {
             flexDirection: "column",
             alignItems: "center",
             gap: 16,
-            width:"100%"
+            width:"100%",
+
         },
     })
     return loginStyles
