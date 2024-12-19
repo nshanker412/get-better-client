@@ -17,8 +17,8 @@ const lightTheme = {
 	postButtonColor: '#4E565F',
 	navbarTextColor: '#59636D',
 	innerborderColor: 'rgba(205, 201, 201, 0.3)',
-	fontFamily: fonts.inter.bold,
-	fontFamilyLight: fonts.inter.regular,
+	fontFamily: fonts.work_sans.bold,
+	fontFamilyLight: fonts.work_sans.regular,
 
 	container: {
 		backgroundColor: '#FFFFFF', // Inverted from darkTheme
@@ -35,7 +35,7 @@ const lightTheme = {
 				backgroundColor: '#000000', // Inverted from darkTheme
 				buttonText: {
 					color: '#FFFFFF',
-					fontFamily: fonts.inter.bold,
+					fontFamily: fonts.work_sans.bold,
 					fontSize: 16,
 					textAlign: 'center',
 					fontWeight: 'bold',
@@ -47,7 +47,7 @@ const lightTheme = {
 			disabled: {
 				backgroundColor: '#666666',
 				buttonText: {
-					fontFamily: fonts.inter.bold,
+					fontFamily: fonts.work_sans.bold,
 					fontSize: 16,
 					color: '#FFFFFF',
 					textAlign: 'center',
@@ -64,7 +64,7 @@ const lightTheme = {
 				backgroundColor: '#FFFFFF', // Inverted from darkTheme
 				buttonText: {
 					color: '#000000', // Inverted from darkTheme
-					fontFamily: fonts.inter.regular,
+					fontFamily: fonts.work_sans.regular,
 					fontSize: 16,
 					textAlign: 'center',
 					fontWeight: 'normal',
@@ -76,7 +76,7 @@ const lightTheme = {
 			disabled: {
 				backgroundColor: '#666666',
 				buttonText: {
-					fontFamily: fonts.inter.regular,
+					fontFamily: fonts.work_sans.regular,
 					fontSize: 16,
 					color: '#333333',
 					textAlign: 'center',
@@ -94,7 +94,7 @@ const lightTheme = {
 	},
 	text: {
 		chungusTitle: {
-			fontFamily: fonts.inter.bold,
+			fontFamily: fonts.work_sans.bold,
 
 			color: '#000000', // Inverted from darkTheme
 			fontSize: 45,
@@ -104,7 +104,7 @@ const lightTheme = {
 			textShadowRadius: 4,
 		},
 		title: {
-			fontFamily: fonts.inter.bold,
+			fontFamily: fonts.work_sans.bold,
 
 			color: '#000000', // Inverted from darkTheme
 			fontSize: 30,
@@ -125,7 +125,7 @@ const lightTheme = {
 		},
 		body: {
 			small: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 				fontSize: 10,
 				color: '#000000', // Inverted from darkTheme
 				textAlign: 'center',
@@ -135,7 +135,7 @@ const lightTheme = {
 				// textShadowRadius: 1,
 			},
 			medium: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 				fontSize: 14,
 				color: '#000000', // Inverted from darkTheme
 				textAlign: 'center',
@@ -145,7 +145,7 @@ const lightTheme = {
 				// textShadowRadius: 1,
 			},
 			mediumer: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 				fontSize: 16,
 				color: '#000000', // Inverted from darkTheme
 				textAlign: 'center',
@@ -155,7 +155,7 @@ const lightTheme = {
 				// textShadowRadius: 1,
 			},
 			large: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 				fontSize: 16,
 				color: '#000000', // Inverted from darkTheme
 				textAlign: 'center',
@@ -206,7 +206,7 @@ const darkTheme = {
 	postButtonColor: '#4E565F',
 	navbarTextColor: '#59636D',
 	innerBorderColor: 'rgba(137, 133, 133, 0.3)',
-	fontFamily: fonts.inter.bold,
+	fontFamily: fonts.work_sans.bold,
 	container: {
 		backgroundColor: '#000000',
 		flex: 1,
@@ -221,10 +221,10 @@ const darkTheme = {
 	button: {
 		primary: {
 			default: {
-				backgroundColor: '#FFFFFF',
+				backgroundColor: '#00D26A',
 				buttonText: {
-					color: '#000000',
-					fontFamily: fonts.inter.bold,
+					color: '#171717',
+					fontFamily: fonts.nord.black,
 					fontSize: 16,
 					textAlign: 'center',
 					// fontWeight: 'bold',
@@ -236,7 +236,7 @@ const darkTheme = {
 			disabled: {
 				backgroundColor: '#666666', // Darker gray for disabled state
 				buttonText: {
-					fontFamily: fonts.inter.bold,
+					fontFamily: fonts.nord.bold,
 					fontSize: 16,
 					color: '#FFFFFF',
 					textAlign: 'center',
@@ -253,7 +253,7 @@ const darkTheme = {
 				backgroundColor: '#000000',
 				buttonText: {
 					color: '#FFFFFF',
-					fontFamily: fonts.inter.regular,
+					fontFamily: fonts.nord.regular,
 					fontSize: 16,
 					textAlign: 'center',
 					// fontWeight: 'bold',
@@ -265,7 +265,7 @@ const darkTheme = {
 			disabled: {
 				backgroundColor: '#666666', // Darker gray for disabled state
 				buttonText: {
-					fontFamily: fonts.inter.regular,
+					fontFamily: fonts.nord.regular,
 					fontSize: 16,
 					color: '#333333',
 					textAlign: 'center',
@@ -283,7 +283,7 @@ const darkTheme = {
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',
 		textShadowOffset: { width: 0, height: 4 },
 		textShadowRadius: 4,
-		fontFamily: fonts.inter.bold,
+		fontFamily: fonts.work_sans.medium,
 		fontSize: 16,
 		fontStyle: 'normal',
 		fontWeight: '400',
@@ -292,7 +292,7 @@ const darkTheme = {
 	text: {
 		chungusTitle: {
 			color: '#FFFFFF',
-			fontFamily: fonts.inter.bold,
+			fontFamily: fonts.work_sans.bold,
 			fontSize: 45,
 			textAlign: 'center',
 			textShadowColor: 'rgba(0, 0, 0, 0.25)', // Shadow color (black with 25% opacity)
@@ -300,7 +300,7 @@ const darkTheme = {
 			textShadowRadius: 4, // Shadow radius
 		},
 		title: {
-			fontFamily: fonts.inter.bold,
+			fontFamily: fonts.nord.bold,
 			color: '#FFFFFF',
 			fontSize: 30,
 			textAlign: 'center',
@@ -310,7 +310,7 @@ const darkTheme = {
 			textShadowRadius: 3, // Shadow radius
 		} as TextStyle,
 		header:  {
-			fontFamily: fonts.inter.bold,
+			fontFamily: fonts.nord.bold,
 			fontSize: 20,
 			color: '#FFFFFF',
 			textAlign: 'center',
@@ -320,7 +320,7 @@ const darkTheme = {
 		},
 		body: {
 			small: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 
 				fontSize: 10,
 				color: '#FFFFFF',
@@ -331,7 +331,7 @@ const darkTheme = {
 				// textShadowRadius: 1, // Shadow radius
 			},
 			medium: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 
 				fontSize: 14,
 				color: '#FFFFFF',
@@ -342,7 +342,7 @@ const darkTheme = {
 				// textShadowRadius: 1, // Shadow radius
 			},
 			mediumer: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 				fontSize: 16,
 				color: '#FFFFFF',
 				// textAlign: 'center',
@@ -352,7 +352,7 @@ const darkTheme = {
 				// textShadowRadius: 1, // Shadow radius
 			},
 			large: {
-				fontFamily: fonts.inter.regular,
+				fontFamily: fonts.work_sans.regular,
 
 				fontSize: 16,
 				color: '#FFFFFF',
