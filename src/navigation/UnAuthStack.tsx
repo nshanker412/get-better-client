@@ -4,8 +4,8 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from 'react';
 import { ForgotPassword } from "../components/login/forgotPassword";
-import { Register } from "../components/login/register";
-import { SignIn } from "../components/login/signIn";
+import { Register } from "../components/login/register_v2";
+import { SignIn } from "../components/login/signIn_v2";
 
 export const UnAuthStack = () => {
     const UnAuthStackNav = createStackNavigator();
