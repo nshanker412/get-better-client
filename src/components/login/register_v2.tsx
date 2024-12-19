@@ -256,7 +256,7 @@ export const Register: React.FC = () => {
 														loginStyles.loginText,
 														loading && { opacity: 0.8 },
 													]}>
-													Sign Up
+													SIGN UP
 												</Text>
 												<SvgXml style={loginStyles.iconSignInContainer} xml={ArrowIcon} color="#ff0000" size={20} />
 											</>
