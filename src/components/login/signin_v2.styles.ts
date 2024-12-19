@@ -20,8 +20,8 @@ export const useLoginStyles = () => {
 			width: '100%',
 			height: '100%',
 			gap: 25,
-            backgroundColor:"#111214",
-            opacity:0.5,
+            backgroundColor:"rgba(17,18,20,0.2)",
+            // opacity:0.2,
            
 		},
 
@@ -59,11 +59,12 @@ export const useLoginStyles = () => {
             gap: 24,
             width:"100%"
         },
+        
 		inputSubContainer:{
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            width:"80%",
+            width:"90%",
             gap: 8,
         },
         iconContainer: {
@@ -91,12 +92,11 @@ export const useLoginStyles = () => {
 		input: {
 			width: '100%',
             paddingLeft:45,
-
 			fontSize: 22,
 			borderWidth: 1,
-			// borderColor: theme.innerBorderColor,
+			borderColor: theme.innerContainer.backgroundColor,
 			backgroundColor: theme.innerContainer.backgroundColor,
-			shadowOpacity: 0.7,
+			// shadowOpacity: 0.7,
 			color: theme.textColorPrimary,
 			padding: 16,
 			// margin: 25,
@@ -182,6 +182,20 @@ export const useLoginStyles = () => {
 			width: 75,
 			height: 75,
 		},
+        // signup 
+        CheckBox:{
+            backgroundColor:"#24262B",
+            borderColor:"#24262B",
+            top:10,
+            left:-5
+        },
+        inputSignUpContainer:{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 16,
+            width:"100%"
+        },
     })
     return loginStyles
 }
