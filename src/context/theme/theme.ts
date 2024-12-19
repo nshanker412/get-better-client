@@ -205,7 +205,7 @@ const darkTheme = {
 	containerDefaultTextColor: '#AFAFAF',
 	postButtonColor: '#4E565F',
 	navbarTextColor: '#59636D',
-	innerBorderColor: 'rgba(137, 133, 133, 0.3)',
+	innerBorderColor: '#C3FF45',
 	fontFamily: fonts.work_sans.bold,
 	container: {
 		backgroundColor: '#000000',
@@ -215,13 +215,13 @@ const darkTheme = {
 	},
 	innerContainer: {
 		borderRadius: 40,
-		backgroundColor: '#1E1D1D',
+		backgroundColor: '#24262B',
 	},
 
 	button: {
 		primary: {
 			default: {
-				backgroundColor: '#00D26A',
+				backgroundColor: '#C3FF45',
 				buttonText: {
 					color: '#171717',
 					fontFamily: fonts.nord.black,
