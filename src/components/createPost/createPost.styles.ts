@@ -160,31 +160,29 @@ export const useCreatePostStyles = () => {
 
 		inputContainer: {
 			position: 'absolute',
-			top: 100,
+			// top: 100,
 			display: 'flex',
 			flexDirection: 'column',
-			justifyContent: 'center',
-			alignItems: 'center',
+			justifyContent: 'flex-start',
+			alignItems: 'left',
 			width: '100%',
 			gap: 10,
 		},
 
 		input: {
-			...theme.input,
-			// height: 50,
-			maxWidth: '70%',
-			minWidth: '40%',
-			width: '70%',
-			marginTop: 5,
-			paddingTop: 15,
-			paddingLeft: 15,
-			paddingRight: 15,
-			borderWidth: 0,
-			borderRadius: 25,
-			fontSize: 16,
-			textAlign: 'center',
-			
-			// overflow: 'hidden',
+			width: '60%',
+			fontSize: 15,
+			minHeight:"100%",
+			borderWidth: 1,
+			borderColor: theme.textColorSecondary,
+			backgroundColor: theme.textColorPrimary,
+			// shadowOpacity: 0.7,
+			color: theme.textColorPrimary,
+			padding: 10,
+			paddingTop: 10,
+			// margin: 25,
+			borderRadius: 10,
+			flexWrap: "wrap",
 		},
 
 		submitCaptionButton: {
@@ -194,8 +192,7 @@ export const useCreatePostStyles = () => {
 			alignItems: 'center',
 			backgroundColor: theme.grayShades.gray300,
 			opacity: 0.95,
-			height: 30,
-			borderRadius: 15,
+			
 		},
 
 		submitCaptionText: {
