@@ -32,7 +32,7 @@ export const useLoginStyles = () => {
             "fontSize": 30,
             "fontWeight": "700",
             "lineHeight": 38,
-            "letterSpacing": -0.3,
+            "letterSpacing": 2,
         },
         SignInSubtext:{
             textAlign:'center',
@@ -58,6 +58,7 @@ export const useLoginStyles = () => {
             alignItems: "center",
             gap: 24,
             width:"100%"
+
         },
         
 		inputSubContainer:{
@@ -65,7 +66,10 @@ export const useLoginStyles = () => {
             flexDirection: "column",
             alignItems: "flex-start",
             width:"90%",
+            
             gap: 8,
+            fontFamily: fonts.work_sans.black,
+
         },
         iconContainer: {
             position: 'absolute',
@@ -80,7 +84,8 @@ export const useLoginStyles = () => {
             top:-10,
             zIndex:1,
             // paddingLeft:50,
-            alignSelf: 'flex-end'
+            alignSelf: 'flex-end',
+            fontWeight:"500"
         },
         eyeButton: {
             position: 'absolute',
@@ -135,7 +140,8 @@ export const useLoginStyles = () => {
 			fontSize: 22,
 			textAlign: 'center',
 			padding: 10,
-            fontWeight:"400",
+            fontWeight:"700",
+            letterSpacing:-0.048,
 
 		},
         otherText: {
@@ -185,7 +191,7 @@ export const useLoginStyles = () => {
         // signup 
         CheckBox:{
             backgroundColor:"#24262B",
-            borderColor:"#24262B",
+            // borderColor:"#24262B",
             top:10,
             left:-5
         },
