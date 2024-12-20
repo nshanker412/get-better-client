@@ -44,9 +44,9 @@ const actions: IActionProps[] = [
 	// 	name: "bt_room",
 	// 	// color: "rgba(137, 133, 133, 0.9)",
 	// 	color: "gray"
-		
+
 	// },
-  ];
+];
 
 
 
@@ -81,7 +81,7 @@ export default function CreatePost() {
 	const [timerId, setTimerId] = useState(null); // To store the timer ID
 	const [linkedPlans, setLinkedPlans] = useState<string[] | []>([]);
 
-	const [mediaSrc, setMediaScr] = useState < "upload" | "taken" | undefined>(undefined);
+	const [mediaSrc, setMediaScr] = useState<"upload" | "taken" | undefined>(undefined);
 
 
 	const navigate = useNavigation();
@@ -110,7 +110,7 @@ export default function CreatePost() {
 			setPhotoContentFit(photoContentFit === 'cover' ? 'contain' : 'cover');
 		} else {
 			setPhotoContentFit('cover');
-		
+
 		}
 	};
 
@@ -162,14 +162,14 @@ export default function CreatePost() {
 			setMediaScr("upload");
 			setPhoto(imageResult?.assets[0]?.uri);
 			return;
-				
+
 		} else {
 
 			const videoResult = await ImagePicker.launchImageLibraryAsync({
 				mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                allowsEditing: true,
-                quality: 1,
-                videoMaxDuration: 10
+				allowsEditing: true,
+				quality: 1,
+				videoMaxDuration: 10
 			});
 			setMediaScr("video result: ", videoResult);
 
@@ -180,14 +180,14 @@ export default function CreatePost() {
 			}
 			console.log(videoResult?.assets[0]?.duration)
 
-			
 
-			
-				setPhoto(null);
-				setMediaScr("upload");
-				setVideo(videoResult?.assets[0]?.uri);
-				return;
-	
+
+
+			setPhoto(null);
+			setMediaScr("upload");
+			setVideo(videoResult?.assets[0]?.uri);
+			return;
+
 		}
 
 	}
@@ -256,7 +256,7 @@ export default function CreatePost() {
 				setTimerId(id);
 
 				try {
-					const recordingPromise = await cameraRef.current.recordAsync({quality: Camera.Constants.VideoQuality['1080p']});
+					const recordingPromise = await cameraRef.current.recordAsync({ quality: Camera.Constants.VideoQuality['1080p'] });
 
 					// Wait for recording to finish
 					const videoData = recordingPromise;
@@ -282,16 +282,16 @@ export default function CreatePost() {
 	const sendPost = async () => {
 		setLoading(true);
 		const resp = await axios.get(
-			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
-		  );
+			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/users?search=${myUsername}`, { headers: { "Authorization": `Bearer ${userToken}` } }
+		);
 		const formData = new FormData();
 		formData.append('published_by', resp.data["results"][0]["id"]);
 		formData.append('caption', caption);
 		formData.append('challenge', challengeUsername ? true : false);
 		formData.append('location', null);
-		linkedPlans.map((plan) => {formData.append('plan', plan);})
+		linkedPlans.map((plan) => { formData.append('plan', plan); })
 
-		
+
 		if (photo) {
 			formData.append('media', {
 				uri: photo,
@@ -305,37 +305,37 @@ export default function CreatePost() {
 				name: `${Math.floor(Date.now() / 1000)}.mp4`,
 			});
 		}
-			
-			await axios({
-				method: "post",
-				url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,
-				data: formData,
-				headers: {"Authorization" : `Bearer ${userToken}`,'Content-Type': 'multipart/form-data'},
-			}).then((response) => {
-				console.log('sendPost', response.data);
-				
-				onSendSuccessToast();
-				setLoading(false);
-		
 
-				// if (challengeUsername) {
-				// 	axios
-				// 		.post(
-				// 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/challenge`,
-				// 			{
-				// 				recievingUser: resp.data["results"][0]["id"],
-				// 				sendingUser: challengeUsername,
-				// 				challengeID: challengeID,
-				// 			},
-				// 		)
-				// 		.then((response) => {
-				// 			console.log('completeChallenge', response.data);
-				// 		})
-				// 		.catch((error) => {
-				// 			console.log('completeChallengeError', error);
-				// 		});
-				// }
-			})
+		await axios({
+			method: "post",
+			url: `${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,
+			data: formData,
+			headers: { "Authorization": `Bearer ${userToken}`, 'Content-Type': 'multipart/form-data' },
+		}).then((response) => {
+			console.log('sendPost', response.data);
+
+			onSendSuccessToast();
+			setLoading(false);
+
+
+			// if (challengeUsername) {
+			// 	axios
+			// 		.post(
+			// 			`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/challenge`,
+			// 			{
+			// 				recievingUser: resp.data["results"][0]["id"],
+			// 				sendingUser: challengeUsername,
+			// 				challengeID: challengeID,
+			// 			},
+			// 		)
+			// 		.then((response) => {
+			// 			console.log('completeChallenge', response.data);
+			// 		})
+			// 		.catch((error) => {
+			// 			console.log('completeChallengeError', error);
+			// 		});
+			// }
+		})
 			.catch((error) => {
 				console.log('sendPostError', error);
 				console.log(error);
@@ -348,12 +348,12 @@ export default function CreatePost() {
 				setVideo(null);
 				setCaption('');
 				setLinkedPlans([])
-				
+
 
 
 				navigate.goBack();
-				
-				() => refreshMyUserInfo() 		
+
+				() => refreshMyUserInfo()
 
 			});
 		setLoading(false);
@@ -425,8 +425,8 @@ export default function CreatePost() {
 							style={createPostStyles.cameraRollIcon}
 							name='picture-o'
 							size={24}
-							// color='white'
-							// backgroundColor='white'
+						// color='white'
+						// backgroundColor='white'
 						/>
 					</TouchableOpacity>
 					<View style={createPostStyles.createPostContainer}>
@@ -441,7 +441,7 @@ export default function CreatePost() {
 								}
 								flashMode={
 									isFlashOn
-										?FlashMode.on
+										? FlashMode.on
 										: FlashMode.off
 								}
 								ref={cameraRef}
@@ -563,11 +563,11 @@ export default function CreatePost() {
 				</>
 			) : (
 				<>
-					<Header  />
-						<TouchableHighlight
-							style={createPostStyles.retakeIconContainer}
-							onPress={onPressCloseMediaSelection}
-						>
+					<Header />
+					<TouchableHighlight
+						style={createPostStyles.retakeIconContainer}
+						onPress={onPressCloseMediaSelection}
+					>
 						<AntDesign
 							style={createPostStyles.retakeIcon}
 							name='close'
@@ -593,7 +593,7 @@ export default function CreatePost() {
 										allowDownscaling={false}
 										// borderRadius={10}
 										source={{ uri: photo }}
-										/>
+									/>
 								</TouchableWithoutFeedback>
 							)}
 							{video && (
@@ -605,55 +605,17 @@ export default function CreatePost() {
 												.width,
 											height: '100%',
 										}}
-											shouldPlay={true}
-											isLooping={true}
-											resizeMode={ResizeMode.COVER}
+										shouldPlay={true}
+										isLooping={true}
+										resizeMode={ResizeMode.COVER}
 									/>
 								</View>
-								)}
-				
+							)}
 
-							<View style={[createPostStyles.inputContainer]}>
-								<TextInput
-									style={createPostStyles.input}
-									maxLength={MAX_CAPTION_LENGTH}
-									placeholder='Write a caption...*'
-									placeholderTextColor={
-										theme.grayShades.gray500
-									}
-									value={caption}
-									onChangeText={setCaption}
-									onFocus={() => {
-										setIsFocused(true);
-									}}
-									onBlur={() => {
-										setIsFocused(false);
-									}}
-										returnKeyType='done'
-										keyboardAppearance='dark'
-									onSubmitEditing={Keyboard.dismiss}
-								/>
-								{isFocused ? (
-									<TouchableOpacity
-										style={
-											createPostStyles.submitCaptionButton
-										}
-										onPress={() => {
-											Keyboard.dismiss();
-										}}>
-										<Text
-											style={
-												createPostStyles.submitCaptionText
-											}>
-											Submit
-										</Text>
-									</TouchableOpacity>
-								) : null}
-								</View>
-				
-							</View>
-							<View style={{ height: 80,  bottom: 100, width: "100%", alignItems: "flex-end", justifyContent: "flex-end"  }}>
-								<View style={{width: "100%", height: 40}}> 
+
+
+							<View style={{ height: 80, bottom: 100, width: "100%", alignItems: "flex-end", justifyContent: "flex-end" }}>
+								<View style={{ width: "100%", height: 40 }}>
 									<FloatingAction
 										onPressItem={onFloatingActionPress}
 										color={"rgba(137, 133, 133, 0.9)"}
@@ -661,58 +623,100 @@ export default function CreatePost() {
 										showBackground={true}
 										actions={actions}
 									/>
-									</View>
-								
-								<View style={{display: "flex", right: 0}}>
-						<TouchableHighlight
-							style={[createPostStyles.sendPostContainer, {right: 0}]}
-							onPress={
-								loading
-									? null
-									: () => {
-											Haptics.impactAsync(
-												Haptics.ImpactFeedbackStyle
-													.Medium,
-											);
-											sendPost();
-									  }
-							}>
-							<View
-								style={{
-									flexDirection: 'row',
-									alignItems: 'center',
-									gap: 10,
-								}}>
-								<Text style={createPostStyles.sendPostText}>
-									Post
-								</Text>
+								</View>
+								<View style={[createPostStyles.inputContainer]}>
+									<TextInput
+										style={createPostStyles.input}
+										maxLength={MAX_CAPTION_LENGTH}
+										placeholder='Write a caption...'
+										placeholderTextColor={
+											theme.grayShades.gray500
+										}
+										multiline={true}
+										value={caption}
+										onChangeText={setCaption}
+										onFocus={() => {
+											setIsFocused(true);
+										}}
+										onBlur={() => {
+											setIsFocused(false);
+										}}
+										returnKeyType='done'
+										keyboardAppearance='dark'
+										onSubmitEditing={Keyboard.dismiss}
+									/>
+									{isFocused ? (
+										null
+										// <TouchableOpacity
+										// 	style={
+										// 		createPostStyles.submitCaptionButton
+										// 	}
+										// 	onPress={() => {
+										// 		Keyboard.dismiss();
+										// 	}}>
+										// 	{/* <Text
+										// 		style={
+										// 			createPostStyles.submitCaptionText
+										// 		}>
+										// 		Submit
+										// 	</Text> */}
+										// </TouchableOpacity>
+									) : null}
+								</View>
 
-								<Ionicons
-									name='send'
-									size={30}
-									color='#ffffff'
-								/>
+
+								<View style={{ display: "flex", right: 0 }}>
+									<TouchableHighlight
+										style={[createPostStyles.sendPostContainer, { right: 0 }]}
+										onPress={
+											loading
+												? null
+												: () => {
+													Haptics.impactAsync(
+														Haptics.ImpactFeedbackStyle
+															.Medium,
+													);
+													sendPost();
+												}
+										}>
+										<View
+											style={{
+												flexDirection: 'row',
+												alignItems: 'center',
+												gap: 10,
+											}}>
+											<Text style={createPostStyles.sendPostText}>
+												Post
+											</Text>
+
+											<Ionicons
+												name='send'
+												size={30}
+												color='#ffffff'
+											/>
+										</View>
+									</TouchableHighlight>
+								</View>
+							
 							</View>
-							</TouchableHighlight>
-						</View> 
-					</View>
-						
 						</View>
+
+					</View>
 					{loading ? (
 						<View style={createPostStyles.sendLoadingContainer}>
 							<LoadingSpinner />
 						</View>
 					) : null}
-					
-					
+
+
 					<PlanSelectModal isVisible={isVisible} onPlanModalClose={onPlanModalClose} />
 
-					</>
-					
+				</>
+
 
 			)}
-						
-						
+
+
 		</TouchableWithoutFeedback>
 
 	);
