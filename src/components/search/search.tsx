@@ -136,16 +136,19 @@ export const Search: React.FC = () => {
 					flex: 1,
 					alignItems: 'center',
 					justifyContent: 'flex-end',
-					paddingLeft: 30,
-					paddingRight: 25,
-					paddingBottom: 10,
-					paddingTop: 20,
+					// paddingLeft: 30,
+					// paddingRight: 25,
+					// paddingBottom: 10,
+					paddingTop: 40
 				}}>
 				<SearchBar onSearchChange={onKeywordChange} />
 			</View>
-			<View style={{ flex: 10 }}>
+			<View style={{ flex: 10, 
+				// paddingLeft: 30,
+				// paddingRight: 25,
+				paddingBottom: 80,
+			}}>
 				<FlashList
-
 					testID='search-flashlist'
 					data={profiles}
 					disableAutoLayout={true}
