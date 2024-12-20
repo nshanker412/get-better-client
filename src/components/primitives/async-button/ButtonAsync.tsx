@@ -1,4 +1,4 @@
-import { darkPalette, grayDark } from '@context/theme/colors_neon';
+import { darkPalette, grayDark,lighgreen } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { Button } from '@rneui/base';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -90,7 +90,7 @@ export default ButtonAsync;
 
 const useButtonAsyncStyles = (isDark: boolean, isOutline: boolean) => {
     
-    const textColor = isDark ? grayDark.gray12 : grayDark.gray1;
+    const textColor = isDark ? grayDark.gray1 : grayDark.gray1;
     const textColorOutline = isDark ? grayDark.gray12 : grayDark.gray10;
 
     const style = useMemo(() => StyleSheet.create({
@@ -111,7 +111,7 @@ const useButtonAsyncStyles = (isDark: boolean, isOutline: boolean) => {
         textStyle: {
             backgroundColor: 'transparent',
             fontSize: 14,
-            fontFamily: isOutline ? fonts.inter.medium : fonts.inter.black,
+            fontFamily: isOutline ? fonts.work_sans.medium : fonts.work_sans.black,
             color: isOutline ? textColorOutline : textColor,
         },
     
