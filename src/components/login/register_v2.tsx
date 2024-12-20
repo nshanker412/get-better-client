@@ -208,7 +208,7 @@ export const Register: React.FC = () => {
 
 										<Text style={{
 											color: 'white',
-
+											"fontSize": 16,
 										}} >
 											<CheckBox
 												value={isSelected}
@@ -216,10 +216,10 @@ export const Register: React.FC = () => {
 												style={loginStyles.CheckBox}
 												onTintColor={theme.textColorSecondary}
 												onCheckColor={theme.textColorSecondary}
-												tintColor="#24262B"
+												tintColor={theme.textColorSecondary}
 
 											/>
-											I Agree to the <Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/eula")}>EULA</Text> and<Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text>
+											<Text style={{marginLeft:20,}}> I agree to  <Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/eula")}>EULA</Text> and<Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text></Text>
 										</Text>
 									</View>
 
