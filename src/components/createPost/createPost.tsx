@@ -18,7 +18,8 @@ import {
 	TouchableHighlight,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
-	View
+	View,
+	KeyboardAvoidingView
 } from 'react-native';
 import { FloatingAction, IActionProps } from "react-native-floating-action";
 import Toast from 'react-native-toast-message';
@@ -410,314 +411,315 @@ export default function CreatePost() {
 	}
 
 	return (
-		<TouchableWithoutFeedback
-			style={{ flex: 1 }}
-			onPress={() => Keyboard.dismiss()}
-			accessible={false}>
-			{photo === null && video === null ? (
-				<>
-					<Header />
-					<TouchableOpacity
-						activeOpacity={0.7}
-						style={createPostStyles.cameraRollContainer}
-						onPress={pickMedia}>
-						<FontAwesome
-							style={createPostStyles.cameraRollIcon}
-							name='picture-o'
-							size={24}
-						// color='white'
-						// backgroundColor='white'
-						/>
-					</TouchableOpacity>
-					<View style={createPostStyles.createPostContainer}>
-						<View style={createPostStyles.cameraContainer}>
-							<Camera
-								// ratio='16:9'
-								style={createPostStyles.camera}
-								type={
-									isCameraFront
-										? CameraType.front
-										: CameraType.back
-								}
-								flashMode={
-									isFlashOn
-										? FlashMode.on
-										: FlashMode.off
-								}
-								ref={cameraRef}
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" enabled>
+			<TouchableWithoutFeedback
+				style={{ flex: 1 }}
+				onPress={() => Keyboard.dismiss()}
+				accessible={false}>
+				{photo === null && video === null ? (
+					<>
+						<Header />
+						<TouchableOpacity
+							activeOpacity={0.7}
+							style={createPostStyles.cameraRollContainer}
+							onPress={pickMedia}>
+							<FontAwesome
+								style={createPostStyles.cameraRollIcon}
+								name='picture-o'
+								size={24}
+							// color='white'
+							// backgroundColor='white'
 							/>
-						</View>
-						<View style={createPostStyles.takePhotoContainer}>
-							{isRecording && (
-								<View style={createPostStyles.isPhotoContainer}>
-									<Text style={createPostStyles.timerText}>
-										{timer}
-									</Text>
-								</View>
-							)}
-							{!isRecording && (
-								<View style={createPostStyles.isPhotoContainer}>
-									<TouchableOpacity
-										onPress={() => setIsPhoto(true)}>
-										<Text
-											style={
-												isPhoto
-													? createPostStyles.isPhotoTextSelected
-													: createPostStyles.isPhotoTextNotSelected
-											}>
-											Photo
-										</Text>
-									</TouchableOpacity>
-									<TouchableOpacity
-										onPress={() => setIsPhoto(false)}>
-										<Text
-											style={
-												isPhoto
-													? createPostStyles.isPhotoTextNotSelected
-													: createPostStyles.isPhotoTextSelected
-											}>
-											Video
-										</Text>
-									</TouchableOpacity>
-								</View>
-							)}
-							<View
-								style={
-									createPostStyles.takePhotoContainerInner
-								}>
-								{!isRecording && (
-									<TouchableOpacity
-										onPress={() => {
-											Haptics.impactAsync(
-												Haptics.ImpactFeedbackStyle
-													.Medium,
-											);
-											setIsFlashOn((prev) => !prev);
-										}}>
-										{isFlashOn ? (
-											<Image
-												style={
-													createPostStyles.flashButton
-												}
-												source={require('../../img/flashOnWhite.png')}></Image>
-										) : (
-											<Image
-												style={
-													createPostStyles.flashButton
-												}
-												source={require('../../img/flashOffWhite.png')}></Image>
-										)}
-									</TouchableOpacity>
-								)}
-								{isPhoto ? (
-									<TouchableOpacity
-										style={createPostStyles.takePhotoButton}
-										onPress={() => {
-											Haptics.impactAsync(
-												Haptics.ImpactFeedbackStyle
-													.Medium,
-											);
-											takePhoto();
-										}}></TouchableOpacity>
-								) : (
-									<TouchableOpacity
-										style={
-											isRecording
-												? createPostStyles.takePhotoButton
-												: createPostStyles.takeVideoButton
-										}
-										onPress={() => {
-											Haptics.impactAsync(
-												Haptics.ImpactFeedbackStyle
-													.Medium,
-											);
-											handleVideoRecording();
-										}}>
-										{
-											<View
-												style={
-													createPostStyles.videoRecording
-												}></View>
-										}
-									</TouchableOpacity>
-								)}
-								{!isRecording && (
-									<TouchableOpacity
-										onPress={() => {
-											Haptics.impactAsync(
-												Haptics.ImpactFeedbackStyle
-													.Medium,
-											);
-											setIsCameraFront((prev) => !prev);
-										}}>
-										<Image
-											style={
-												createPostStyles.reverseCameraButton
-											}
-											source={require('../../img/reverseWhite.png')}></Image>
-									</TouchableOpacity>
-								)}
+						</TouchableOpacity>
+						<View style={createPostStyles.createPostContainer}>
+							<View style={createPostStyles.cameraContainer}>
+								<Camera
+									// ratio='16:9'
+									style={createPostStyles.camera}
+									type={
+										isCameraFront
+											? CameraType.front
+											: CameraType.back
+									}
+									flashMode={
+										isFlashOn
+											? FlashMode.on
+											: FlashMode.off
+									}
+									ref={cameraRef}
+								/>
 							</View>
-						</View>
-					</View>
-				</>
-			) : (
-				<>
-					<Header />
-					<TouchableHighlight
-						style={createPostStyles.retakeIconContainer}
-						onPress={onPressCloseMediaSelection}
-					>
-						<AntDesign
-							style={createPostStyles.retakeIcon}
-							name='close'
-							size={25}
-							color='#ffffff'
-						/>
-					</TouchableHighlight>
-					<View style={createPostStyles.createPostContainer}>
-						<View style={[createPostStyles.takenPhotoContainer]}>
-							{photo && (
-								<TouchableWithoutFeedback
-									style={{ flex: 1 }}
-									onPress={() => {
-										Keyboard.dismiss();
-										toggleContentFit(); // Toggle content fit mode on tap
-									}}
-									accessible={false}>
-									<Image
-										style={createPostStyles.photoStyle}
-										transition={100}
-										contentFit={mediaSrc == "taken" ? "cover" : photoContentFit}
-										contentPosition={'center'}
-										allowDownscaling={false}
-										// borderRadius={10}
-										source={{ uri: photo }}
-									/>
-								</TouchableWithoutFeedback>
-							)}
-							{video && (
-								<View>
-									<Video
-										source={{ uri: video }}
-										style={{
-											width: Dimensions.get('window')
-												.width,
-											height: '100%',
-										}}
-										shouldPlay={true}
-										isLooping={true}
-										resizeMode={ResizeMode.COVER}
-									/>
-								</View>
-							)}
-
-
-
-							<View style={{ height: 80, bottom: 100, width: "100%", alignItems: "flex-end", justifyContent: "flex-end" }}>
-								<View style={{ width: "100%", height: 40 }}>
-									<FloatingAction
-										onPressItem={onFloatingActionPress}
-										color={"rgba(137, 133, 133, 0.9)"}
-										overlayColor={"transparent"}
-										showBackground={true}
-										actions={actions}
-									/>
-								</View>
-								<View style={[createPostStyles.inputContainer]}>
-									<TextInput
-										style={createPostStyles.input}
-										maxLength={MAX_CAPTION_LENGTH}
-										placeholder='Write a caption...'
-										placeholderTextColor={
-											theme.grayShades.gray500
-										}
-										multiline={true}
-										value={caption}
-										onChangeText={setCaption}
-										onFocus={() => {
-											setIsFocused(true);
-										}}
-										onBlur={() => {
-											setIsFocused(false);
-										}}
-										returnKeyType='done'
-										keyboardAppearance='dark'
-										onSubmitEditing={Keyboard.dismiss}
-									/>
-									{isFocused ? (
-										null
-										// <TouchableOpacity
-										// 	style={
-										// 		createPostStyles.submitCaptionButton
-										// 	}
-										// 	onPress={() => {
-										// 		Keyboard.dismiss();
-										// 	}}>
-										// 	{/* <Text
-										// 		style={
-										// 			createPostStyles.submitCaptionText
-										// 		}>
-										// 		Submit
-										// 	</Text> */}
-										// </TouchableOpacity>
-									) : null}
-								</View>
-
-
-								<View style={{ display: "flex", right: 0 }}>
-									<TouchableHighlight
-										style={[createPostStyles.sendPostContainer, { right: 0 }]}
-										onPress={
-											loading
-												? null
-												: () => {
-													Haptics.impactAsync(
-														Haptics.ImpactFeedbackStyle
-															.Medium,
-													);
-													sendPost();
-												}
-										}>
-										<View
-											style={{
-												flexDirection: 'row',
-												alignItems: 'center',
-												gap: 10,
-											}}>
-											<Text style={createPostStyles.sendPostText}>
-												Post
+							<View style={createPostStyles.takePhotoContainer}>
+								{isRecording && (
+									<View style={createPostStyles.isPhotoContainer}>
+										<Text style={createPostStyles.timerText}>
+											{timer}
+										</Text>
+									</View>
+								)}
+								{!isRecording && (
+									<View style={createPostStyles.isPhotoContainer}>
+										<TouchableOpacity
+											onPress={() => setIsPhoto(true)}>
+											<Text
+												style={
+													isPhoto
+														? createPostStyles.isPhotoTextSelected
+														: createPostStyles.isPhotoTextNotSelected
+												}>
+												Photo
 											</Text>
-
-											<Ionicons
-												name='send'
-												size={30}
-												color='#ffffff'
-											/>
-										</View>
-									</TouchableHighlight>
+										</TouchableOpacity>
+										<TouchableOpacity
+											onPress={() => setIsPhoto(false)}>
+											<Text
+												style={
+													isPhoto
+														? createPostStyles.isPhotoTextNotSelected
+														: createPostStyles.isPhotoTextSelected
+												}>
+												Video
+											</Text>
+										</TouchableOpacity>
+									</View>
+								)}
+								<View
+									style={
+										createPostStyles.takePhotoContainerInner
+									}>
+									{!isRecording && (
+										<TouchableOpacity
+											onPress={() => {
+												Haptics.impactAsync(
+													Haptics.ImpactFeedbackStyle
+														.Medium,
+												);
+												setIsFlashOn((prev) => !prev);
+											}}>
+											{isFlashOn ? (
+												<Image
+													style={
+														createPostStyles.flashButton
+													}
+													source={require('../../img/flashOnWhite.png')}></Image>
+											) : (
+												<Image
+													style={
+														createPostStyles.flashButton
+													}
+													source={require('../../img/flashOffWhite.png')}></Image>
+											)}
+										</TouchableOpacity>
+									)}
+									{isPhoto ? (
+										<TouchableOpacity
+											style={createPostStyles.takePhotoButton}
+											onPress={() => {
+												Haptics.impactAsync(
+													Haptics.ImpactFeedbackStyle
+														.Medium,
+												);
+												takePhoto();
+											}}></TouchableOpacity>
+									) : (
+										<TouchableOpacity
+											style={
+												isRecording
+													? createPostStyles.takePhotoButton
+													: createPostStyles.takeVideoButton
+											}
+											onPress={() => {
+												Haptics.impactAsync(
+													Haptics.ImpactFeedbackStyle
+														.Medium,
+												);
+												handleVideoRecording();
+											}}>
+											{
+												<View
+													style={
+														createPostStyles.videoRecording
+													}></View>
+											}
+										</TouchableOpacity>
+									)}
+									{!isRecording && (
+										<TouchableOpacity
+											onPress={() => {
+												Haptics.impactAsync(
+													Haptics.ImpactFeedbackStyle
+														.Medium,
+												);
+												setIsCameraFront((prev) => !prev);
+											}}>
+											<Image
+												style={
+													createPostStyles.reverseCameraButton
+												}
+												source={require('../../img/reverseWhite.png')}></Image>
+										</TouchableOpacity>
+									)}
 								</View>
-							
 							</View>
 						</View>
+					</>
+				) : (
+					<>
+						<Header />
+						<TouchableHighlight
+							style={createPostStyles.retakeIconContainer}
+							onPress={onPressCloseMediaSelection}
+						>
+							<AntDesign
+								style={createPostStyles.retakeIcon}
+								name='close'
+								size={25}
+								color='#ffffff'
+							/>
+						</TouchableHighlight>
+						<View style={createPostStyles.createPostContainer}>
+							<View style={[createPostStyles.takenPhotoContainer]}>
+								{photo && (
+									<TouchableWithoutFeedback
+										style={{ flex: 1 }}
+										onPress={() => {
+											Keyboard.dismiss();
+											toggleContentFit(); // Toggle content fit mode on tap
+										}}
+										accessible={false}>
+										<Image
+											style={createPostStyles.photoStyle}
+											transition={100}
+											contentFit={mediaSrc == "taken" ? "cover" : photoContentFit}
+											contentPosition={'center'}
+											allowDownscaling={false}
+											// borderRadius={10}
+											source={{ uri: photo }}
+										/>
+									</TouchableWithoutFeedback>
+								)}
+								{video && (
+									<View>
+										<Video
+											source={{ uri: video }}
+											style={{
+												width: Dimensions.get('window')
+													.width,
+												height: '100%',
+											}}
+											shouldPlay={true}
+											isLooping={true}
+											resizeMode={ResizeMode.COVER}
+										/>
+									</View>
+								)}
 
-					</View>
-					{loading ? (
-						<View style={createPostStyles.sendLoadingContainer}>
-							<LoadingSpinner />
+
+
+								<View style={{ height: 80, bottom: 100, width: "100%", alignItems: "flex-end", justifyContent: "flex-end" }}>
+									<View style={{ width: "100%", height: 40 }}>
+										<FloatingAction
+											onPressItem={onFloatingActionPress}
+											color={"rgba(137, 133, 133, 0.9)"}
+											overlayColor={"transparent"}
+											showBackground={true}
+											actions={actions}
+										/>
+									</View>
+									<View style={[createPostStyles.inputContainer]}>
+										<TextInput
+											style={createPostStyles.input}
+											maxLength={MAX_CAPTION_LENGTH}
+											placeholder='Write a caption...'
+											placeholderTextColor={
+												theme.grayShades.gray500
+											}
+											multiline={true}
+											value={caption}
+											onChangeText={setCaption}
+											onFocus={() => {
+												setIsFocused(true);
+											}}
+											onBlur={() => {
+												setIsFocused(false);
+											}}
+											returnKeyType='done'
+											keyboardAppearance='dark'
+											onSubmitEditing={Keyboard.dismiss}
+										/>
+										{isFocused ? (
+											null
+											// <TouchableOpacity
+											// 	style={
+											// 		createPostStyles.submitCaptionButton
+											// 	}
+											// 	onPress={() => {
+											// 		Keyboard.dismiss();
+											// 	}}>
+											// 	{/* <Text
+											// 		style={
+											// 			createPostStyles.submitCaptionText
+											// 		}>
+											// 		Submit
+											// 	</Text> */}
+											// </TouchableOpacity>
+										) : null}
+									</View>
+
+
+									<View style={{ display: "flex", right: 0 }}>
+										<TouchableHighlight
+											style={[createPostStyles.sendPostContainer, { right: 0 }]}
+											onPress={
+												loading
+													? null
+													: () => {
+														Haptics.impactAsync(
+															Haptics.ImpactFeedbackStyle
+																.Medium,
+														);
+														sendPost();
+													}
+											}>
+											<View
+												style={{
+													flexDirection: 'row',
+													alignItems: 'center',
+													gap: 10,
+												}}>
+												<Text style={createPostStyles.sendPostText}>
+													Post
+												</Text>
+
+												<Ionicons
+													name='send'
+													size={30}
+													color='#ffffff'
+												/>
+											</View>
+										</TouchableHighlight>
+									</View>
+
+								</View>
+							</View>
+
 						</View>
-					) : null}
+						{loading ? (
+							<View style={createPostStyles.sendLoadingContainer}>
+								<LoadingSpinner />
+							</View>
+						) : null}
 
 
-					<PlanSelectModal isVisible={isVisible} onPlanModalClose={onPlanModalClose} />
+						<PlanSelectModal isVisible={isVisible} onPlanModalClose={onPlanModalClose} />
 
-				</>
-
-
-			)}
+					</>
 
 
-		</TouchableWithoutFeedback>
+				)}
 
+
+			</TouchableWithoutFeedback>
+		</KeyboardAvoidingView>
 	);
 }

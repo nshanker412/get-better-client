@@ -177,7 +177,7 @@ export const useCreatePostStyles = () => {
 			borderColor: theme.textColorSecondary,
 			backgroundColor: theme.textColorPrimary,
 			// shadowOpacity: 0.7,
-			color: theme.textColorPrimary,
+			color: theme.grayShades.gray200,
 			padding: 10,
 			paddingTop: 10,
 			// margin: 25,
