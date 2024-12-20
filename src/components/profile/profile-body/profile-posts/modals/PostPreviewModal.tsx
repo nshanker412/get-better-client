@@ -277,6 +277,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 ListEmptyComponent={
                   <View style={{ height: "100%", width: "100%", justifyContent: "flex-start", alignItems: "center" , paddingTop: 50, gap: 20}}>
                     <Text style={{ color: "white", fontSize: 20, fontFamily: fonts.inter.thin,  }}>No posts created yet</Text>
+                    {isMyFeed?(
                     <View style={{
                       maxHeight: 200,
                       maxWidth: 200,
@@ -295,11 +296,13 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                       borderRadius: 10,
                       
                     }}>
+                      
                       <TouchableOpacity onPress={() => navigate('post')}>
                         <AntDesign name="pluscircleo" size={60} color={grayDark.gray10} />
                       </TouchableOpacity>
+                      
 
-                    </View>
+                    </View>):null}
                     </View>
                 }
                 estimatedItemSize={200}
