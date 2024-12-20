@@ -28,7 +28,7 @@ const HomeTabIcon = ({ focused }) => {
 			width: '100%',
 			height: 3,
 			borderRadius: 2,
-			backgroundColor: 'white',
+			backgroundColor: '#C3FF45',
 			position: 'absolute',
 			top: 0,
 		  }} />
@@ -41,7 +41,7 @@ const HomeTabIcon = ({ focused }) => {
 			  xml={HI}
 			  width={30}
 			  height={30}
-			  fill={focused ? 'white' : 'none'}
+			  fill={focused ? '#C3FF45' : 'none'}
 			/>
 		</TouchableOpacity>
 	  </View>
@@ -57,7 +57,7 @@ const SearchTabIcon = ({ focused }) => {
 			width: '100%',
 					height: 3,
 			borderRadius: 2,
-			backgroundColor: 'white',
+			backgroundColor: '#C3FF45',
 					position: 'absolute',
 			top: 0,
 		  }} />
@@ -71,7 +71,7 @@ const SearchTabIcon = ({ focused }) => {
 					xml={SearchIcon}
 					width={40}
 					height={40}
-					fill={focused ? 'white' : 'none'}
+					fill={focused ? '#C3FF45' : 'none'}
 					/>
 			</TouchableOpacity>
 			</View>
@@ -108,7 +108,7 @@ const RankingTabIcon = ({ focused }) => {
 			width: '100%',
 					height: 3,
 			borderRadius: 2,
-			backgroundColor: 'white',
+			backgroundColor: '#C3FF45',
 			position: 'absolute',
 			top: 0,
 		  }} />
@@ -120,7 +120,7 @@ const RankingTabIcon = ({ focused }) => {
 					xml={RankingIcon}
 					width={35}
 					height={35}
-					fill={focused ? 'white' : 'none'}
+					fill={focused ? '#C3FF45' : 'none'}
 				/>
 			</TouchableOpacity>
 			</View>
@@ -135,7 +135,7 @@ const ProfileTabIcon = ({ focused }) => {
 			width: '100%',
 			height: 3,
 			borderRadius: 2,
-			backgroundColor: 'white',
+			backgroundColor: '#C3FF45',
 			position: 'absolute',
 			top: 0,
 		  }} />
@@ -148,7 +148,7 @@ const ProfileTabIcon = ({ focused }) => {
 				xml={ProfileIcon}
 				width={35}
 				height={35}
-				fill={focused ? 'white' : 'none'}
+				fill={focused ? '#C3FF45' : 'none'}
 			/>
 			</TouchableOpacity>
 			</View>	
