@@ -57,7 +57,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     flex: 1,
     height: Dimensions.get("window").height,
     width: Dimensions.get("window").width,
-    bottom: 80
+    bottom: isMyFeed ? 0 : 80
   }
 
   const listContainerStyle = {
