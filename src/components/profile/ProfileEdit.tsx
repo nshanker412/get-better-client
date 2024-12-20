@@ -284,13 +284,13 @@ export const ProfileEdit: React.FC = () =>  {
 						maxLength={50}
 						keyboardAppearance='dark'
 					/>
-					<InputAccessoryView>
+					{/* <InputAccessoryView>
 						<View >
 							<Button
 								title="Done"
 							/>
 						</View>
-	  				</InputAccessoryView>
+	  				</InputAccessoryView> */}
 				</View>
 
 				<View style={[profileEditStyles.inputContainer]}>
