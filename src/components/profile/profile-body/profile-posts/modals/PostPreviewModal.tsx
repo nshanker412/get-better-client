@@ -55,10 +55,22 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
   const fullViewStyle = {
     flex: 1,
-    height: Dimensions.get("screen").height,
-    width: Dimensions.get("screen").width,
+    height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
+    bottom: 80
   }
 
+  const listContainerStyle = {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const getItemLayout = (data, index) => ({
+    length: Dimensions.get('window').height,
+    offset: Dimensions.get('window').height * index,
+    index,
+  });
 
   const onDeletePressCb = async () => {    
     setDeleteModalVisible(true);
@@ -134,13 +146,13 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
               backgroundColor: 'black'
             }}>
             <PostTile
-                handlePostPress={() => handlePostPress(index)}
-                isEmbeddedFeed={!isFullscreenPreview}
-                post={item}
-                myUsername={myUsername ?? ''}
-                ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
-            </View>
-        );
+              handlePostPress={() => handlePostPress(index)}
+              isEmbeddedFeed={!isFullscreenPreview}
+              post={item}
+              myUsername={myUsername ?? ''}
+              ref={PostTileRef => (mediaRefs.current[item.filename] = PostTileRef)} />
+          </View>
+      );
     };
   
   const onRefreshFeed = async () => {
@@ -214,31 +226,37 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
                 id='preview-feed-flash-list-fullscreen'
                 ref={profileFeedRef}
                 data={posts ?? []}
-                estimatedItemSize={Dimensions.get("screen").height}
+                estimatedItemSize={Dimensions.get("window").height}
                 initialScrollIndex={currentIndex}
                 showsVerticalScrollIndicator={false}
-                removeClippedSubviews
+                removeClippedSubviews={true}
                 viewabilityConfig={{
-                  itemVisiblePercentThreshold: 10
+                  itemVisiblePercentThreshold: 10,
+                  minimumViewTime: 200
                 }}
                 onScroll={onScroll}
                 onContentSizeChange={onContentSizeChange}
                 renderItem={renderItem}
-                numColumns={ 1 }
-                scrollEventThrottle={20}
+                numColumns={1}
+                scrollEventThrottle={16}
                 snapToAlignment='start'
+                snapToInterval={Dimensions.get('window').height}
                 pagingEnabled={true}
-                keyExtractor={item => {return item.filename}}
-                decelerationRate={'normal'}
+                keyExtractor={item => item.filename}
+                decelerationRate="fast" 
                 onViewableItemsChanged={onViewableItemsChangedRef.current}
                 onMomentumScrollEnd={() => {
-                  Haptics.impactAsync(
-                    Haptics.ImpactFeedbackStyle.Medium,
-                  );
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 }}
-                onScrollToTop={() => onClosePress(false)}          
-            />         
-        
+                onScrollToTop={() => onClosePress(false)}
+                contentContainerStyle={listContainerStyle}
+                getItemLayout={getItemLayout} 
+                maintainVisibleContentPosition={{
+                  minIndexForVisible: 0,
+                  autoscrollToTopThreshold: 10
+                }}
+              />
+
               <Portal>
                 {isFullscreenPreview && <ConnectedPostCommentDrawer />}
               </Portal>
@@ -247,9 +265,8 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
 
               </Portal>)}
             </View>
-            </Host>
-            </Portal>
-
+          </Host>
+        </Portal>
         ) : (
           <Host>
             <View style={embeddedViewStyle} >
