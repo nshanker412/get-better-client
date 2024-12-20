@@ -74,14 +74,14 @@ export const useLoginStyles = () => {
         iconContainer: {
             position: 'absolute',
             left: 10,
-            top:40,
+            top:"45%",
             zIndex:1,
             padding:15,
         },
         iconSignInContainer:{
             // position: 'absolute',
             // left: 15,
-            top:-10,
+            top:"-5%",
             zIndex:1,
             // paddingLeft:50,
             alignSelf: 'flex-end',
@@ -90,7 +90,7 @@ export const useLoginStyles = () => {
         eyeButton: {
             position: 'absolute',
             right: 10,
-            top:26,
+            top:"33%",
             zIndex:1,
             padding:15,
           },
