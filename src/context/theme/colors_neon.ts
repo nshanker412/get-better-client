@@ -173,6 +173,11 @@ export const orangeDark = {
     green11: 'hsl(155, 100%, 8.4%)',
     green12: 'hsl(146, 100%, 7.4%)',
   }
+  export const lightgreen = {
+    lightgreen1: 'hsl(79 100% 63.5%)',
+    lightgreen2: 'hsl(79 100% 59%)',
+    lightgreen3: 'hsl(79 100% 76%)',
+  }
   export const orange = {
     orange1: 'hsl(24, 100%, 82.2%)',
     orange2: 'hsl(24, 100%, 62.2%)',

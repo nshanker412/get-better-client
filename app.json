@@ -2,7 +2,7 @@
     "expo": {
         "name": "GetBetter.",
         "slug": "get-better",
-        "version": "1.0.20",
+        "version": "1.0.26",
         "owner": "nshanker4",
         "platforms": ["ios"],
         "orientation": "portrait",

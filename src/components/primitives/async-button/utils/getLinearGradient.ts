@@ -1,9 +1,9 @@
 
 
 
-import { blue, blueDark, gray, grayDark, green, greenDark, yellow, yellowDark } from '@context/theme/colors_neon';
+import { blue, blueDark, gray, grayDark, green, greenDark, yellow, yellowDark,lightgreen } from '@context/theme/colors_neon';
 
-export type LGColor = 'green' | 'blue' | 'gray' | 'yellow';
+export type LGColor = 'green' | 'blue' | 'gray' | 'yellow'| 'lightgreen';
 export type LGdirection = 'horizontal' | 'vertical' | 'diagonalTR' | 'diagonalBL';
 
 export const getLinearGradientProps = (gradientColor: LGColor, dark: boolean, direction: LGdirection="diagonalTR") => {
@@ -52,6 +52,12 @@ export const getLinearGradientProps = (gradientColor: LGColor, dark: boolean, di
                     start: direction === 'horizontal' ? horizontal.start : direction === 'vertical' ? vertical.start : direction === 'diagonalTR' ? diagonalTR.start : diagonalBL.start,
                     end: direction === 'horizontal' ? horizontal.end : direction === 'vertical' ? vertical.end : direction === 'diagonalTR' ? diagonalTR.end : diagonalBL.end,
                 }
+            case 'lightgreen':
+                return {
+                    colors: [lightgreen.lightgreen1, lightgreen.lightgreen2, lightgreen.lightgreen3],
+                    start: direction === 'horizontal' ? horizontal.start : direction === 'vertical' ? vertical.start : direction === 'diagonalTR' ? diagonalTR.start : diagonalBL.start,
+                    end: direction === 'horizontal' ? horizontal.end : direction === 'vertical' ? vertical.end : direction === 'diagonalTR' ? diagonalTR.end : diagonalBL.end,
+                }
             default:
                 return {
                     colors: [blueDark.blue10, blueDark.blue9, blueDark.blue8],
@@ -85,6 +91,12 @@ export const getLinearGradientProps = (gradientColor: LGColor, dark: boolean, di
             case 'yellow':
                 return {
                     colors: [yellow.yellow7, yellow.yellow6, yellow.yellow5],
+                    start: direction === 'horizontal' ? horizontal.start : direction === 'vertical' ? vertical.start : direction === 'diagonalTR' ? diagonalTR.start : diagonalBL.start,
+                    end: direction === 'horizontal' ? horizontal.end : direction === 'vertical' ? vertical.end : direction === 'diagonalTR' ? diagonalTR.end : diagonalBL.end,
+                }
+            case 'lightgreen':
+                return {
+                    colors: [lightgreen.lightgreen1, lightgreen.lightgreen2, lightgreen.lightgreen3],
                     start: direction === 'horizontal' ? horizontal.start : direction === 'vertical' ? vertical.start : direction === 'diagonalTR' ? diagonalTR.start : diagonalBL.start,
                     end: direction === 'horizontal' ? horizontal.end : direction === 'vertical' ? vertical.end : direction === 'diagonalTR' ? diagonalTR.end : diagonalBL.end,
                 }

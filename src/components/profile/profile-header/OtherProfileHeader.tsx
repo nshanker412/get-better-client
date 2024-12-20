@@ -15,6 +15,7 @@ import { handleSocialPress } from './utils/handleSocialPress';
 import { useAuth } from '@context/auth/useAuth';
 import axios from 'axios';
 import { useMyUserInfo } from '@context/my-user-info/useMyUserInfo';
+import { color } from '@rneui/base';
 
 
 const s = StyleSheet.create({
@@ -201,7 +202,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
 			  id={'challenge-button'}
 			  loading={false}
-			  gradientColor='gray'
+			  gradientColor='lightgreen'
 			  isPrimary={true}
 			  title={'Challenge'}
 			  size='lg'
@@ -214,7 +215,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
 			  id={'block-button'}
 			  loading={false}
-			  gradientColor='gray'
+			  gradientColor='lightgreen'
 			  isPrimary={true}
 			  type={isBlocked ? 'outline' : 'solid'}
 			  title={isBlocked?'Blocked':'Block'}
@@ -228,7 +229,7 @@ export const OtherProfileHeader: React.FC<OtherProfileHeaderProps> = ({
 			  containerStyle={{ width: 100, height: 35 }}
 			  buttonStyle={{ width: 100, height: 35, paddingHorizontal: 5, paddingVertical: 2, alignItems: "center", justifyContent: "center" }}
 			  loading={isLoading}
-			  gradientColor={'gray'}
+			  gradientColor={'lightgreen'}
 			  disabled={isLoading}
 			  isPrimary={true}
 			  size='lg'
