@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Header } from '../header/Header';
-import { useLoginStyles } from './login.styles';
+import { useLoginStyles } from './signin_v2.styles';
 
 export const ForgotPassword: React.FC = () => {
 	const [email, setEmail] = useState('');

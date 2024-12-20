@@ -71,21 +71,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 			email,
 			password,
 		);
-		const user = userCred.data;
-		console.log('user', user, user.auth_token);
+		
+		const user = userCred && userCred.data?userCred.data:"no data";
 		if (user?.auth_token) {
 			const uname = await fetch(
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/me`,{ headers: {"Authorization" : `Bearer ${user.auth_token}`} }
 			).then((res) => res.json()).catch((err)=>console.log(err));
 
-			console.log('uname', uname['username']);
 
 			dispatch({ type: 'SIGN_IN', token: user.auth_token });
 			await AsyncStorage.setItem('accessToken',  user.auth_token);
-			// username: string | null;
-			// email: string | null;
-			// hasPostedDaily: boolean | null;
-			// myData: UserData;
+
 			
 			dispatch({
 				type: 'RESTORE_SESSION',
