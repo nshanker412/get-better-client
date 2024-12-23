@@ -8,10 +8,14 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
+
 } from 'react-native';
+import { SvgXml } from 'react-native-svg';
+
 import Toast from 'react-native-toast-message';
 import { Header } from '../header/Header';
 import { useLoginStyles } from './signin_v2.styles';
+import { MailIcon } from '@assets/darkSvg/MailIcon';
 
 export const ForgotPassword: React.FC = () => {
 	const [email, setEmail] = useState('');
@@ -49,12 +53,12 @@ export const ForgotPassword: React.FC = () => {
 					showToastMsg(
 						'success',
 						'Reset link sent to your email.',
-						'',
+						''
 					);
 					// navigate to login screen after 2 seconds
 					setTimeout(() => {
 						navigate.navigate('SignIn');
-					});
+					},2000);
 				})
 				.catch((error) => {
 					showToastMsg('error', error.message);
@@ -81,10 +85,11 @@ export const ForgotPassword: React.FC = () => {
 						Enter your email below to reset your password{' '}
 					</Text>
 				</View>
+				<SvgXml style={loginStyles.iconContainer} xml={MailIcon} color="#ff0000" size={20} />
 
 				<TextInput
 					style={loginStyles.input}
-					placeholder='email'
+					placeholder='Email Address'
 					onChangeText={setEmail}
 					autoCapitalize='none'
 					placeholderTextColor={theme.containerDefaultTextColor}
