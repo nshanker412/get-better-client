@@ -320,9 +320,9 @@ const onFoodsChange = (items: string[]) => {
             <Dropdown
               key="subcategory"
               placeholder={planState.init.subcategory ?? "select type"}
-                label="Workout Type"
-                data={workoutSubcategoryDropdownItems}
-                onSelectionChange={onSubcategoryChange}
+              label="Workout Type"
+              data={workoutSubcategoryDropdownItems}
+              onSelectionChange={onSubcategoryChange}
               />
             {planState.init.subcategory && (
               <MultiSelectComponent<ExerciseDropdownItem>
