@@ -67,6 +67,7 @@ const Plans: React.FC = () => {
 	const navig = useNavigation();
 
 	const onPressTile = (planID: string, planType: PlanType, version: string) => {
+		
 		if (planType === PlanType.NewPlan) {
 			navig.navigate('createPlan');
 
@@ -79,7 +80,7 @@ const Plans: React.FC = () => {
 	}
 
 	useEffect(() => {
-		if (plans) {
+		if (plans && plans.length>0) {
 			const planList: PlanTileType[] = plans?.map((plan: PlanModel) => ({
 				v: "v2",
 				id: plan.id,
