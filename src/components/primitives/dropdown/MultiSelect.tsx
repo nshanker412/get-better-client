@@ -2,7 +2,7 @@ import { grayDark } from '@context/theme/colors_neon';
 import { fonts } from '@context/theme/fonts';
 import { FontAwesome6, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet,Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 
 
@@ -72,6 +72,7 @@ export const MultiSelectComponent = <T extends BaseDropdownItem>({ placeholder, 
         }}
         onBlur={onBlur}
         renderItem={renderItem}
+        containerStyle={{height:150}}
         renderSelectedItem={(item, unSelect) => (
             <View style={styles.selectedStyle}>
                 <Text style={styles.textSelectedStyle}>{item.label}</Text>
@@ -128,7 +129,7 @@ const stylesd = StyleSheet.create({
     fontSize: 16,
   },
   item: {
-    padding: 17,
+    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

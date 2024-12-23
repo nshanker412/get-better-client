@@ -55,7 +55,7 @@ export const Dropdown = <T extends BaseDropdownItem>({placeholder="...",  label,
               data={data}
               label={label}
               search={search}
-              maxHeight={300}
+              maxHeight={200}
               minHeight={100}
               labelField="label"
               valueField="value"
