@@ -7,9 +7,8 @@ export const signInWithEmailAndPasswordAPI = async (email: string, password: str
         "email":email,
         "password":password,
     }).catch(err=>{Toast.show({
-        text1: `Login Failed, Please Check Email and Password`,
+        text1: `${err.response.data.errors[0].message}`,
         type: 'error',
         topOffset: 70
       });});
-    
 };

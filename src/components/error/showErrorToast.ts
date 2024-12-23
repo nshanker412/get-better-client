@@ -6,7 +6,7 @@ export const showErrorToast = (errorMsg: string) => {
         text1: errorMsg,
         type: 'error',
         visibilityTime: 5000,
-        topOffset: 150,
+        topOffset: 100,
         autoHide: true,
     });
 };

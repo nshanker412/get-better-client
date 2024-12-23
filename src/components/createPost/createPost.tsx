@@ -51,7 +51,7 @@ const actions: IActionProps[] = [
 
 
 
-const MAX_CAPTION_LENGTH = 200;
+const MAX_CAPTION_LENGTH = 100;
 
 export default function CreatePost() {
 	const route = useRoute();
