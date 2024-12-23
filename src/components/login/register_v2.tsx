@@ -59,6 +59,7 @@ export const Register: React.FC = () => {
 	const usernameRef = useRef(null);
 	const passwordRef = useRef(null);
 	const submitButtonRef = useRef(null);
+	const checkBoxRef = useRef(null);
 
 
 	const onClickSignUp = () => {
@@ -85,17 +86,23 @@ export const Register: React.FC = () => {
 			setLoading(false);
 		})
 	};
+	const updateTOC = (value:boolean) =>{
+		setSelection(value)		
+	}
 
 
-	const trySignUp = useCallback(async () => {
+	const trySignUp = useCallback(async (isSelectedValue:boolean) => {
 		setLoading(true);
+		
 		const input: RegisterData = {
 			email,
 			name,
 			username,
 			password,
-			is_eula: isSelected,
+			is_eula: isSelectedValue,
 		};
+
+		
 		const resp = await registerUser(input);
 		if (resp) {
 			setLoading(false);
@@ -183,7 +190,7 @@ export const Register: React.FC = () => {
 										<TextInput
 											style={loginStyles.input}
 											ref={passwordRef}
-											secureTextEntry={true}
+											secureTextEntry={!showPassword}
 											onChangeText={setPassword}
 											autoCapitalize='none'
 											keyboardAppearance='dark'
@@ -210,15 +217,19 @@ export const Register: React.FC = () => {
 											color: 'white',
 											"fontSize": 16,
 										}} >
-											<CheckBox
-												value={isSelected}
-												onValueChange={setSelection}
-												style={loginStyles.CheckBox}
-												onTintColor={theme.textColorSecondary}
-												onCheckColor={theme.textColorSecondary}
-												tintColor={theme.textColorSecondary}
+											<TouchableOpacity>
+												<CheckBox
+													ref={checkBoxRef}
+													value={isSelected}
+													onValueChange={(value)=>{updateTOC(value)}}
+													
+													style={loginStyles.CheckBox}
+													onTintColor={theme.textColorSecondary}
+													onCheckColor={theme.textColorSecondary}
+													tintColor={theme.textColorSecondary}
 
-											/>
+												/>
+											</TouchableOpacity>
 											<Text style={{marginLeft:20,}}> I agree to  <Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/eula")}>EULA</Text> and<Text style={{ color: theme.textColorSecondary }} onPress={() => Linking.openURL("https://getbetterbrand.com/privacy-policy")}> Privacy Policy </Text></Text>
 										</Text>
 									</View>
@@ -239,7 +250,7 @@ export const Register: React.FC = () => {
 												backgroundColor: '',
 											},
 										]}
-										onPress={trySignUp}
+										onPress={()=>{trySignUp(isSelected)}}
 										disabled={loading}
 										activeOpacity={0.8}
 										ref={submitButtonRef}>
