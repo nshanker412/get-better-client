@@ -20,9 +20,10 @@ export const SearchItemCell: React.FC<SearchItemCellProps> = ({ user }) => {
 			navigation.dispatch(TabActions.jumpTo('profileTab'));
 		}
 
-            navigation.navigate('profile', {
-                    profileUsername: username,
-                });
+        navigation.navigate('profile', {
+                profileUsername: username,
+                prev_screen_name:"search",
+            });
         };
 
     return (
