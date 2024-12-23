@@ -160,7 +160,7 @@ export const useCreatePostStyles = () => {
 
 		inputContainer: {
 			position: 'absolute',
-			// top: 100,
+			top: 20,
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'flex-start',
@@ -181,6 +181,7 @@ export const useCreatePostStyles = () => {
 			padding: 10,
 			paddingTop: 10,
 			// margin: 25,
+			// marginTop:-6,
 			borderRadius: 10,
 			flexWrap: "wrap",
 		},
