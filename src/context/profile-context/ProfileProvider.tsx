@@ -7,7 +7,7 @@ import { ProfileProviderProps } from './ProfileContext.types';
 
 
 
-export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMyProfile , profileUsername}) => {
+export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMyProfile , profileUsername,PrevScreenName}) => {
     // const useProfile = isMyProfile ? useMyUserInfo : useOtherUserInfo;
     const {
         username: myUsername,
@@ -71,7 +71,8 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children, isMy
         onFetchPosts: isMine ? fetchMyPosts : fetchUserPosts,
         onFetchPlans: isMine ? fetchMyPlans : fetchUserPlans,
         posts: isMine ? myPosts : otherPosts,
-        plans: isMine ? myPlans : otherPlans
+        plans: isMine ? myPlans : otherPlans,
+        PrevScreenName: PrevScreenName?PrevScreenName:null
     }
     
 	return (

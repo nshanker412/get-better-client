@@ -3,6 +3,7 @@ import { Post } from '@models/posts';
 export interface ProfileProviderProps {
     isMyProfile: boolean | undefined;
     profileUsername: string;
+    PrevScreenName:any[],
     children: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ export interface ProfileContextValue {
     onFetchPlans: () => Promise<void>;
     posts: Post[] | []; // TODO: Define post type
     plans: any[];
+    PrevScreenName:any[] | undefined;
 }
 
 export const defaultProfileContextValue: ProfileContextValue = {
@@ -22,4 +24,5 @@ export const defaultProfileContextValue: ProfileContextValue = {
     onFetchPlans: async () => {},
     posts: [],
     plans: [],
+    PrevScreenName:undefined
 }
