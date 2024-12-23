@@ -53,9 +53,6 @@ export default function FeedScreen() {
             Object.values(postTileRefs.current).forEach(ref => {
                 ref.current?.unMute();
             });
-            const fetchData = async () => {
-                await setMyUserInfo(userToken)
-            }
             onRefresh()
             // fetchData()
         }
@@ -128,11 +125,11 @@ export default function FeedScreen() {
     ), [username]);
 
     const onRefresh = useCallback(async () => {
-        setRefreshing(true);
+        // setRefreshing(true);
         const newPosts = await getFeed(userToken);
+        // setRefreshing(false);
         setPosts(newPosts);
         refreshNotifications(userToken!);
-        setRefreshing(false);
     }, [username, refreshNotifications]);
 
     return (

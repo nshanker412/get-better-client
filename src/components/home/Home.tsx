@@ -99,9 +99,9 @@ export const Home: React.FC = () => {
 				`${process.env.EXPO_PUBLIC_SERVER_BASE_URL}/api/post`,{ headers: {"Authorization" : `Bearer ${userToken}`}}
 			)
 			.then((response) => {
+				setPublicPostsFetched(true);
 				setPosts((prevPosts) => [...prevPosts, ...response.data["results"]]);
 				setLoadingPosts(false);
-				setPublicPostsFetched(true);
 			})
 			.catch((error) => {
 				console.log('fetchPublicPostsError', error);
