@@ -5,6 +5,7 @@ import Toast from 'react-native-toast-message';
 import { ProfilePostsProps } from './ProfilePosts.types';
 import { PreviewFeedScreen } from './modals/PostPreviewModal';
 import { ScrollView } from 'react-native';
+import { useProfileContext } from '@context/profile-context/useProfileContext';
 
 //helper to take in a postID and check if it exists in the posts array
 // if it does, set the previewPostId to the index of the post
@@ -23,6 +24,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
     const route = useRoute();
     const [previewPostId, setPreviewPostId] = useState<number | undefined>(undefined);
     const [linkPostID, setLinkPostID] = useState<string | undefined>(undefined);
+	 const { PrevScreenName } = useProfileContext();
     
     useEffect(() => {
         setLinkPostID(route?.params?.linkPostID);
@@ -78,6 +80,7 @@ const findIdxByID = (postID: string, posts: Post[]) => {
                 currentPost={previewPostId } 
                 onFetchPosts={onFetchUserPosts}
                 isMyFeed={isMyProfile}
+                PrevScreenName={PrevScreenName}
             />
 
     );

@@ -13,6 +13,7 @@ import { Host, Portal } from 'react-native-portalize';
 import { ConnectedPostCommentDrawer } from '../../../../home/post-comment-drawer/ConnectedPostCommentDrawer';
 import { PostTile } from '../post-flashlist/PostTile';
 import { DeletePostModal } from './DeletePostModal';
+
 /**
  * Component that renders a list of posts meant to be 
  * used for the feed screen.
@@ -20,7 +21,7 @@ import { DeletePostModal } from './DeletePostModal';
  * On start make fetch for posts then use a flatList 
  * to display/control the posts.
  */
-export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts }: { isMyFeed: boolean; posts: Post[]; currentPost: number | undefined; onClosePress: (close: boolean) => void, onFetchPosts: () => Promise<void>, isFullscreen: boolean }) {
+export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, onClosePress, onFetchPosts,PrevScreenName }: { isMyFeed: boolean; posts: Post[]; currentPost: number | undefined; onClosePress: (close: boolean) => void, onFetchPosts: () => Promise<void>, isFullscreen: boolean ,PrevScreenName:any[]}) {
   
   const mediaRefs = useRef([]);
   const { username: myUsername } = useMyUserInfo()
@@ -57,7 +58,7 @@ export function PreviewFeedScreen({ posts, currentPost, isMyFeed, isFullscreen, 
     flex: 1,
     height: Dimensions.get("window").height,
     width: Dimensions.get("window").width,
-    bottom: isMyFeed ? 0 : 80
+    bottom: PrevScreenName==="search" ? 80:0
   }
 
   const listContainerStyle = {

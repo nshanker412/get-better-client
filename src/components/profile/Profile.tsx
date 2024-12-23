@@ -27,7 +27,9 @@ export const Profile: React.FC = ({route}) => {
 			<OtherUserInfoProvider otherProfileUsername={route?.params?.profileUsername}>
 				<ProfileProvider
 					isMyProfile={myUsername === route?.params?.profileUsername}
-					profileUsername={route?.params?.profileUsername}>
+					profileUsername={route?.params?.profileUsername}
+					PrevScreenName={route?.params?.prev_screen_name}
+					>
 					<_Profile  />
 				</ProfileProvider>
 			</OtherUserInfoProvider>
